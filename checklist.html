@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bug Bounty Checklist — Cheakstar</title>
+<meta name="description" content="A free, interactive bug bounty checklist by Cheakstar — from permission and scope to recon, testing, evidence and reports. For authorized targets and legal labs only.">
+<link rel="stylesheet" href="styles.css">
+<style>
+.progress-wrap{background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:34px}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.progress-top strong{color:#fff;font-size:1.05rem}
+.progress-top span{color:var(--gold);font-weight:700}
+.bar{height:14px;background:rgba(255,255,255,.08);border-radius:8px;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:8px;transition:width .3s ease}
+.progress-wrap p{color:var(--muted);font-size:.9rem;margin-top:10px}
+.check-sec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px;margin-bottom:22px}
+.check-sec h3{color:#fff;font-size:1.18rem;margin-bottom:4px}
+.check-sec .count{color:var(--gold);font-size:.85rem;font-weight:700}
+.check-sec .why{color:var(--muted);font-size:.94rem;margin-bottom:14px}
+ul.tasks{list-style:none}
+ul.tasks li{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+ul.tasks li:last-child{border-bottom:none}
+ul.tasks label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;color:var(--ink);font-size:.98rem}
+ul.tasks input[type=checkbox]{width:20px;height:20px;margin-top:3px;accent-color:var(--gold);flex:none;cursor:pointer}
+ul.tasks input[type=checkbox]:checked + span{color:var(--muted);text-decoration:line-through}
+.sec-link{margin-top:16px;font-size:.93rem;color:var(--muted)}
+.warn{background:rgba(212,175,55,.1);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:16px 20px;color:var(--ink);margin-bottom:30px}
+.warn strong{color:var(--gold)}
+.reset-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-weight:600;padding:9px 20px;border-radius:6px;cursor:pointer;font-size:.95rem}
+.reset-btn:hover{background:rgba(212,175,55,.12)}
+</style>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap">
+<h2>Bug Bounty <span class="gold">Checklist</span></h2>
+<p class="sub">The working checklist our book <em>Bug Bounty from Scratch</em> is built on — from the fences you never cross, to recon, testing, evidence and the report. Tick items off as you build the habit; your progress is saved in this browser. Free, forever.</p>
+
+<div class="warn"><strong>Only where you are invited.</strong> Everything on this page is for targets that have invited testing through a published bug bounty program or a legal practice lab — and only inside the scope that invitation names. Testing anywhere else is not research; it is unauthorised access. Permission first, always.</div>
+
+<div class="progress-wrap">
+<div class="progress-top"><strong>Your progress</strong><span id="pct">0%</span></div>
+<div class="bar"><i id="barfill"></i></div>
+<p><span id="done-count">0</span> of <span id="total-count">0</span> habits built. Small, honest ticks — this is a season's work, not an afternoon's.</p>
+</div>
+
+<div class="check-sec" data-sec>
+<h3>1. Before You Touch Anything — The Fences <span class="count" data-count></span></h3>
+<p class="why">Three rules govern everything: permission, proof, scope. Build these fences first and most hard decisions answer themselves.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>I have a notebook (paper or digital) where every session's work will be written down</span></label></li>
+<li><label><input type="checkbox"><span>I have written the three rules on its first page: never test without permission · never claim a bug without proof · always respect the scope</span></label></li>
+<li><label><input type="checkbox"><span>I have chosen ONE platform and read how it works — briefs, triage, payments, reputation</span></label></li>
+<li><label><input type="checkbox"><span>I only test targets with a published program or in legal labs — never a random website</span></label></li>
+<li><label><input type="checkbox"><span>I have my own test accounts, clearly mine, for any proof I create</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — Chapters 4 and 5 draw these legal lines in full.</p>
+</div>
+<div class="check-sec" data-sec>
+<h3>2. Recon — Map What Exists <span class="count" data-count></span></h3>
+<p class="why">Patient, legal, in public view: you are mapping what exists before touching anything.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>I read the program brief like a contract — scope, out-of-scope, rules, safe harbor</span></label></li>
+<li><label><input type="checkbox"><span>I listed the in-scope assets (domains, apps, APIs) in my notebook before opening any tool</span></label></li>
+<li><label><input type="checkbox"><span>I mapped subdomains and services using passive, public sources first</span></label></li>
+<li><label><input type="checkbox"><span>I walked the application as a normal user and noted every feature</span></label></li>
+<li><label><input type="checkbox"><span>I noted the technologies in use (headers, error pages, public files) — facts, not guesses</span></label></li>
+<li><label><input type="checkbox"><span>My map lives on paper/in notes — drawn by me, not only inside a scanner</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <em>Recon &amp; Mapping</em> — in our <a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">store</a>.</p>
+</div>
+
+<div class="check-sec" data-sec>
+<h3>3. Understand the Target <span class="count" data-count></span></h3>
+<p class="why">Internal teams see the system they meant to build. Your advantage is seeing the one that actually exists.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>I can explain how this application makes money / serves its users</span></label></li>
+<li><label><input type="checkbox"><span>I know the user roles (guest, user, admin…) and what each is allowed to do</span></label></li>
+<li><label><input type="checkbox"><span>I have used every main feature once, slowly, watching the requests</span></label></li>
+<li><label><input type="checkbox"><span>I listed where data crosses a trust boundary (forms, uploads, payments, sharing)</span></label></li>
+<li><label><input type="checkbox"><span>I wrote down the three places experience says to check first — and why</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — Chapter 9, how the web actually works; Chapter 13, walking a brief end to end.</p>
+</div>
+<div class="check-sec" data-sec>
+<h3>4. The Testing Method <span class="count" data-count></span></h3>
+<p class="why">Feature by feature, not wandering and hoping. A method does not depend on luck.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>I work through one feature at a time, in a fixed order, and log each one</span></label></li>
+<li><label><input type="checkbox"><span>For each feature I ask: who else could reach this? what if I change the ID, the role, the state?</span></label></li>
+<li><label><input type="checkbox"><span>I change one thing at a time, so I know what caused what I saw</span></label></li>
+<li><label><input type="checkbox"><span>Negative results go in the notebook too — "tested, held" is real information</span></label></li>
+<li><label><input type="checkbox"><span>Scanners support my method; they never replace it (and I verify anything they claim)</span></label></li>
+<li><label><input type="checkbox"><span>I stop at proof of impact — I never take data, break things, or wander beyond the finding</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — Chapter 15 builds the full manual testing method.</p>
+</div>
+
+<div class="check-sec" data-sec>
+<h3>5. Beginner Bug Classes — Learn Them in Labs First <span class="count" data-count></span></h3>
+<p class="why">A few families understood deeply beat twenty names memorised. Every class below is first learned in a legal lab, then hunted in scope.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>IDOR / broken access control — I can prove one in a lab with two of my own accounts</span></label></li>
+<li><label><input type="checkbox"><span>XSS — I can demonstrate impact honestly, without harming real users</span></label></li>
+<li><label><input type="checkbox"><span>Authentication &amp; session issues — I know the common shapes and safe tests</span></label></li>
+<li><label><input type="checkbox"><span>Information disclosure &amp; misconfigurations — I can tell signal from checklist noise</span></label></li>
+<li><label><input type="checkbox"><span>For every class: I learned it in a lab BEFORE looking for it on a real program</span></label></li>
+<li><label><input type="checkbox"><span>I can explain each class I hunt in plain words a beginner would understand</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — Chapters 11, 12 and 16–19 walk each class in the lab first.</p>
+</div>
+<div class="check-sec" data-sec>
+<h3>6. Evidence &amp; Proof <span class="count" data-count></span></h3>
+<p class="why">A program pays for what your report demonstrates, not what you believe.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>My proof uses only my own test accounts and my own data</span></label></li>
+<li><label><input type="checkbox"><span>A stranger could repeat my steps exactly and see the same result</span></label></li>
+<li><label><input type="checkbox"><span>Screenshots/requests are captured at the moment of the finding, not recreated later</span></label></li>
+<li><label><input type="checkbox"><span>The impact I claim is the impact I proved — never one inch more</span></label></li>
+<li><label><input type="checkbox"><span>I stopped testing as soon as the point was proven</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/viqzZ" target="_blank" rel="noopener"><em>The Honest Report</em></a> — proof and evidence craft, in full.</p>
+</div>
+
+<div class="check-sec" data-sec>
+<h3>7. Write the Report <span class="count" data-count></span></h3>
+<p class="why">You are selling verified knowledge to a busy buyer. Clarity is rewarded; noise is punished.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>Title states the issue and where it lives — no drama, no clickbait</span></label></li>
+<li><label><input type="checkbox"><span>Summary explains the impact in two or three plain sentences</span></label></li>
+<li><label><input type="checkbox"><span>Steps to reproduce are numbered, complete, and use my test accounts</span></label></li>
+<li><label><input type="checkbox"><span>Evidence is attached and labelled so each step is easy to verify</span></label></li>
+<li><label><input type="checkbox"><span>Severity is honest — I would defend this rating in a meeting</span></label></li>
+<li><label><input type="checkbox"><span>A practical fix is suggested — it shows I understand the cause</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/d9skA" target="_blank" rel="noopener"><em>Bug Bounty Report Template Pack</em></a> — six ready report structures; and <a href="https://payhip.com/b/viqzZ" target="_blank" rel="noopener"><em>The Honest Report</em></a>.</p>
+</div>
+<div class="check-sec" data-sec>
+<h3>8. Triage, Duplicates &amp; Follow-up <span class="count" data-count></span></h3>
+<p class="why">The triager is your first professional reader. Write for that eye — and survive its verdicts without burning your name.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>I answer triage questions briefly, with evidence, without arguing</span></label></li>
+<li><label><input type="checkbox"><span>A duplicate stings — I record what I learned and move on; the root cause was real</span></label></li>
+<li><label><input type="checkbox"><span>"Informative" means below the bar, not an insult — I note the bar for next time</span></label></li>
+<li><label><input type="checkbox"><span>I never disclose a finding publicly before the program allows it</span></label></li>
+<li><label><input type="checkbox"><span>My ledger (accepted / duplicate / informative) is reviewed at the end of each season</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — Chapter 23 is devoted to talking to triage.</p>
+</div>
+
+<div class="check-sec" data-sec>
+<h3>9. Habits That Keep You Hunting <span class="count" data-count></span></h3>
+<p class="why">Ninety days buy skill first. These habits are the spine of the season.</p>
+<ul class="tasks">
+<li><label><input type="checkbox"><span>Daily rhythm: review yesterday's notes → practise → nightly review (what I did, learned, failed; tomorrow's first step)</span></label></li>
+<li><label><input type="checkbox"><span>I measure the season in hours, labs, notes and reports — not in money</span></label></li>
+<li><label><input type="checkbox"><span>I never compare my Day 12 to a stranger's Year 4 highlight reel</span></label></li>
+<li><label><input type="checkbox"><span>At Day 90 I plan the next ninety days honestly — seasons compound</span></label></li>
+</ul>
+<p class="sec-link">Go deeper: the full 90-day plan is <a href="https://payhip.com/b/5xBDz" target="_blank" rel="noopener"><em>Bug Bounty from Scratch</em></a> — and Chapter 1 is <strong>free</strong> in our <a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">store</a>.</p>
+</div>
+<div class="note" style="margin-top:6px"><strong>Want the whole path in one place?</strong> All 23 of our books — including every title named on this page — are together in <a href="https://payhip.com/b/93Thw" target="_blank" rel="noopener">The Complete Library</a> bundle in our store.</div>
+
+<div style="margin-top:26px"><button class="reset-btn" id="reset">Reset my ticks</button></div>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js"></script>
+<script>
+(function(){
+  var KEY='cheakstar-bb-checklist-v1';
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('ul.tasks input[type=checkbox]'));
+  var saved=[];
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ saved=[]; }
+  boxes.forEach(function(b,i){ b.checked=!!saved[i]; b.addEventListener('change',update); });
+  function update(){
+    var state=boxes.map(function(b){return b.checked;});
+    try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
+    var done=state.filter(Boolean).length;
+    document.getElementById('done-count').textContent=done;
+    document.getElementById('total-count').textContent=boxes.length;
+    var pct=boxes.length?Math.round(done*100/boxes.length):0;
+    document.getElementById('pct').textContent=pct+'%';
+    document.getElementById('barfill').style.width=pct+'%';
+    document.querySelectorAll('[data-sec]').forEach(function(sec){
+      var bs=sec.querySelectorAll('input[type=checkbox]');
+      var d=Array.prototype.filter.call(bs,function(b){return b.checked;}).length;
+      var c=sec.querySelector('[data-count]');
+      if(c) c.textContent='· '+d+'/'+bs.length+' done';
+    });
+  }
+  document.getElementById('reset').addEventListener('click',function(){
+    boxes.forEach(function(b){ b.checked=false; }); update();
+  });
+  update();
+})();
+</script>
+</body></html>
