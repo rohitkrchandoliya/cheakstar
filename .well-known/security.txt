@@ -1,0 +1,2 @@
+Contact: https://rohitkrchandoliya.github.io/cheakstar/contact.html
+Canonical: https://rohitkrchandoliya.github.io/cheakstar/.well-known/security.txt
