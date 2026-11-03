@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>What Is API Security? A Beginner's Plain-English Guide — Cheakstar Blog</title>
+<meta name="description" content="APIs run the modern internet - and fail in simple, repeated ways. A beginner-friendly tour of what API security means and why it matters.">
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<div class="hero"><div class="wrap">
+<h1>What Is API Security? A Beginner's Plain-English Guide</h1>
+<p>3 Nov 2026 · Cheakstar Blog</p>
+</div></div>
+<section><div class="wrap">
+<h2>First: what is an API, in plain words?</h2>
+<p>When you use an app, the screen you touch is only a window. Behind it, the app talks to a server in a structured language of requests and responses: "here is my login, show my orders", "here is a payment, confirm it". That structured conversation is an API - Application Programming Interface. Websites, mobile apps, payment systems and smart devices all run on APIs.</p>
+<p>Which means: whoever understands APIs understands where modern systems keep their data, their logic and, often, their mistakes.</p>
+<h2>Why APIs are attacked so often</h2>
+<p>APIs are attractive targets for simple reasons. They are built to be machine-readable, so they are easy to test at scale. They often expose more data than the screen shows, because the interface was trusted to filter it. And they are shipped fast, under deadline pressure, which is when security checks get skipped.</p>
+<p>The result: a short list of flaw patterns causes most real API incidents, and the patterns repeat everywhere.</p>
+<h2>The patterns you will meet first</h2>
+<p><strong>Broken access control.</strong> The API checks that you are logged in, but not that the record you asked for belongs to you. Change an ID in the request, see another customer's data. This is the single most common serious API flaw.</p>
+<p><strong>Excessive data exposure.</strong> The API returns a full record; the app displays three fields. The other twelve fields were still delivered to anyone who looks at the response.</p>
+<p><strong>Missing rate limits.</strong> Nothing slows down repeated attempts, so guessing, scraping and brute force become practical.</p>
+<p><strong>Weak authentication on forgotten endpoints.</strong> The main login gets hardened while an old version of the API stays online with none of the fixes.</p>
+<p>None of these require exotic skill to understand. They require method: mapping what an API exposes, testing who can see what, and proving the result with evidence.</p>
+<h2>Why beginners should learn this early</h2>
+<p>API security sits at a useful crossroads: it needs web fundamentals, it rewards careful thinking over heavy tooling, and it is directly relevant to bug bounty and to professional testing work. Organisations are actively short of people who test APIs methodically.</p>
+<p>If this guide has made the subject feel approachable, that is because it is. Our book <em>API Security for Beginners</em> takes this tour much deeper - one flaw class at a time, with the defender's fix explained beside every attack. Start anywhere, but start with permission, and build the habit of evidence from day one.</p>
+<p><a class="go" href="blog.html">← Back to Blog</a></p>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js"></script>
+</body></html>
