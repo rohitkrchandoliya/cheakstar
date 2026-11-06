@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex">
+<title>My Account — Cheakstar</title>
+<meta name="description" content="Your Cheakstar account: your profile, your favourite tools and your recently used tools.">
+<meta property="og:title" content="My Account — Cheakstar">
+  <meta property="og:description" content="Your Cheakstar account: your profile, your favourite tools and your recently used tools.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/account.html">
+<link rel="stylesheet" href="styles.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap">
+<h1>My <span class="gold">Account</span></h1>
+<p class="sub">Your profile, your favourite tools and the tools you used most recently.</p>
+
+<p id="accountLoading" style="color:var(--muted)">Loading your account…</p>
+
+<div id="accountSignedOut" hidden>
+  <div class="note"><strong>You are not signed in.</strong> Sign in to see your favourite tools and your recently used tools — or create a free account in a minute.<p style="margin-top:12px"><a class="btn" href="login.html">Sign In</a> <a class="btn ghost" href="signup.html" style="margin-left:8px">Create Account</a></p></div>
+</div>
+
+<div id="accountMain" hidden>
+  <div class="card" style="margin-bottom:22px">
+    <div class="acct-head">
+      <div class="acct-avatar" id="acctAvatar">C</div>
+      <div class="acct-who">
+        <h3 id="acctName" style="margin-bottom:2px">Your account</h3>
+        <p id="acctEmail" style="color:var(--muted)"></p>
+        <p id="acctSince" style="color:var(--muted);font-size:.9rem"></p>
+      </div>
+    </div>
+    <div class="btns" style="justify-content:flex-start;margin-top:20px">
+      <a class="btn" href="reset-password.html">Change Password</a>
+      <button class="btn ghost" type="button" id="acctSignOut">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>My Favourite Tools</h3>
+      <ul class="clean" id="favList"></ul>
+      <p id="favEmpty" style="color:var(--muted)" hidden>You have not saved any favourite tools yet. <a href="tools-preview/">Browse the free tools</a> and save the ones you use most.</p>
+    </div>
+    <div class="card">
+      <h3>Recently Used Tools</h3>
+      <ul class="clean" id="recentList"></ul>
+      <p id="recentEmpty" style="color:var(--muted)" hidden>No tools used yet. <a href="tools-preview/">Open the tools index</a> and try one — it will appear here.</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:22px"><strong>Delete your account:</strong> accounts are deleted on request, by a person, so nothing is removed by accident. To delete your account and its stored details, contact us through the <a href="contact.html">contact page</a> from your account email, and we will delete it for you.</div>
+</div>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+  var loading = document.getElementById("accountLoading");
+  var signedOut = document.getElementById("accountSignedOut");
+  var main = document.getElementById("accountMain");
+
+  function toolTitle(slug) {
+    return slug.split("-").map(function (w) {
+      return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
+    }).join(" ");
+  }
+  function toolUrl(slug) { return "tools-preview/" + slug + "/"; }
+
+  function fillList(listEl, emptyEl, items) {
+    listEl.innerHTML = "";
+    items.forEach(function (it) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = toolUrl(it.slug);
+      a.textContent = it.title;
+      li.appendChild(a);
+      listEl.appendChild(li);
+    });
+    emptyEl.hidden = items.length > 0;
+    listEl.hidden = items.length === 0;
+  }
+
+  function render(user) {
+    loading.hidden = true;
+    if (!user) {
+      main.hidden = true;
+      signedOut.hidden = false;
+      return;
+    }
+    signedOut.hidden = true;
+    main.hidden = false;
+    var meta = user.user_metadata || {};
+    var name = meta.display_name || user.email || "Your account";
+    document.getElementById("acctAvatar").textContent = name.charAt(0).toUpperCase();
+    document.getElementById("acctName").textContent = name;
+    document.getElementById("acctEmail").textContent = user.email || "";
+    var since = user.created_at ? new Date(user.created_at) : null;
+    document.getElementById("acctSince").textContent = since && !isNaN(since.getTime())
+      ? "Member since " + since.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+      : "";
+    var favs = window.CSAuth.getFavorites().map(function (slug) {
+      return { slug: slug, title: toolTitle(slug) };
+    });
+    fillList(document.getElementById("favList"), document.getElementById("favEmpty"), favs);
+    fillList(document.getElementById("recentList"), document.getElementById("recentEmpty"), window.CSAuth.getRecent());
+  }
+
+  document.getElementById("acctSignOut").addEventListener("click", function () {
+    window.CSAuth.signOut().then(function () { window.location.href = "index.html"; });
+  });
+
+  window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
+  window.CSAuth.onChange(function (user) { render(user); });
+})();
+</script>
+</body></html>
