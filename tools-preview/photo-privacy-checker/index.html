@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Photo Privacy Checker (EXIF) - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Photo Privacy Checker (EXIF)</h1>
+<p class="tool-sub">See what a photo secretly carries: GPS location, camera model and date taken.</p>
+<div class="tool-card">
+  <p>Photos quietly carry extra data called EXIF: the camera or phone model, the date and time, and often the exact GPS location where the photo was taken. Pick a photo to see what it reveals before you share it.</p>
+
+  <label for="exif-file">Choose a photo</label>
+  <input id="exif-file" type="file" accept="image/*">
+  <div class="preview" id="exif-preview"></div>
+
+  <div class="result" id="exif-result" hidden>
+    <p class="big" id="exif-verdict"></p>
+    <div id="exif-rows"></div>
+  </div>
+  <p id="exif-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Privacy:</strong> your photo is read only inside your browser, on this device. It is never uploaded to any server, including Cheakstar. Tip: most messaging apps strip some of this data when you send a photo as a message, but sending the original file (as a document or by email) usually keeps all of it.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var exifStatus = document.getElementById("exif-status");
+
+function addRow(container, label, value) {
+  if (value === undefined || value === null || value === "") { return; }
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  if (typeof value === "string") {
+    p.appendChild(document.createTextNode(" " + value));
+  } else {
+    p.appendChild(document.createTextNode(" "));
+    p.appendChild(value);
+  }
+  container.appendChild(p);
+}
+
+function formatExifDate(v) {
+  if (!v) { return ""; }
+  if (v instanceof Date) {
+    if (isNaN(v.getTime())) { return ""; }
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return v.getFullYear() + "-" + p(v.getMonth() + 1) + "-" + p(v.getDate()) +
+      " " + p(v.getHours()) + ":" + p(v.getMinutes()) + ":" + p(v.getSeconds());
+  }
+  // EXIF text dates look like "2024:05:01 10:30:00" — reformat to ISO style.
+  var s = String(v);
+  var m = s.match(/^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
+  if (m) { return m[1] + "-" + m[2] + "-" + m[3] + " " + m[4] + ":" + m[5] + ":" + m[6]; }
+  return s;
+}
+
+document.getElementById("exif-file").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) { return; }
+  var rows = document.getElementById("exif-rows");
+  var resultBox = document.getElementById("exif-result");
+  var verdict = document.getElementById("exif-verdict");
+  rows.innerHTML = "";
+  resultBox.hidden = true;
+  var preview = document.getElementById("exif-preview");
+  preview.innerHTML = "";
+  var url = URL.createObjectURL(file);
+  var img = document.createElement("img");
+  img.src = url;
+  img.alt = "Selected photo preview";
+  img.style.maxHeight = "240px";
+  preview.appendChild(img);
+
+  exifStatus.className = "status";
+  exifStatus.textContent = "Reading the photo's hidden data...";
+  if (typeof exifr === "undefined") {
+    exifStatus.className = "status error";
+    exifStatus.textContent = "The EXIF reader library could not be loaded. Check your connection and try again.";
+    return;
+  }
+  exifr.parse(file, { gps: true }).then(function (data) {
+    if (!data || Object.keys(data).length === 0) {
+      verdict.textContent = "Good news: no hidden camera data found.";
+      addRow(rows, "Result", "This image carries no EXIF data — no camera details and no location. That is typical for screenshots and for photos downloaded from social media.");
+      resultBox.hidden = false;
+      exifStatus.className = "status ok";
+      exifStatus.textContent = "Check complete.";
+      return;
+    }
+    var hasGps = typeof data.latitude === "number" && typeof data.longitude === "number";
+    verdict.textContent = hasGps
+      ? "Careful: this photo reveals its location."
+      : "This photo carries camera details (no location found).";
+    addRow(rows, "Camera make", data.Make);
+    addRow(rows, "Camera / phone model", data.Model);
+    addRow(rows, "Date taken", formatExifDate(data.DateTimeOriginal || data.CreateDate || data.ModifyDate));
+    addRow(rows, "Software", data.Software);
+    if (hasGps) {
+      var link = document.createElement("a");
+      link.href = "https://www.google.com/maps/search/?api=1&query=" + data.latitude.toFixed(6) + "," + data.longitude.toFixed(6);
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = data.latitude.toFixed(6) + ", " + data.longitude.toFixed(6) + " — see where this photo was taken";
+      addRow(rows, "GPS location", link);
+      addRow(rows, "Risk", "Anyone you send the original file to can open this map link and see the spot. Share a screenshot of the photo instead if the location must stay private.");
+    }
+    resultBox.hidden = false;
+    exifStatus.className = "status ok";
+    exifStatus.textContent = "Check complete.";
+  }).catch(function () {
+    verdict.textContent = "This image's hidden data could not be read.";
+    addRow(rows, "Result", "The file may be in a format without EXIF support (like PNG or WebP), or its data section may be damaged. No location or camera data could be extracted from it here.");
+    resultBox.hidden = false;
+    exifStatus.className = "status";
+    exifStatus.textContent = "Check complete.";
+  });
+});
+</script>
+</body>
+</html>
