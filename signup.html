@@ -10,7 +10,26 @@
   <meta property="og:description" content="Create a free Cheakstar account to save your favourite tools and pick up your recently used tools on any visit.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/signup.html">
-<link rel="stylesheet" href="styles.css?v=20261106d">
+<script>
+/* Theme snippet (same block as theme-head-snippet.html): first paint
+   already carries the visitor's saved appearance choices. */
+(function () {
+  try {
+    var mode = "system";
+    try { mode = window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) {}
+    var dark = mode === "dark" || (mode !== "light" &&
+      !(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches));
+    var root = document.documentElement;
+    root.setAttribute("data-theme", dark ? "dark" : "light");
+    root.style.background = dark ? "#0a1628" : "#f2f5fa";
+    try {
+      if (window.localStorage.getItem("ck_reduce_motion") === "1") root.setAttribute("data-motion", "reduced");
+      if (window.localStorage.getItem("ck_text_size") === "large") root.setAttribute("data-textsize", "large");
+    } catch (e) {}
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="styles.css?v=20261106e">
 </head><body class="auth-page">
 <header class="auth-strip"><a class="cs-logo" href="index.html">CHEAK<span>STAR</span></a></header>
 <section><div class="wrap">
@@ -19,7 +38,7 @@
 
 <div class="auth-card">
   <div class="auth-msg success" id="signupDone" hidden>
-    <strong>Almost done.</strong> Check your email to confirm your account, then <a href="login.html">sign in</a>.
+    <strong>Almost done.</strong> Check your email to confirm your account, then <a href="login.html" id="doneSignIn">sign in</a>.
   </div>
   <div class="auth-msg info" id="signupNotice" hidden>
     The sign-in service could not be reached just now. The form still works if the service recovers, otherwise please try again in a little while.
@@ -52,10 +71,47 @@
 <div class="auth-links"><a href="index.html">Back to home</a> · <a href="privacy-policy.html">Privacy Policy</a> · <a href="contact.html">Contact</a></div>
 </div></section>
 <footer class="auth-foot">© 2026 Cheakstar Private Limited · Jaipur, India</footer>
-<script src="auth.js?v=20261106c"></script>
+<script src="auth.js?v=20261106e"></script>
+<script src="theme.js?v=20261106a"></script>
 <script>
 (function () {
   "use strict";
+
+  /* Return flow (added 2026-11-06, settings/gating build): mirrors
+     login.html — the gate's ?next target (or the ck_return_to stash)
+     is honoured after sign-up, and carried into the "sign in" link
+     shown after the confirmation email step. */
+  function cleanNext(raw) {
+    if (!raw) return "";
+    var s = String(raw);
+    try { s = decodeURIComponent(s); } catch (e) {}
+    if (s.indexOf("://") >= 0 || s.indexOf("//") === 0) return "";
+    if (s.indexOf("\\") >= 0 || s.indexOf("..") >= 0) return "";
+    if (!/^[A-Za-z0-9_\-\.\/\?#=&%+~]+$/.test(s)) return "";
+    if (s.charAt(0) === "/") s = s.slice(1);
+    return s;
+  }
+  function urlNext() {
+    try { return cleanNext(new URLSearchParams(window.location.search).get("next") || ""); }
+    catch (e) { return ""; }
+  }
+  (function () {
+    var n = urlNext();
+    if (n) {
+      try { window.localStorage.setItem("ck_return_to", n); } catch (e) {}
+      var link = document.getElementById("doneSignIn");
+      if (link) link.href = "login.html?next=" + encodeURIComponent(n);
+    }
+  })();
+  function resolveNext() {
+    var target = urlNext();
+    if (!target) {
+      try { target = cleanNext(window.localStorage.getItem("ck_return_to") || ""); } catch (e) {}
+    }
+    try { window.localStorage.removeItem("ck_return_to"); } catch (e) {}
+    return target ? (window.CSAuth.siteBase() + target) : "account.html";
+  }
+
   var form = document.getElementById("signupForm");
   var errorBox = document.getElementById("signupError");
   var doneBox = document.getElementById("signupDone");
@@ -65,7 +121,7 @@
   function showError(msg) { errorBox.textContent = msg; errorBox.hidden = !msg; }
 
   window.CSAuth.ready.then(function () {
-    if (window.CSAuth.getUser()) { window.location.href = "account.html"; return; }
+    if (window.CSAuth.getUser()) { window.location.href = resolveNext(); return; }
     if (!window.CSAuth.isAvailable()) notice.hidden = false;
   });
 
@@ -88,7 +144,7 @@
         notice.hidden = true;
         doneBox.hidden = false;
       } else {
-        window.location.href = "account.html";
+        window.location.href = resolveNext();
       }
     }, function (err) {
       submitBtn.disabled = false;
