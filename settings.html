@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex">
+<title>Settings — Cheakstar</title>
+<meta name="description" content="Your Cheakstar settings: appearance, interface, language, email updates, your data, password and two-factor authentication.">
+<meta property="og:title" content="Settings — Cheakstar">
+  <meta property="og:description" content="Your Cheakstar settings: appearance, interface, language, email updates, your data, password and two-factor authentication.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/settings.html">
+<script>
+/* Theme snippet (same block as theme-head-snippet.html): first paint
+   already carries the visitor's saved appearance choices. */
+(function () {
+  try {
+    var mode = "system";
+    try { mode = window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) {}
+    var dark = mode === "dark" || (mode !== "light" &&
+      !(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches));
+    var root = document.documentElement;
+    root.setAttribute("data-theme", dark ? "dark" : "light");
+    root.style.background = dark ? "#0a1628" : "#f2f5fa";
+    try {
+      if (window.localStorage.getItem("ck_reduce_motion") === "1") root.setAttribute("data-motion", "reduced");
+      if (window.localStorage.getItem("ck_text_size") === "large") root.setAttribute("data-textsize", "large");
+    } catch (e) {}
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="styles.css?v=20261106e">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap">
+<h1>Settings</h1>
+<p class="sub">How Cheakstar looks and behaves for you, your email updates, your data, and your sign-in security. Your profile, email address and devices live on <a href="account.html">My Account</a>.</p>
+
+<p id="settingsLoading" style="color:var(--muted)">Loading your settings…</p>
+
+<div id="settingsMain" hidden>
+
+  <!-- Appearance -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Appearance</h3>
+    <div class="set-row">
+      <div>
+        <h4>Theme</h4>
+        <p>System default follows your device. Light and Dark fix the theme on every page of this website, tools included.</p>
+      </div>
+      <div class="set-ctl" role="radiogroup" aria-label="Theme">
+        <label class="radio-line"><input type="radio" name="themeMode" value="system">System default</label>
+        <label class="radio-line"><input type="radio" name="themeMode" value="light">Light</label>
+        <label class="radio-line"><input type="radio" name="themeMode" value="dark">Dark</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interface -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Interface</h3>
+    <div class="set-row">
+      <div>
+        <h4>Reduce animations</h4>
+        <p>Calms the website down: reveal effects, the opening animation and smooth transitions are switched off for you.</p>
+      </div>
+      <div class="set-ctl">
+        <label class="radio-line"><input type="checkbox" id="setMotion">Reduce animations</label>
+      </div>
+    </div>
+    <div class="set-row">
+      <div>
+        <h4>Sidebar on desktop</h4>
+        <p>Whether the side menu starts wide open or as the narrow rail. Applies from your next page; you can also collapse it at any time with the menu's own button.</p>
+      </div>
+      <div class="set-ctl" role="radiogroup" aria-label="Sidebar default">
+        <label class="radio-line"><input type="radio" name="sideDefault" value="expanded">Expanded</label>
+        <label class="radio-line"><input type="radio" name="sideDefault" value="collapsed">Collapsed rail</label>
+      </div>
+    </div>
+    <div class="set-row">
+      <div>
+        <h4>Text size</h4>
+        <p>Large makes the text on the whole website one step bigger.</p>
+      </div>
+      <div class="set-ctl" role="radiogroup" aria-label="Text size">
+        <label class="radio-line"><input type="radio" name="textSize" value="comfortable">Comfortable</label>
+        <label class="radio-line"><input type="radio" name="textSize" value="large">Large</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Language</h3>
+    <div class="set-row">
+      <div>
+        <h4>Display language</h4>
+        <p>Your preferred language for this website. It is saved now and used by the website's translation option when that is switched on; until then, pages are written in English.</p>
+      </div>
+      <div class="set-ctl">
+        <select id="setLang" aria-label="Display language">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="bn">Bengali</option>
+          <option value="te">Telugu</option>
+          <option value="mr">Marathi</option>
+          <option value="ta">Tamil</option>
+          <option value="ur">Urdu</option>
+          <option value="gu">Gujarati</option>
+          <option value="kn">Kannada</option>
+          <option value="ml">Malayalam</option>
+          <option value="pa">Punjabi</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="ar">Arabic</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="ja">Japanese</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Email updates</h3>
+    <div class="set-row">
+      <div>
+        <h4>Cheakstar email updates</h4>
+        <p>Occasional emails about new tools, books and guides. This saves your preference on your account; the emails themselves are sent through our email provider and every one of them carries its own unsubscribe link.</p>
+      </div>
+      <div class="set-ctl">
+        <label class="radio-line"><input type="checkbox" id="setNewsletter">Email me updates</label>
+      </div>
+    </div>
+    <p class="hint" style="color:var(--muted);font-size:.88rem">Security emails about your account (sign-ins, password and email changes) are sent by our sign-in provider whenever they happen and cannot be switched off here.</p>
+  </div>
+
+  <!-- Privacy & your data -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Privacy &amp; your data</h3>
+    <div class="set-row">
+      <div>
+        <h4>Download my data</h4>
+        <p>One JSON file with what this website holds for you: your profile details, favourite tools, recently used tools and these settings.</p>
+      </div>
+      <div class="set-ctl">
+        <button class="btn ghost" type="button" id="dataDownload">Download my data</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <div>
+        <h4>Clear recently used tools</h4>
+        <p>Empties the "Recently Used Tools" list on this device and on your account.</p>
+      </div>
+      <div class="set-ctl">
+        <button class="btn ghost" type="button" id="clearRecentBtn">Clear list</button>
+      </div>
+    </div>
+    <div class="set-row">
+      <div>
+        <h4>Clear favourites</h4>
+        <p>Removes every tool you saved as a favourite, on this device and on your account.</p>
+      </div>
+      <div class="set-ctl">
+        <button class="btn ghost" type="button" id="clearFavBtn">Clear favourites</button>
+      </div>
+    </div>
+    <div class="auth-msg success" id="dataMsg" hidden></div>
+    <div class="auth-msg error" id="dataError" role="alert" hidden></div>
+  </div>
+
+  <!-- Security -->
+  <div class="card" id="security" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Security</h3>
+    <p style="color:var(--muted);margin-bottom:16px">Change your password here. For your safety, your current password is checked first — the change only goes through when it is correct.</p>
+    <form id="pwForm" novalidate style="max-width:460px">
+      <div class="auth-field">
+        <label for="pwCurrent">Current password</label>
+        <input type="password" id="pwCurrent" autocomplete="current-password" placeholder="Your current password">
+      </div>
+      <div class="auth-field">
+        <label for="pwNew">New password</label>
+        <input type="password" id="pwNew" autocomplete="new-password" placeholder="Choose a new password">
+        <p class="hint">Use at least 8 characters. A longer phrase you can remember is stronger than a short complicated one.</p>
+      </div>
+      <div class="auth-field">
+        <label for="pwConfirm">Confirm new password</label>
+        <input type="password" id="pwConfirm" autocomplete="new-password" placeholder="Type the new password again">
+      </div>
+      <div class="auth-msg error" id="pwError" role="alert" hidden></div>
+      <div class="auth-msg success" id="pwMsg" hidden>Your password has been changed.</div>
+      <button class="btn auth-submit acct-btn" type="submit" id="pwSubmit">Change password</button>
+      <p class="auth-alt" style="text-align:left">Forgot your current password? <a href="reset-password.html">Reset it by email</a></p>
+    </form>
+    <p style="margin-top:20px"><a href="account.html">Manage devices &amp; sessions →</a> <span style="color:var(--muted)">(on My Account: this device, sign out, sign out of all devices)</span></p>
+  </div>
+
+  <!-- Two-factor authentication -->
+  <div class="card" id="mfaCard" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Two-factor authentication</h3>
+    <p style="color:var(--muted);margin-bottom:14px">Add a second step to signing in: after your password, a 6-digit code from an authenticator app on your phone. Use an app such as Google Authenticator, Microsoft Authenticator or Authy.</p>
+    <p id="mfaStatusLine" style="margin-bottom:14px"><strong>Status:</strong> <span style="color:var(--muted)">Checking…</span></p>
+
+    <div id="mfaOff" hidden>
+      <button class="btn acct-btn" type="button" id="mfaStart">Turn on two-factor authentication</button>
+      <div id="mfaSetup" hidden style="margin-top:18px">
+        <p style="color:var(--muted);margin-bottom:12px">1. Open your authenticator app and scan this QR code:</p>
+        <div class="mfa-qr"><img id="mfaQr" alt="Two-factor setup QR code" width="200" height="200"></div>
+        <p style="color:var(--muted);margin:14px 0 6px">Or type this key into the app by hand:</p>
+        <p class="mfa-secret" id="mfaSecret"></p>
+        <form id="mfaVerifyForm" novalidate style="max-width:460px;margin-top:16px">
+          <div class="auth-field">
+            <label for="mfaCode">2. Enter the 6-digit code the app shows</label>
+            <input type="text" id="mfaCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+          </div>
+          <button class="btn auth-submit acct-btn" type="submit" id="mfaVerifyBtn">Verify and turn on</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="mfaOn" hidden>
+      <p id="mfaOnSince" style="color:var(--muted);margin-bottom:14px"></p>
+      <button class="btn ghost" type="button" id="mfaOffBtn">Turn off two-factor authentication</button>
+      <form id="mfaOffForm" novalidate hidden style="max-width:460px;margin-top:16px">
+        <div class="auth-field">
+          <label for="mfaOffCode">Enter a current 6-digit code to confirm</label>
+          <input type="text" id="mfaOffCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+        </div>
+        <button class="btn auth-submit acct-btn" type="submit" id="mfaOffVerify">Verify code and turn off</button>
+      </form>
+    </div>
+
+    <div class="auth-msg error" id="mfaError" role="alert" hidden style="margin-top:16px"></div>
+    <div class="auth-msg success" id="mfaMsg" hidden style="margin-top:16px"></div>
+    <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:16px">If you lose access to your authenticator app, contact us through the <a href="contact.html">contact page</a> and we will help you regain access after verifying your identity.</p>
+    <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:8px">Tip: after turning this on, add the same account to a second authenticator app as a backup, so a lost phone does not lock you out.</p>
+  </div>
+
+  <!-- Danger zone -->
+  <div class="card danger-zone" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Delete my account</h3>
+    <p style="color:var(--muted)">Accounts are deleted on request, by a person, so nothing is removed by accident. To delete your account and its stored details, contact us through the <a href="contact.html">contact page</a> from your account email, and we will delete it for you.</p>
+  </div>
+
+</div>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js?v=20261106e"></script>
+<script src="auth.js?v=20261106e"></script>
+<script src="theme.js?v=20261106a"></script>
+<script>
+(function () {
+  "use strict";
+  var loading = document.getElementById("settingsLoading");
+  var main = document.getElementById("settingsMain");
+  function $(id) { return document.getElementById(id); }
+  function show(el, msg) { if (msg != null) el.textContent = msg; el.hidden = !msg; }
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function fmtDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  /* ---------------- access: login-only + the AAL gate ----------------
+     Settings is exactly the page an aal1 session (password step done,
+     two-factor code still owed) must not reach: it redirects to the
+     login challenge, like account.html does since the 2026-11-06 fix. */
+  var aalState = "pending"; // pending | checking | ok | failed
+  function ensureAal(done) {
+    if (aalState === "ok") { done(true); return; }
+    if (aalState === "failed") { done(false); return; }
+    if (aalState === "checking") return;
+    aalState = "checking";
+    window.CSAuth.getAAL().then(function (aal) {
+      if (aal.currentLevel === "aal1" && aal.nextLevel === "aal2") {
+        window.location.href = "login.html?next=settings.html";
+        return;
+      }
+      aalState = "ok";
+      done(true);
+    }, function () {
+      aalState = "failed";
+      done(false);
+    });
+  }
+
+  var booted = false;
+  function render(user) {
+    if (!window.CSAuth.isAvailable()) {
+      loading.textContent = "The sign-in service could not be reached just now, so your settings cannot be loaded. Please try again in a little while.";
+      return;
+    }
+    if (!user) {
+      window.location.href = "login.html?next=settings.html";
+      return;
+    }
+    if (aalState !== "ok") {
+      ensureAal(function (ok) {
+        if (ok) { render(window.CSAuth.getUser()); return; }
+        loading.textContent = "We could not verify your sign-in security level just now. Please reload the page in a little while.";
+      });
+      return;
+    }
+    loading.hidden = true;
+    main.hidden = false;
+    if (!booted) { booted = true; boot(user); }
+  }
+
+  /* ---------------- controls ---------------- */
+  function boot(user) {
+    var meta = (user && user.user_metadata) || {};
+
+    // Appearance — theme (CSTheme owns storage + account mirror).
+    var mode = window.CSTheme.getMode();
+    document.querySelectorAll('input[name="themeMode"]').forEach(function (r) {
+      r.checked = r.value === mode;
+      r.addEventListener("change", function () {
+        if (r.checked) window.CSTheme.setMode(r.value);
+      });
+    });
+
+    // Interface — reduce animations + text size (CSTheme), sidebar (the
+    // shell's own csRail key + an account mirror of the choice).
+    $("setMotion").checked = window.CSTheme.getReduceMotion();
+    $("setMotion").addEventListener("change", function () {
+      window.CSTheme.setReduceMotion($("setMotion").checked);
+    });
+    var textSize = window.CSTheme.getTextSize();
+    document.querySelectorAll('input[name="textSize"]').forEach(function (r) {
+      r.checked = r.value === textSize;
+      r.addEventListener("change", function () {
+        if (r.checked) window.CSTheme.setTextSize(r.value);
+      });
+    });
+    var sideDefault = (typeof meta.sidebar_default === "string")
+      ? meta.sidebar_default
+      : (lsGet("csRail") === "1" ? "collapsed" : "expanded");
+    document.querySelectorAll('input[name="sideDefault"]').forEach(function (r) {
+      r.checked = r.value === sideDefault;
+      r.addEventListener("change", function () {
+        if (!r.checked) return;
+        lsSet("csRail", r.value === "collapsed" ? "1" : "0");
+        window.CSAuth.savePrefs({ sidebar_default: r.value }).then(function () {}, function () {});
+      });
+    });
+
+    // Language — saved on this device and on the account.
+    var lang = (typeof meta.display_language === "string" && meta.display_language)
+      ? meta.display_language
+      : (lsGet("ck_lang") || "en");
+    $("setLang").value = lang;
+    if ($("setLang").value !== lang) $("setLang").value = "en";
+    $("setLang").addEventListener("change", function () {
+      lsSet("ck_lang", $("setLang").value);
+      window.CSAuth.savePrefs({ display_language: $("setLang").value }).then(function () {}, function () {});
+    });
+
+    // Email updates preference.
+    var news = (typeof meta.newsletter === "boolean")
+      ? meta.newsletter
+      : lsGet("ck_newsletter") === "1";
+    $("setNewsletter").checked = news;
+    $("setNewsletter").addEventListener("change", function () {
+      lsSet("ck_newsletter", $("setNewsletter").checked ? "1" : "");
+      window.CSAuth.savePrefs({ newsletter: $("setNewsletter").checked }).then(function () {}, function () {});
+    });
+
+    // Privacy & your data.
+    $("dataDownload").addEventListener("click", function () {
+      show($("dataError"), "");
+      show($("dataMsg"), "");
+      var u = window.CSAuth.getUser();
+      if (!u) { show($("dataError"), "You are not signed in."); return; }
+      var m = u.user_metadata || {};
+      var data = {
+        exported_from: "Cheakstar Settings",
+        exported_at: new Date().toISOString(),
+        profile: {
+          email: u.email || "",
+          display_name: m.display_name || "",
+          phone: m.phone || "",
+          member_since: u.created_at || null,
+          email_confirmed: !!u.email_confirmed_at
+        },
+        favourite_tools: window.CSAuth.getFavorites(),
+        recently_used_tools: window.CSAuth.getRecent(),
+        settings: {
+          theme_mode: window.CSTheme.getMode(),
+          reduce_motion: window.CSTheme.getReduceMotion(),
+          text_size: window.CSTheme.getTextSize(),
+          sidebar_default: lsGet("csRail") === "1" ? "collapsed" : "expanded",
+          display_language: lsGet("ck_lang") || "en",
+          email_updates: $("setNewsletter").checked
+        }
+      };
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "cheakstar-my-data.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      show($("dataMsg"), "Your data file has been downloaded.");
+    });
+    $("clearRecentBtn").addEventListener("click", function () {
+      show($("dataError"), "");
+      window.CSAuth.clearRecent();
+      show($("dataMsg"), "Your recently used tools list has been cleared.");
+    });
+    $("clearFavBtn").addEventListener("click", function () {
+      show($("dataError"), "");
+      window.CSAuth.clearFavorites();
+      show($("dataMsg"), "Your favourite tools have been cleared.");
+    });
+
+    loadMfa();
+  }
+
+  /* ---------------- change password (moved from My Account) ---------------- */
+  $("pwForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    show($("pwError"), "");
+    show($("pwMsg"), "");
+    var cur = $("pwCurrent").value;
+    var nw = $("pwNew").value;
+    var cf = $("pwConfirm").value;
+    if (!cur) { show($("pwError"), "Please enter your current password."); return; }
+    if (nw.length < 8) { show($("pwError"), "Please choose a new password of at least 8 characters."); return; }
+    if (nw !== cf) { show($("pwError"), "The two new passwords do not match. Please type them again."); return; }
+    var btn = $("pwSubmit");
+    btn.disabled = true;
+    btn.textContent = "Changing…";
+    window.CSAuth.changePasswordWithCurrent(cur, nw).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Change password";
+      $("pwCurrent").value = ""; $("pwNew").value = ""; $("pwConfirm").value = "";
+      show($("pwMsg"), "Your password has been changed.");
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Change password";
+      show($("pwError"), err.message || "The password could not be changed. Please try again.");
+    });
+  });
+
+  /* ---------------- two-factor authentication (moved from My Account) ---------------- */
+  var mfaFactorId = null;
+  var mfaPendingFactorId = null;
+
+  function mfaShowError(msg) { show($("mfaError"), msg || ""); }
+  function mfaShowMsg(msg) { show($("mfaMsg"), msg || ""); }
+
+  function paintMfaUnknown() {
+    $("mfaStatusLine").innerHTML = "";
+    var strong = document.createElement("strong");
+    strong.textContent = "Status: ";
+    var span = document.createElement("span");
+    span.textContent = "Could not be checked just now. Please reload the page in a little while.";
+    span.style.color = "var(--muted)";
+    $("mfaStatusLine").appendChild(strong);
+    $("mfaStatusLine").appendChild(span);
+  }
+
+  function loadMfa() {
+    window.CSAuth.mfaStatus().then(function (st) {
+      if (!st || st.unknown) { paintMfaUnknown(); return; }
+      mfaFactorId = st.factorId;
+      $("mfaOff").hidden = st.enabled;
+      $("mfaOn").hidden = !st.enabled;
+      $("mfaStatusLine").innerHTML = "";
+      var strong = document.createElement("strong");
+      strong.textContent = "Status: ";
+      var span = document.createElement("span");
+      span.textContent = st.enabled ? "On — signing in asks for a code from your authenticator app." : "Off — signing in needs only your password.";
+      span.style.color = st.enabled ? "#b9efcb" : "var(--muted)";
+      $("mfaStatusLine").appendChild(strong);
+      $("mfaStatusLine").appendChild(span);
+      if (st.enabled) {
+        $("mfaOnSince").textContent = st.createdAt
+          ? "Turned on " + fmtDate(st.createdAt) + "."
+          : "Two-factor authentication is on for your account.";
+        $("mfaOffForm").hidden = true;
+      }
+    }, function () {
+      paintMfaUnknown();
+    });
+  }
+
+  function startMfaEnroll() {
+    mfaShowError(""); mfaShowMsg("");
+    var btn = $("mfaStart");
+    btn.disabled = true;
+    btn.textContent = "Preparing…";
+    window.CSAuth.mfaEnroll().then(function (en) {
+      btn.disabled = false;
+      btn.textContent = "Turn on two-factor authentication";
+      mfaPendingFactorId = en.factorId;
+      var qr = en.qrCode || "";
+      // Supabase returns the QR as SVG markup; turn it into an <img> source.
+      $("mfaQr").src = qr.indexOf("<svg") === 0
+        ? "data:image/svg+xml;utf8," + encodeURIComponent(qr)
+        : qr;
+      $("mfaSecret").textContent = en.secret || "";
+      $("mfaSetup").hidden = false;
+      btn.hidden = true;
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Turn on two-factor authentication";
+      mfaShowError(err.message || "Two-factor setup could not be started. Please try again.");
+    });
+  }
+
+  $("mfaStart").addEventListener("click", startMfaEnroll);
+
+  $("mfaVerifyForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    mfaShowError(""); mfaShowMsg("");
+    var code = $("mfaCode").value.replace(/\D/g, "");
+    if (code.length !== 6) { mfaShowError("Please enter the 6-digit code from your authenticator app."); return; }
+    if (!mfaPendingFactorId) { mfaShowError("The setup has expired. Please reload the page and start again."); return; }
+    var btn = $("mfaVerifyBtn");
+    btn.disabled = true;
+    btn.textContent = "Verifying…";
+    window.CSAuth.mfaVerifyEnroll(mfaPendingFactorId, code).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Verify and turn on";
+      $("mfaSetup").hidden = true;
+      mfaPendingFactorId = null;
+      mfaShowMsg("Two-factor authentication is on. From now on, signing in will also ask for a code from your authenticator app.");
+      loadMfa();
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Verify and turn on";
+      mfaShowError(err.message || "That code is not correct. Check your authenticator app and try again.");
+    });
+  });
+
+  $("mfaOffBtn").addEventListener("click", function () {
+    mfaShowError(""); mfaShowMsg("");
+    if (!mfaFactorId) { mfaShowError("Two-factor status could not be read. Please reload the page."); return; }
+    window.CSAuth.getAAL().then(function (aal) {
+      if (aal.currentLevel === "aal2") {
+        doUnenroll();
+      } else {
+        $("mfaOffForm").hidden = false;
+      }
+    }, function () {
+      // If the level cannot be read, ask for a code anyway: verifying it
+      // raises the session, after which turning off can proceed.
+      $("mfaOffForm").hidden = false;
+    });
+  });
+
+  $("mfaOffForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    mfaShowError(""); mfaShowMsg("");
+    var code = $("mfaOffCode").value.replace(/\D/g, "");
+    if (code.length !== 6) { mfaShowError("Please enter the 6-digit code from your authenticator app."); return; }
+    var btn = $("mfaOffVerify");
+    btn.disabled = true;
+    btn.textContent = "Verifying…";
+    window.CSAuth.mfaChallengeAndVerify(mfaFactorId, code).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Verify code and turn off";
+      doUnenroll();
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Verify code and turn off";
+      mfaShowError(err.message || "That code is not correct. Check your authenticator app and try again.");
+    });
+  });
+
+  function doUnenroll() {
+    window.CSAuth.mfaUnenroll(mfaFactorId).then(function () {
+      mfaFactorId = null;
+      $("mfaOffForm").hidden = true;
+      mfaShowMsg("Two-factor authentication is off. Signing in now needs only your password.");
+      loadMfa();
+    }, function (err) {
+      mfaShowError(err.message || "Two-factor authentication could not be turned off. Please try again.");
+    });
+  }
+
+  window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
+  window.CSAuth.onChange(function (user) { render(user); });
+})();
+</script>
+</body></html>
