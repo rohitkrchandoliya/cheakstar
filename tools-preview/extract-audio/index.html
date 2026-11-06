@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Extract Audio from Video - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Extract Audio from Video</h1>
+<p class="tool-sub">Pull the sound out of a video and save it as an MP3.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). Files up to about 50 MB work best; files over 100 MB are refused because browser memory is limited. The engine is a single-thread build, so it is slower than a desktop app. Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Pull the sound out of a video and save it as an MP3 — for lectures, interviews, songs and voice notes recorded as video.</p>
+
+  <label for="ea-file">Choose a video file</label>
+  <input id="ea-file" type="file" accept="video/*">
+  <p class="status" id="ea-basic"></p>
+
+  <div class="btn-row">
+    <button id="ea-run" class="btn" type="button" disabled>Extract audio as MP3</button>
+  </div>
+  <p id="ea-status" class="status" role="status"></p>
+  <div id="ea-result"></div>
+  <div id="ea-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var eaStatusEl = document.getElementById("ea-status");
+var eaFile = null;
+
+AV.wirePage({
+  statusEl: eaStatusEl,
+  logEl: document.getElementById("ea-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+document.getElementById("ea-file").addEventListener("change", function (event) {
+  eaFile = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+  document.getElementById("ea-run").disabled = !eaFile;
+  if (eaFile) { AV.showBasicInfo(eaFile, document.getElementById("ea-basic")); }
+});
+
+document.getElementById("ea-run").addEventListener("click", function () {
+  if (!eaFile) { return; }
+  if (!AV.checkFile(eaFile, AV.statusFn(eaStatusEl))) { return; }
+  var inputName = "input." + AV.extOf(eaFile.name);
+  AV.runJob({
+    file: eaFile,
+    args: ["-i", inputName, "-vn", "-c:a", "libmp3lame", "-q:a", "4", "output.mp3"],
+    outName: "output.mp3",
+    mime: "audio/mpeg",
+    downloadName: AV.baseName(eaFile.name) + "-audio.mp3",
+    statusEl: eaStatusEl,
+    resultEl: document.getElementById("ea-result"),
+    busyText: "Extracting the audio..."
+  }).catch(function () { /* status already shows the error */ });
+});
+</script>
+</body>
+</html>
