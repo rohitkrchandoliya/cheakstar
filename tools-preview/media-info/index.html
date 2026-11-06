@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Media Info - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Media Info</h1>
+<p class="tool-sub">See a media file's duration, resolution, codecs, bitrate and more.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). Files up to about 50 MB work best; files over 100 MB are refused because browser memory is limited. The engine is a single-thread build, so reading and converting is slower than a desktop app. Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Pick any audio or video file to see what is inside it: duration, resolution, codecs, frame rate, bitrates and audio channels. Nothing is converted — the file is only read.</p>
+
+  <label for="mi-file">Choose an audio or video file</label>
+  <input id="mi-file" type="file" accept="audio/*,video/*">
+  <p class="status" id="mi-basic"></p>
+
+  <div class="btn-row">
+    <button id="mi-run" class="btn" type="button" disabled>Read full codec details</button>
+  </div>
+  <div class="result" id="mi-result" hidden>
+    <p class="big">Media information</p>
+    <div id="mi-rows"></div>
+  </div>
+  <p id="mi-status" class="status" role="status"></p>
+  <div id="mi-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var miStatusEl = document.getElementById("mi-status");
+var miFile = null;
+
+AV.wirePage({
+  statusEl: miStatusEl,
+  logEl: document.getElementById("mi-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+document.getElementById("mi-file").addEventListener("change", function (event) {
+  miFile = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+  document.getElementById("mi-run").disabled = !miFile;
+  document.getElementById("mi-result").hidden = true;
+  if (miFile) {
+    AV.showBasicInfo(miFile, document.getElementById("mi-basic"));
+    miStatusEl.className = "status";
+    miStatusEl.textContent = "File selected. The quick facts are above; read the full codec details for codecs, bitrates and channels.";
+    if (AV.isReady()) { document.getElementById("mi-run").click(); }
+  }
+});
+
+document.getElementById("mi-run").addEventListener("click", function () {
+  if (!miFile) { return; }
+  if (!AV.checkFile(miFile, AV.statusFn(miStatusEl))) { return; }
+  miStatusEl.className = "status";
+  miStatusEl.textContent = "Reading the file details...";
+  AV.ensureEngine(AV.statusFn(miStatusEl)).then(function (ok) {
+    if (!ok) { throw new Error("engine"); }
+    miStatusEl.textContent = "Reading the file details...";
+    return AV.probe(miFile);
+  }).then(function (res) {
+    var info = res.info;
+    var rows = document.getElementById("mi-rows");
+    rows.innerHTML = "";
+    function row(label, value) {
+      if (value === undefined || value === null || value === "") { return; }
+      var p = document.createElement("p");
+      p.className = "kv";
+      var b = document.createElement("b");
+      b.textContent = label + ":";
+      p.appendChild(b);
+      p.appendChild(document.createTextNode(" " + value));
+      rows.appendChild(p);
+    }
+    row("File name", miFile.name);
+    row("File size", AV.formatBytes(miFile.size));
+    row("File type", miFile.type || "Unknown");
+    row("Duration", info.durationSeconds ? AV.formatSeconds(info.durationSeconds) : "");
+    if (info.width && info.height) { row("Resolution", info.width + " x " + info.height + " pixels"); }
+    row("Video codec", info.videoCodec);
+    if (info.fps) { row("Frame rate", info.fps + " fps"); }
+    if (info.videoBitrateKbps) { row("Video bitrate", info.videoBitrateKbps + " kb/s"); }
+    if (info.overallBitrateKbps) { row("Overall bitrate", info.overallBitrateKbps + " kb/s"); }
+    row("Audio codec", info.audioCodec);
+    if (info.audioBitrateKbps) { row("Audio bitrate", info.audioBitrateKbps + " kb/s"); }
+    if (info.sampleRate) { row("Audio sample rate", Number(info.sampleRate).toLocaleString("en-IN") + " Hz"); }
+    if (info.channels) { row("Audio channels", info.channels); }
+    document.getElementById("mi-result").hidden = false;
+    miStatusEl.className = "status ok";
+    miStatusEl.textContent = "Details read. The engine log below shows the raw report if you want more.";
+  }).catch(function (err) {
+    if (err && err.message === "engine") { return; } // ensureEngine already explained
+    miStatusEl.textContent = "This file could not be read by the engine. It may be damaged, or in a format the engine does not know.";
+    miStatusEl.className = "status error";
+  });
+});
+</script>
+</body>
+</html>
