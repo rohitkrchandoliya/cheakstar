@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Create Your Account — Cheakstar</title>
+<meta name="description" content="Create a free Cheakstar account to save your favourite tools and pick up your recently used tools on any visit.">
+<meta property="og:title" content="Create Your Account — Cheakstar">
+  <meta property="og:description" content="Create a free Cheakstar account to save your favourite tools and pick up your recently used tools on any visit.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/signup.html">
+<link rel="stylesheet" href="styles.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap">
+<h1>Create Your <span class="gold">Account</span></h1>
+<p class="sub">A free Cheakstar account lets you save favourite tools and see your recently used tools on every visit. We will email you a confirmation link first — your account works as soon as you confirm it.</p>
+
+<div class="auth-card">
+  <div class="auth-msg success" id="signupDone" hidden>
+    <strong>Almost done.</strong> Check your email to confirm your account, then <a href="login.html">sign in</a>.
+  </div>
+  <div class="auth-msg info" id="signupNotice" hidden>
+    The sign-in service could not be reached just now. The form still works if the service recovers, otherwise please try again in a little while.
+  </div>
+
+  <form id="signupForm" novalidate>
+    <div class="auth-field">
+      <label for="signupName">Display name</label>
+      <input type="text" id="signupName" name="name" autocomplete="name" required placeholder="Your name">
+    </div>
+    <div class="auth-field">
+      <label for="signupEmail">Email</label>
+      <input type="email" id="signupEmail" name="email" autocomplete="email" required placeholder="you@example.com">
+    </div>
+    <div class="auth-field">
+      <label for="signupPassword">Password</label>
+      <input type="password" id="signupPassword" name="password" autocomplete="new-password" required placeholder="Choose a password">
+      <p class="hint">Use at least 8 characters. A longer phrase you can remember is stronger than a short complicated one.</p>
+    </div>
+    <div class="auth-field">
+      <label for="signupConfirm">Confirm password</label>
+      <input type="password" id="signupConfirm" name="confirm" autocomplete="new-password" required placeholder="Type the password again">
+    </div>
+    <div class="auth-msg error" id="signupError" role="alert" hidden></div>
+    <button class="btn auth-submit" type="submit" id="signupSubmit">Create Account</button>
+    <p class="auth-alt">Already have an account? <a href="login.html">Sign in</a></p>
+    <p class="auth-alt" style="margin-top:6px">How we handle your details is explained in our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+  </form>
+</div>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+  var form = document.getElementById("signupForm");
+  var errorBox = document.getElementById("signupError");
+  var doneBox = document.getElementById("signupDone");
+  var notice = document.getElementById("signupNotice");
+  var submitBtn = document.getElementById("signupSubmit");
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.hidden = !msg; }
+
+  window.CSAuth.ready.then(function () {
+    if (window.CSAuth.getUser()) { window.location.href = "account.html"; return; }
+    if (!window.CSAuth.isAvailable()) notice.hidden = false;
+  });
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    showError("");
+    var name = document.getElementById("signupName").value.trim();
+    var email = document.getElementById("signupEmail").value.trim();
+    var pw = document.getElementById("signupPassword").value;
+    var pw2 = document.getElementById("signupConfirm").value;
+    if (!name) { showError("Please enter a display name."); return; }
+    if (!email || email.indexOf("@") < 1) { showError("Please enter a valid email address."); return; }
+    if (pw.length < 8) { showError("Please choose a password of at least 8 characters."); return; }
+    if (pw !== pw2) { showError("The two passwords do not match. Please type them again."); return; }
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account…";
+    window.CSAuth.signUp(email, pw, name).then(function (result) {
+      if (result.needsConfirmation) {
+        form.hidden = true;
+        notice.hidden = true;
+        doneBox.hidden = false;
+      } else {
+        window.location.href = "account.html";
+      }
+    }, function (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Create Account";
+      showError(err.message || "Sign-up failed. Please try again.");
+    });
+  });
+})();
+</script>
+</body></html>
