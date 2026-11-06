@@ -284,7 +284,7 @@
       var url = URL.createObjectURL(blob);
       opts.resultEl.innerHTML = "";
       var link = document.createElement("a");
-      link.className = "download";
+      link.className = "btn download";
       link.href = url;
       link.download = opts.downloadName;
       link.textContent = "Download " + opts.downloadName + " (" + AV.formatBytes(blob.size) + ")";
