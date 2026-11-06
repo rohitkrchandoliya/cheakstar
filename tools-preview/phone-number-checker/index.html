@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Phone Number Checker - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.11.12/bundle/libphonenumber-max.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Phone Number Checker</h1>
+<p class="tool-sub">Check a phone number's country, line type, formats and calling links.</p>
+<div class="tool-card">
+  <p>Enter any phone number with its country code to see real facts about it: the country, the kind of line (mobile, landline, toll-free and more), its standard formats, one-tap call and WhatsApp links, and whether the number is even possible.</p>
+
+  <label for="phone-input">Phone number (with country code)</label>
+  <input id="phone-input" type="tel" placeholder="+91 98765 43210" autocomplete="off" spellcheck="false">
+  <div class="btn-row">
+    <button id="phone-run" class="btn" type="button">Check number</button>
+  </div>
+  <p id="phone-status" class="status" role="status"></p>
+  <div class="result" id="phone-result" hidden>
+    <p class="big">Number details</p>
+    <div id="phone-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>What this cannot do:</strong> no free tool or database can tell you who owns a number or its live carrier company — that data is private and held by the telecom operators. Anyone selling "owner name from number" lookups is guessing or using leaked data. This tool reports only what the number itself proves: its country, line type and formats, checked on this device.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var phoneStatus = document.getElementById("phone-status");
+
+var TYPE_WORDS = {
+  MOBILE: "Mobile",
+  FIXED_LINE: "Landline",
+  FIXED_LINE_OR_MOBILE: "Landline or mobile — this range is used for both, so the number itself cannot say which",
+  VOIP: "VoIP (internet phone service)",
+  TOLL_FREE: "Toll-free",
+  PREMIUM_RATE: "Premium rate (charged at a higher rate)",
+  SHARED_COST: "Shared cost",
+  PAGER: "Pager",
+  PERSONAL_NUMBER: "Personal number (follows the person between services)",
+  UAN: "Universal access number",
+  VOICEMAIL: "Voicemail service"
+};
+
+var ERROR_WORDS = {
+  NOT_A_NUMBER: "That does not look like a phone number at all. Include the country code, for example +91 for India.",
+  INVALID_COUNTRY: "The country code at the start is not recognised. Check the code after the + sign.",
+  TOO_SHORT: "The number is too short for its country. Some digits are probably missing.",
+  TOO_LONG: "The number is too long for its country. There are probably extra digits."
+};
+
+function addRow(container, label, value) {
+  if (value === undefined || value === null || value === "") { return; }
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  if (typeof value === "string") {
+    p.appendChild(document.createTextNode(" " + value));
+  } else {
+    p.appendChild(document.createTextNode(" "));
+    p.appendChild(value);
+  }
+  container.appendChild(p);
+}
+
+function countryName(code) {
+  try {
+    var names = new Intl.DisplayNames(["en"], { type: "region" });
+    return names.of(code) || code;
+  } catch (e) {
+    return code;
+  }
+}
+
+document.getElementById("phone-run").addEventListener("click", function () {
+  var raw = document.getElementById("phone-input").value.trim();
+  var rows = document.getElementById("phone-rows");
+  var resultBox = document.getElementById("phone-result");
+  rows.innerHTML = "";
+  resultBox.hidden = true;
+  if (!raw) {
+    phoneStatus.className = "status error";
+    phoneStatus.textContent = "Enter a phone number with its country code, for example +91 98765 43210.";
+    return;
+  }
+  if (typeof libphonenumber === "undefined" || typeof libphonenumber.parsePhoneNumberFromString !== "function") {
+    // Fallback for builds that expose the functions at top level.
+    if (typeof parsePhoneNumberFromString === "function") {
+      window.libphonenumber = {
+        parsePhoneNumberFromString: parsePhoneNumberFromString,
+        getCountries: getCountries,
+        getCountryCallingCode: getCountryCallingCode
+      };
+    } else {
+      phoneStatus.className = "status error";
+      phoneStatus.textContent = "The phone-number library could not be loaded. Check your connection and reload the page.";
+      return;
+    }
+  }
+  var phone;
+  try {
+    phone = libphonenumber.parsePhoneNumberFromString(raw);
+  } catch (err) {
+    phoneStatus.className = "status error";
+    var code = err && err.message ? err.message : "";
+    phoneStatus.textContent = ERROR_WORDS[code] || "That number could not be read. Include the country code, for example +91 for India.";
+    return;
+  }
+  if (!phone) {
+    phoneStatus.className = "status error";
+    phoneStatus.textContent = ERROR_WORDS.NOT_A_NUMBER;
+    return;
+  }
+
+  var e164 = phone.number; // E.164, e.g. +919876543210
+  var countryCode = phone.country || "";
+  var callingCode = phone.countryCallingCode || "";
+
+  addRow(rows, "Country", countryCode ? countryName(countryCode) + " (" + countryCode + ", +" + callingCode + ")" : "Unknown");
+  var type = "";
+  try { type = phone.getType() || ""; } catch (e) { type = ""; }
+  addRow(rows, "Line type", TYPE_WORDS[type] || "Unknown — this range is not classified");
+  addRow(rows, "International format", phone.formatInternational());
+  addRow(rows, "National format", phone.formatNational());
+  addRow(rows, "E.164 format", e164);
+
+  var telLink = document.createElement("a");
+  telLink.href = phone.getURI(); // RFC3966 tel: URI
+  telLink.textContent = phone.getURI();
+  addRow(rows, "Tap to call", telLink);
+
+  if (phone.isPossible()) {
+    var wa = document.createElement("a");
+    wa.href = "https://wa.me/" + e164.replace(/\D/g, "");
+    wa.target = "_blank";
+    wa.rel = "noopener";
+    wa.textContent = "https://wa.me/" + e164.replace(/\D/g, "");
+    addRow(rows, "WhatsApp chat", wa);
+  }
+
+  // Shared calling codes: +1, +7, +44 (with crown dependencies) and others.
+  try {
+    if (callingCode && typeof libphonenumber.getCountries === "function") {
+      var sharers = libphonenumber.getCountries().filter(function (c) {
+        try { return libphonenumber.getCountryCallingCode(c) === callingCode; } catch (e) { return false; }
+      });
+      if (sharers.length > 1) {
+        var others = sharers.filter(function (c) { return c !== countryCode; })
+          .map(function (c) { return countryName(c); });
+        var shownOthers = others.slice(0, 10).join(", ");
+        if (others.length > 10) { shownOthers += " and " + (others.length - 10) + " more"; }
+        addRow(rows, "Calling code +" + callingCode + " is shared",
+          "Also used by: " + shownOthers + ". So the code alone does not prove the country — the rest of the number does.");
+      }
+    }
+  } catch (e) { /* sharing note is best-effort */ }
+
+  resultBox.hidden = false;
+  if (phone.isValid()) {
+    phoneStatus.className = "status ok";
+    phoneStatus.textContent = "This is a valid " + (countryCode ? countryName(countryCode) : "") + " number format. (Valid format cannot prove the number is currently switched on or assigned.)";
+  } else if (phone.isPossible()) {
+    phoneStatus.className = "status";
+    phoneStatus.textContent = "This number is possible — its length fits " + (countryCode ? countryName(countryCode) : "its country") +
+      " — but it is not a fully valid number: no real number range matches it exactly. It may be mistyped, unassigned, or made up.";
+  } else {
+    phoneStatus.className = "status error";
+    phoneStatus.textContent = "This number is not possible: its length or pattern cannot exist in " +
+      (countryCode ? countryName(countryCode) : "any country") + ". Check the digits and the country code.";
+  }
+});
+</script>
+</body>
+</html>
