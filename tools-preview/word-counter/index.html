@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Word &amp; Character Counter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Word &amp; Character Counter</h1>
+<p class="tool-sub">Count words, characters, sentences and reading time as you type.</p>
+<div class="tool-card">
+  <p>Type or paste your text and get instant counts — for essays, articles, applications and social posts with length limits. Counting happens as you type, on this device only.</p>
+
+  <label for="wc-text">Your text</label>
+  <textarea id="wc-text" rows="10" placeholder="Start typing or paste your text here..."></textarea>
+
+  <div class="stats">
+    <div class="stat"><span class="value" id="wc-words">0</span><span class="label">Words</span></div>
+    <div class="stat"><span class="value" id="wc-chars">0</span><span class="label">Characters</span></div>
+    <div class="stat"><span class="value" id="wc-chars-nospace">0</span><span class="label">Characters (no spaces)</span></div>
+    <div class="stat"><span class="value" id="wc-sentences">0</span><span class="label">Sentences</span></div>
+    <div class="stat"><span class="value" id="wc-paragraphs">0</span><span class="label">Paragraphs</span></div>
+    <div class="stat"><span class="value" id="wc-reading">0 min</span><span class="label">Reading time (about 200 words/min)</span></div>
+    <div class="stat"><span class="value" id="wc-speaking">0 min</span><span class="label">Speaking time (about 130 words/min)</span></div>
+  </div>
+
+  <h3>Most used words</h3>
+  <p class="status" id="wc-topwords">Your top keywords will appear here (common words like "the" and "and" are excluded).</p>
+  <div class="btn-row">
+    <button id="wc-clear" class="btn ghost" type="button">Clear text</button>
+  </div>
+</div>
+<div class="note"><strong>Privacy:</strong> your text is counted only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var STOPWORDS = {};
+("a,an,the,and,or,but,if,while,of,at,by,for,with,about,into,through,after,over,between,out,against,during,without,before,under,around,among,is,am,are,was,were,be,been,being,have,has,had,do,does,did,will,would,shall,should,can,could,may,might,must,i,you,he,she,it,we,they,this,that,these,those,my,your,his,her,its,our,their,me,him,us,them,as,so,than,too,very,just,not,no,yes,to,from,in,on,off,up,down,here,there,when,where,which,who,whom,how,all,any,both,each,few,more,most,other,some,such,only,own,same,also,into")
+  .split(",").forEach(function (w) { STOPWORDS[w] = true; });
+
+var wcText = document.getElementById("wc-text");
+
+function wcSet(id, value) { document.getElementById(id).textContent = value; }
+
+function wcUpdate() {
+  var text = wcText.value;
+  var words = text.match(/\S+/g) || [];
+  var wordCount = text.trim() === "" ? 0 : words.length;
+  wcSet("wc-words", wordCount.toLocaleString("en-IN"));
+  wcSet("wc-chars", text.length.toLocaleString("en-IN"));
+  wcSet("wc-chars-nospace", text.replace(/\s/g, "").length.toLocaleString("en-IN"));
+  var sentences = text.split(/[.!?]+/).filter(function (s) { return s.trim().length > 0; }).length;
+  wcSet("wc-sentences", sentences.toLocaleString("en-IN"));
+  var paragraphs = text.split(/\n\s*\n/).filter(function (s) { return s.trim().length > 0; }).length;
+  wcSet("wc-paragraphs", paragraphs.toLocaleString("en-IN"));
+  wcSet("wc-reading", wordCount === 0 ? "0 min" : Math.max(1, Math.round(wordCount / 200)) + " min");
+  wcSet("wc-speaking", wordCount === 0 ? "0 min" : Math.max(1, Math.round(wordCount / 130)) + " min");
+
+  var freq = {};
+  (text.toLowerCase().match(/[a-z0-9']+/g) || []).forEach(function (w) {
+    w = w.replace(/^'+|'+$/g, "");
+    if (w.length < 3 || STOPWORDS[w]) { return; }
+    freq[w] = (freq[w] || 0) + 1;
+  });
+  var top = Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a]; }).slice(0, 5);
+  var topEl = document.getElementById("wc-topwords");
+  if (top.length === 0) {
+    topEl.textContent = "Your top keywords will appear here (common words like \"the\" and \"and\" are excluded).";
+  } else {
+    topEl.textContent = top.map(function (w) {
+      var pct = wordCount > 0 ? ((freq[w] / wordCount) * 100).toFixed(1) : "0.0";
+      return w + " — " + freq[w] + " times (" + pct + "%)";
+    }).join(" · ");
+  }
+}
+
+wcText.addEventListener("input", wcUpdate);
+document.getElementById("wc-clear").addEventListener("click", function () {
+  wcText.value = "";
+  wcUpdate();
+  wcText.focus();
+});
+wcUpdate();
+</script>
+</body>
+</html>
