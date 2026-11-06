@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Tools - Compressor, Converter, Resizer - Cheakstar Tools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; color: #111; }
+  h1 { font-size: 1.6rem; }
+  label { display: block; margin-top: 1rem; font-weight: 600; }
+  input, select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; }
+  input[type="radio"], input[type="checkbox"] { width: auto; }
+  button { margin-top: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: 0.5; }
+  .tabs { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+  .tabs button { margin-top: 0; flex: 1; }
+  .tabs button.active { background: #111; color: #fff; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .preview { margin-top: 1rem; max-width: 100%; }
+  .preview img { max-width: 100%; border: 1px solid #ddd; }
+  .row { display: flex; gap: 1rem; }
+  .row > div { flex: 1; }
+  .note { color: #555; font-size: 0.9rem; margin-top: 1rem; }
+  .result { margin-top: 1rem; font-size: 0.95rem; }
+  #crop-container { margin-top: 1rem; max-height: 420px; }
+  #crop-container img { max-width: 100%; display: block; }
+  .radio-row { margin-top: 0.75rem; }
+  .radio-row label { display: inline; font-weight: 400; margin-right: 1rem; }
+</style>
+</head>
+<body>
+<h1>Image Tools</h1>
+<p>Compress, convert, or resize your photos. Everything runs in your browser. Nothing is uploaded anywhere.</p>
+
+<div class="tabs" role="tablist">
+  <button id="tab-compress" class="active" type="button" role="tab">Compressor</button>
+  <button id="tab-convert" type="button" role="tab">Converter</button>
+  <button id="tab-resize" type="button" role="tab">Resizer &amp; Cropper</button>
+</div>
+
+<!-- ============ COMPRESSOR ============ -->
+<section id="panel-compress" class="panel active" role="tabpanel">
+  <h2>Image Compressor</h2>
+  <p>Shrink a JPG, PNG, or WebP image to a smaller file size, for example to fit a form upload limit.</p>
+
+  <label for="compress-file">Choose an image</label>
+  <input id="compress-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+  <div class="preview" id="compress-preview"></div>
+  <p class="result" id="compress-info"></p>
+
+  <div class="radio-row">
+    <label><input id="mode-quality" type="radio" name="compress-mode" value="quality" checked> By quality</label>
+    <label><input id="mode-target" type="radio" name="compress-mode" value="target"> By target size</label>
+  </div>
+
+  <div id="quality-controls">
+    <label for="quality">Quality: <span id="quality-value">80</span>%</label>
+    <input id="quality" type="range" min="10" max="100" value="80">
+  </div>
+
+  <div id="target-controls" hidden>
+    <label for="target-kb">Target size (KB)</label>
+    <input id="target-kb" type="number" min="10" max="10000" value="100">
+  </div>
+
+  <label for="compress-format">Output format</label>
+  <select id="compress-format">
+    <option value="same">Same as input</option>
+    <option value="image/jpeg">JPEG</option>
+    <option value="image/png">PNG</option>
+    <option value="image/webp">WebP</option>
+  </select>
+
+  <div>
+    <button id="compress-run" type="button" disabled>Compress</button>
+    <button id="compress-download" type="button" disabled>Download compressed image</button>
+  </div>
+  <p class="result" id="compress-result"></p>
+  <p id="compress-status" class="note" role="status"></p>
+  <p class="note">Lower quality means a smaller file but a softer image. PNG output ignores the quality setting (PNG is lossless), so pick JPEG or WebP for the smallest files. Target-size mode tries several quality levels and keeps the best fit; very small targets may not be reachable without shrinking the image, and the page will say so.</p>
+</section>
+
+<!-- ============ CONVERTER ============ -->
+<section id="panel-convert" class="panel" role="tabpanel">
+  <h2>Image Converter</h2>
+  <p>Convert an image between JPG, PNG, and WebP. The file never leaves your device.</p>
+
+  <label for="convert-file">Choose an image</label>
+  <input id="convert-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+  <div class="preview" id="convert-preview"></div>
+  <p class="result" id="convert-info"></p>
+
+  <label for="convert-format">Convert to</label>
+  <select id="convert-format">
+    <option value="image/jpeg">JPEG (.jpg)</option>
+    <option value="image/png">PNG (.png)</option>
+    <option value="image/webp">WebP (.webp)</option>
+  </select>
+
+  <div>
+    <button id="convert-run" type="button" disabled>Convert</button>
+    <button id="convert-download" type="button" disabled>Download converted image</button>
+  </div>
+  <p class="result" id="convert-result"></p>
+  <p id="convert-status" class="note" role="status"></p>
+  <p class="note">Converting to PNG from a photo usually makes a larger file, because PNG is lossless. Converting to JPEG drops transparency: transparent areas become white. HEIC photos from iPhones are not supported in this version.</p>
+</section>
+
+<!-- ============ RESIZER & CROPPER ============ -->
+<section id="panel-resize" class="panel" role="tabpanel">
+  <h2>Image Resizer &amp; Cropper</h2>
+  <p>Resize an image to exact pixels, or crop it to an aspect ratio. Includes passport-photo size presets.</p>
+
+  <label for="resize-file">Choose an image</label>
+  <input id="resize-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+  <div id="crop-container"><img id="crop-image" alt="Image to crop" hidden></div>
+
+  <label for="preset">Size preset</label>
+  <select id="preset">
+    <option value="custom">Custom size</option>
+    <option value="600x600">Passport photo - 2 x 2 inch (600 x 600 px)</option>
+    <option value="413x531">Passport photo - 35 x 45 mm (413 x 531 px)</option>
+    <option value="1200x1800">Photo print - 4 x 6 inch (1200 x 1800 px)</option>
+    <option value="1920x1080">Full HD - 1920 x 1080 px</option>
+    <option value="1080x1080">Square - 1080 x 1080 px</option>
+  </select>
+
+  <div class="row">
+    <div>
+      <label for="resize-width">Width (px)</label>
+      <input id="resize-width" type="number" min="1" max="8000" value="600">
+    </div>
+    <div>
+      <label for="resize-height">Height (px)</label>
+      <input id="resize-height" type="number" min="1" max="8000" value="600">
+    </div>
+  </div>
+
+  <div class="radio-row">
+    <label><input id="keep-aspect" type="checkbox" checked> Keep aspect ratio when resizing</label>
+  </div>
+
+  <label for="crop-ratio">Crop to aspect ratio</label>
+  <select id="crop-ratio">
+    <option value="free">Free crop (no fixed ratio)</option>
+    <option value="1">Square (1:1)</option>
+    <option value="1.333333">4:3</option>
+    <option value="1.5">3:2</option>
+    <option value="1.777778">16:9</option>
+    <option value="0.777778">Passport 35 x 45 (7:9)</option>
+  </select>
+
+  <div>
+    <button id="resize-run" type="button" disabled>Apply crop &amp; resize</button>
+    <button id="resize-download" type="button" disabled>Download resized image</button>
+  </div>
+  <p class="result" id="resize-result"></p>
+  <p id="resize-status" class="note" role="status"></p>
+  <p class="note">Resizing to a larger size than the original will not add detail; it only stretches the image. Passport sizes here use 300 dpi equivalents (2 x 2 inch = 600 x 600 px, 35 x 45 mm = 413 x 531 px). Always check the official photo rules of the form or authority you are submitting to.</p>
+</section>
+
+<p class="note">Privacy: your images are processed only in this browser tab and are never sent to any server. Closing this page removes them.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script>
+"use strict";
+
+/* ---------- Shared helpers ---------- */
+
+function formatKB(bytes) {
+  return (bytes / 1024).toFixed(1) + " KB";
+}
+
+function readImageFile(file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { reject(new Error("Could not read this image file.")); };
+      img.src = reader.result;
+    };
+    reader.onerror = function () { reject(new Error("Could not read this file.")); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function canvasToBlob(canvas, mime, quality) {
+  return new Promise(function (resolve, reject) {
+    canvas.toBlob(function (blob) {
+      if (blob) { resolve(blob); } else { reject(new Error("The browser could not create the output image.")); }
+    }, mime, quality);
+  });
+}
+
+function drawImageToCanvas(img, width, height) {
+  var canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  var ctx = canvas.getContext("2d");
+  if (ctx === null) { throw new Error("Canvas is not supported in this browser."); }
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, width, height);
+  ctx.drawImage(img, 0, 0, width, height);
+  return canvas;
+}
+
+function extensionFor(mime) {
+  if (mime === "image/png") { return "png"; }
+  if (mime === "image/webp") { return "webp"; }
+  return "jpg";
+}
+
+function baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+
+function triggerDownload(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ---------- Tabs ---------- */
+
+var tabIds = ["compress", "convert", "resize"];
+tabIds.forEach(function (name) {
+  document.getElementById("tab-" + name).addEventListener("click", function () {
+    tabIds.forEach(function (other) {
+      document.getElementById("tab-" + other).classList.toggle("active", other === name);
+      document.getElementById("panel-" + other).classList.toggle("active", other === name);
+    });
+    if (name === "resize" && resizeImg && typeof Cropper !== "undefined" && !cropper) {
+      initCropper();
+    }
+  });
+});
+
+/* ---------- Compressor ---------- */
+
+var compressFileInput = document.getElementById("compress-file");
+var compressRunBtn = document.getElementById("compress-run");
+var compressDownloadBtn = document.getElementById("compress-download");
+var compressStatusEl = document.getElementById("compress-status");
+var compressInfoEl = document.getElementById("compress-info");
+var compressResultEl = document.getElementById("compress-result");
+var compressImg = null;
+var compressFile = null;
+var compressBlob = null;
+
+compressFileInput.addEventListener("change", function () {
+  var file = compressFileInput.files[0];
+  if (!file) { return; }
+  readImageFile(file).then(function (img) {
+    compressImg = img;
+    compressFile = file;
+    compressBlob = null;
+    compressDownloadBtn.disabled = true;
+    compressResultEl.textContent = "";
+    var preview = document.getElementById("compress-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "240px";
+    preview.appendChild(thumb);
+    compressInfoEl.textContent = "Original: " + img.naturalWidth + " x " + img.naturalHeight
+      + " px, " + formatKB(file.size) + ", " + file.type + ".";
+    compressRunBtn.disabled = false;
+    compressStatusEl.textContent = "";
+  }).catch(function (err) {
+    compressStatusEl.textContent = err.message;
+  });
+});
+
+document.getElementById("quality").addEventListener("input", function (e) {
+  document.getElementById("quality-value").textContent = e.target.value;
+});
+
+document.getElementById("mode-quality").addEventListener("change", function () {
+  document.getElementById("quality-controls").hidden = false;
+  document.getElementById("target-controls").hidden = true;
+});
+document.getElementById("mode-target").addEventListener("change", function () {
+  document.getElementById("quality-controls").hidden = true;
+  document.getElementById("target-controls").hidden = false;
+});
+
+function outputMimeFor(selectId, fallbackType) {
+  var value = document.getElementById(selectId).value;
+  return value === "same" ? fallbackType : value;
+}
+
+async function compressOnce(mime, quality) {
+  var canvas = drawImageToCanvas(compressImg, compressImg.naturalWidth, compressImg.naturalHeight);
+  return canvasToBlob(canvas, mime, quality);
+}
+
+compressRunBtn.addEventListener("click", async function () {
+  if (!compressImg || !compressFile) { return; }
+  var mime = outputMimeFor("compress-format", compressFile.type);
+  if (mime === "image/png") {
+    compressStatusEl.textContent = "PNG is lossless, so the quality setting does not apply to it.";
+  }
+  compressStatusEl.textContent = "Compressing...";
+  try {
+    var blob;
+    if (document.getElementById("mode-target").checked) {
+      var targetBytes = Math.max(10, parseInt(document.getElementById("target-kb").value, 10) || 100) * 1024;
+      blob = await compressToTarget(mime, targetBytes);
+      if (blob.size > targetBytes) {
+        compressStatusEl.textContent = "Target size could not be reached at this image size. "
+          + "Try a smaller target only after resizing the image down, or use JPEG/WebP.";
+      } else {
+        compressStatusEl.textContent = "Compressed to the target size.";
+      }
+    } else {
+      var quality = parseInt(document.getElementById("quality").value, 10) / 100;
+      blob = await compressOnce(mime, quality);
+      compressStatusEl.textContent = "Compressed.";
+    }
+    compressBlob = blob;
+    var saved = Math.round((1 - blob.size / compressFile.size) * 100);
+    compressResultEl.textContent = "Result: " + formatKB(blob.size) + " (" + mime + ")"
+      + (saved >= 0 ? ", " + saved + "% smaller than the original." : ", larger than the original. Try JPEG or WebP, or a lower quality.");
+    compressDownloadBtn.disabled = false;
+  } catch (err) {
+    compressStatusEl.textContent = err.message;
+  }
+});
+
+async function compressToTarget(mime, targetBytes) {
+  // Binary search on quality: 8 rounds, keeps the largest file that still fits.
+  var low = 0.05, high = 0.95, best = null;
+  for (var i = 0; i < 8; i++) {
+    var mid = (low + high) / 2;
+    var blob = await compressOnce(mime, mid);
+    if (blob.size <= targetBytes) {
+      best = blob;
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  if (best) { return best; }
+  return compressOnce(mime, 0.05);
+}
+
+compressDownloadBtn.addEventListener("click", function () {
+  if (!compressBlob || !compressFile) { return; }
+  triggerDownload(compressBlob, baseName(compressFile.name) + "-compressed." + extensionFor(compressBlob.type));
+});
+
+/* ---------- Converter ---------- */
+
+var convertFileInput = document.getElementById("convert-file");
+var convertRunBtn = document.getElementById("convert-run");
+var convertDownloadBtn = document.getElementById("convert-download");
+var convertStatusEl = document.getElementById("convert-status");
+var convertInfoEl = document.getElementById("convert-info");
+var convertResultEl = document.getElementById("convert-result");
+var convertImg = null;
+var convertFile = null;
+var convertBlob = null;
+
+convertFileInput.addEventListener("change", function () {
+  var file = convertFileInput.files[0];
+  if (!file) { return; }
+  readImageFile(file).then(function (img) {
+    convertImg = img;
+    convertFile = file;
+    convertBlob = null;
+    convertDownloadBtn.disabled = true;
+    convertResultEl.textContent = "";
+    var preview = document.getElementById("convert-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "240px";
+    preview.appendChild(thumb);
+    convertInfoEl.textContent = "Original: " + img.naturalWidth + " x " + img.naturalHeight
+      + " px, " + formatKB(file.size) + ", " + file.type + ".";
+    convertRunBtn.disabled = false;
+    convertStatusEl.textContent = "";
+  }).catch(function (err) {
+    convertStatusEl.textContent = err.message;
+  });
+});
+
+convertRunBtn.addEventListener("click", async function () {
+  if (!convertImg || !convertFile) { return; }
+  var mime = document.getElementById("convert-format").value;
+  if (mime === convertFile.type) {
+    convertStatusEl.textContent = "The image is already in that format.";
+    return;
+  }
+  convertStatusEl.textContent = "Converting...";
+  try {
+    var canvas = drawImageToCanvas(convertImg, convertImg.naturalWidth, convertImg.naturalHeight);
+    var quality = mime === "image/png" ? undefined : 0.92;
+    convertBlob = await canvasToBlob(canvas, mime, quality);
+    convertResultEl.textContent = "Result: " + formatKB(convertBlob.size) + " (" + mime + ").";
+    convertStatusEl.textContent = "Converted.";
+    convertDownloadBtn.disabled = false;
+  } catch (err) {
+    convertStatusEl.textContent = err.message;
+  }
+});
+
+convertDownloadBtn.addEventListener("click", function () {
+  if (!convertBlob || !convertFile) { return; }
+  triggerDownload(convertBlob, baseName(convertFile.name) + "-converted." + extensionFor(convertBlob.type));
+});
+
+/* ---------- Resizer & Cropper ---------- */
+
+var resizeFileInput = document.getElementById("resize-file");
+var resizeRunBtn = document.getElementById("resize-run");
+var resizeDownloadBtn = document.getElementById("resize-download");
+var resizeStatusEl = document.getElementById("resize-status");
+var resizeResultEl = document.getElementById("resize-result");
+var cropImageEl = document.getElementById("crop-image");
+var resizeImg = null;
+var resizeFile = null;
+var resizeBlob = null;
+var cropper = null;
+
+function initCropper() {
+  if (typeof Cropper === "undefined") {
+    resizeStatusEl.textContent = "The crop library could not be loaded. Check your connection and try again. Resizing without cropping still works.";
+    return;
+  }
+  var ratioValue = document.getElementById("crop-ratio").value;
+  cropper = new Cropper(cropImageEl, {
+    aspectRatio: ratioValue === "free" ? NaN : parseFloat(ratioValue),
+    viewMode: 1,
+    autoCropArea: 0.9
+  });
+}
+
+resizeFileInput.addEventListener("change", function () {
+  var file = resizeFileInput.files[0];
+  if (!file) { return; }
+  readImageFile(file).then(function (img) {
+    if (cropper) { cropper.destroy(); cropper = null; }
+    resizeImg = img;
+    resizeFile = file;
+    resizeBlob = null;
+    resizeDownloadBtn.disabled = true;
+    resizeResultEl.textContent = "";
+    cropImageEl.src = img.src;
+    cropImageEl.hidden = false;
+    document.getElementById("resize-width").value = img.naturalWidth;
+    document.getElementById("resize-height").value = img.naturalHeight;
+    resizeRunBtn.disabled = false;
+    resizeStatusEl.textContent = "";
+    if (document.getElementById("panel-resize").classList.contains("active")) {
+      initCropper();
+    }
+  }).catch(function (err) {
+    resizeStatusEl.textContent = err.message;
+  });
+});
+
+document.getElementById("preset").addEventListener("change", function (e) {
+  var value = e.target.value;
+  if (value === "custom") { return; }
+  var parts = value.split("x");
+  document.getElementById("resize-width").value = parts[0];
+  document.getElementById("resize-height").value = parts[1];
+  document.getElementById("keep-aspect").checked = false;
+});
+
+document.getElementById("crop-ratio").addEventListener("change", function (e) {
+  if (!cropper) { return; }
+  var value = e.target.value;
+  cropper.setAspectRatio(value === "free" ? NaN : parseFloat(value));
+});
+
+document.getElementById("keep-aspect").addEventListener("change", function (e) {
+  if (!e.target.checked || !resizeImg) { return; }
+  var width = parseInt(document.getElementById("resize-width").value, 10);
+  if (width > 0) {
+    document.getElementById("resize-height").value = Math.round(width * resizeImg.naturalHeight / resizeImg.naturalWidth);
+  }
+});
+
+document.getElementById("resize-width").addEventListener("input", function (e) {
+  if (!document.getElementById("keep-aspect").checked || !resizeImg) { return; }
+  var width = parseInt(e.target.value, 10);
+  if (width > 0) {
+    document.getElementById("resize-height").value = Math.round(width * resizeImg.naturalHeight / resizeImg.naturalWidth);
+  }
+});
+
+resizeRunBtn.addEventListener("click", async function () {
+  if (!resizeImg || !resizeFile) { return; }
+  var width = parseInt(document.getElementById("resize-width").value, 10);
+  var height = parseInt(document.getElementById("resize-height").value, 10);
+  if (!width || !height || width < 1 || height < 1) {
+    resizeStatusEl.textContent = "Enter a valid width and height in pixels.";
+    return;
+  }
+  resizeStatusEl.textContent = "Resizing...";
+  try {
+    var sourceCanvas;
+    if (cropper) {
+      sourceCanvas = cropper.getCroppedCanvas();
+      if (!sourceCanvas) { throw new Error("Could not read the crop area. Try again."); }
+    } else {
+      sourceCanvas = drawImageToCanvas(resizeImg, resizeImg.naturalWidth, resizeImg.naturalHeight);
+    }
+    var outCanvas = document.createElement("canvas");
+    outCanvas.width = width;
+    outCanvas.height = height;
+    var ctx = outCanvas.getContext("2d");
+    if (ctx === null) { throw new Error("Canvas is not supported in this browser."); }
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(sourceCanvas, 0, 0, width, height);
+    var mime = resizeFile.type === "image/png" ? "image/png" : "image/jpeg";
+    resizeBlob = await canvasToBlob(outCanvas, mime, 0.92);
+    resizeResultEl.textContent = "Result: " + width + " x " + height + " px, " + formatKB(resizeBlob.size) + " (" + mime + ").";
+    resizeStatusEl.textContent = "Resized.";
+    resizeDownloadBtn.disabled = false;
+  } catch (err) {
+    resizeStatusEl.textContent = err.message;
+  }
+});
+
+resizeDownloadBtn.addEventListener("click", function () {
+  if (!resizeBlob || !resizeFile) { return; }
+  triggerDownload(resizeBlob, baseName(resizeFile.name) + "-resized." + extensionFor(resizeBlob.type));
+});
+</script>
+</body>
+</html>
