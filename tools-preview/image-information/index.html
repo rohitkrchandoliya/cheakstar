@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Image Information - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Information</h1>
+<p class="tool-sub">See an image's size, dimensions and the camera details (EXIF) stored inside it.</p>
+<div class="tool-card">
+  <p>Pick any image to see its file details, and — for photos — the camera details (EXIF) stored inside it: camera model, date taken, exposure settings and sometimes the GPS location. Everything is read on this device.</p>
+
+  <label for="info-file">Choose an image</label>
+  <input id="info-file" type="file" accept="image/*">
+
+  <div class="preview" id="info-preview"></div>
+
+  <div class="result" id="info-result" hidden>
+    <p class="big">Image information</p>
+    <div id="info-basic"></div>
+    <h3 style="margin-top:16px">Camera details (EXIF)</h3>
+    <div id="info-exif"></div>
+    <p class="status" id="info-exif-note"></p>
+  </div>
+  <p id="info-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Privacy:</strong> your image is read only inside your browser. Nothing is uploaded to any server, including Cheakstar.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/img-tools.js"></script>
+<script>
+"use strict";
+var IT = window.ImgTools;
+var infoFileInput = document.getElementById("info-file");
+var infoStatusEl = document.getElementById("info-status");
+var infoResultEl = document.getElementById("info-result");
+
+var ORIENTATION_TEXT = {
+  1: "Normal (not rotated)",
+  2: "Mirrored horizontally",
+  3: "Rotated 180 degrees",
+  4: "Mirrored vertically",
+  5: "Mirrored, then rotated 90 degrees counter-clockwise",
+  6: "Rotated 90 degrees clockwise",
+  7: "Mirrored, then rotated 90 degrees clockwise",
+  8: "Rotated 90 degrees counter-clockwise"
+};
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  if (typeof value === "string") {
+    p.appendChild(document.createTextNode(" " + value));
+  } else {
+    p.appendChild(document.createTextNode(" "));
+    p.appendChild(value);
+  }
+  container.appendChild(p);
+}
+
+function formatExifDate(v) {
+  if (!v) { return ""; }
+  if (v instanceof Date) {
+    if (isNaN(v.getTime())) { return ""; }
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return v.getFullYear() + "-" + p(v.getMonth() + 1) + "-" + p(v.getDate()) +
+      " " + p(v.getHours()) + ":" + p(v.getMinutes()) + ":" + p(v.getSeconds());
+  }
+  return String(v);
+}
+
+function formatExposure(v) {
+  if (typeof v !== "number" || !isFinite(v) || v <= 0) { return ""; }
+  if (v < 1) { return "1/" + Math.round(1 / v) + " s"; }
+  return v + " s";
+}
+
+infoFileInput.addEventListener("change", function () {
+  var file = infoFileInput.files[0];
+  if (!file) { return; }
+  var basicEl = document.getElementById("info-basic");
+  var exifEl = document.getElementById("info-exif");
+  var exifNote = document.getElementById("info-exif-note");
+  basicEl.innerHTML = "";
+  exifEl.innerHTML = "";
+  exifNote.textContent = "";
+  infoStatusEl.className = "status";
+  infoStatusEl.textContent = "Reading the image on this device...";
+
+  // Basic facts come straight from the file itself — no library needed.
+  addRow(basicEl, "File name", file.name);
+  addRow(basicEl, "Format", file.type || "Unknown (the browser did not report a type)");
+  addRow(basicEl, "File size", IT.formatSize(file.size));
+  infoResultEl.hidden = false;
+
+  IT.readImageFile(file).then(function (img) {
+    var preview = document.getElementById("info-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "240px";
+    preview.appendChild(thumb);
+    var w = img.naturalWidth, h = img.naturalHeight;
+    addRow(basicEl, "Dimensions", w + " x " + h + " pixels");
+    addRow(basicEl, "Aspect ratio", IT.aspectText(w, h) + " (" + (w / h).toFixed(2) + ":1)");
+    addRow(basicEl, "Megapixels", ((w * h) / 1000000).toFixed(2) + " MP");
+  }).catch(function () {
+    addRow(basicEl, "Dimensions", "This browser cannot display this format, so the pixel size is unavailable.");
+  }).then(function () {
+    // EXIF details need the exifr library (full build) from the CDN.
+    if (typeof exifr === "undefined") {
+      exifNote.textContent = "The camera-details library could not be loaded (check your connection). The basic file details above still work.";
+      infoStatusEl.textContent = "Basic information shown.";
+      return null;
+    }
+    return exifr.parse(file, { gps: true }).then(function (data) {
+      if (!data || Object.keys(data).length === 0) {
+        exifNote.textContent = "This image carries no EXIF camera details. That is normal for screenshots, downloads from social media, and most PNG files.";
+        infoStatusEl.textContent = "Information shown. No EXIF data in this image.";
+        return;
+      }
+      var shown = 0;
+      function exifRow(label, value) {
+        if (value === undefined || value === null || value === "") { return; }
+        addRow(exifEl, label, value);
+        shown++;
+      }
+      exifRow("Camera make", data.Make);
+      exifRow("Camera model", data.Model);
+      exifRow("Date taken", formatExifDate(data.DateTimeOriginal || data.CreateDate || data.ModifyDate));
+      exifRow("Software", data.Software);
+      exifRow("Orientation", data.Orientation ? (ORIENTATION_TEXT[data.Orientation] || "Code " + data.Orientation) : "");
+      exifRow("Exposure time", formatExposure(data.ExposureTime));
+      exifRow("Aperture", (typeof data.FNumber === "number") ? "f/" + data.FNumber : "");
+      var iso = data.ISO || data.ISOSpeedRatings;
+      exifRow("ISO", iso ? String(iso) : "");
+      exifRow("Focal length", (typeof data.FocalLength === "number") ? data.FocalLength + " mm" : "");
+      if (typeof data.latitude === "number" && typeof data.longitude === "number") {
+        var link = document.createElement("a");
+        link.href = "https://www.google.com/maps/search/?api=1&query=" + data.latitude.toFixed(6) + "," + data.longitude.toFixed(6);
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = data.latitude.toFixed(6) + ", " + data.longitude.toFixed(6) + " — open on Google Maps";
+        addRow(exifEl, "GPS location", link);
+        shown++;
+      }
+      if (shown === 0) {
+        exifNote.textContent = "This image has some stored data, but none of the usual camera details (make, model, date, exposure) were in it.";
+      }
+      infoStatusEl.textContent = "Information shown.";
+    }).catch(function () {
+      exifNote.textContent = "The camera details in this image could not be read. The basic file details above still work.";
+      infoStatusEl.textContent = "Basic information shown.";
+    });
+  });
+});
+</script>
+</body>
+</html>
