@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>YouTube Thumbnail Downloader - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">YouTube Thumbnail Downloader</h1>
+<p class="tool-sub">Get the public thumbnail of any YouTube video in HD or SD.</p>
+<div class="tool-card">
+  <p>Paste a YouTube video link or video ID. Thumbnails are public image URLs served by YouTube itself, so downloading them is fine for any public video.</p>
+
+  <label for="thumb-input">YouTube link or video ID</label>
+  <input id="thumb-input" type="text" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off">
+  <div class="btn-row">
+    <button id="thumb-fetch" class="btn" type="button">Get thumbnails</button>
+  </div>
+  <p id="thumb-status" class="status" role="status"></p>
+  <div id="thumb-results" class="thumb-grid" aria-live="polite"></div>
+</div>
+<div class="note">
+  <strong>Guide: download your own YouTube videos, legally.</strong>
+  <p style="margin-top:8px"><strong>This tool cannot download videos.</strong> Downloading other people's videos breaks YouTube's Terms of Service, so no video-download feature is offered here. To get your own videos legally:</p>
+  <ol>
+    <li><strong>Your own uploads:</strong> open <a href="https://studio.youtube.com">YouTube Studio</a>, go to Content, open the video's menu (three dots), and choose <strong>Download</strong>. YouTube gives you the original file you uploaded.</li>
+    <li><strong>Watch offline:</strong> with a <a href="https://www.youtube.com/premium">YouTube Premium</a> subscription, the YouTube app lets you save videos to watch offline inside the app.</li>
+  </ol>
+  <p>Thumbnails are a different case: they are public images served by YouTube itself, which is why this downloader works for any public video. The thumbnail images load directly from YouTube's image servers; no data is sent to Cheakstar.</p>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var QUALITIES = [
+  { key: "maxresdefault", label: "Full HD", size: "1280 x 720" },
+  { key: "sddefault", label: "Standard", size: "640 x 480" },
+  { key: "hqdefault", label: "High quality", size: "480 x 360" },
+  { key: "mqdefault", label: "Medium quality", size: "320 x 180" },
+  { key: "default", label: "Default", size: "120 x 90" }
+];
+
+function extractVideoId(input) {
+  var value = (input || "").trim();
+  if (!value) { return null; }
+  var match = value.match(/(?:youtube\.com\/(?:watch\?[^#]*v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (match) { return match[1]; }
+  if (/^[A-Za-z0-9_-]{11}$/.test(value)) { return value; }
+  return null;
+}
+
+function thumbnailUrl(videoId, quality) {
+  return "https://i.ytimg.com/vi/" + videoId + "/" + quality + ".jpg";
+}
+
+var thumbInput = document.getElementById("thumb-input");
+var thumbStatus = document.getElementById("thumb-status");
+var thumbResults = document.getElementById("thumb-results");
+
+function loadThumbnails(videoId) {
+  thumbResults.innerHTML = "";
+  var found = 0;
+  var checked = 0;
+  QUALITIES.forEach(function (q) {
+    var card = document.createElement("div");
+    card.className = "thumb-card";
+    var title = document.createElement("h3");
+    title.textContent = q.label + " (" + q.size + ")";
+    card.appendChild(title);
+    var img = document.createElement("img");
+    img.alt = q.label + " thumbnail";
+    img.src = thumbnailUrl(videoId, q.key);
+    var info = document.createElement("p");
+    info.textContent = "Loading...";
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn small";
+    button.textContent = "Download JPG";
+    button.disabled = true;
+    button.addEventListener("click", function () { downloadThumbnail(videoId, q); });
+    card.appendChild(img);
+    card.appendChild(info);
+    card.appendChild(button);
+    thumbResults.appendChild(card);
+    img.addEventListener("load", function () {
+      if (img.naturalWidth > 120 || q.key === "default") {
+        found++;
+        info.textContent = "Available (" + img.naturalWidth + " x " + img.naturalHeight + ").";
+        button.disabled = false;
+      } else {
+        info.textContent = "Not available for this video.";
+        info.className = "missing";
+        img.style.display = "none";
+      }
+      checked++;
+      finishThumbCheck(checked, found, videoId);
+    });
+    img.addEventListener("error", function () {
+      info.textContent = "Not available for this video.";
+      info.className = "missing";
+      img.style.display = "none";
+      checked++;
+      finishThumbCheck(checked, found, videoId);
+    });
+  });
+}
+
+function finishThumbCheck(checked, found, videoId) {
+  if (checked < QUALITIES.length) { return; }
+  if (found === 0) {
+    thumbStatus.textContent = "No thumbnails found for this video ID. Check the link and try again.";
+    thumbStatus.className = "status error";
+  } else {
+    thumbStatus.textContent = "Found " + found + " of " + QUALITIES.length + " thumbnail sizes for video " + videoId + ".";
+    thumbStatus.className = "status ok";
+  }
+}
+
+function downloadThumbnail(videoId, quality) {
+  var url = thumbnailUrl(videoId, quality.key);
+  fetch(url).then(function (response) {
+    if (!response.ok) { throw new Error("Download failed."); }
+    return response.blob();
+  }).then(function (blob) {
+    var objectUrl = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = videoId + "-" + quality.key + ".jpg";
+    link.click();
+    setTimeout(function () { URL.revokeObjectURL(objectUrl); }, 1000);
+  }).catch(function () {
+    window.open(url, "_blank");
+    thumbStatus.textContent = "Direct download was blocked by the browser, so the image was opened in a new tab. Save it from there.";
+    thumbStatus.className = "status";
+  });
+}
+
+document.getElementById("thumb-fetch").addEventListener("click", function () {
+  var videoId = extractVideoId(thumbInput.value);
+  if (!videoId) {
+    thumbStatus.textContent = "Enter a valid YouTube link or an 11-character video ID.";
+    thumbStatus.className = "status error";
+    return;
+  }
+  thumbStatus.textContent = "Loading thumbnails...";
+  thumbStatus.className = "status";
+  loadThumbnails(videoId);
+});
+</script>
+</body>
+</html>
