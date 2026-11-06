@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Images to PDF - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Images to PDF</h1>
+<p class="tool-sub">Turn JPG or PNG images into a single PDF, one image per page.</p>
+<div class="tool-card">
+  <p>Turn photos or scans (JPG or PNG) into a single PDF, one image per page — handy for forms that ask for one PDF instead of many photos.</p>
+
+  <label for="img-files">Choose images (JPG or PNG)</label>
+  <input id="img-files" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple>
+  <label for="img-pagesize">Page size</label>
+  <select id="img-pagesize">
+    <option value="a4">A4</option>
+    <option value="letter">Letter (US)</option>
+    <option value="fit">Fit to image size</option>
+  </select>
+  <div class="btn-row">
+    <button id="img-convert" class="btn" type="button" disabled>Create PDF from images</button>
+  </div>
+  <p id="img-status" class="status" aria-live="polite"></p>
+</div>
+<div class="note"><strong>Your files stay on your device.</strong> This runs entirely in your browser using the open-source pdf-lib library (MIT licence). Nothing is uploaded to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var imgFiles = [];
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+  }
+  function libsReady() {
+    if (typeof PDFLib === "undefined") {
+      setStatus($("img-status"), "The PDF library (pdf-lib) did not load. Check your connection and reload the page.", true);
+      return false;
+    }
+    return true;
+  }
+
+  $("img-files").addEventListener("change", function (event) {
+    imgFiles = Array.prototype.slice.call(event.target.files || []);
+    $("img-convert").disabled = imgFiles.length === 0;
+    if (imgFiles.length > 0) {
+      setStatus($("img-status"), imgFiles.length + (imgFiles.length === 1 ? " image" : " images") + " selected.", false);
+    }
+    event.target.value = "";
+  });
+
+  $("img-convert").addEventListener("click", function () {
+    if (!libsReady() || imgFiles.length === 0) { return; }
+    setStatus($("img-status"), "Creating PDF...", false);
+    var sizeChoice = $("img-pagesize").value;
+    PDFLib.PDFDocument.create().then(function (doc) {
+      var chain = Promise.resolve();
+      imgFiles.forEach(function (file) {
+        chain = chain.then(function () {
+          return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function () { resolve(reader.result); };
+            reader.onerror = function () { reject(new Error("read failed")); };
+            reader.readAsArrayBuffer(file);
+          }).then(function (bytes) {
+            var isPng = file.type === "image/png" || /\.png$/i.test(file.name);
+            var embed = isPng ? doc.embedPng(bytes) : doc.embedJpg(bytes);
+            return embed.then(function (image) {
+              var page;
+              if (sizeChoice === "fit") {
+                page = doc.addPage([image.width, image.height]);
+                page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+              } else {
+                var dims = sizeChoice === "letter" ? [612, 792] : [595.28, 841.89];
+                page = doc.addPage(dims);
+                var scale = Math.min(dims[0] / image.width, dims[1] / image.height);
+                var w = image.width * scale;
+                var h = image.height * scale;
+                page.drawImage(image, { x: (dims[0] - w) / 2, y: (dims[1] - h) / 2, width: w, height: h });
+              }
+            });
+          });
+        });
+      });
+      return chain.then(function () { return doc.save(); });
+    }).then(function (bytes) {
+      downloadBlob(new Blob([bytes], { type: "application/pdf" }), "images.pdf");
+      setStatus($("img-status"), "Done. Created a PDF with " + imgFiles.length + (imgFiles.length === 1 ? " page" : " pages") + " from your images.", false);
+    }).catch(function () {
+      setStatus($("img-status"), "Could not create the PDF. Use JPG or PNG images only.", true);
+    });
+  });
+})();
+</script>
+</body>
+</html>
