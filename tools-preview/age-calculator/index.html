@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Age Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Age Calculator</h1>
+<p class="tool-sub">Work out an exact age in years, months and days from a date of birth.</p>
+<div class="tool-card">
+  <p>Work out an exact age from a date of birth: years, months and days — plus total days lived, the day of the week you were born, and when the next birthday falls.</p>
+
+  <label for="age-dob">Date of birth</label>
+  <input id="age-dob" type="date">
+  <label for="age-asof">Age on this date (optional — leave blank for today)</label>
+  <input id="age-asof" type="date">
+  <div class="btn-row">
+    <button id="age-run" class="btn" type="button">Calculate age</button>
+  </div>
+  <p id="age-status" class="status" role="status"></p>
+  <div class="result" id="age-result" hidden>
+    <p class="big" id="age-headline"></p>
+    <div id="age-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Privacy:</strong> dates are calculated only in this browser tab and are never sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ageStatus = document.getElementById("age-status");
+var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function niceDate(d) {
+  return WEEKDAYS[d.getDay()] + ", " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+}
+
+function parseLocalDate(value) {
+  if (!value) { return null; }
+  var parts = value.split("-");
+  var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+document.getElementById("age-run").addEventListener("click", function () {
+  var dob = parseLocalDate(document.getElementById("age-dob").value);
+  var asOf = parseLocalDate(document.getElementById("age-asof").value) || new Date();
+  asOf = new Date(asOf.getFullYear(), asOf.getMonth(), asOf.getDate());
+  var rows = document.getElementById("age-rows");
+  rows.innerHTML = "";
+  document.getElementById("age-result").hidden = true;
+  if (!dob) {
+    ageStatus.className = "status error";
+    ageStatus.textContent = "Choose a date of birth first.";
+    return;
+  }
+  if (dob > asOf) {
+    ageStatus.className = "status error";
+    ageStatus.textContent = "The date of birth is after the comparison date. Check both dates.";
+    return;
+  }
+  var years = asOf.getFullYear() - dob.getFullYear();
+  var months = asOf.getMonth() - dob.getMonth();
+  var days = asOf.getDate() - dob.getDate();
+  if (days < 0) {
+    months--;
+    var prevMonth = new Date(asOf.getFullYear(), asOf.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if (months < 0) { years--; months += 12; }
+  var totalDays = Math.floor((asOf - dob) / 86400000);
+  var nextBirthday = new Date(asOf.getFullYear(), dob.getMonth(), dob.getDate());
+  if (nextBirthday <= asOf) { nextBirthday.setFullYear(asOf.getFullYear() + 1); }
+  var daysToNext = Math.ceil((nextBirthday - asOf) / 86400000);
+
+  document.getElementById("age-headline").textContent =
+    "Age: " + years + " years, " + months + " months, " + days + " days";
+  addRow(rows, "Date of birth", niceDate(dob));
+  addRow(rows, "Born on a", WEEKDAYS[dob.getDay()]);
+  addRow(rows, "Total days lived", totalDays.toLocaleString("en-IN"));
+  addRow(rows, "Total weeks lived", Math.floor(totalDays / 7).toLocaleString("en-IN"));
+  addRow(rows, "Next birthday", niceDate(nextBirthday) + " (in " + daysToNext + (daysToNext === 1 ? " day" : " days") + ", turning " + (years + 1) + ")");
+  document.getElementById("age-result").hidden = false;
+  ageStatus.className = "status ok";
+  ageStatus.textContent = "Age calculated as of " + niceDate(asOf) + ".";
+});
+</script>
+</body>
+</html>
