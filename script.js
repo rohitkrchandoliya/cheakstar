@@ -143,9 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ]},
       { id: "tools", name: "Tools", links: [
         ["tools-preview/", "All Tools", "grid"],
-        ["tools-preview/qr-generator/", "QR Code Generator", "qr"],
-        ["tools-preview/pdf-tools/", "PDF Tools", "doc"],
-        ["tools-preview/image-tools/", "Image Tools", "image"]
+        ["tools-preview/qr-code-generator/", "QR Code Generator", "qr"],
+        ["tools-preview/pdf-compressor/", "PDF Compressor", "doc"],
+        ["tools-preview/image-compressor/", "Image Compressor", "image"]
       ]}
     ];
 
@@ -158,9 +158,9 @@ document.addEventListener("DOMContentLoaded", function () {
         var rest = path.slice(tp + "/tools-preview/".length);
         var seg = rest.split("/")[0];
         currentGroup = "tools";
-        if (seg === "qr-generator") currentHref = "tools-preview/qr-generator/";
-        else if (seg === "pdf-tools") currentHref = "tools-preview/pdf-tools/";
-        else if (seg === "image-tools") currentHref = "tools-preview/image-tools/";
+        if (seg === "qr-code-generator") currentHref = "tools-preview/qr-code-generator/";
+        else if (seg === "pdf-compressor") currentHref = "tools-preview/pdf-compressor/";
+        else if (seg === "image-compressor") currentHref = "tools-preview/image-compressor/";
         else currentHref = "tools-preview/";
         return;
       }
@@ -416,8 +416,11 @@ document.addEventListener("DOMContentLoaded", function () {
       var meta = user.user_metadata || {};
       var name = meta.display_name || user.email || "Account";
       var initial = name.charAt(0).toUpperCase() || "A";
+      var avatarHtml = (typeof meta.avatar === "string" && meta.avatar.indexOf("data:image/") === 0)
+        ? '<img class="cs-avatar" src="' + esc(meta.avatar) + '" alt="">'
+        : '<div class="cs-avatar" aria-hidden="true">' + esc(initial) + "</div>";
       bodyEl.innerHTML =
-        '<div class="cs-acc-who"><div class="cs-avatar" aria-hidden="true">' + esc(initial) + "</div>" +
+        '<div class="cs-acc-who">' + avatarHtml +
         '<div class="cs-acc-meta"><span class="cs-acc-name">' + esc(name) + "</span>" +
         '<span class="cs-acc-email">' + esc(user.email || "") + "</span></div></div>" +
         '<a href="account.html">' + USER_ICON + '<span class="cs-label">My Account</span></a>' +
