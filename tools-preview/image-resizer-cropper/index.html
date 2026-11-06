@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Image Resizer &amp; Cropper - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Resizer &amp; Cropper</h1>
+<p class="tool-sub">Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets.</p>
+<div class="tool-card">
+  <p>Resize an image to exact pixels, or crop it to an aspect ratio. Includes passport-photo size presets.</p>
+
+  <label for="resize-file">Choose an image</label>
+  <input id="resize-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+  <div id="crop-container"><img id="crop-image" alt="Image to crop" hidden></div>
+
+  <label for="preset">Size preset</label>
+  <select id="preset">
+    <option value="custom">Custom size</option>
+    <option value="600x600">Passport photo - 2 x 2 inch (600 x 600 px)</option>
+    <option value="413x531">Passport photo - 35 x 45 mm (413 x 531 px)</option>
+    <option value="1200x1800">Photo print - 4 x 6 inch (1200 x 1800 px)</option>
+    <option value="1920x1080">Full HD - 1920 x 1080 px</option>
+    <option value="1080x1080">Square - 1080 x 1080 px</option>
+  </select>
+
+  <div class="row2">
+    <div>
+      <label for="resize-width">Width (px)</label>
+      <input id="resize-width" type="number" min="1" max="8000" value="600">
+    </div>
+    <div>
+      <label for="resize-height">Height (px)</label>
+      <input id="resize-height" type="number" min="1" max="8000" value="600">
+    </div>
+  </div>
+
+  <div class="check-line">
+    <label for="keep-aspect"><input id="keep-aspect" type="checkbox" checked> Keep aspect ratio when resizing</label>
+  </div>
+
+  <label for="crop-ratio">Crop to aspect ratio</label>
+  <select id="crop-ratio">
+    <option value="free">Free crop (no fixed ratio)</option>
+    <option value="1">Square (1:1)</option>
+    <option value="1.333333">4:3</option>
+    <option value="1.5">3:2</option>
+    <option value="1.777778">16:9</option>
+    <option value="0.777778">Passport 35 x 45 (7:9)</option>
+  </select>
+
+  <div class="btn-row">
+    <button id="resize-run" class="btn" type="button" disabled>Apply crop &amp; resize</button>
+    <button id="resize-download" class="btn ghost" type="button" disabled>Download resized image</button>
+  </div>
+  <p class="status" id="resize-result"></p>
+  <p id="resize-status" class="status" role="status"></p>
+  <p class="status">Resizing to a larger size than the original will not add detail; it only stretches the image. Passport sizes here use 300 dpi equivalents (2 x 2 inch = 600 x 600 px, 35 x 45 mm = 413 x 531 px). Always check the official photo rules of the form or authority you are submitting to.</p>
+</div>
+<div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<script src="../assets/img-tools.js"></script>
+<script>
+"use strict";
+var IT = window.ImgTools;
+var resizeFileInput = document.getElementById("resize-file");
+var resizeRunBtn = document.getElementById("resize-run");
+var resizeDownloadBtn = document.getElementById("resize-download");
+var resizeStatusEl = document.getElementById("resize-status");
+var resizeResultEl = document.getElementById("resize-result");
+var cropImageEl = document.getElementById("crop-image");
+var resizeImg = null;
+var resizeFile = null;
+var resizeBlob = null;
+var cropper = null;
+
+function initCropper() {
+  if (typeof Cropper === "undefined") {
+    resizeStatusEl.textContent = "The crop library could not be loaded. Check your connection and try again. Resizing without cropping still works.";
+    resizeStatusEl.className = "status error";
+    return;
+  }
+  var ratioValue = document.getElementById("crop-ratio").value;
+  cropper = new Cropper(cropImageEl, {
+    aspectRatio: ratioValue === "free" ? NaN : parseFloat(ratioValue),
+    viewMode: 1,
+    autoCropArea: 0.9
+  });
+}
+
+resizeFileInput.addEventListener("change", function () {
+  var file = resizeFileInput.files[0];
+  if (!file) { return; }
+  IT.readImageFile(file).then(function (img) {
+    if (cropper) { cropper.destroy(); cropper = null; }
+    resizeImg = img;
+    resizeFile = file;
+    resizeBlob = null;
+    resizeDownloadBtn.disabled = true;
+    resizeResultEl.textContent = "";
+    cropImageEl.src = img.src;
+    cropImageEl.hidden = false;
+    document.getElementById("resize-width").value = img.naturalWidth;
+    document.getElementById("resize-height").value = img.naturalHeight;
+    resizeRunBtn.disabled = false;
+    resizeStatusEl.textContent = "";
+    initCropper();
+  }).catch(function (err) {
+    resizeStatusEl.textContent = err.message;
+    resizeStatusEl.className = "status error";
+  });
+});
+
+document.getElementById("preset").addEventListener("change", function (e) {
+  var value = e.target.value;
+  if (value === "custom") { return; }
+  var parts = value.split("x");
+  document.getElementById("resize-width").value = parts[0];
+  document.getElementById("resize-height").value = parts[1];
+  document.getElementById("keep-aspect").checked = false;
+});
+
+document.getElementById("crop-ratio").addEventListener("change", function (e) {
+  if (!cropper) { return; }
+  var value = e.target.value;
+  cropper.setAspectRatio(value === "free" ? NaN : parseFloat(value));
+});
+
+document.getElementById("keep-aspect").addEventListener("change", function (e) {
+  if (!e.target.checked || !resizeImg) { return; }
+  var width = parseInt(document.getElementById("resize-width").value, 10);
+  if (width > 0) {
+    document.getElementById("resize-height").value = Math.round(width * resizeImg.naturalHeight / resizeImg.naturalWidth);
+  }
+});
+
+document.getElementById("resize-width").addEventListener("input", function (e) {
+  if (!document.getElementById("keep-aspect").checked || !resizeImg) { return; }
+  var width = parseInt(e.target.value, 10);
+  if (width > 0) {
+    document.getElementById("resize-height").value = Math.round(width * resizeImg.naturalHeight / resizeImg.naturalWidth);
+  }
+});
+
+resizeRunBtn.addEventListener("click", async function () {
+  if (!resizeImg || !resizeFile) { return; }
+  var width = parseInt(document.getElementById("resize-width").value, 10);
+  var height = parseInt(document.getElementById("resize-height").value, 10);
+  if (!width || !height || width < 1 || height < 1) {
+    resizeStatusEl.textContent = "Enter a valid width and height in pixels.";
+    resizeStatusEl.className = "status error";
+    return;
+  }
+  resizeStatusEl.className = "status";
+  resizeStatusEl.textContent = "Resizing...";
+  try {
+    var sourceCanvas;
+    if (cropper) {
+      sourceCanvas = cropper.getCroppedCanvas();
+      if (!sourceCanvas) { throw new Error("Could not read the crop area. Try again."); }
+    } else {
+      sourceCanvas = IT.drawImageToCanvas(resizeImg, resizeImg.naturalWidth, resizeImg.naturalHeight);
+    }
+    var outCanvas = document.createElement("canvas");
+    outCanvas.width = width;
+    outCanvas.height = height;
+    var ctx = outCanvas.getContext("2d");
+    if (ctx === null) { throw new Error("Canvas is not supported in this browser."); }
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(sourceCanvas, 0, 0, width, height);
+    var mime = resizeFile.type === "image/png" ? "image/png" : "image/jpeg";
+    resizeBlob = await IT.canvasToBlob(outCanvas, mime, 0.92);
+    resizeResultEl.textContent = "Result: " + width + " x " + height + " px, " + IT.formatSize(resizeBlob.size) + " (" + mime + ").";
+    resizeStatusEl.textContent = "Resized.";
+    resizeDownloadBtn.disabled = false;
+  } catch (err) {
+    resizeStatusEl.textContent = err.message;
+    resizeStatusEl.className = "status error";
+  }
+});
+
+resizeDownloadBtn.addEventListener("click", function () {
+  if (!resizeBlob || !resizeFile) { return; }
+  IT.triggerDownload(resizeBlob, IT.baseName(resizeFile.name) + "-resized." + IT.extensionFor(resizeBlob.type));
+});
+</script>
+</body>
+</html>
