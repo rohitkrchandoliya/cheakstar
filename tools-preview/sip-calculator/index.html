@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>SIP Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">SIP Calculator</h1>
+<p class="tool-sub">Future value of a monthly investment: how much you put in vs how much it grows.</p>
+<div class="tool-card">
+  <p>See what a monthly SIP (Systematic Investment Plan) could grow to: how much you would put in, and how much growth the assumed return adds.</p>
+
+  <label for="sip-monthly">Monthly investment (₹)</label>
+  <input id="sip-monthly" type="number" min="0" step="any" value="5000">
+  <div class="row2">
+    <div>
+      <label for="sip-rate">Expected return (% per year)</label>
+      <input id="sip-rate" type="number" min="0" step="any" value="12">
+    </div>
+    <div>
+      <label for="sip-years">Time period (years)</label>
+      <input id="sip-years" type="number" min="0" step="any" value="10">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="sip-run" class="btn" type="button">Calculate SIP value</button>
+  </div>
+  <p id="sip-status" class="status" role="status"></p>
+  <div class="result" id="sip-result" hidden>
+    <p class="big" id="sip-future"></p>
+    <div id="sip-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> this is simple maths with a steady assumed return. Real market returns move up and down year to year, so the actual result will differ — sometimes by a lot. This is a planning estimate, not a promise or investment advice.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var sipStatus = document.getElementById("sip-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("sip-run").addEventListener("click", function () {
+  var P = parseFloat(document.getElementById("sip-monthly").value);
+  var annual = parseFloat(document.getElementById("sip-rate").value);
+  var years = parseFloat(document.getElementById("sip-years").value);
+  var rows = document.getElementById("sip-rows");
+  rows.innerHTML = "";
+  document.getElementById("sip-result").hidden = true;
+  if (!(P > 0) || !(years > 0) || isNaN(annual) || annual < 0) {
+    sipStatus.className = "status error";
+    sipStatus.textContent = "Enter a monthly amount above zero, an expected return (0 or more), and a time period above zero.";
+    return;
+  }
+  var n = Math.round(years * 12);
+  var i = annual / 1200;
+  var fv = i === 0 ? P * n : P * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+  var invested = P * n;
+  var gains = fv - invested;
+  document.getElementById("sip-future").textContent = "Value after " + years + " years: " + inr(fv);
+  addRow(rows, "You invest", inr(invested) + " (" + inr(P) + " x " + n + " months)");
+  addRow(rows, "Growth at " + annual + "%", inr(gains));
+  addRow(rows, "Total value", inr(fv));
+  addRow(rows, "Growth share", (gains / fv * 100).toFixed(1) + "% of the final value is growth, the rest is your own money");
+  document.getElementById("sip-result").hidden = false;
+  sipStatus.className = "status ok";
+  sipStatus.textContent = "Calculation complete. Remember: real returns vary year to year.";
+});
+</script>
+</body>
+</html>
