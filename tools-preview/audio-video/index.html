@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Audio and Video Tools - Audio Converter, Video Tools - Cheakstar Tools</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  label { display: block; margin-top: 1rem; font-weight: 600; }
+  input[type="file"], input[type="number"], select { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+  input[type="number"], select { border: 1px solid var(--line); }
+  button { margin-top: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; }
+  button:hover { background: #123a5c; }
+  button:disabled { background: #9aa5b1; cursor: default; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+  .error { color: #b91c1c; }
+  .ok { color: #166534; }
+  .result { border: 1px solid var(--line); padding: 1rem; margin-top: 1rem; }
+  .result p { margin: 0.25rem 0; }
+  .result .big { font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .limits li { margin: 0.25rem 0; }
+  .row { display: flex; gap: 1rem; }
+  .row > div { flex: 1; }
+  .log { background: #f3f4f6; border: 1px solid var(--line); padding: 0.75rem; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; max-height: 180px; overflow-y: auto; }
+  a.download { display: inline-block; margin-top: 0.75rem; font-weight: 700; color: var(--navy); }
+  @media (max-width: 560px) { .row { flex-direction: column; gap: 0; } .result .big { font-size: 1.1rem; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Audio and Video Tools</h1>
+  <p>Convert audio between common formats, trim audio and video, pull the audio out of a video, make a short GIF, or convert short clips between MP4 and WebM. Everything runs in your browser. No account or sign-in is needed.</p>
+</header>
+
+<div class="limits" id="limits">
+  <strong>Please read before you convert: honest limits.</strong>
+  <ul>
+    <li>Best for short clips. Files up to about 50 MB work best; files over 100 MB are refused on this page.</li>
+    <li>The conversion engine (ffmpeg.wasm, single-threaded core) is about 20 to 31 MB and downloads once from the jsDelivr CDN the first time you convert. It is cached by your browser after that.</li>
+    <li>Conversion runs at roughly 10 to 20 percent of native speed, because it runs inside the browser. A 30 second clip can take a minute or more.</li>
+    <li>This page uses the single-threaded core on purpose. GitHub Pages cannot set the COOP and COEP headers that the multi-threaded core needs, so the faster multi-threaded core cannot run here.</li>
+    <li>Weak phones may struggle with video, and very long videos may run out of browser memory. For long videos, use a desktop app instead.</li>
+  </ul>
+</div>
+
+<div class="privacy">
+  <strong>Your privacy.</strong> Your files never leave this device. Conversion happens entirely in your browser. The only thing downloaded from the internet is the conversion engine itself, from the public jsDelivr CDN. Nothing you convert is uploaded or stored anywhere.
+</div>
+
+<h2>Conversion engine</h2>
+<p id="engine-status">Engine not loaded yet. It loads automatically when you start your first conversion, or you can load it now.</p>
+<div>
+  <button id="engine-load" type="button">Load engine now</button>
+</div>
+<p class="note">Engine: ffmpeg.wasm 0.12.15 (ESM build, files in the ffmpeg-esm folder next to this page) with the single-threaded core 0.12.10, whose files load from jsDelivr. If the engine cannot be loaded, the tools below will say so plainly instead of failing silently. Open this page from the website address: if you open the file directly from your downloads, some browsers block the conversion engine.</p>
+
+<h2>1. Audio Converter</h2>
+<p>Convert an audio file between MP3, WAV, M4A and OGG. You can also trim a section by giving a start and end time in seconds. Leave both trim boxes empty to convert the whole file.</p>
+
+<label for="audio-input">Audio file (MP3, WAV, M4A, OGG, FLAC; up to 100 MB)</label>
+<input id="audio-input" type="file" accept="audio/*,.m4a,.ogg,.flac">
+
+<label for="audio-format">Convert to</label>
+<select id="audio-format">
+  <option value="mp3">MP3</option>
+  <option value="wav">WAV</option>
+  <option value="m4a">M4A (AAC)</option>
+  <option value="ogg">OGG (Vorbis)</option>
+</select>
+
+<div class="row">
+  <div>
+    <label for="audio-start">Trim from (seconds, optional)</label>
+    <input id="audio-start" type="number" min="0" step="0.1" placeholder="0">
+  </div>
+  <div>
+    <label for="audio-end">Trim to (seconds, optional)</label>
+    <input id="audio-end" type="number" min="0" step="0.1" placeholder="end of file">
+  </div>
+</div>
+
+<div>
+  <button id="audio-convert" type="button">Convert audio</button>
+</div>
+<p id="audio-status" class="note" aria-live="polite"></p>
+<div class="result" id="audio-result" hidden>
+  <p class="big" id="audio-title"></p>
+  <p id="audio-detail"></p>
+  <a class="download" id="audio-download" href="#" download>Download converted file</a>
+</div>
+<div class="log" id="audio-log" hidden></div>
+
+<h2>2. Video Tools (small files)</h2>
+<p>Work on short video clips: pull the audio out as MP3, trim a section, make a GIF, or convert between MP4 and WebM. The same honest limits above apply, and video is slower than audio.</p>
+
+<label for="video-input">Video file (MP4, WebM, MOV; up to 100 MB)</label>
+<input id="video-input" type="file" accept="video/*,.mov">
+
+<label for="video-op">What to do</label>
+<select id="video-op">
+  <option value="extract-mp3">Extract audio as MP3</option>
+  <option value="trim">Trim video (re-encodes, keeps picture and sound)</option>
+  <option value="gif">Make a GIF (10 frames per second, 320 pixels wide)</option>
+  <option value="mp4-webm">Convert MP4 to WebM</option>
+  <option value="webm-mp4">Convert WebM to MP4</option>
+</select>
+
+<div class="row">
+  <div>
+    <label for="video-start">Trim from (seconds, optional)</label>
+    <input id="video-start" type="number" min="0" step="0.1" placeholder="0">
+  </div>
+  <div>
+    <label for="video-end">Trim to (seconds, optional)</label>
+    <input id="video-end" type="number" min="0" step="0.1" placeholder="end of file">
+  </div>
+</div>
+<p class="note">Trim times only apply to the trim operation. The GIF uses the first 10 seconds of the video at most.</p>
+
+<div>
+  <button id="video-convert" type="button">Run video tool</button>
+</div>
+<p id="video-status" class="note" aria-live="polite"></p>
+<div class="result" id="video-result" hidden>
+  <p class="big" id="video-title"></p>
+  <p id="video-detail"></p>
+  <a class="download" id="video-download" href="#" download>Download result file</a>
+</div>
+<div class="log" id="video-log" hidden></div>
+
+<p class="note">Built with ffmpeg.wasm (LGPL/GPL, FFmpeg project) and the FFmpeg JavaScript bindings (MIT). No server, no account, no uploads. If anything goes wrong, the page says what happened instead of showing a blank result.</p>
+
+<script type="module">
+(function () {
+  "use strict";
+
+  var CORE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/ffmpeg-core.js";
+  var WASM_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/ffmpeg-core.wasm";
+  // The ffmpeg.wasm ESM files are vendored next to this page (ffmpeg-esm/):
+  // browsers block cross-origin web workers, so the library must load from
+  // the same origin as the page for its worker to start. Only the conversion
+  // engine core itself still comes from the jsDelivr CDN (see ensureEngine).
+  var FFMPEG_URL = "./ffmpeg-esm/index.js";
+  var MAX_BYTES = 100 * 1024 * 1024;
+  var ADVISED_BYTES = 50 * 1024 * 1024;
+
+  // The ffmpeg.wasm ESM build is loaded with dynamic import so that a load
+  // failure is caught and reported plainly instead of killing this script.
+  // (The UMD build cannot be used here: it starts a classic web worker from
+  // the CDN, and browsers block cross-origin workers. The ESM build starts a
+  // module worker, which only works when the library files sit on the same
+  // origin as the page -- hence the vendored ffmpeg-esm/ folder.)
+  var FFmpegClass = null;
+  var libState = "loading"; // loading | ready | failed
+  var libError = "";
+  window.ffmpegLibLoaded = false;
+  // Same helper as @ffmpeg/util toBlobURL: fetch a URL and return a blob URL.
+  // One retry: the core files are large, and a single dropped connection
+  // should not fail the whole conversion.
+  async function toBlobURL(url, mimeType) {
+    var lastErr = null;
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        var res = await fetch(url);
+        if (!res.ok) throw new Error("Download failed with status " + res.status + " for " + url);
+        var buf = await res.arrayBuffer();
+        return URL.createObjectURL(new Blob([buf], { type: mimeType }));
+      } catch (err) {
+        lastErr = err;
+        await new Promise(function (r) { setTimeout(r, 2000); });
+      }
+    }
+    throw lastErr;
+  }
+  import(FFMPEG_URL).then(function (mod) {
+    FFmpegClass = mod.FFmpeg;
+    libState = "ready";
+    window.ffmpegLibLoaded = true;
+  }).catch(function (err) {
+    libState = "failed";
+    libError = err && err.message ? err.message : String(err);
+    window.ffmpegLibLoaded = false;
+  });
+
+  var ffmpeg = null;
+  var engineState = "not-loaded"; // not-loaded | loading | ready | failed
+  var engineError = "";
+
+  function $(id) { return document.getElementById(id); }
+
+  function showStatus(el, message, isError) {
+    el.textContent = message;
+    el.className = isError ? "note error" : "note";
+  }
+
+  function logTo(box, text) {
+    box.hidden = false;
+    box.textContent += text + "\n";
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function baseName(name) {
+    var i = name.lastIndexOf(".");
+    return i > 0 ? name.slice(0, i) : name;
+  }
+
+  function extOf(name) {
+    var i = name.lastIndexOf(".");
+    return i > 0 ? name.slice(i + 1).toLowerCase() : "";
+  }
+
+  function readTrim(startEl, endEl) {
+    var start = startEl.value === "" ? null : parseFloat(startEl.value);
+    var end = endEl.value === "" ? null : parseFloat(endEl.value);
+    if ((start !== null && (isNaN(start) || start < 0)) ||
+        (end !== null && (isNaN(end) || end < 0))) {
+      return { error: "Trim times must be zero or more seconds." };
+    }
+    if (start !== null && end !== null && end <= start) {
+      return { error: "The trim end time must be after the trim start time." };
+    }
+    return { start: start, end: end };
+  }
+
+  function checkFile(file, statusEl) {
+    if (!file) { showStatus(statusEl, "Choose a file first.", true); return null; }
+    if (file.size > MAX_BYTES) {
+      showStatus(statusEl, "That file is over 100 MB. This page refuses files over 100 MB because the browser conversion engine runs out of memory on large files. Use a desktop app for large files.", true);
+      return null;
+    }
+    if (file.size > ADVISED_BYTES) {
+      showStatus(statusEl, "That file is over 50 MB, so conversion may be slow or may run out of memory. Trying anyway.", false);
+    }
+    return file;
+  }
+
+  function trimArgs(trim) {
+    var args = [];
+    if (trim.start !== null) { args.push("-ss", String(trim.start)); }
+    if (trim.end !== null) { args.push("-to", String(trim.end)); }
+    return args;
+  }
+
+  async function ensureEngine(statusEl, logBox) {
+    if (engineState === "ready") return true;
+    if (engineState === "failed") {
+      showStatus(statusEl, "The conversion engine could not be loaded: " + engineError + " Check your connection and try again.", true);
+      return false;
+    }
+    if (engineState === "loading") {
+      showStatus(statusEl, "The conversion engine is still loading. Please wait a moment and try again.", true);
+      return false;
+    }
+    if (libState === "loading") {
+      showStatus(statusEl, "The conversion library is still loading. Please wait a moment and try again.", true);
+      return false;
+    }
+    if (libState === "failed" || !FFmpegClass) {
+      engineState = "failed";
+      engineError = "the ffmpeg.wasm library did not load" + (libError ? " (" + libError + ")" : ".");
+      showStatus(statusEl, "The conversion engine could not be loaded: " + engineError + " Check your connection and try again.", true);
+      return false;
+    }
+    engineState = "loading";
+    showStatus($("engine-status"), "Loading conversion engine (about 20 to 31 MB, once)...", false);
+    if (statusEl !== $("engine-status")) showStatus(statusEl, "Loading conversion engine (about 20 to 31 MB, once)...", false);
+    try {
+      ffmpeg = new FFmpegClass();
+      ffmpeg.on("log", function (e) { if (logBox) logTo(logBox, e.message); });
+      ffmpeg.on("progress", function (p) {
+        if (statusEl) showStatus(statusEl, "Converting... about " + Math.round(p.progress * 100) + "% done.", false);
+      });
+      // Fetch the core files as blob URLs first (the documented ffmpeg.wasm
+      // route): the module worker then loads them without origin problems.
+      var coreURL = await toBlobURL(CORE_URL, "text/javascript");
+      var wasmURL = await toBlobURL(WASM_URL, "application/wasm");
+      await ffmpeg.load({ coreURL: coreURL, wasmURL: wasmURL });
+      engineState = "ready";
+      window.ffmpegLoaded = true;
+      showStatus($("engine-status"), "Engine ready. The single-threaded ffmpeg.wasm core is loaded.", false);
+      return true;
+    } catch (err) {
+      engineState = "failed";
+      engineError = err && err.message ? err.message : String(err);
+      window.ffmpegLoaded = false;
+      showStatus($("engine-status"), "The conversion engine could not be loaded: " + engineError + " Check your connection and try again.", true);
+      if (statusEl !== $("engine-status")) showStatus(statusEl, "The conversion engine could not be loaded: " + engineError + " Check your connection and try again.", true);
+      return false;
+    }
+  }
+
+  async function runJob(inputName, inputData, args, outputName, mimeType, statusEl, resultBox, titleEl, detailEl, linkEl, logBox) {
+    logBox.textContent = "";
+    logBox.hidden = true;
+    try {
+      await ffmpeg.writeFile(inputName, inputData);
+      await ffmpeg.exec(args);
+      var data = await ffmpeg.readFile(outputName);
+      var blob = new Blob([data.buffer], { type: mimeType });
+      if (linkEl.href && linkEl.href.indexOf("blob:") === 0) URL.revokeObjectURL(linkEl.href);
+      linkEl.href = URL.createObjectURL(blob);
+      linkEl.setAttribute("download", outputName);
+      var sizeKb = Math.round(blob.size / 1024);
+      titleEl.textContent = "Done";
+      detailEl.textContent = "Output: " + outputName + " (" + sizeKb + " KB). Your file was converted on this device and was never uploaded.";
+      resultBox.hidden = false;
+      showStatus(statusEl, "Done. Your download is ready below.", false);
+      try { await ffmpeg.deleteFile(inputName); } catch (e) { /* ignore cleanup errors */ }
+      try { await ffmpeg.deleteFile(outputName); } catch (e) { /* ignore cleanup errors */ }
+      return true;
+    } catch (err) {
+      resultBox.hidden = true;
+      showStatus(statusEl, "Conversion failed: " + (err && err.message ? err.message : String(err)) + " Try a smaller or shorter file.", true);
+      return false;
+    }
+  }
+
+  $("engine-load").addEventListener("click", function () {
+    ensureEngine($("engine-status"), null);
+  });
+
+  // ---------- 1. Audio Converter ----------
+  $("audio-convert").addEventListener("click", async function () {
+    var statusEl = $("audio-status");
+    $("audio-result").hidden = true;
+    var trim = readTrim($("audio-start"), $("audio-end"));
+    if (trim.error) { showStatus(statusEl, trim.error, true); return; }
+    var file = checkFile($("audio-input").files[0], statusEl);
+    if (!file) return;
+    var ok = await ensureEngine(statusEl, $("audio-log"));
+    if (!ok) return;
+    var format = $("audio-format").value;
+    var inputName = "input." + (extOf(file.name) || "bin");
+    var outputName = baseName(file.name) + "." + format;
+    var args = ["-i", inputName].concat(trimArgs(trim));
+    if (format === "mp3") args = args.concat(["-vn", "-c:a", "libmp3lame", "-q:a", "4", outputName]);
+    else if (format === "wav") args = args.concat(["-vn", "-c:a", "pcm_s16le", outputName]);
+    else if (format === "m4a") args = args.concat(["-vn", "-c:a", "aac", "-b:a", "192k", outputName]);
+    else args = args.concat(["-vn", "-c:a", "libvorbis", "-q:a", "5", outputName]);
+    showStatus(statusEl, "Converting to " + format.toUpperCase() + "...", false);
+    var data = new Uint8Array(await file.arrayBuffer());
+    await runJob(inputName, data, args, outputName, format === "wav" ? "audio/wav" : "audio/" + format,
+      statusEl, $("audio-result"), $("audio-title"), $("audio-detail"), $("audio-download"), $("audio-log"));
+  });
+
+  // ---------- 2. Video Tools ----------
+  $("video-convert").addEventListener("click", async function () {
+    var statusEl = $("video-status");
+    $("video-result").hidden = true;
+    var op = $("video-op").value;
+    var trim = readTrim($("video-start"), $("video-end"));
+    if (trim.error) { showStatus(statusEl, trim.error, true); return; }
+    var file = checkFile($("video-input").files[0], statusEl);
+    if (!file) return;
+    if (op === "mp4-webm" && extOf(file.name) !== "mp4") {
+      showStatus(statusEl, "MP4 to WebM needs an MP4 file. Choose an MP4 file for this operation.", true);
+      return;
+    }
+    if (op === "webm-mp4" && extOf(file.name) !== "webm") {
+      showStatus(statusEl, "WebM to MP4 needs a WebM file. Choose a WebM file for this operation.", true);
+      return;
+    }
+    var ok = await ensureEngine(statusEl, $("video-log"));
+    if (!ok) return;
+    var inputName = "input." + (extOf(file.name) || "bin");
+    var stem = baseName(file.name);
+    var outputName, mimeType, args;
+    if (op === "extract-mp3") {
+      outputName = stem + ".mp3"; mimeType = "audio/mp3";
+      args = ["-i", inputName, "-vn", "-c:a", "libmp3lame", "-q:a", "4", outputName];
+    } else if (op === "trim") {
+      outputName = stem + "-trimmed." + (extOf(file.name) || "mp4"); mimeType = "video/mp4";
+      args = ["-i", inputName].concat(trimArgs(trim), ["-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-c:a", "aac", outputName]);
+    } else if (op === "gif") {
+      outputName = stem + ".gif"; mimeType = "image/gif";
+      args = ["-i", inputName, "-t", "10", "-vf", "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse", outputName];
+    } else if (op === "mp4-webm") {
+      outputName = stem + ".webm"; mimeType = "video/webm";
+      args = ["-i", inputName, "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "30", "-c:a", "libopus", outputName];
+    } else {
+      outputName = stem + ".mp4"; mimeType = "video/mp4";
+      args = ["-i", inputName, "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-c:a", "aac", outputName];
+    }
+    showStatus(statusEl, "Working on your video. This can take a while for video...", false);
+    var data = new Uint8Array(await file.arrayBuffer());
+    await runJob(inputName, data, args, outputName, mimeType,
+      statusEl, $("video-result"), $("video-title"), $("video-detail"), $("video-download"), $("video-log"));
+  });
+})();
+</script>
+</body>
+</html>
