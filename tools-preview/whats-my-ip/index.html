@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>What's My IP - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">What's My IP</h1>
+<p class="tool-sub">See your own public IP address, location and internet provider.</p>
+<div class="tool-card">
+  <p>It loads automatically when the page opens. If you use a VPN, you will see the VPN's address and location instead of your own.</p>
+
+  <div class="btn-row">
+    <button id="myip-run" class="btn" type="button">Refresh my IP details</button>
+  </div>
+  <p id="myip-status" class="status" role="status"></p>
+  <div class="result" id="myip-result" hidden>
+    <p class="big">Your connection</p>
+    <div id="myip-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Notes:</strong> this is the address websites see when you visit them. If you use a VPN, you will see the VPN's address and location instead of your own. Details come from the free ipwho.is service (with ipify as a fallback); nothing is sent to Cheakstar. Long IPv6 addresses wrap on small screens, so nothing is cut off.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var myipStatus = document.getElementById("myip-status");
+
+function addRow(container, label, value) {
+  if (value === undefined || value === null || value === "") { return; }
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  if (typeof value === "string") {
+    p.appendChild(document.createTextNode(" " + value));
+  } else {
+    p.appendChild(document.createTextNode(" "));
+    p.appendChild(value);
+  }
+  container.appendChild(p);
+}
+
+function renderMyIp(rows, data) {
+  addRow(rows, "Your public IP", data.ip);
+  addRow(rows, "Type", data.type || "");
+  addRow(rows, "Continent", data.continent || "");
+  addRow(rows, "Country", data.country ? data.country + (data.country_code ? " (" + data.country_code + ")" : "") : "");
+  addRow(rows, "Region", data.region || "");
+  addRow(rows, "City", data.city || "");
+  addRow(rows, "Postal code", data.postal || "");
+  if (typeof data.latitude === "number" && typeof data.longitude === "number") {
+    var link = document.createElement("a");
+    link.href = "https://www.google.com/maps/search/?api=1&query=" + data.latitude + "," + data.longitude;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = data.latitude + ", " + data.longitude + " — open on Google Maps (approximate)";
+    addRow(rows, "Coordinates", link);
+  }
+  var conn = data.connection || {};
+  addRow(rows, "Internet provider", conn.isp || "");
+  addRow(rows, "Organisation", conn.org || "");
+  addRow(rows, "ASN", conn.asn ? "AS" + conn.asn : "");
+  var tz = data.timezone || {};
+  addRow(rows, "Timezone", tz.id ? tz.id + (tz.utc ? " (" + tz.utc + ")" : "") : "");
+}
+
+function lookupOwnIp() {
+  var rows = document.getElementById("myip-rows");
+  var resultBox = document.getElementById("myip-result");
+  rows.innerHTML = "";
+  resultBox.hidden = true;
+  myipStatus.className = "status";
+  myipStatus.textContent = "Finding your public IP address...";
+  fetch("https://ipwho.is/").then(function (res) {
+    if (!res.ok) { throw new Error("http"); }
+    return res.json();
+  }).then(function (data) {
+    if (!data || data.success === false || !data.ip) { throw new Error("no data"); }
+    return data;
+  }).catch(function () {
+    // Fallback: get the address from ipify, then the details from ipwho.is.
+    return fetch("https://api.ipify.org?format=json").then(function (res) { return res.json(); }).then(function (ipData) {
+      return fetch("https://ipwho.is/" + encodeURIComponent(ipData.ip)).then(function (res) { return res.json(); });
+    });
+  }).then(function (data) {
+    renderMyIp(rows, data);
+    resultBox.hidden = false;
+    myipStatus.className = "status ok";
+    myipStatus.textContent = "This is the public address of your current connection. Location is approximate.";
+  }).catch(function () {
+    myipStatus.className = "status error";
+    myipStatus.textContent = "Your IP details could not be loaded. Check your connection and press Refresh.";
+  });
+}
+
+document.getElementById("myip-run").addEventListener("click", lookupOwnIp);
+lookupOwnIp();
+</script>
+</body>
+</html>
