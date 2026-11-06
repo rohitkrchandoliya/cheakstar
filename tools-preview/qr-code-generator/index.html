@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>QR Code Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">QR Code Generator</h1>
+<p class="tool-sub">Create QR codes for links, text, Wi-Fi, UPI and contact cards.</p>
+<div class="tool-card">
+  <label for="mode">Type</label>
+  <select id="mode">
+    <option value="text">Link or text</option>
+    <option value="wifi">Wi-Fi network</option>
+    <option value="upi">UPI ID</option>
+    <option value="contact">Contact card (vCard)</option>
+  </select>
+
+  <div id="fields-text">
+    <label for="input-text">Link or text</label>
+    <textarea id="input-text" rows="3" placeholder="https://example.com" style="min-height:80px"></textarea>
+  </div>
+
+  <div id="fields-wifi" hidden>
+    <label for="wifi-ssid">Network name (SSID)</label>
+    <input id="wifi-ssid" type="text" autocomplete="off">
+    <label for="wifi-password">Password</label>
+    <input id="wifi-password" type="text" autocomplete="off">
+    <label for="wifi-auth">Security</label>
+    <select id="wifi-auth">
+      <option value="WPA">WPA / WPA2</option>
+      <option value="WEP">WEP</option>
+      <option value="nopass">No password</option>
+    </select>
+  </div>
+
+  <div id="fields-upi" hidden>
+    <label for="upi-id">UPI ID</label>
+    <input id="upi-id" type="text" placeholder="name@bank" autocomplete="off">
+    <label for="upi-name">Payee name (optional)</label>
+    <input id="upi-name" type="text" autocomplete="off">
+  </div>
+
+  <div id="fields-contact" hidden>
+    <label for="contact-name">Full name</label>
+    <input id="contact-name" type="text" autocomplete="off">
+    <label for="contact-phone">Phone (optional)</label>
+    <input id="contact-phone" type="tel" autocomplete="off">
+    <label for="contact-email">Email (optional)</label>
+    <input id="contact-email" type="email" autocomplete="off">
+  </div>
+
+  <div class="row2">
+    <div>
+      <label for="size">Download size (pixels)</label>
+      <select id="size">
+        <option value="256">256</option>
+        <option value="512" selected>512</option>
+        <option value="1024">1024</option>
+      </select>
+    </div>
+    <div>
+      <label for="correction">Error correction</label>
+      <select id="correction">
+        <option value="L">Low (L)</option>
+        <option value="M" selected>Medium (M)</option>
+        <option value="Q">Quartile (Q)</option>
+        <option value="H">High (H)</option>
+      </select>
+    </div>
+  </div>
+  <p class="status">The preview below always stays the same size on screen. The size setting only changes the downloaded file.</p>
+
+  <div class="btn-row">
+    <button id="generate" class="btn" type="button">Generate QR code</button>
+    <button id="download" class="btn ghost" type="button" disabled>Download PNG</button>
+    <button id="download-svg" class="btn ghost" type="button" disabled>Download SVG</button>
+  </div>
+
+  <div class="qr-display" id="qr-display"><span class="qr-empty">Your QR code will appear here, always at this size.</span></div>
+  <div class="qr-render-hidden" id="qrcode" aria-hidden="true"></div>
+  <p id="status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Tip:</strong> test the code with your phone camera before printing or sharing it. Everything runs in your browser — nothing is uploaded.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var modeEl = document.getElementById("mode");
+var statusEl = document.getElementById("status");
+var downloadBtn = document.getElementById("download");
+var downloadSvgBtn = document.getElementById("download-svg");
+var qrBox = document.getElementById("qrcode");
+var qrDisplay = document.getElementById("qr-display");
+var currentQr = null;
+var currentPngUrl = "";
+
+function showFields() {
+  var mode = modeEl.value;
+  ["text", "wifi", "upi", "contact"].forEach(function (name) {
+    document.getElementById("fields-" + name).hidden = (name !== mode);
+  });
+}
+
+function escapeValue(value) {
+  return value.replace(/([\\;,:\"])/g, "\\$1");
+}
+
+function buildPayload() {
+  var mode = modeEl.value;
+  if (mode === "wifi") {
+    var ssid = document.getElementById("wifi-ssid").value.trim();
+    var password = document.getElementById("wifi-password").value;
+    var auth = document.getElementById("wifi-auth").value;
+    if (!ssid) { return { error: "Enter a network name (SSID)." }; }
+    return { value: "WIFI:T:" + auth + ";S:" + escapeValue(ssid) + ";P:" + escapeValue(password) + ";;" };
+  }
+  if (mode === "upi") {
+    var upiId = document.getElementById("upi-id").value.trim();
+    var payee = document.getElementById("upi-name").value.trim();
+    if (!upiId) { return { error: "Enter a UPI ID." }; }
+    var payload = "upi://pay?pa=" + encodeURIComponent(upiId);
+    if (payee) { payload += "&pn=" + encodeURIComponent(payee); }
+    return { value: payload };
+  }
+  if (mode === "contact") {
+    var name = document.getElementById("contact-name").value.trim();
+    var phone = document.getElementById("contact-phone").value.trim();
+    var email = document.getElementById("contact-email").value.trim();
+    if (!name && !phone && !email) { return { error: "Enter at least a name, phone number, or email." }; }
+    var lines = ["BEGIN:VCARD", "VERSION:3.0"];
+    if (name) { lines.push("FN:" + name); }
+    if (phone) { lines.push("TEL:" + phone); }
+    if (email) { lines.push("EMAIL:" + email); }
+    lines.push("END:VCARD");
+    return { value: lines.join("\n") };
+  }
+  var text = document.getElementById("input-text").value.trim();
+  if (!text) { return { error: "Enter a link or some text." }; }
+  return { value: text };
+}
+
+modeEl.addEventListener("change", showFields);
+
+document.getElementById("generate").addEventListener("click", function () {
+  if (typeof QRCode === "undefined") {
+    statusEl.textContent = "The QR library could not be loaded. Check your connection and try again.";
+    statusEl.className = "status error";
+    return;
+  }
+  var result = buildPayload();
+  if (result.error) {
+    statusEl.textContent = result.error;
+    statusEl.className = "status error";
+    return;
+  }
+  // Render at the chosen download resolution into a hidden holder, then show
+  // a copy inside the fixed-size display card. The on-screen size never
+  // changes; only the downloaded file uses the chosen resolution.
+  qrBox.innerHTML = "";
+  var size = parseInt(document.getElementById("size").value, 10);
+  currentQr = new QRCode(qrBox, {
+    text: result.value,
+    width: size,
+    height: size,
+    correctLevel: QRCode.CorrectLevel[document.getElementById("correction").value]
+  });
+  var canvas = qrBox.querySelector("canvas");
+  var libImg = qrBox.querySelector("img");
+  currentPngUrl = canvas ? canvas.toDataURL("image/png") : (libImg ? libImg.src : "");
+  qrDisplay.innerHTML = "";
+  var shown = document.createElement("img");
+  shown.alt = "Generated QR code";
+  shown.src = currentPngUrl;
+  qrDisplay.appendChild(shown);
+  downloadBtn.disabled = false;
+  downloadSvgBtn.disabled = false;
+  statusEl.textContent = "QR code generated at " + size + " x " + size + " pixels for download.";
+  statusEl.className = "status ok";
+});
+
+downloadBtn.addEventListener("click", function () {
+  if (!currentPngUrl) { return; }
+  var link = document.createElement("a");
+  link.download = "qr-code.png";
+  link.href = currentPngUrl;
+  link.click();
+});
+
+function buildSvgString(qrModel) {
+  // qrModel is the module matrix the QR library already computed for the
+  // on-screen code (getModuleCount / isDark). A 4-module quiet zone is
+  // included so scanners can lock onto the code.
+  var count = qrModel.getModuleCount();
+  var quiet = 4;
+  var total = count + quiet * 2;
+  var path = "";
+  for (var row = 0; row < count; row++) {
+    for (var col = 0; col < count; col++) {
+      if (qrModel.isDark(row, col)) {
+        path += "M" + (col + quiet) + " " + (row + quiet) + "h1v1h-1z";
+      }
+    }
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + total + " " + total + '" width="512" height="512">'
+    + '<rect width="' + total + '" height="' + total + '" fill="#ffffff"/>'
+    + '<path d="' + path + '" fill="#000000"/></svg>';
+}
+
+downloadSvgBtn.addEventListener("click", function () {
+  if (!currentQr || !currentQr._oQRCode) {
+    statusEl.textContent = "Generate a QR code first.";
+    statusEl.className = "status error";
+    return;
+  }
+  var svg = buildSvgString(currentQr._oQRCode);
+  var blob = new Blob([svg], { type: "image/svg+xml" });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement("a");
+  link.download = "qr-code.svg";
+  link.href = url;
+  link.click();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+});
+</script>
+</body>
+</html>
