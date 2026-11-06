@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Base64 Encoder &amp; Decoder - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -17,17 +16,17 @@
 <p class="tool-sub">Encode or decode Base64, for text and for files.</p>
 <div class="tool-card">
   <h2 style="margin-top:0">Text</h2>
-  <p>Encode plain text to Base64, or decode Base64 back to text. Full Unicode is supported, so Hindi and emoji text work too.</p>
+  <p>Full Unicode is supported, so Hindi and emoji text work too.</p>
   <label for="b64-text-in">Text input</label>
-  <textarea id="b64-text-in" rows="6" placeholder="Type text, or paste Base64 here..."></textarea>
+  <textarea id="b64-text-in" class="tall" rows="6" placeholder="Type text, or paste Base64 here..."></textarea>
   <div class="btn-row">
     <button id="b64-encode" class="btn" type="button">Encode to Base64</button>
     <button id="b64-decode" class="btn ghost" type="button">Decode from Base64</button>
   </div>
   <label for="b64-text-out">Result</label>
-  <textarea id="b64-text-out" rows="6" readonly placeholder="The result will appear here."></textarea>
+  <textarea id="b64-text-out" class="tall" rows="6" readonly placeholder="The result will appear here." data-result></textarea>
   <div class="btn-row">
-    <button id="b64-copy" class="btn small ghost" type="button">Copy result</button>
+    <button id="b64-copy" class="btn small ghost" type="button" data-result data-result-soft data-result-peer="#b64-text-out">Copy result</button>
   </div>
   <p id="b64-text-status" class="status" role="status"></p>
 </div>
@@ -38,7 +37,7 @@
   <input id="b64-file" type="file">
   <p id="b64-file-status" class="status" role="status"></p>
   <label for="b64-file-out">File as Base64</label>
-  <textarea id="b64-file-out" rows="5" placeholder="The Base64 of the chosen file will appear here. You can also paste Base64 here and save it as a file below."></textarea>
+  <textarea id="b64-file-out" class="tall" rows="5" placeholder="The Base64 of the chosen file will appear here. You can also paste Base64 here and save it as a file below." data-result></textarea>
   <div class="row2">
     <div>
       <label for="b64-save-name">Save decoded Base64 as file name</label>
@@ -50,7 +49,7 @@
     </div>
   </div>
   <div class="btn-row">
-    <button id="b64-save" class="btn" type="button">Save as file</button>
+    <button id="b64-save" class="btn" type="button" data-gate-run>Save as file</button>
   </div>
 </div>
 <div class="note"><strong>Privacy:</strong> everything runs in this browser tab. No text or file is sent to any server.</div>
@@ -170,5 +169,7 @@ document.getElementById("b64-save").addEventListener("click", function () {
   }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
