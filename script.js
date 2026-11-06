@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
       '<div class="cs-pre-brand">CHEAK<span>STAR</span></div>' +
       '<div class="cs-pre-bar"><i></i></div>' +
       '<div class="cs-pre-status" id="csPreStatus">Initialising secure session</div>';
-
     document.body.insertBefore(pre, document.body.firstChild);
     if (!reduced) {
       var phases = ["Initialising secure session", "Scanning modules", "Verifying integrity", "Loading interface"];
@@ -379,4 +378,75 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     } catch (e2) {}
   }
+})();
+
+// ==== Cheakstar sidebar account block (2026-11-06).
+// Failure-isolated: renders instantly in the signed-out state, loads
+// auth.js lazily, then updates when the account state is known. If
+// anything fails, the block simply stays in its signed-out form. ====
+(function () {
+  "use strict";
+  try {
+    var side = document.getElementById("csSide");
+    var foot = side ? side.querySelector(".cs-side-foot") : null;
+    if (!side || !foot) return;
+
+    var USER_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.2 3.8-4.8 7-4.8s5.8 1.6 7 4.8"/></svg>';
+    var OUT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4"/><path d="M14 8l3.5 4L14 16"/><path d="M17 12H9.5"/></svg>';
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    var block = document.createElement("div");
+    block.className = "cs-account";
+    block.id = "csAccount";
+    block.innerHTML = '<div class="cs-acc-head">Account</div><div class="cs-acc-body" id="csAccBody"></div>';
+    side.insertBefore(block, foot);
+    var bodyEl = block.querySelector("#csAccBody");
+
+    function render(user) {
+      if (!user) {
+        bodyEl.innerHTML =
+          '<a href="login.html">' + USER_ICON + '<span class="cs-label">Login</span></a>' +
+          '<a href="signup.html">' + USER_ICON + '<span class="cs-label">Sign Up</span></a>';
+        return;
+      }
+      var meta = user.user_metadata || {};
+      var name = meta.display_name || user.email || "Account";
+      var initial = name.charAt(0).toUpperCase() || "A";
+      bodyEl.innerHTML =
+        '<div class="cs-acc-who"><div class="cs-avatar" aria-hidden="true">' + esc(initial) + "</div>" +
+        '<div class="cs-acc-meta"><span class="cs-acc-name">' + esc(name) + "</span>" +
+        '<span class="cs-acc-email">' + esc(user.email || "") + "</span></div></div>" +
+        '<a href="account.html">' + USER_ICON + '<span class="cs-label">My Account</span></a>' +
+        '<button type="button" class="cs-acc-out" id="csAccSignOut">' + OUT_ICON + '<span class="cs-label">Sign Out</span></button>';
+      var out = bodyEl.querySelector("#csAccSignOut");
+      if (out) out.addEventListener("click", function () {
+        if (window.CSAuth) window.CSAuth.signOut().then(function () { window.location.reload(); });
+      });
+    }
+    render(null); // instant signed-out state; updated when CSAuth resolves
+
+    var hooked = false;
+    function hook() {
+      if (hooked || !window.CSAuth) return hooked;
+      hooked = true;
+      try {
+        window.CSAuth.onChange(function (user) { render(user); });
+        window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
+      } catch (e) {}
+      return true;
+    }
+    if (!hook()) {
+      var s = document.createElement("script");
+      s.src = "auth.js";
+      s.async = true;
+      s.onload = function () { hook(); };
+      (document.head || document.documentElement).appendChild(s);
+      var tries = 0;
+      var iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250);
+    }
+  } catch (e) {}
 })();
