@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>PDF Merge - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF Merge</h1>
+<p class="tool-sub">Combine several PDFs into one PDF, in your chosen order.</p>
+<div class="tool-card">
+  <p>Combine several PDFs into one. Add your files, set the order with Move up / Move down, then merge.</p>
+
+  <label for="merge-files">Choose PDF files</label>
+  <input id="merge-files" type="file" accept="application/pdf,.pdf" multiple>
+  <div id="merge-list"></div>
+  <div class="btn-row">
+    <button id="merge-all" class="btn" type="button" disabled>Merge all into one PDF</button>
+  </div>
+  <p id="merge-status" class="status" aria-live="polite"></p>
+</div>
+<div class="note"><strong>Your files stay on your device.</strong> Merging runs entirely in your browser using the open-source pdf-lib library (MIT licence). Nothing is uploaded to any server. Password-protected or damaged PDFs cannot be merged, and the tool will say so.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var mergeFiles = [];
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+  }
+  function libsReady() {
+    if (typeof PDFLib === "undefined") {
+      setStatus($("merge-status"), "The PDF library (pdf-lib) did not load. Check your connection and reload the page.", true);
+      return false;
+    }
+    return true;
+  }
+
+  function renderMergeList() {
+    var list = $("merge-list");
+    list.innerHTML = "";
+    mergeFiles.forEach(function (entry, idx) {
+      var row = document.createElement("div");
+      row.className = "file-row";
+      var name = document.createElement("p");
+      name.className = "fname";
+      name.textContent = (idx + 1) + ". " + entry.file.name;
+      var pages = document.createElement("p");
+      pages.className = "pages";
+      pages.textContent = entry.pageCount + (entry.pageCount === 1 ? " page" : " pages");
+      var upBtn = document.createElement("button");
+      upBtn.type = "button";
+      upBtn.className = "btn small ghost";
+      upBtn.textContent = "Move up";
+      upBtn.disabled = idx === 0;
+      upBtn.addEventListener("click", function () { moveMergeFile(idx, -1); });
+      var downBtn = document.createElement("button");
+      downBtn.type = "button";
+      downBtn.className = "btn small ghost";
+      downBtn.textContent = "Move down";
+      downBtn.disabled = idx === mergeFiles.length - 1;
+      downBtn.addEventListener("click", function () { moveMergeFile(idx, 1); });
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn small ghost";
+      removeBtn.textContent = "Remove";
+      removeBtn.addEventListener("click", function () { mergeFiles.splice(idx, 1); renderMergeList(); updateMergeButton(); });
+      row.appendChild(name);
+      row.appendChild(pages);
+      row.appendChild(upBtn);
+      row.appendChild(downBtn);
+      row.appendChild(removeBtn);
+      list.appendChild(row);
+    });
+  }
+
+  function updateMergeButton() { $("merge-all").disabled = mergeFiles.length === 0; }
+
+  function moveMergeFile(idx, delta) {
+    var target = idx + delta;
+    if (target < 0 || target >= mergeFiles.length) { return; }
+    var tmp = mergeFiles[idx];
+    mergeFiles[idx] = mergeFiles[target];
+    mergeFiles[target] = tmp;
+    renderMergeList();
+  }
+
+  $("merge-files").addEventListener("change", function (event) {
+    var files = Array.prototype.slice.call(event.target.files || []);
+    if (!libsReady()) { return; }
+    if (files.length === 0) { return; }
+    setStatus($("merge-status"), "Reading " + files.length + (files.length === 1 ? " file" : " files") + "...", false);
+    files.forEach(function (file) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        PDFLib.PDFDocument.load(reader.result).then(function (doc) {
+          mergeFiles.push({ file: file, bytes: reader.result, pageCount: doc.getPageCount() });
+          renderMergeList();
+          updateMergeButton();
+          setStatus($("merge-status"), mergeFiles.length + (mergeFiles.length === 1 ? " file" : " files") + " ready. Use Move up / Move down to set the merge order.", false);
+        }).catch(function () {
+          setStatus($("merge-status"), "Could not read " + file.name + " as a PDF. It may be damaged or password-protected.", true);
+        });
+      };
+      reader.onerror = function () { setStatus($("merge-status"), "Could not read " + file.name + ".", true); };
+      reader.readAsArrayBuffer(file);
+    });
+    event.target.value = "";
+  });
+
+  $("merge-all").addEventListener("click", function () {
+    if (!libsReady() || mergeFiles.length === 0) { return; }
+    setStatus($("merge-status"), "Merging...", false);
+    PDFLib.PDFDocument.create().then(function (out) {
+      var chain = Promise.resolve();
+      mergeFiles.forEach(function (entry) {
+        chain = chain.then(function () {
+          return PDFLib.PDFDocument.load(entry.bytes).then(function (src) {
+            return out.copyPages(src, src.getPageIndices());
+          }).then(function (pages) {
+            pages.forEach(function (page) { out.addPage(page); });
+          });
+        });
+      });
+      return chain.then(function () { return out.save(); });
+    }).then(function (bytes) {
+      var total = mergeFiles.reduce(function (sum, e) { return sum + e.pageCount; }, 0);
+      downloadBlob(new Blob([bytes], { type: "application/pdf" }), "merged.pdf");
+      setStatus($("merge-status"), "Done. Merged " + mergeFiles.length + " files into one PDF with " + total + " pages.", false);
+    }).catch(function () {
+      setStatus($("merge-status"), "Merging failed. One of the files may be damaged or password-protected.", true);
+    });
+  });
+})();
+</script>
+</body>
+</html>
