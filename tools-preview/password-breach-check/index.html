@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Leaked Password Check - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Leaked Password Check</h1>
+<p class="tool-sub">Check a password against real breach data — without sending the password anywhere.</p>
+<div class="tool-card">
+  <p>Check whether a password has appeared in known data breaches — without sending the password anywhere. Only the first 5 characters of its scrambled fingerprint (SHA-1 hash) are sent to the Have I Been Pwned service; the match is completed on this device. This is called k-anonymity, and it is the safe standard way to do this check.</p>
+
+  <label for="pw-input">Password to check</label>
+  <input id="pw-input" type="password" placeholder="Type the password to test" autocomplete="off">
+  <div class="btn-row">
+    <button id="pw-run" class="btn" type="button">Check password</button>
+  </div>
+  <p id="pw-status" class="status" role="status"></p>
+  <div id="pw-result"></div>
+</div>
+<div class="note"><strong>Safety:</strong> the password itself never leaves this page, and the box is cleared as soon as the check runs. Even so, do not type a password you currently use on an important account into any website as a habit — use this to test old or candidate passwords. Cheakstar receives nothing.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pwStatus = document.getElementById("pw-status");
+
+function sha1Hex(text) {
+  var bytes = new TextEncoder().encode(text);
+  return crypto.subtle.digest("SHA-1", bytes).then(function (buf) {
+    var arr = new Uint8Array(buf);
+    var hex = "";
+    for (var i = 0; i < arr.length; i++) {
+      hex += (arr[i] < 16 ? "0" : "") + arr[i].toString(16);
+    }
+    return hex.toUpperCase();
+  });
+}
+
+document.getElementById("pw-run").addEventListener("click", function () {
+  var input = document.getElementById("pw-input");
+  var password = input.value;
+  var result = document.getElementById("pw-result");
+  result.innerHTML = "";
+  if (!password) {
+    pwStatus.className = "status error";
+    pwStatus.textContent = "Type a password to check first.";
+    return;
+  }
+  if (!window.crypto || !crypto.subtle) {
+    pwStatus.className = "status error";
+    pwStatus.textContent = "This check needs a secure (HTTPS) page for the hashing step. Open the live site version and try again.";
+    return;
+  }
+  pwStatus.className = "status";
+  pwStatus.textContent = "Hashing on this device and checking the fingerprint...";
+  sha1Hex(password).then(function (hash) {
+    input.value = ""; // clear the password as soon as it is hashed
+    var prefix = hash.slice(0, 5);
+    var suffix = hash.slice(5);
+    return fetch("https://api.pwnedpasswords.com/range/" + prefix).then(function (res) {
+      if (!res.ok) { throw new Error("http"); }
+      return res.text();
+    }).then(function (body) {
+      var count = 0;
+      body.split("\n").forEach(function (line) {
+        var parts = line.trim().split(":");
+        if (parts.length === 2 && parts[0].toUpperCase() === suffix) {
+          count = parseInt(parts[1], 10) || 0;
+        }
+      });
+      var box = document.createElement("div");
+      box.className = "result";
+      var big = document.createElement("p");
+      big.className = "big";
+      var line2 = document.createElement("p");
+      if (count > 0) {
+        big.textContent = "This password has been seen in breaches";
+        line2.textContent = "It appears " + count.toLocaleString("en-IN") + " times in the Have I Been Pwned breach collection. Never use it anywhere — attackers try known passwords first. Pick a long, unique password (a few random words work well) and store it in a password manager.";
+      } else {
+        big.textContent = "Not found in known breaches";
+        line2.textContent = "This password does not appear in the Have I Been Pwned collection. That does not make it strong by itself — length and uniqueness still matter, and every account should have its own password.";
+      }
+      box.appendChild(big);
+      box.appendChild(line2);
+      result.appendChild(box);
+      pwStatus.className = "status ok";
+      pwStatus.textContent = "Check complete. The password box has been cleared.";
+    });
+  }).catch(function () {
+    pwStatus.className = "status error";
+    pwStatus.textContent = "The check could not be completed. The Have I Been Pwned service may be unreachable — try again in a little while.";
+  });
+});
+</script>
+</body>
+</html>
