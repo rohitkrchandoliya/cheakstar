@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Audio Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Audio Converter</h1>
+<p class="tool-sub">Convert audio between MP3, WAV, M4A and OGG, with trim, speed and loudness options.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). Files up to about 50 MB work best; files over 100 MB are refused because browser memory is limited. The engine is a single-thread build, so converting is slower than a desktop app (about 10&ndash;20% of native speed). Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Convert an audio file to MP3, WAV, M4A or OGG. Optionally trim it, change its speed, or normalise loudness so quiet and loud parts even out.</p>
+
+  <label for="ac-file">Choose an audio file</label>
+  <input id="ac-file" type="file" accept="audio/*">
+  <p class="status" id="ac-basic"></p>
+
+  <div class="row2">
+    <div>
+      <label for="ac-format">Output format</label>
+      <select id="ac-format">
+        <option value="mp3">MP3</option>
+        <option value="wav">WAV</option>
+        <option value="m4a">M4A (AAC)</option>
+        <option value="ogg">OGG (Vorbis)</option>
+      </select>
+    </div>
+    <div>
+      <label for="ac-speed">Speed</label>
+      <select id="ac-speed">
+        <option value="1">Normal speed</option>
+        <option value="0.5">0.5x (slower)</option>
+        <option value="1.5">1.5x (faster)</option>
+        <option value="2">2x (faster)</option>
+      </select>
+    </div>
+  </div>
+
+  <label class="check-line"><input id="ac-trim-on" type="checkbox"> Trim the audio (optional)</label>
+  <div class="row2">
+    <div>
+      <label for="ac-start">Start (seconds)</label>
+      <input id="ac-start" type="number" min="0" step="0.1" value="0">
+    </div>
+    <div>
+      <label for="ac-end">End (seconds, blank = to the end)</label>
+      <input id="ac-end" type="number" min="0" step="0.1" placeholder="To the end">
+    </div>
+  </div>
+  <label class="check-line"><input id="ac-loudnorm" type="checkbox"> Normalise loudness ( evens out quiet and loud parts — good for voice recordings and podcasts )</label>
+
+  <div class="btn-row">
+    <button id="ac-run" class="btn" type="button" disabled>Convert audio</button>
+  </div>
+  <p id="ac-status" class="status" role="status"></p>
+  <div id="ac-result"></div>
+  <div id="ac-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var acStatusEl = document.getElementById("ac-status");
+var acFile = null;
+
+AV.wirePage({
+  statusEl: acStatusEl,
+  logEl: document.getElementById("ac-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+document.getElementById("ac-file").addEventListener("change", function (event) {
+  acFile = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+  document.getElementById("ac-run").disabled = !acFile;
+  if (acFile) { AV.showBasicInfo(acFile, document.getElementById("ac-basic")); }
+});
+
+document.getElementById("ac-run").addEventListener("click", function () {
+  if (!acFile) { return; }
+  if (!AV.checkFile(acFile, AV.statusFn(acStatusEl))) { return; }
+  var format = document.getElementById("ac-format").value;
+  var speed = document.getElementById("ac-speed").value;
+  var filters = [];
+  if (speed !== "1") { filters.push("atempo=" + speed); }
+  if (document.getElementById("ac-loudnorm").checked) { filters.push("loudnorm=I=-16:TP=-1.5:LRA=11"); }
+  var args = ["-i", "input." + AV.extOf(acFile.name)];
+  if (document.getElementById("ac-trim-on").checked) {
+    var startRaw = document.getElementById("ac-start").value;
+    var endRaw = document.getElementById("ac-end").value;
+    args.push("-ss", startRaw === "" ? "0" : startRaw);
+    if (endRaw !== "") { args.push("-to", endRaw); }
+  }
+  if (filters.length) { args.push("-af", filters.join(",")); }
+  if (format === "mp3") { args.push("-vn", "-c:a", "libmp3lame", "-q:a", "4"); }
+  if (format === "wav") { args.push("-vn", "-c:a", "pcm_s16le"); }
+  if (format === "m4a") { args.push("-vn", "-c:a", "aac", "-b:a", "192k"); }
+  if (format === "ogg") { args.push("-vn", "-c:a", "libvorbis", "-q:a", "5"); }
+  var outputName = "output." + format;
+  args.push(outputName);
+  var mime = format === "mp3" ? "audio/mpeg" : (format === "wav" ? "audio/wav" : (format === "m4a" ? "audio/mp4" : "audio/ogg"));
+  AV.runJob({
+    file: acFile,
+    args: args,
+    outName: outputName,
+    mime: mime,
+    downloadName: AV.baseName(acFile.name) + "." + format,
+    statusEl: acStatusEl,
+    resultEl: document.getElementById("ac-result"),
+    busyText: "Converting your audio..."
+  }).catch(function () { /* status already shows the error */ });
+});
+</script>
+</body>
+</html>
