@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Email Breach Check - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,15 +15,15 @@
 <h1 class="tool-title">Email Breach Check</h1>
 <p class="tool-sub">Check whether an email address has appeared in known data breaches.</p>
 <div class="tool-card">
-  <p>Check whether an email address appears in known data breaches, using the free XposedOrNot service. If it does, change that account's password and turn on two-factor authentication.</p>
+  <p>Results come from the free XposedOrNot service. If an address appears in a breach, change that account's password and turn on two-factor authentication.</p>
 
   <label for="breach-email">Email address</label>
   <input id="breach-email" type="email" placeholder="you@example.com" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="breach-run" class="btn" type="button">Check email</button>
+    <button id="breach-run" class="btn" type="button" data-autorun>Check email</button>
   </div>
   <p id="breach-status" class="status" role="status"></p>
-  <div id="breach-result"></div>
+  <div id="breach-result" data-result></div>
 </div>
 <div class="note"><strong>Privacy note:</strong> the email address is sent to XposedOrNot (api.xposedornot.com) to run the check — that is how the service works. It is not sent to Cheakstar, and Cheakstar keeps no record of it. A clean result means "not in the breaches this service knows about", not a guarantee for all time.</div>
 </main>
@@ -108,5 +107,7 @@ document.getElementById("breach-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
