@@ -244,3 +244,32 @@ body.cs-rail .cs-acc-body a .cs-label,body.cs-rail .cs-acc-out .cs-label{display
 @media print{
 .cs-account{display:none!important}
 }
+
+/* --- account v2 (2026-11-06): profile edit, verified badge, sessions, 2FA --- */
+.acct-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.acct-avatar.sm{width:44px;height:44px;font-size:1.05rem}
+img.cs-avatar{object-fit:cover;display:block}
+.verified-badge{display:inline-block;background:rgba(52,168,83,.16);border:1px solid rgba(52,168,83,.6);color:#b9efcb;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:.02em}
+.verified-badge.warn{background:rgba(216,164,64,.14);border-color:rgba(216,164,64,.6);color:#f2d492}
+.auth-field input[disabled]{opacity:.65;cursor:not-allowed}
+.btn.acct-btn{width:auto;padding-left:30px;padding-right:30px}
+.btn.acct-mini{padding:6px 14px;font-size:.88rem;margin-left:8px}
+.photo-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.photo-row input[type="file"]{color:var(--muted);font-size:.9rem;font-family:inherit}
+.sess-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sess-label{flex:0 0 110px;color:var(--muted);font-size:.92rem}
+.sess-value{color:var(--ink);overflow-wrap:anywhere}
+.mfa-qr{background:#fff;border-radius:10px;padding:14px;width:228px;max-width:100%}
+.mfa-qr img{display:block;width:200px;height:200px}
+.mfa-secret{font-family:Consolas,Menlo,"Courier New",monospace;font-size:1rem;letter-spacing:.08em;color:var(--gold);overflow-wrap:anywhere;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;padding:10px 12px;max-width:460px}
+
+/* --- standalone auth pages (2026-11-06): login, signup, reset password.
+   Dedicated pages like professional sites: no site shell (these pages do
+   not load script.js), only a logo strip, the centred card, links, footer. --- */
+.auth-page{background:radial-gradient(ellipse at 50% 0%,var(--navy3) 0%,var(--navy) 58%)}
+.auth-strip{display:flex;justify-content:center;padding:20px 16px 16px;background:var(--navy2);border-bottom:2px solid var(--gold)}
+.auth-page section{padding:40px 0 10px}
+.auth-page h1,.auth-page .sub{text-align:center}
+.auth-page .sub{margin-left:auto;margin-right:auto;margin-bottom:4px}
+.auth-links{max-width:460px;margin:22px auto 0;text-align:center;color:var(--muted);font-size:.92rem}
+.auth-foot{text-align:center;color:var(--muted);font-size:.88rem;padding:28px 16px 32px}
