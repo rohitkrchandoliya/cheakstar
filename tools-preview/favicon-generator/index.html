@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Favicon Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Favicon Generator</h1>
+<p class="tool-sub">Turn an image into a favicon set: an ICO file plus PNG icons in common sizes.</p>
+<div class="tool-card">
+  <p>Turn a logo or image into a complete favicon set for a website: a classic favicon.ico plus PNG icons in the sizes browsers, phones and bookmarks ask for.</p>
+
+  <label for="fav-file">Choose an image (a square logo works best)</label>
+  <input id="fav-file" type="file" accept="image/*">
+  <div class="preview" id="fav-preview"></div>
+  <p id="fav-status" class="status" role="status"></p>
+
+  <div class="btn-row">
+    <button id="fav-zip" class="btn" type="button" disabled>Download full set as ZIP</button>
+  </div>
+  <div id="fav-list"></div>
+  <p class="status">In your website's HTML head, the usual lines are: &lt;link rel="icon" href="/favicon.ico" sizes="any"&gt; and &lt;link rel="apple-touch-icon" href="/favicon-180.png"&gt;. Put the files in the site's root folder.</p>
+</div>
+<div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never uploaded. Non-square images are centred on a square canvas, so nothing is stretched.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/img-tools.js"></script>
+<script>
+"use strict";
+var IT = window.ImgTools;
+var favStatus = document.getElementById("fav-status");
+var favImg = null;
+var PNG_SIZES = [16, 32, 48, 64, 128, 180, 192, 512];
+var ICO_SIZES = [16, 24, 32, 48, 64];
+
+function squareCanvas(img, size) {
+  var canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  var ctx = canvas.getContext("2d");
+  var side = Math.min(img.naturalWidth, img.naturalHeight);
+  var sx = (img.naturalWidth - side) / 2;
+  var sy = (img.naturalHeight - side) / 2;
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+  return canvas;
+}
+
+async function buildIco(img) {
+  var blobs = [];
+  for (var i = 0; i < ICO_SIZES.length; i++) {
+    var blob = await IT.canvasToBlob(squareCanvas(img, ICO_SIZES[i]), "image/png");
+    blobs.push({ size: ICO_SIZES[i], bytes: new Uint8Array(await blob.arrayBuffer()) });
+  }
+  var headerSize = 6 + blobs.length * 16;
+  var total = headerSize;
+  blobs.forEach(function (b) { total += b.bytes.length; });
+  var out = new Uint8Array(total);
+  var view = new DataView(out.buffer);
+  view.setUint16(0, 0, true); // reserved
+  view.setUint16(2, 1, true); // type: icon
+  view.setUint16(4, blobs.length, true);
+  var offset = headerSize;
+  blobs.forEach(function (b, idx) {
+    var e = 6 + idx * 16;
+    view.setUint8(e, b.size >= 256 ? 0 : b.size);
+    view.setUint8(e + 1, b.size >= 256 ? 0 : b.size);
+    view.setUint8(e + 2, 0); // palette colours
+    view.setUint8(e + 3, 0); // reserved
+    view.setUint16(e + 4, 1, true); // colour planes
+    view.setUint16(e + 6, 32, true); // bits per pixel
+    view.setUint32(e + 8, b.bytes.length, true);
+    view.setUint32(e + 12, offset, true);
+    out.set(b.bytes, offset);
+    offset += b.bytes.length;
+  });
+  return new Blob([out], { type: "image/x-icon" });
+}
+
+function downloadBlob(blob, name) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+}
+
+async function renderFavList() {
+  var list = document.getElementById("fav-list");
+  list.innerHTML = "";
+  var ul = document.createElement("ul");
+  ul.className = "plain-list";
+  var icoBlob = await buildIco(favImg);
+  var icoLi = document.createElement("li");
+  var icoLabel = document.createElement("span");
+  icoLabel.textContent = "favicon.ico — classic icon (" + ICO_SIZES.join(", ") + " px inside)";
+  var icoBtn = document.createElement("button");
+  icoBtn.type = "button";
+  icoBtn.className = "btn small";
+  icoBtn.textContent = "Download";
+  icoBtn.addEventListener("click", function () { downloadBlob(icoBlob, "favicon.ico"); });
+  icoLi.appendChild(icoLabel);
+  icoLi.appendChild(icoBtn);
+  ul.appendChild(icoLi);
+  for (var i = 0; i < PNG_SIZES.length; i++) {
+    (function (size) {
+      IT.canvasToBlob(squareCanvas(favImg, size), "image/png").then(function (blob) {
+        var li = document.createElement("li");
+        var label = document.createElement("span");
+        label.textContent = "favicon-" + size + ".png — " + size + " x " + size + " px" + (size === 180 ? " (Apple touch icon)" : "") + (size === 192 ? " (Android / PWA)" : "");
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn small";
+        btn.textContent = "Download";
+        btn.addEventListener("click", function () { downloadBlob(blob, "favicon-" + size + ".png"); });
+        li.appendChild(label);
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+    })(PNG_SIZES[i]);
+  }
+  list.appendChild(ul);
+}
+
+document.getElementById("fav-file").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) { return; }
+  IT.readImageFile(file).then(async function (img) {
+    favImg = img;
+    var preview = document.getElementById("fav-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "160px";
+    preview.appendChild(thumb);
+    if (img.naturalWidth !== img.naturalHeight) {
+      favStatus.className = "status";
+      favStatus.textContent = "Note: this image is not square, so the centre square will be used (" +
+        Math.min(img.naturalWidth, img.naturalHeight) + " x " + Math.min(img.naturalWidth, img.naturalHeight) + " px of it).";
+    } else {
+      favStatus.className = "status ok";
+      favStatus.textContent = "Square image loaded. Your favicon set is ready below.";
+    }
+    document.getElementById("fav-zip").disabled = false;
+    await renderFavList();
+  }).catch(function (err) {
+    favStatus.className = "status error";
+    favStatus.textContent = err.message;
+  });
+});
+
+document.getElementById("fav-zip").addEventListener("click", async function () {
+  if (!favImg) { return; }
+  if (typeof JSZip === "undefined") {
+    favStatus.className = "status error";
+    favStatus.textContent = "The ZIP library could not be loaded, so the set cannot be bundled. The individual downloads above still work.";
+    return;
+  }
+  try {
+    var zip = new JSZip();
+    zip.file("favicon.ico", await buildIco(favImg));
+    for (var i = 0; i < PNG_SIZES.length; i++) {
+      var blob = await IT.canvasToBlob(squareCanvas(favImg, PNG_SIZES[i]), "image/png");
+      zip.file("favicon-" + PNG_SIZES[i] + ".png", blob);
+    }
+    var zipBlob = await zip.generateAsync({ type: "blob" });
+    downloadBlob(zipBlob, "favicon-set.zip");
+    favStatus.className = "status ok";
+    favStatus.textContent = "Favicon set downloaded as favicon-set.zip.";
+  } catch (err) {
+    favStatus.className = "status error";
+    favStatus.textContent = "Bundling the ZIP failed in this browser. The individual downloads above still work.";
+  }
+});
+</script>
+</body>
+</html>
