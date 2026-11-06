@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Screen Recorder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Screen Recorder</h1>
+<p class="tool-sub">Record your screen, with optional microphone sound, and download the video.</p>
+<div class="tool-card">
+  <p>Record your screen — a tab, a window or the whole display — with optional microphone narration, then download the video. Useful for tutorials, demos and bug reports. The recording is made only in this browser tab; nothing is uploaded.</p>
+
+  <label class="check-line"><input id="sr-mic" type="checkbox" checked> Also record my microphone (narration)</label>
+
+  <div class="btn-row">
+    <button id="sr-start" class="btn" type="button">Start screen recording</button>
+    <button id="sr-stop" class="btn ghost" type="button" disabled>Stop recording</button>
+  </div>
+  <p id="sr-status" class="status" role="status">Ready. Your browser will ask which screen or window to share when you start.</p>
+  <p class="status" id="sr-timer"></p>
+
+  <div id="sr-result" hidden>
+    <h3>Your screen recording</h3>
+    <video id="sr-player" controls style="width:100%" playsinline></video>
+    <div class="btn-row">
+      <a id="sr-download" class="btn" href="#" download="screen-recording.webm">Download recording (WebM)</a>
+    </div>
+    <p class="status" id="sr-meta"></p>
+  </div>
+</div>
+<div class="note"><strong>Notes:</strong> screen recording works on desktop browsers (Chrome, Edge, Firefox) and most Android browsers; iPhone Safari does not offer screen capture to websites — use the phone's own screen recorder there. Recordings are WebM files, which play in browsers and most players; use the Video Converter tool here if you need MP3 audio or other formats. If you stop sharing from the browser's own "Stop sharing" bar, the recording ends and is saved here the same way.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var srStartBtn = document.getElementById("sr-start");
+var srStopBtn = document.getElementById("sr-stop");
+var srStatusEl = document.getElementById("sr-status");
+var srTimerEl = document.getElementById("sr-timer");
+var srRecorder = null;
+var srChunks = [];
+var srStreams = [];
+var srStartedAt = 0;
+var srTimerId = null;
+var srUrl = null;
+
+function srFormatTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+srStartBtn.addEventListener("click", async function () {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia || typeof MediaRecorder === "undefined") {
+    srStatusEl.textContent = "This browser cannot record the screen. Try Chrome, Edge or Firefox on a computer.";
+    srStatusEl.className = "status error";
+    return;
+  }
+  try {
+    var displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    srStreams = [displayStream];
+    var tracks = displayStream.getVideoTracks().slice();
+    if (document.getElementById("sr-mic").checked) {
+      try {
+        var micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        srStreams.push(micStream);
+        micStream.getAudioTracks().forEach(function (t) { tracks.push(t); });
+      } catch (e) {
+        srStatusEl.textContent = "Microphone was not allowed, so recording continues with screen only.";
+        srStatusEl.className = "status";
+      }
+    }
+    var combined = new MediaStream(tracks);
+    srChunks = [];
+    var options = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
+      ? { mimeType: "video/webm;codecs=vp9,opus" }
+      : (MediaRecorder.isTypeSupported("video/webm") ? { mimeType: "video/webm" } : {});
+    srRecorder = new MediaRecorder(combined, options);
+    srRecorder.addEventListener("dataavailable", function (e) {
+      if (e.data && e.data.size > 0) { srChunks.push(e.data); }
+    });
+    srRecorder.addEventListener("stop", srOnStop);
+    displayStream.getVideoTracks()[0].addEventListener("ended", function () {
+      if (srRecorder && srRecorder.state !== "inactive") { srRecorder.stop(); }
+    });
+    srRecorder.start(250);
+    srStartedAt = Date.now();
+    srTimerEl.textContent = "Recording... 0:00";
+    srTimerId = setInterval(function () {
+      srTimerEl.textContent = "Recording... " + srFormatTime((Date.now() - srStartedAt) / 1000);
+    }, 500);
+    srStartBtn.disabled = true;
+    srStopBtn.disabled = false;
+    document.getElementById("sr-result").hidden = true;
+    srStatusEl.className = "status";
+    srStatusEl.textContent = "Recording your screen now. Switch to the window you want to show, and press Stop when finished.";
+  } catch (err) {
+    srStatusEl.textContent = "Screen sharing was cancelled or not allowed. Press Start and pick a screen, window or tab to record.";
+    srStatusEl.className = "status error";
+  }
+});
+
+srStopBtn.addEventListener("click", function () {
+  if (srRecorder && srRecorder.state !== "inactive") { srRecorder.stop(); }
+});
+
+function srOnStop() {
+  clearInterval(srTimerId);
+  srTimerEl.textContent = "";
+  srStreams.forEach(function (s) { s.getTracks().forEach(function (t) { t.stop(); }); });
+  srStreams = [];
+  srStartBtn.disabled = false;
+  srStopBtn.disabled = true;
+  var type = (srRecorder && srRecorder.mimeType) || "video/webm";
+  var blob = new Blob(srChunks, { type: "video/webm" });
+  if (srUrl) { URL.revokeObjectURL(srUrl); }
+  srUrl = URL.createObjectURL(blob);
+  var player = document.getElementById("sr-player");
+  player.src = srUrl;
+  var dl = document.getElementById("sr-download");
+  dl.href = srUrl;
+  dl.download = "screen-recording.webm";
+  document.getElementById("sr-meta").textContent = "Length about " + srFormatTime((Date.now() - srStartedAt) / 1000) +
+    ", size " + (blob.size / (1024 * 1024)).toFixed(2) + " MB, format WebM (" + type + ").";
+  document.getElementById("sr-result").hidden = false;
+  srStatusEl.className = "status ok";
+  srStatusEl.textContent = "Recording finished. Watch it above, then download it.";
+}
+</script>
+</body>
+</html>
