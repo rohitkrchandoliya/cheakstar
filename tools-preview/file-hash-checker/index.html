@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>File Hash Checker - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">File Hash Checker</h1>
+<p class="tool-sub">Get the SHA-256 and MD5 hash of any file, for verifying downloads.</p>
+<div class="tool-card">
+  <p>A hash is a file's fingerprint: if even one byte changes, the fingerprint changes completely. Download sites publish SHA-256 values so you can prove the file you received is the file they sent. Pick a file to get its SHA-256 and MD5 fingerprints.</p>
+
+  <label for="hash-file">Choose a file</label>
+  <input id="hash-file" type="file">
+  <p id="hash-status" class="status" role="status"></p>
+  <div class="result" id="hash-result" hidden>
+    <p class="big">File fingerprints</p>
+    <p class="kv"><b>File:</b> <span id="hash-name"></span></p>
+    <p class="kv"><b>Size:</b> <span id="hash-size"></span></p>
+    <p class="kv"><b>SHA-256:</b> <span class="mono" id="hash-sha"></span></p>
+    <p class="kv"><b>MD5:</b> <span class="mono" id="hash-md5"></span></p>
+    <label for="hash-compare">Compare with an expected hash (optional)</label>
+    <input id="hash-compare" type="text" placeholder="Paste the SHA-256 or MD5 from the download site">
+    <p class="status" id="hash-verdict"></p>
+  </div>
+</div>
+<div class="note"><strong>Privacy and limits:</strong> the file is read only in this browser tab and is never uploaded. The whole file is loaded into memory to hash it, so very large files (hundreds of MB) can be slow or fail on small phones — that is a browser limit, not a silent error: the tool will tell you.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var hashStatus = document.getElementById("hash-status");
+
+// One-shot MD5 over a Uint8Array (RFC 1321). Needed because WebCrypto
+// offers SHA-256 but not MD5. Correctness is covered by test vectors.
+var MD5_S = [
+  7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+  5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+  4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+  6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
+];
+var MD5_K = [];
+for (var ki = 0; ki < 64; ki++) {
+  MD5_K.push(Math.floor(Math.abs(Math.sin(ki + 1)) * 4294967296));
+}
+
+function md5Hex(input) {
+  var origLen = input.length;
+  var bitLenLow = (origLen << 3) >>> 0;
+  var bitLenHigh = Math.floor(origLen / 536870912) >>> 0;
+  var padLen = (origLen % 64 < 56) ? (56 - (origLen % 64)) : (120 - (origLen % 64));
+  var total = origLen + padLen + 8;
+  var msg = new Uint8Array(total);
+  msg.set(input);
+  msg[origLen] = 0x80;
+  var view = new DataView(msg.buffer);
+  view.setUint32(total - 8, bitLenLow, true);
+  view.setUint32(total - 4, bitLenHigh, true);
+
+  var a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
+  var M = new Uint32Array(16);
+  for (var block = 0; block < total; block += 64) {
+    for (var j = 0; j < 16; j++) { M[j] = view.getUint32(block + j * 4, true); }
+    var A = a0, B = b0, C = c0, D = d0;
+    for (var i = 0; i < 64; i++) {
+      var F, g;
+      if (i < 16) { F = (B & C) | (~B & D); g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C); g = (5 * i + 1) % 16; }
+      else if (i < 48) { F = B ^ C ^ D; g = (3 * i + 5) % 16; }
+      else { F = C ^ (B | ~D); g = (7 * i) % 16; }
+      var tmp = D;
+      D = C;
+      C = B;
+      var sum = (A + F + MD5_K[i] + M[g]) >>> 0;
+      var rotated = ((sum << MD5_S[i]) | (sum >>> (32 - MD5_S[i]))) >>> 0;
+      B = (B + rotated) >>> 0;
+      A = tmp;
+    }
+    a0 = (a0 + A) >>> 0;
+    b0 = (b0 + B) >>> 0;
+    c0 = (c0 + C) >>> 0;
+    d0 = (d0 + D) >>> 0;
+  }
+  function wordHex(w) {
+    var out = "";
+    for (var s = 0; s < 4; s++) {
+      var byte = (w >>> (s * 8)) & 0xff;
+      out += (byte < 16 ? "0" : "") + byte.toString(16);
+    }
+    return out;
+  }
+  return wordHex(a0) + wordHex(b0) + wordHex(c0) + wordHex(d0);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) { return bytes + " bytes"; }
+  if (bytes < 1024 * 1024) { return (bytes / 1024).toFixed(1) + " KB"; }
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+var currentSha = "";
+var currentMd5 = "";
+
+function checkCompare() {
+  var expected = document.getElementById("hash-compare").value.trim().toLowerCase();
+  var verdict = document.getElementById("hash-verdict");
+  if (!expected) { verdict.textContent = ""; return; }
+  if (expected === currentSha.toLowerCase() || expected === currentMd5.toLowerCase()) {
+    verdict.className = "status ok";
+    verdict.textContent = "Match. The file's fingerprint equals the value you pasted — the file is exactly what was published.";
+  } else {
+    verdict.className = "status error";
+    verdict.textContent = "No match. The file's fingerprint is different from the value you pasted. Do not trust this file — download it again from the official source.";
+  }
+}
+
+document.getElementById("hash-compare").addEventListener("input", checkCompare);
+
+document.getElementById("hash-file").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) { return; }
+  document.getElementById("hash-result").hidden = true;
+  hashStatus.className = "status";
+  hashStatus.textContent = "Reading and hashing " + file.name + "...";
+  file.arrayBuffer().then(function (buf) {
+    var bytes = new Uint8Array(buf);
+    return crypto.subtle.digest("SHA-256", buf).then(function (digest) {
+      var sha = Array.prototype.map.call(new Uint8Array(digest), function (b) {
+        return (b < 16 ? "0" : "") + b.toString(16);
+      }).join("");
+      return { sha: sha, md5: md5Hex(bytes) };
+    });
+  }).then(function (hashes) {
+    currentSha = hashes.sha;
+    currentMd5 = hashes.md5;
+    document.getElementById("hash-name").textContent = file.name;
+    document.getElementById("hash-size").textContent = formatSize(file.size);
+    document.getElementById("hash-sha").textContent = hashes.sha;
+    document.getElementById("hash-md5").textContent = hashes.md5;
+    document.getElementById("hash-result").hidden = false;
+    hashStatus.className = "status ok";
+    hashStatus.textContent = "Fingerprints ready. Compare them with the values on the site you downloaded from.";
+    checkCompare();
+  }).catch(function () {
+    hashStatus.className = "status error";
+    hashStatus.textContent = "The file could not be hashed. It may be too large for this device's memory — try on a computer, or hash a smaller file.";
+  });
+});
+</script>
+</body>
+</html>
