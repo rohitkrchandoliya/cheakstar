@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Unit Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Unit Converter</h1>
+<p class="tool-sub">Convert length, weight, temperature and data size units.</p>
+<div class="tool-card">
+  <p>Convert everyday units: length, weight, temperature and data size. Pick a category, enter a value, and the conversion updates as you type.</p>
+
+  <label for="uc-category">Category</label>
+  <select id="uc-category">
+    <option value="length">Length</option>
+    <option value="weight">Weight</option>
+    <option value="temperature">Temperature</option>
+    <option value="data">Data size</option>
+  </select>
+
+  <label for="uc-value">Value</label>
+  <input id="uc-value" type="number" step="any" value="1">
+
+  <div class="row2">
+    <div>
+      <label for="uc-from">From</label>
+      <select id="uc-from"></select>
+    </div>
+    <div>
+      <label for="uc-to">To</label>
+      <select id="uc-to"></select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="uc-swap" class="btn ghost" type="button">Swap units</button>
+  </div>
+  <div class="result" style="margin-top:16px">
+    <p class="big" id="uc-result">—</p>
+    <p class="status" id="uc-note"></p>
+  </div>
+</div>
+<div class="note"><strong>Notes:</strong> data sizes use the binary scale (1 KB = 1024 bytes), the way operating systems count. Temperature converts between Celsius, Fahrenheit and Kelvin. Everything is calculated on this device only.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var UNITS = {
+  length: {
+    note: "Base unit: metre.",
+    units: {
+      "Millimetre (mm)": 0.001,
+      "Centimetre (cm)": 0.01,
+      "Metre (m)": 1,
+      "Kilometre (km)": 1000,
+      "Inch (in)": 0.0254,
+      "Foot (ft)": 0.3048,
+      "Yard (yd)": 0.9144,
+      "Mile (mi)": 1609.344
+    },
+    defaults: ["Kilometre (km)", "Mile (mi)"]
+  },
+  weight: {
+    note: "Base unit: kilogram.",
+    units: {
+      "Milligram (mg)": 0.000001,
+      "Gram (g)": 0.001,
+      "Kilogram (kg)": 1,
+      "Tonne (t)": 1000,
+      "Ounce (oz)": 0.028349523125,
+      "Pound (lb)": 0.45359237
+    },
+    defaults: ["Kilogram (kg)", "Pound (lb)"]
+  },
+  temperature: {
+    note: "Temperature uses formulas, not a simple multiplier.",
+    units: { "Celsius (°C)": "c", "Fahrenheit (°F)": "f", "Kelvin (K)": "k" },
+    defaults: ["Celsius (°C)", "Fahrenheit (°F)"]
+  },
+  data: {
+    note: "Base unit: byte. 1 KB = 1024 bytes.",
+    units: {
+      "Byte (B)": 1,
+      "Kilobyte (KB)": 1024,
+      "Megabyte (MB)": 1048576,
+      "Gigabyte (GB)": 1073741824,
+      "Terabyte (TB)": 1099511627776
+    },
+    defaults: ["Megabyte (MB)", "Gigabyte (GB)"]
+  }
+};
+
+var ucCategory = document.getElementById("uc-category");
+var ucFrom = document.getElementById("uc-from");
+var ucTo = document.getElementById("uc-to");
+
+function fillUnits() {
+  var cat = UNITS[ucCategory.value];
+  ucFrom.innerHTML = "";
+  ucTo.innerHTML = "";
+  Object.keys(cat.units).forEach(function (name) {
+    var o1 = document.createElement("option");
+    o1.value = name; o1.textContent = name;
+    ucFrom.appendChild(o1);
+    var o2 = document.createElement("option");
+    o2.value = name; o2.textContent = name;
+    ucTo.appendChild(o2);
+  });
+  ucFrom.value = cat.defaults[0];
+  ucTo.value = cat.defaults[1];
+  document.getElementById("uc-note").textContent = cat.note;
+  convert();
+}
+
+function toCelsius(value, from) {
+  if (from === "c") { return value; }
+  if (from === "f") { return (value - 32) * 5 / 9; }
+  return value - 273.15;
+}
+function fromCelsius(value, to) {
+  if (to === "c") { return value; }
+  if (to === "f") { return value * 9 / 5 + 32; }
+  return value + 273.15;
+}
+
+function fmt(n) {
+  if (!isFinite(n)) { return "—"; }
+  if (n !== 0 && (Math.abs(n) >= 1e12 || Math.abs(n) < 1e-6)) { return n.toExponential(4); }
+  return parseFloat(n.toFixed(6)).toLocaleString("en-IN", { maximumFractionDigits: 6 });
+}
+
+function convert() {
+  var value = parseFloat(document.getElementById("uc-value").value);
+  var resultEl = document.getElementById("uc-result");
+  if (isNaN(value)) { resultEl.textContent = "Enter a value to convert."; return; }
+  var cat = UNITS[ucCategory.value];
+  var out;
+  if (ucCategory.value === "temperature") {
+    out = fromCelsius(toCelsius(value, cat.units[ucFrom.value]), cat.units[ucTo.value]);
+  } else {
+    out = value * cat.units[ucFrom.value] / cat.units[ucTo.value];
+  }
+  resultEl.textContent = fmt(value) + " " + ucFrom.value + " = " + fmt(out) + " " + ucTo.value;
+}
+
+ucCategory.addEventListener("change", fillUnits);
+ucFrom.addEventListener("change", convert);
+ucTo.addEventListener("change", convert);
+document.getElementById("uc-value").addEventListener("input", convert);
+document.getElementById("uc-swap").addEventListener("click", function () {
+  var t = ucFrom.value;
+  ucFrom.value = ucTo.value;
+  ucTo.value = t;
+  convert();
+});
+fillUnits();
+</script>
+</body>
+</html>
