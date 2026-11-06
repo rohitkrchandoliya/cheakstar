@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Audio Converter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -67,7 +66,7 @@
     <button id="ac-run" class="btn" type="button" disabled>Convert audio</button>
   </div>
   <p id="ac-status" class="status" role="status"></p>
-  <div id="ac-result"></div>
+  <div id="ac-result" data-result></div>
   <div id="ac-log" class="log" aria-label="Engine log"></div>
 </div>
 </main>
@@ -131,5 +130,7 @@ document.getElementById("ac-run").addEventListener("click", function () {
   }).catch(function () { /* status already shows the error */ });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
