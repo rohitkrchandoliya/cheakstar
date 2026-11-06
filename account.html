@@ -6,9 +6,9 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="noindex">
 <title>My Account — Cheakstar</title>
-<meta name="description" content="Your Cheakstar account: your profile, your favourite tools and your recently used tools.">
+<meta name="description" content="Your Cheakstar account: your profile, security settings, two-factor authentication, devices and your saved tools.">
 <meta property="og:title" content="My Account — Cheakstar">
-  <meta property="og:description" content="Your Cheakstar account: your profile, your favourite tools and your recently used tools.">
+  <meta property="og:description" content="Your Cheakstar account: your profile, security settings, two-factor authentication, devices and your saved tools.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/account.html">
 <link rel="stylesheet" href="styles.css">
@@ -21,30 +21,148 @@
 </nav></div></header>
 <section><div class="wrap">
 <h1>My <span class="gold">Account</span></h1>
-<p class="sub">Your profile, your favourite tools and the tools you used most recently.</p>
+<p class="sub">Your profile, your security settings and the tools you use most.</p>
 
 <p id="accountLoading" style="color:var(--muted)">Loading your account…</p>
 
 <div id="accountSignedOut" hidden>
-  <div class="note"><strong>You are not signed in.</strong> Sign in to see your favourite tools and your recently used tools — or create a free account in a minute.<p style="margin-top:12px"><a class="btn" href="login.html">Sign In</a> <a class="btn ghost" href="signup.html" style="margin-left:8px">Create Account</a></p></div>
+  <div class="note"><strong>You are not signed in.</strong> Sign in to see your profile, your favourite tools and your recently used tools — or create a free account in a minute.<p style="margin-top:12px"><a class="btn" href="login.html">Sign In</a> <a class="btn ghost" href="signup.html" style="margin-left:8px">Create Account</a></p></div>
 </div>
 
 <div id="accountMain" hidden>
+
+  <!-- A. Profile -->
   <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:14px">Profile</h3>
     <div class="acct-head">
       <div class="acct-avatar" id="acctAvatar">C</div>
       <div class="acct-who">
         <h3 id="acctName" style="margin-bottom:2px">Your account</h3>
-        <p id="acctEmail" style="color:var(--muted)"></p>
         <p id="acctSince" style="color:var(--muted);font-size:.9rem"></p>
       </div>
     </div>
-    <div class="btns" style="justify-content:flex-start;margin-top:20px">
-      <a class="btn" href="reset-password.html">Change Password</a>
-      <button class="btn ghost" type="button" id="acctSignOut">Sign Out</button>
+
+    <div class="auth-field" style="margin-top:22px;margin-bottom:6px">
+      <label for="acctEmail">Email (cannot be changed)</label>
+      <input type="email" id="acctEmail" readonly disabled>
+      <p class="hint">Your email address is your account name, so it stays fixed. <span aria-hidden="true">🔒</span></p>
+    </div>
+    <p style="margin:4px 0 2px">
+      <span class="verified-badge" id="emailBadge" hidden>Email verified</span>
+      <span class="verified-badge warn" id="emailBadgeWarn" hidden>Email not confirmed</span>
+      <button class="btn ghost acct-mini" type="button" id="resendConfirm" hidden>Resend confirmation email</button>
+    </p>
+    <div class="auth-msg success" id="resendMsg" hidden>Confirmation email sent. Please check your inbox and open the link in it.</div>
+    <div class="auth-msg error" id="resendError" role="alert" hidden></div>
+
+    <h3 style="margin:24px 0 12px">Edit profile</h3>
+    <form id="profileForm" novalidate>
+      <div class="auth-field">
+        <label for="profName">Display name</label>
+        <input type="text" id="profName" name="name" autocomplete="name" placeholder="Your name">
+      </div>
+      <div class="auth-field">
+        <label for="profPhone">Mobile number (optional)</label>
+        <input type="tel" id="profPhone" name="phone" autocomplete="tel" placeholder="+91 98765 43210">
+        <p class="hint">Stored on your account only, so it is there when you need it. Leave it empty and save to remove the number.</p>
+      </div>
+      <div class="auth-field">
+        <label for="profPhoto">Profile photo (optional)</label>
+        <div class="photo-row">
+          <div class="acct-avatar sm" id="photoPreview">C</div>
+          <input type="file" id="profPhoto" accept="image/*">
+        </div>
+        <p class="hint">The photo is cropped to a square in your browser and stored in your account. It is saved when you press Save profile.</p>
+        <button class="btn ghost acct-mini" type="button" id="removePhoto" hidden>Remove photo</button>
+      </div>
+      <div class="auth-msg error" id="profileError" role="alert" hidden></div>
+      <div class="auth-msg success" id="profileMsg" hidden>Your profile has been saved.</div>
+      <button class="btn auth-submit acct-btn" type="submit" id="profileSave">Save profile</button>
+    </form>
+  </div>
+
+  <!-- B. Security: change password with the current password -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Security</h3>
+    <p style="color:var(--muted);margin-bottom:16px">Change your password here. For your safety, your current password is checked first — the change only goes through when it is correct.</p>
+    <form id="pwForm" novalidate style="max-width:460px">
+      <div class="auth-field">
+        <label for="pwCurrent">Current password</label>
+        <input type="password" id="pwCurrent" autocomplete="current-password" placeholder="Your current password">
+      </div>
+      <div class="auth-field">
+        <label for="pwNew">New password</label>
+        <input type="password" id="pwNew" autocomplete="new-password" placeholder="Choose a new password">
+        <p class="hint">Use at least 8 characters. A longer phrase you can remember is stronger than a short complicated one.</p>
+      </div>
+      <div class="auth-field">
+        <label for="pwConfirm">Confirm new password</label>
+        <input type="password" id="pwConfirm" autocomplete="new-password" placeholder="Type the new password again">
+      </div>
+      <div class="auth-msg error" id="pwError" role="alert" hidden></div>
+      <div class="auth-msg success" id="pwMsg" hidden>Your password has been changed.</div>
+      <button class="btn auth-submit acct-btn" type="submit" id="pwSubmit">Change password</button>
+      <p class="auth-alt" style="text-align:left">Forgot your current password? <a href="reset-password.html">Reset it by email</a></p>
+    </form>
+  </div>
+
+  <!-- C. Two-factor authentication -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Two-factor authentication</h3>
+    <p style="color:var(--muted);margin-bottom:14px">Add a second step to signing in: after your password, a 6-digit code from an authenticator app on your phone. Use an app such as Google Authenticator, Microsoft Authenticator or Authy.</p>
+    <p id="mfaStatusLine" style="margin-bottom:14px"><strong>Status:</strong> <span style="color:var(--muted)">Checking…</span></p>
+
+    <div id="mfaOff" hidden>
+      <button class="btn acct-btn" type="button" id="mfaStart">Turn on two-factor authentication</button>
+      <div id="mfaSetup" hidden style="margin-top:18px">
+        <p style="color:var(--muted);margin-bottom:12px">1. Open your authenticator app and scan this QR code:</p>
+        <div class="mfa-qr"><img id="mfaQr" alt="Two-factor setup QR code" width="200" height="200"></div>
+        <p style="color:var(--muted);margin:14px 0 6px">Or type this key into the app by hand:</p>
+        <p class="mfa-secret" id="mfaSecret"></p>
+        <form id="mfaVerifyForm" novalidate style="max-width:460px;margin-top:16px">
+          <div class="auth-field">
+            <label for="mfaCode">2. Enter the 6-digit code the app shows</label>
+            <input type="text" id="mfaCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+          </div>
+          <button class="btn auth-submit acct-btn" type="submit" id="mfaVerifyBtn">Verify and turn on</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="mfaOn" hidden>
+      <p id="mfaOnSince" style="color:var(--muted);margin-bottom:14px"></p>
+      <button class="btn ghost" type="button" id="mfaOffBtn">Turn off two-factor authentication</button>
+      <form id="mfaOffForm" novalidate hidden style="max-width:460px;margin-top:16px">
+        <div class="auth-field">
+          <label for="mfaOffCode">Enter a current 6-digit code to confirm</label>
+          <input type="text" id="mfaOffCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+        </div>
+        <button class="btn auth-submit acct-btn" type="submit" id="mfaOffVerify">Verify code and turn off</button>
+      </form>
+    </div>
+
+    <div class="auth-msg error" id="mfaError" role="alert" hidden style="margin-top:16px"></div>
+    <div class="auth-msg success" id="mfaMsg" hidden style="margin-top:16px"></div>
+    <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:16px">If you lose access to your authenticator app, contact us through the <a href="contact.html">contact page</a> and we will help you regain access after verifying your identity.</p>
+  </div>
+
+  <!-- D. Devices and sessions -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Devices &amp; sessions</h3>
+    <p style="color:var(--muted);margin-bottom:16px">This shows the device you are using now. To end your account session everywhere at once, use Sign out of all devices.</p>
+    <div class="sess-row"><span class="sess-label">Device</span><span class="sess-value" id="sessDevice">—</span></div>
+    <div class="sess-row"><span class="sess-label">Browser</span><span class="sess-value" id="sessBrowser">—</span></div>
+    <div class="sess-row"><span class="sess-label">Signed in</span><span class="sess-value" id="sessWhen">—</span></div>
+    <div class="sess-row"><span class="sess-label">IP address</span><span class="sess-value" id="sessIp">Loading…</span></div>
+    <div class="sess-row"><span class="sess-label">Location</span><span class="sess-value" id="sessLoc">Loading…</span></div>
+    <div class="sess-row"><span class="sess-label">Network</span><span class="sess-value" id="sessNet">Loading…</span></div>
+    <div class="btns" style="justify-content:flex-start;margin-top:22px">
+      <button class="btn" type="button" id="acctSignOut">Sign out</button>
+      <button class="btn ghost" type="button" id="acctSignOutAll">Sign out of all devices</button>
     </div>
   </div>
 
+  <!-- E. Saved tools -->
   <div class="grid">
     <div class="card">
       <h3>My Favourite Tools</h3>
@@ -58,6 +176,7 @@
     </div>
   </div>
 
+  <!-- F. Delete on request -->
   <div class="note" style="margin-top:22px"><strong>Delete your account:</strong> accounts are deleted on request, by a person, so nothing is removed by accident. To delete your account and its stored details, contact us through the <a href="contact.html">contact page</a> from your account email, and we will delete it for you.</div>
 </div>
 </div></section>
@@ -74,13 +193,25 @@
   var signedOut = document.getElementById("accountSignedOut");
   var main = document.getElementById("accountMain");
 
+  function $(id) { return document.getElementById(id); }
+  function show(el, msg) { if (msg != null) el.textContent = msg; el.hidden = !msg; }
+  function fmtDate(iso, withTime) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    var opts = withTime
+      ? { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }
+      : { day: "numeric", month: "long", year: "numeric" };
+    return d.toLocaleDateString("en-GB", opts);
+  }
+
+  /* ---------------- favourites + recent (as before) ---------------- */
   function toolTitle(slug) {
     return slug.split("-").map(function (w) {
       return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
     }).join(" ");
   }
   function toolUrl(slug) { return "tools-preview/" + slug + "/"; }
-
   function fillList(listEl, emptyEl, items) {
     listEl.innerHTML = "";
     items.forEach(function (it) {
@@ -95,6 +226,358 @@
     listEl.hidden = items.length === 0;
   }
 
+  /* ---------------- profile ---------------- */
+  function validAvatar(v) { return typeof v === "string" && v.indexOf("data:image/") === 0; }
+  function paintAvatar(el, user) {
+    var meta = (user && user.user_metadata) || {};
+    var name = meta.display_name || (user && user.email) || "Your account";
+    if (validAvatar(meta.avatar)) {
+      el.innerHTML = "";
+      var img = document.createElement("img");
+      img.src = meta.avatar;
+      img.alt = "";
+      el.appendChild(img);
+    } else {
+      el.textContent = name.charAt(0).toUpperCase() || "A";
+    }
+  }
+
+  var profileDirty = false;
+  var pendingAvatar = null;   // data URL chosen but not saved yet
+  var avatarRemoved = false;  // photo marked for removal, not saved yet
+  ["profName", "profPhone"].forEach(function (id) {
+    $(id).addEventListener("input", function () { profileDirty = true; });
+  });
+
+  $("profPhoto").addEventListener("change", function () {
+    var input = $("profPhoto");
+    var file = input.files && input.files[0];
+    if (!file) return;
+    show($("profileError"), "");
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var size = 128;
+          var canvas = document.createElement("canvas");
+          canvas.width = size; canvas.height = size;
+          var ctx = canvas.getContext("2d");
+          var side = Math.min(img.naturalWidth, img.naturalHeight);
+          var sx = (img.naturalWidth - side) / 2, sy = (img.naturalHeight - side) / 2;
+          ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+          var url = canvas.toDataURL("image/jpeg", 0.85);
+          var q = 0.7;
+          while (url.length > 39000 && q >= 0.3) { url = canvas.toDataURL("image/jpeg", q); q -= 0.15; }
+          if (url.length > 40000) { show($("profileError"), "That photo is too detailed to save as a profile picture. Please choose a simpler image."); return; }
+          pendingAvatar = url;
+          avatarRemoved = false;
+          profileDirty = true;
+          var prev = $("photoPreview");
+          prev.innerHTML = "";
+          var pimg = document.createElement("img");
+          pimg.src = url; pimg.alt = "";
+          prev.appendChild(pimg);
+          $("removePhoto").hidden = false;
+        } catch (e) {
+          show($("profileError"), "That photo could not be read. Please choose an image file.");
+        }
+      };
+      img.onerror = function () { show($("profileError"), "That photo could not be read. Please choose an image file."); };
+      img.src = reader.result;
+    };
+    reader.onerror = function () { show($("profileError"), "That photo could not be read. Please choose an image file."); };
+    reader.readAsDataURL(file);
+  });
+
+  $("removePhoto").addEventListener("click", function () {
+    pendingAvatar = null;
+    avatarRemoved = true;
+    profileDirty = true;
+    $("profPhoto").value = "";
+    $("removePhoto").hidden = true;
+    paintAvatar($("photoPreview"), window.CSAuth.getUser());
+    // Show the initial again right away instead of the removed photo.
+    var user = window.CSAuth.getUser();
+    if (user) {
+      var meta = user.user_metadata || {};
+      var name = meta.display_name || user.email || "A";
+      $("photoPreview").textContent = ($("profName").value.trim() || name).charAt(0).toUpperCase() || "A";
+    }
+  });
+
+  $("profileForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    show($("profileError"), "");
+    show($("profileMsg"), "");
+    var name = $("profName").value.trim();
+    var phone = $("profPhone").value.trim();
+    if (phone) {
+      if (!/^[\d\s+\-()]+$/.test(phone)) { show($("profileError"), "The mobile number can only contain digits, spaces, +, - and brackets."); return; }
+      var digits = phone.replace(/\D/g, "").length;
+      if (digits < 7 || digits > 15) { show($("profileError"), "Please enter a mobile number with 7 to 15 digits, or leave it empty."); return; }
+    }
+    var btn = $("profileSave");
+    btn.disabled = true;
+    btn.textContent = "Saving…";
+    function done(ok, errMsg) {
+      btn.disabled = false;
+      btn.textContent = "Save profile";
+      if (ok) {
+        profileDirty = false;
+        pendingAvatar = null;
+        avatarRemoved = false;
+        show($("profileMsg"), "Your profile has been saved.");
+      } else {
+        show($("profileError"), errMsg || "Your profile could not be saved. Please try again.");
+      }
+    }
+    window.CSAuth.updateProfile({ displayName: name, phone: phone }).then(function () {
+      if (avatarRemoved) return window.CSAuth.clearAvatar();
+      if (pendingAvatar) return window.CSAuth.setAvatar(pendingAvatar);
+      return null;
+    }).then(function () { done(true); }, function (err) { done(false, err.message); });
+  });
+
+  $("resendConfirm").addEventListener("click", function () {
+    show($("resendError"), "");
+    show($("resendMsg"), "");
+    var btn = $("resendConfirm");
+    btn.disabled = true;
+    window.CSAuth.resendConfirmation().then(function () {
+      btn.disabled = false;
+      show($("resendMsg"), "Confirmation email sent. Please check your inbox and open the link in it.");
+    }, function (err) {
+      btn.disabled = false;
+      show($("resendError"), err.message || "The confirmation email could not be sent. Please try again.");
+    });
+  });
+
+  /* ---------------- change password ---------------- */
+  $("pwForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    show($("pwError"), "");
+    show($("pwMsg"), "");
+    var cur = $("pwCurrent").value;
+    var nw = $("pwNew").value;
+    var cf = $("pwConfirm").value;
+    if (!cur) { show($("pwError"), "Please enter your current password."); return; }
+    if (nw.length < 8) { show($("pwError"), "Please choose a new password of at least 8 characters."); return; }
+    if (nw !== cf) { show($("pwError"), "The two new passwords do not match. Please type them again."); return; }
+    var btn = $("pwSubmit");
+    btn.disabled = true;
+    btn.textContent = "Changing…";
+    window.CSAuth.changePasswordWithCurrent(cur, nw).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Change password";
+      $("pwCurrent").value = ""; $("pwNew").value = ""; $("pwConfirm").value = "";
+      show($("pwMsg"), "Your password has been changed.");
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Change password";
+      show($("pwError"), err.message || "The password could not be changed. Please try again.");
+    });
+  });
+
+  /* ---------------- two-factor authentication ---------------- */
+  var mfaFactorId = null;
+  var mfaPendingFactorId = null;
+
+  function mfaShowError(msg) { show($("mfaError"), msg || ""); }
+  function mfaShowMsg(msg) { show($("mfaMsg"), msg || ""); }
+
+  function loadMfa() {
+    window.CSAuth.mfaStatus().then(function (st) {
+      mfaFactorId = st.factorId;
+      $("mfaOff").hidden = st.enabled;
+      $("mfaOn").hidden = !st.enabled;
+      $("mfaStatusLine").innerHTML = "";
+      var strong = document.createElement("strong");
+      strong.textContent = "Status: ";
+      var span = document.createElement("span");
+      span.textContent = st.enabled ? "On — signing in asks for a code from your authenticator app." : "Off — signing in needs only your password.";
+      span.style.color = st.enabled ? "#b9efcb" : "var(--muted)";
+      $("mfaStatusLine").appendChild(strong);
+      $("mfaStatusLine").appendChild(span);
+      if (st.enabled) {
+        $("mfaOnSince").textContent = st.createdAt
+          ? "Turned on " + fmtDate(st.createdAt, false) + "."
+          : "Two-factor authentication is on for your account.";
+        $("mfaOffForm").hidden = true;
+      }
+    }, function () {
+      $("mfaStatusLine").innerHTML = "";
+      var strong = document.createElement("strong");
+      strong.textContent = "Status: ";
+      var span = document.createElement("span");
+      span.textContent = "Could not be checked just now. Please reload the page in a little while.";
+      span.style.color = "var(--muted)";
+      $("mfaStatusLine").appendChild(strong);
+      $("mfaStatusLine").appendChild(span);
+    });
+  }
+
+  $("mfaStart").addEventListener("click", function () {
+    mfaShowError(""); mfaShowMsg("");
+    var btn = $("mfaStart");
+    btn.disabled = true;
+    btn.textContent = "Preparing…";
+    window.CSAuth.mfaEnroll().then(function (en) {
+      btn.disabled = false;
+      btn.textContent = "Turn on two-factor authentication";
+      mfaPendingFactorId = en.factorId;
+      var qr = en.qrCode || "";
+      // Supabase returns the QR as SVG markup; turn it into an <img> source.
+      $("mfaQr").src = qr.indexOf("<svg") === 0
+        ? "data:image/svg+xml;utf8," + encodeURIComponent(qr)
+        : qr;
+      $("mfaSecret").textContent = en.secret || "";
+      $("mfaSetup").hidden = false;
+      btn.hidden = true;
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Turn on two-factor authentication";
+      mfaShowError(err.message || "Two-factor setup could not be started. Please try again.");
+    });
+  });
+
+  $("mfaVerifyForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    mfaShowError(""); mfaShowMsg("");
+    var code = $("mfaCode").value.replace(/\D/g, "");
+    if (code.length !== 6) { mfaShowError("Please enter the 6-digit code from your authenticator app."); return; }
+    if (!mfaPendingFactorId) { mfaShowError("The setup has expired. Please reload the page and start again."); return; }
+    var btn = $("mfaVerifyBtn");
+    btn.disabled = true;
+    btn.textContent = "Verifying…";
+    window.CSAuth.mfaVerifyEnroll(mfaPendingFactorId, code).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Verify and turn on";
+      $("mfaSetup").hidden = true;
+      mfaPendingFactorId = null;
+      mfaShowMsg("Two-factor authentication is on. From now on, signing in will also ask for a code from your authenticator app.");
+      loadMfa();
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Verify and turn on";
+      mfaShowError(err.message || "That code is not correct. Check your authenticator app and try again.");
+    });
+  });
+
+  $("mfaOffBtn").addEventListener("click", function () {
+    mfaShowError(""); mfaShowMsg("");
+    if (!mfaFactorId) { mfaShowError("Two-factor status could not be read. Please reload the page."); return; }
+    window.CSAuth.getAAL().then(function (aal) {
+      if (aal.currentLevel === "aal2") {
+        doUnenroll();
+      } else {
+        $("mfaOffForm").hidden = false;
+      }
+    }, function () {
+      // If the level cannot be read, ask for a code anyway: verifying it
+      // raises the session, after which turning off can proceed.
+      $("mfaOffForm").hidden = false;
+    });
+  });
+
+  $("mfaOffForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    mfaShowError(""); mfaShowMsg("");
+    var code = $("mfaOffCode").value.replace(/\D/g, "");
+    if (code.length !== 6) { mfaShowError("Please enter the 6-digit code from your authenticator app."); return; }
+    var btn = $("mfaOffVerify");
+    btn.disabled = true;
+    btn.textContent = "Verifying…";
+    window.CSAuth.mfaChallengeAndVerify(mfaFactorId, code).then(function () {
+      btn.disabled = false;
+      btn.textContent = "Verify code and turn off";
+      doUnenroll();
+    }, function (err) {
+      btn.disabled = false;
+      btn.textContent = "Verify code and turn off";
+      mfaShowError(err.message || "That code is not correct. Check your authenticator app and try again.");
+    });
+  });
+
+  function doUnenroll() {
+    window.CSAuth.mfaUnenroll(mfaFactorId).then(function () {
+      mfaFactorId = null;
+      $("mfaOffForm").hidden = true;
+      mfaShowMsg("Two-factor authentication is off. Signing in now needs only your password.");
+      loadMfa();
+    }, function (err) {
+      mfaShowError(err.message || "Two-factor authentication could not be turned off. Please try again.");
+    });
+  }
+
+  /* ---------------- this device ---------------- */
+  function parseUA(ua) {
+    var os = "Unknown system";
+    if (/Windows NT/.test(ua)) os = "Windows";
+    else if (/Android/.test(ua)) os = "Android";
+    else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+    else if (/Mac OS X/.test(ua)) os = "macOS";
+    else if (/Linux/.test(ua)) os = "Linux";
+    var browser = "Unknown browser";
+    if (/Edg\//.test(ua)) browser = "Microsoft Edge";
+    else if (/OPR\/|Opera/.test(ua)) browser = "Opera";
+    else if (/Firefox\//.test(ua)) browser = "Firefox";
+    else if (/Chrome\//.test(ua)) browser = "Google Chrome";
+    else if (/Safari\//.test(ua)) browser = "Safari";
+    var kind = /Mobi|Android|iPhone|iPad|iPod/.test(ua) ? "Mobile" : "Desktop";
+    return { os: os, browser: browser, kind: kind };
+  }
+
+  function loadDevice(user) {
+    var d = parseUA(window.navigator.userAgent || "");
+    $("sessDevice").textContent = d.os + " · " + d.kind;
+    $("sessBrowser").textContent = d.browser;
+    window.CSAuth.getSessionInfo().then(function (info) {
+      $("sessWhen").textContent = info.sessionCreatedAt ? fmtDate(info.sessionCreatedAt, true) : "This visit";
+    });
+    if (!window.fetch) {
+      $("sessIp").textContent = "Network details could not be loaded right now.";
+      $("sessLoc").textContent = "Network details could not be loaded right now.";
+      $("sessNet").textContent = "Network details could not be loaded right now.";
+      return;
+    }
+    window.fetch("https://ipwho.is/").then(function (r) { return r.json(); }).then(function (data) {
+      if (!data || data.success === false || !data.ip) throw new Error("lookup failed");
+      $("sessIp").textContent = data.ip;
+      var loc = [data.city, data.country].filter(Boolean).join(", ");
+      $("sessLoc").textContent = loc || "Not available";
+      var conn = data.connection || {};
+      $("sessNet").textContent = conn.isp || conn.org || "Not available";
+    }).catch(function () {
+      $("sessIp").textContent = "Network details could not be loaded right now.";
+      $("sessLoc").textContent = "Network details could not be loaded right now.";
+      $("sessNet").textContent = "Network details could not be loaded right now.";
+    });
+  }
+
+  /* ---------------- sign out ---------------- */
+  $("acctSignOut").addEventListener("click", function () {
+    window.CSAuth.signOut().then(function () { window.location.href = "index.html"; });
+  });
+
+  var allArmed = false, allTimer = null;
+  $("acctSignOutAll").addEventListener("click", function () {
+    var btn = $("acctSignOutAll");
+    if (!allArmed) {
+      allArmed = true;
+      btn.textContent = "Tap again to confirm — this signs out every device";
+      allTimer = setTimeout(function () {
+        allArmed = false;
+        btn.textContent = "Sign out of all devices";
+      }, 5000);
+      return;
+    }
+    clearTimeout(allTimer);
+    btn.disabled = true;
+    window.CSAuth.signOutAll().then(function () { window.location.href = "index.html"; });
+  });
+
+  /* ---------------- render ---------------- */
   function render(user) {
     loading.hidden = true;
     if (!user) {
@@ -106,23 +589,37 @@
     main.hidden = false;
     var meta = user.user_metadata || {};
     var name = meta.display_name || user.email || "Your account";
-    document.getElementById("acctAvatar").textContent = name.charAt(0).toUpperCase();
-    document.getElementById("acctName").textContent = name;
-    document.getElementById("acctEmail").textContent = user.email || "";
+    $("acctName").textContent = name;
+    paintAvatar($("acctAvatar"), user);
     var since = user.created_at ? new Date(user.created_at) : null;
-    document.getElementById("acctSince").textContent = since && !isNaN(since.getTime())
-      ? "Member since " + since.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    $("acctSince").textContent = since && !isNaN(since.getTime())
+      ? "Member since " + fmtDate(user.created_at, false)
       : "";
+
+    // Email: read-only by design, with its confirmation state.
+    $("acctEmail").value = user.email || "";
+    var confirmed = !!user.email_confirmed_at;
+    $("emailBadge").hidden = !confirmed;
+    $("emailBadgeWarn").hidden = confirmed;
+    $("resendConfirm").hidden = confirmed;
+
+    // Edit form prefill (never while the visitor is mid-edit).
+    if (!profileDirty) {
+      $("profName").value = meta.display_name || "";
+      $("profPhone").value = meta.phone || "";
+      paintAvatar($("photoPreview"), user);
+      $("removePhoto").hidden = !validAvatar(meta.avatar);
+    }
+
+    loadMfa();
+    loadDevice(user);
+
     var favs = window.CSAuth.getFavorites().map(function (slug) {
       return { slug: slug, title: toolTitle(slug) };
     });
-    fillList(document.getElementById("favList"), document.getElementById("favEmpty"), favs);
-    fillList(document.getElementById("recentList"), document.getElementById("recentEmpty"), window.CSAuth.getRecent());
+    fillList($("favList"), $("favEmpty"), favs);
+    fillList($("recentList"), $("recentEmpty"), window.CSAuth.getRecent());
   }
-
-  document.getElementById("acctSignOut").addEventListener("click", function () {
-    window.CSAuth.signOut().then(function () { window.location.href = "index.html"; });
-  });
 
   window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
   window.CSAuth.onChange(function (user) { render(user); });
