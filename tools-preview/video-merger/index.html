@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Video Merger - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Video Merger</h1>
+<p class="tool-sub">Join two or more small videos into one MP4, in your chosen order.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). Keep the combined size under about 50 MB and use short clips; any single file over 100 MB is refused. Clips are re-encoded to one size (the first clip's size), so clips recorded on different devices still join cleanly. The engine is a single-thread build, so merging is slower than a desktop app. Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Join two or more small videos into one MP4, played one after another in the order shown.</p>
+
+  <label for="vm-files">Choose video files</label>
+  <input id="vm-files" type="file" accept="video/*" multiple>
+  <div id="vm-list"></div>
+
+  <div class="btn-row">
+    <button id="vm-run" class="btn" type="button" disabled>Merge into one MP4</button>
+  </div>
+  <p id="vm-status" class="status" role="status"></p>
+  <div id="vm-result"></div>
+  <div id="vm-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var vmStatusEl = document.getElementById("vm-status");
+var vmFiles = [];
+
+AV.wirePage({
+  statusEl: vmStatusEl,
+  logEl: document.getElementById("vm-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+function renderVmList() {
+  var list = document.getElementById("vm-list");
+  list.innerHTML = "";
+  vmFiles.forEach(function (file, idx) {
+    var row = document.createElement("div");
+    row.className = "file-row";
+    var name = document.createElement("p");
+    name.className = "fname";
+    name.textContent = (idx + 1) + ". " + file.name;
+    var size = document.createElement("p");
+    size.className = "pages";
+    size.textContent = AV.formatBytes(file.size);
+    var up = document.createElement("button");
+    up.type = "button"; up.className = "btn small ghost"; up.textContent = "Move up"; up.disabled = idx === 0;
+    up.addEventListener("click", function () { var t = vmFiles[idx - 1]; vmFiles[idx - 1] = vmFiles[idx]; vmFiles[idx] = t; renderVmList(); });
+    var down = document.createElement("button");
+    down.type = "button"; down.className = "btn small ghost"; down.textContent = "Move down"; down.disabled = idx === vmFiles.length - 1;
+    down.addEventListener("click", function () { var t = vmFiles[idx + 1]; vmFiles[idx + 1] = vmFiles[idx]; vmFiles[idx] = t; renderVmList(); });
+    var remove = document.createElement("button");
+    remove.type = "button"; remove.className = "btn small ghost"; remove.textContent = "Remove";
+    remove.addEventListener("click", function () { vmFiles.splice(idx, 1); renderVmList(); });
+    row.appendChild(name); row.appendChild(size); row.appendChild(up); row.appendChild(down); row.appendChild(remove);
+    list.appendChild(row);
+  });
+  document.getElementById("vm-run").disabled = vmFiles.length < 2;
+}
+
+document.getElementById("vm-files").addEventListener("change", function (event) {
+  var picked = Array.prototype.slice.call(event.target.files || []);
+  picked.forEach(function (f) { vmFiles.push(f); });
+  renderVmList();
+  event.target.value = "";
+});
+
+document.getElementById("vm-run").addEventListener("click", async function () {
+  if (vmFiles.length < 2) { return; }
+  var showMsg = AV.statusFn(vmStatusEl);
+  for (var i = 0; i < vmFiles.length; i++) {
+    if (!AV.checkFile(vmFiles[i], showMsg)) { return; }
+  }
+  vmStatusEl.dataset.busy = "1";
+  var names = [];
+  try {
+    var ok = await AV.ensureEngine(showMsg);
+    if (!ok) { delete vmStatusEl.dataset.busy; return; }
+    vmStatusEl.className = "status";
+    vmStatusEl.textContent = "Merging " + vmFiles.length + " videos...";
+    var baseArgs = [];
+    for (var j = 0; j < vmFiles.length; j++) {
+      var inName = "in" + j + "." + (AV.extOf(vmFiles[j].name) || "bin");
+      names.push(inName);
+      await AV.writeFile(inName, new Uint8Array(await vmFiles[j].arrayBuffer()));
+      baseArgs.push("-i", inName);
+    }
+    // Normalise every clip to the first clip's frame size, then join.
+    var chains = "";
+    var concatIn = "";
+    for (var k = 0; k < vmFiles.length; k++) {
+      chains += "[" + k + ":v]scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=1[v" + k + "];";
+      concatIn += "[v" + k + "][" + k + ":a]";
+    }
+    var withAudio = baseArgs.concat([
+      "-filter_complex", chains + concatIn + "concat=n=" + vmFiles.length + ":v=1:a=1[v][a]",
+      "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-c:a", "aac", "merged.mp4"
+    ]);
+    var note = "";
+    try {
+      await AV.exec(withAudio);
+    } catch (e) {
+      // A clip without an audio track breaks the audio join; retry video-only.
+      var videoOnlyIn = "";
+      for (var m = 0; m < vmFiles.length; m++) { videoOnlyIn += "[v" + m + "]"; }
+      var videoOnly = baseArgs.concat([
+        "-filter_complex", chains + videoOnlyIn + "concat=n=" + vmFiles.length + ":v=1:a=0[v]",
+        "-map", "[v]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "merged.mp4"
+      ]);
+      await AV.exec(videoOnly);
+      note = " Note: the merged video has no sound, because not all clips had an audio track.";
+    }
+    var data = await AV.readFile("merged.mp4");
+    var blob = new Blob([data], { type: "video/mp4" });
+    var url = URL.createObjectURL(blob);
+    var resultEl = document.getElementById("vm-result");
+    resultEl.innerHTML = "";
+    var link = document.createElement("a");
+    link.className = "download";
+    link.href = url;
+    link.download = "merged-video.mp4";
+    link.textContent = "Download merged-video.mp4 (" + AV.formatBytes(blob.size) + ")";
+    resultEl.appendChild(link);
+    delete vmStatusEl.dataset.busy;
+    vmStatusEl.className = "status ok";
+    vmStatusEl.textContent = "Done. " + vmFiles.length + " videos merged into one MP4." + note;
+  } catch (err) {
+    delete vmStatusEl.dataset.busy;
+    vmStatusEl.textContent = "Merging failed. One of the files may be damaged or in an unusual format. The engine log below shows the details.";
+    vmStatusEl.className = "status error";
+  } finally {
+    names.forEach(function (n) { AV.deleteFile(n); });
+    AV.deleteFile("merged.mp4");
+  }
+});
+</script>
+</body>
+</html>
