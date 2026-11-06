@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Base64 Encoder &amp; Decoder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Base64 Encoder &amp; Decoder</h1>
+<p class="tool-sub">Encode or decode Base64, for text and for files.</p>
+<div class="tool-card">
+  <h2 style="margin-top:0">Text</h2>
+  <p>Encode plain text to Base64, or decode Base64 back to text. Full Unicode is supported, so Hindi and emoji text work too.</p>
+  <label for="b64-text-in">Text input</label>
+  <textarea id="b64-text-in" rows="6" placeholder="Type text, or paste Base64 here..."></textarea>
+  <div class="btn-row">
+    <button id="b64-encode" class="btn" type="button">Encode to Base64</button>
+    <button id="b64-decode" class="btn ghost" type="button">Decode from Base64</button>
+  </div>
+  <label for="b64-text-out">Result</label>
+  <textarea id="b64-text-out" rows="6" readonly placeholder="The result will appear here."></textarea>
+  <div class="btn-row">
+    <button id="b64-copy" class="btn small ghost" type="button">Copy result</button>
+  </div>
+  <p id="b64-text-status" class="status" role="status"></p>
+</div>
+<div class="tool-card">
+  <h2 style="margin-top:0">File</h2>
+  <p>Turn a small file (up to about 2 MB) into a Base64 string, or save a Base64 string back as a file — handy for data URIs and testing.</p>
+  <label for="b64-file">Choose a file to encode</label>
+  <input id="b64-file" type="file">
+  <p id="b64-file-status" class="status" role="status"></p>
+  <label for="b64-file-out">File as Base64</label>
+  <textarea id="b64-file-out" rows="5" placeholder="The Base64 of the chosen file will appear here. You can also paste Base64 here and save it as a file below."></textarea>
+  <div class="row2">
+    <div>
+      <label for="b64-save-name">Save decoded Base64 as file name</label>
+      <input id="b64-save-name" type="text" value="decoded-file.bin">
+    </div>
+    <div>
+      <label for="b64-save-type">File type (MIME)</label>
+      <input id="b64-save-type" type="text" value="application/octet-stream">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="b64-save" class="btn" type="button">Save as file</button>
+  </div>
+</div>
+<div class="note"><strong>Privacy:</strong> everything runs in this browser tab. No text or file is sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var b64TextStatus = document.getElementById("b64-text-status");
+
+function textToBase64(text) {
+  var bytes = new TextEncoder().encode(text);
+  var binary = "";
+  var chunk = 0x8000;
+  for (var i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+function base64ToText(b64) {
+  var cleaned = b64.replace(/\s+/g, "");
+  var binary = atob(cleaned);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) { bytes[i] = binary.charCodeAt(i); }
+  return new TextDecoder().decode(bytes);
+}
+
+document.getElementById("b64-encode").addEventListener("click", function () {
+  var input = document.getElementById("b64-text-in").value;
+  document.getElementById("b64-text-out").value = textToBase64(input);
+  b64TextStatus.className = "status ok";
+  b64TextStatus.textContent = "Encoded " + input.length + " characters of text.";
+});
+
+document.getElementById("b64-decode").addEventListener("click", function () {
+  var input = document.getElementById("b64-text-in").value;
+  try {
+    document.getElementById("b64-text-out").value = base64ToText(input);
+    b64TextStatus.className = "status ok";
+    b64TextStatus.textContent = "Decoded successfully.";
+  } catch (err) {
+    b64TextStatus.className = "status error";
+    b64TextStatus.textContent = "That is not valid Base64. Check for missing or extra characters and try again.";
+  }
+});
+
+document.getElementById("b64-copy").addEventListener("click", function () {
+  var out = document.getElementById("b64-text-out");
+  if (!out.value) { return; }
+  function done() {
+    b64TextStatus.className = "status ok";
+    b64TextStatus.textContent = "Result copied to the clipboard.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(out.value).then(done).catch(function () { out.select(); document.execCommand("copy"); done(); });
+  } else { out.select(); document.execCommand("copy"); done(); }
+});
+
+document.getElementById("b64-file").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  var status = document.getElementById("b64-file-status");
+  if (!file) { return; }
+  if (file.size > 2 * 1024 * 1024) {
+    status.className = "status error";
+    status.textContent = "That file is over 2 MB. Base64 of big files makes very long text that browsers handle badly, so this tool stops at 2 MB.";
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function () {
+    var result = String(reader.result || "");
+    var comma = result.indexOf(",");
+    document.getElementById("b64-file-out").value = comma >= 0 ? result.slice(comma + 1) : result;
+    status.className = "status ok";
+    status.textContent = "Encoded " + file.name + " (" + file.size.toLocaleString("en-IN") + " bytes). Suggested save name and type are filled in below.";
+    document.getElementById("b64-save-name").value = file.name;
+    document.getElementById("b64-save-type").value = file.type || "application/octet-stream";
+  };
+  reader.onerror = function () {
+    status.className = "status error";
+    status.textContent = "The file could not be read.";
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById("b64-save").addEventListener("click", function () {
+  var status = document.getElementById("b64-file-status");
+  var b64 = document.getElementById("b64-file-out").value.replace(/\s+/g, "");
+  if (!b64) {
+    status.className = "status error";
+    status.textContent = "There is no Base64 text to save yet.";
+    return;
+  }
+  try {
+    var binary = atob(b64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) { bytes[i] = binary.charCodeAt(i); }
+    var name = document.getElementById("b64-save-name").value.trim() || "decoded-file.bin";
+    var type = document.getElementById("b64-save-type").value.trim() || "application/octet-stream";
+    var blob = new Blob([bytes], { type: type });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+    status.className = "status ok";
+    status.textContent = "Saved " + name + " (" + bytes.length.toLocaleString("en-IN") + " bytes).";
+  } catch (err) {
+    status.className = "status error";
+    status.textContent = "That text is not valid Base64, so no file could be saved.";
+  }
+});
+</script>
+</body>
+</html>
