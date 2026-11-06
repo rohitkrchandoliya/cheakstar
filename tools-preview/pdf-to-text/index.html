@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>PDF to Text - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF to Text</h1>
+<p class="tool-sub">Pull the text out of a PDF and download it as a .txt file.</p>
+<div class="tool-card">
+  <p>Pull the readable text out of a PDF. Preview it here, then download it as a plain .txt file.</p>
+
+  <label for="pdf2txt-file">Choose a PDF file</label>
+  <input id="pdf2txt-file" type="file" accept="application/pdf,.pdf">
+  <div class="btn-row">
+    <button id="pdf2txt-run" class="btn" type="button" disabled>Extract text</button>
+    <button id="pdf2txt-download" class="btn ghost" type="button" disabled>Download .txt</button>
+  </div>
+  <p id="pdf2txt-status" class="status" aria-live="polite"></p>
+  <label for="pdf2txt-out">Extracted text</label>
+  <textarea id="pdf2txt-out" rows="12" readonly placeholder="The extracted text will appear here."></textarea>
+</div>
+<div class="note"><strong>Honest note:</strong> this reads the text stored inside the PDF. Scanned PDFs are pictures of pages — they contain no stored text, so extraction will come back empty for them (that needs OCR, which this free tool does not do). Everything runs in your browser using PDF.js by Mozilla; nothing is uploaded.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var pdf2txtFile = null;
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+  }
+
+  $("pdf2txt-file").addEventListener("change", function (event) {
+    var files = event.target.files || [];
+    pdf2txtFile = files.length > 0 ? files[0] : null;
+    $("pdf2txt-run").disabled = !pdf2txtFile;
+    if (pdf2txtFile) { setStatus($("pdf2txt-status"), "Selected: " + pdf2txtFile.name, false); }
+    event.target.value = "";
+  });
+
+  $("pdf2txt-run").addEventListener("click", function () {
+    if (!pdf2txtFile) { return; }
+    if (typeof pdfjsLib === "undefined") {
+      setStatus($("pdf2txt-status"), "The PDF viewer library (PDF.js) did not load. Check your connection and reload the page.", true);
+      return;
+    }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    setStatus($("pdf2txt-status"), "Extracting text...", false);
+    $("pdf2txt-download").disabled = true;
+    $("pdf2txt-out").value = "";
+    var reader = new FileReader();
+    reader.onload = function () {
+      pdfjsLib.getDocument({ data: new Uint8Array(reader.result) }).promise.then(function (pdf) {
+        var totalPages = pdf.numPages;
+        var parts = [];
+        var chain = Promise.resolve();
+        for (var n = 1; n <= totalPages; n++) {
+          (function (pageNum) {
+            chain = chain.then(function () {
+              setStatus($("pdf2txt-status"), "Reading page " + pageNum + " of " + totalPages + "...", false);
+              return pdf.getPage(pageNum).then(function (page) {
+                return page.getTextContent();
+              }).then(function (content) {
+                var lines = [];
+                var current = "";
+                content.items.forEach(function (item) {
+                  current += item.str;
+                  if (item.hasEOL) { lines.push(current); current = ""; }
+                  else { current += " "; }
+                });
+                if (current.trim()) { lines.push(current); }
+                parts.push("--- Page " + pageNum + " ---\n" + lines.join("\n"));
+              });
+            });
+          })(n);
+        }
+        return chain.then(function () {
+          var text = parts.join("\n\n");
+          $("pdf2txt-out").value = text;
+          var chars = text.replace(/\s+/g, "").length;
+          if (chars === 0) {
+            setStatus($("pdf2txt-status"), "No readable text was found in this PDF. It is probably a scanned document (pictures of pages), which needs OCR rather than text extraction.", true);
+            $("pdf2txt-download").disabled = true;
+          } else {
+            setStatus($("pdf2txt-status"), "Done. Extracted text from " + totalPages + (totalPages === 1 ? " page" : " pages") + " (" + text.length.toLocaleString("en-IN") + " characters).", false);
+            $("pdf2txt-download").disabled = false;
+          }
+        });
+      }).catch(function () {
+        setStatus($("pdf2txt-status"), "Could not read this PDF. It may be damaged or password-protected.", true);
+      });
+    };
+    reader.onerror = function () { setStatus($("pdf2txt-status"), "Could not read the file.", true); };
+    reader.readAsArrayBuffer(pdf2txtFile);
+  });
+
+  $("pdf2txt-download").addEventListener("click", function () {
+    var text = $("pdf2txt-out").value;
+    if (!text) { return; }
+    var base = pdf2txtFile ? pdf2txtFile.name.replace(/\.pdf$/i, "") : "extracted-text";
+    downloadBlob(new Blob([text], { type: "text/plain;charset=utf-8" }), base + ".txt");
+  });
+})();
+</script>
+</body>
+</html>
