@@ -10,7 +10,26 @@
   <meta property="og:description" content="Contact Cheakstar Private Limited — reach us through LinkedIn or our official store for books, training and website security checks.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/contact.html">
-<link rel="stylesheet" href="styles.css?v=20261106d">
+<script>
+/* Theme snippet (same block as theme-head-snippet.html): first paint
+   already carries the visitor's saved appearance choices. */
+(function () {
+  try {
+    var mode = "system";
+    try { mode = window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) {}
+    var dark = mode === "dark" || (mode !== "light" &&
+      !(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches));
+    var root = document.documentElement;
+    root.setAttribute("data-theme", dark ? "dark" : "light");
+    root.style.background = dark ? "#0a1628" : "#f2f5fa";
+    try {
+      if (window.localStorage.getItem("ck_reduce_motion") === "1") root.setAttribute("data-motion", "reduced");
+      if (window.localStorage.getItem("ck_text_size") === "large") root.setAttribute("data-textsize", "large");
+    } catch (e) {}
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="styles.css?v=20261106e">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
 <header class="site"><div class="wrap nav">
@@ -26,11 +45,23 @@
 <div class="card"><span class="tag">Orders &amp; Books</span><h3>Our Store</h3><p>Bought a book and something went wrong — a download that failed, or the wrong file? Use the contact/message option on the store and tell us your order details; we will sort it out.</p><a class="go" href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Go to the store →</a></div>
 <div class="card"><span class="tag">Free Learning</span><h3>ByteShield</h3><p>Our free cybersecurity and Python tutorials are published as ByteShield on YouTube, Instagram and Facebook — search "ByteShield" on your platform of choice.</p><a class="go" href="books.html">Or start with a book →</a></div>
 </div>
+<!-- Message form slot: the enquiry form itself lands here in the
+     additions phase; the login gate (gate.js) already guards the slot,
+     so signed-out visitors meet the lock card here while the public
+     channels above stay open to everyone. -->
+<div class="card" style="margin-top:40px">
+  <h3>Send us a message</h3>
+  <div id="contactFormSlot">
+    <p>You are signed in. Our online message form is being set up — for now, the fastest way to reach us is LinkedIn or the store's message option above, and we reply to every genuine message.</p>
+  </div>
+</div>
 <div class="note" style="margin-top:40px"><strong>For a website security check:</strong> message us on LinkedIn with your website's address and a line about your business. Remember — checks begin only after scope is agreed and you have given written authorization for your own website.</div>
 </div></section>
 <footer class="site"><div class="wrap foot">
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
-<script src="script.js?v=20261106c"></script>
+<script src="script.js?v=20261106e"></script>
+<script src="theme.js?v=20261106a"></script>
+<script src="gate.js?v=20261106a" data-cs-gate-run="contact"></script>
 </body></html>
