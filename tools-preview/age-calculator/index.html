@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Age Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,17 +15,17 @@
 <h1 class="tool-title">Age Calculator</h1>
 <p class="tool-sub">Work out an exact age in years, months and days from a date of birth.</p>
 <div class="tool-card">
-  <p>Work out an exact age from a date of birth: years, months and days — plus total days lived, the day of the week you were born, and when the next birthday falls.</p>
+  <p>Along with the exact age, you also get total days lived, the day of the week you were born, and when the next birthday falls.</p>
 
   <label for="age-dob">Date of birth</label>
   <input id="age-dob" type="date">
   <label for="age-asof">Age on this date (optional — leave blank for today)</label>
   <input id="age-asof" type="date">
   <div class="btn-row">
-    <button id="age-run" class="btn" type="button">Calculate age</button>
+    <button id="age-run" class="btn" type="button" data-autorun>Calculate age</button>
   </div>
   <p id="age-status" class="status" role="status"></p>
-  <div class="result" id="age-result" hidden>
+  <div class="result" id="age-result" hidden data-result>
     <p class="big" id="age-headline"></p>
     <div id="age-rows"></div>
   </div>
@@ -108,5 +107,7 @@ document.getElementById("age-run").addEventListener("click", function () {
   ageStatus.textContent = "Age calculated as of " + niceDate(asOf) + ".";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
