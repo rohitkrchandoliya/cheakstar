@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Sign In — Cheakstar</title>
+<meta name="description" content="Sign in to your Cheakstar account to reach your saved favourite tools and recently used tools.">
+<meta property="og:title" content="Sign In — Cheakstar">
+  <meta property="og:description" content="Sign in to your Cheakstar account to reach your saved favourite tools and recently used tools.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/login.html">
+<link rel="stylesheet" href="styles.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap">
+<h1>Welcome <span class="gold">Back</span></h1>
+<p class="sub">Sign in to your Cheakstar account to reach your saved favourite tools and your recently used tools. Every tool on this website stays free, signed in or not.</p>
+
+<div class="auth-card">
+  <div class="auth-msg info" id="loginNotice">Checking your sign-in state…</div>
+
+  <div id="loginSignedIn" hidden>
+    <p style="margin-bottom:16px">You are signed in as <strong id="loginWho"></strong>.</p>
+    <div class="btns" style="justify-content:flex-start;margin-top:0">
+      <a class="btn" href="account.html">My Account</a>
+      <button class="btn ghost" type="button" id="loginSignOut">Sign Out</button>
+    </div>
+  </div>
+
+  <form id="loginForm" novalidate>
+    <div class="auth-field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" name="email" autocomplete="email" required placeholder="you@example.com">
+    </div>
+    <div class="auth-field">
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" name="password" autocomplete="current-password" required placeholder="Your password">
+    </div>
+    <div class="auth-msg error" id="loginError" role="alert" hidden></div>
+    <button class="btn auth-submit" type="submit" id="loginSubmit">Sign In</button>
+    <p class="auth-alt">New to Cheakstar? <a href="signup.html">Create an account</a></p>
+    <p class="auth-alt" style="margin-top:6px"><a href="reset-password.html">Forgot your password?</a></p>
+  </form>
+</div>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+  "use strict";
+  var notice = document.getElementById("loginNotice");
+  var form = document.getElementById("loginForm");
+  var signedInBox = document.getElementById("loginSignedIn");
+  var errorBox = document.getElementById("loginError");
+  var submitBtn = document.getElementById("loginSubmit");
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.hidden = !msg; }
+  function userLabel(user) {
+    var meta = user.user_metadata || {};
+    return meta.display_name ? meta.display_name + " (" + user.email + ")" : user.email;
+  }
+  function render(user) {
+    if (user) {
+      document.getElementById("loginWho").textContent = userLabel(user);
+      signedInBox.hidden = false;
+      form.hidden = true;
+      notice.hidden = true;
+    } else {
+      signedInBox.hidden = true;
+      form.hidden = false;
+      if (!window.CSAuth.isAvailable()) {
+        notice.textContent = "The sign-in service could not be reached just now. The form still works if the service recovers, otherwise please try again in a little while.";
+        notice.hidden = false;
+      } else {
+        notice.hidden = true;
+      }
+    }
+  }
+
+  document.getElementById("loginSignOut").addEventListener("click", function () {
+    window.CSAuth.signOut().then(function () { window.location.reload(); });
+  });
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    showError("");
+    var email = document.getElementById("loginEmail").value.trim();
+    var password = document.getElementById("loginPassword").value;
+    if (!email || email.indexOf("@") < 1) { showError("Please enter a valid email address."); return; }
+    if (!password) { showError("Please enter your password."); return; }
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Signing in…";
+    window.CSAuth.signIn(email, password).then(function () {
+      window.location.href = "account.html";
+    }, function (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign In";
+      showError(err.message || "Sign-in failed. Please try again.");
+    });
+  });
+
+  window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
+  window.CSAuth.onChange(function (user) { render(user); });
+})();
+</script>
+</body></html>
