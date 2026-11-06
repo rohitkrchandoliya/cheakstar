@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Subdomain Finder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Subdomain Finder</h1>
+<p class="tool-sub">List a domain's subdomains from public Certificate Transparency logs.</p>
+<div class="tool-card">
+  <p>Find a domain's publicly known subdomains from Certificate Transparency logs — the public record of SSL certificates. Website owners use this to audit their own domains; it only shows what is already public.</p>
+
+  <label for="sub-domain">Domain name</label>
+  <input id="sub-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
+  <div class="btn-row">
+    <button id="sub-run" class="btn" type="button">Find subdomains</button>
+  </div>
+  <p id="sub-status" class="status" role="status"></p>
+  <div id="sub-result"></div>
+</div>
+<div class="note"><strong>Notes:</strong> data comes from crt.sh, the public Certificate Transparency search service. A busy domain can take a while (this tool waits up to 2 minutes), and at most 300 subdomains are shown. A subdomain with no certificate will not appear. Nothing is sent to Cheakstar.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var subStatus = document.getElementById("sub-status");
+
+function cleanDomain(raw) {
+  var d = (raw || "").trim().toLowerCase();
+  d = d.replace(/^https?:\/\//, "");
+  d = d.replace(/^www\./, "");
+  d = d.split("/")[0].split("?")[0].split("#")[0];
+  d = d.split(":")[0];
+  d = d.replace(/\.$/, "").replace(/^\*\./, "");
+  return d;
+}
+
+document.getElementById("sub-run").addEventListener("click", function () {
+  var domain = cleanDomain(document.getElementById("sub-domain").value);
+  var result = document.getElementById("sub-result");
+  result.innerHTML = "";
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(domain)) {
+    subStatus.className = "status error";
+    subStatus.textContent = "Enter a valid domain name, for example example.com.";
+    return;
+  }
+  subStatus.className = "status";
+  subStatus.textContent = "Searching Certificate Transparency logs for " + domain + ". This can take up to a minute for busy domains...";
+  var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  var timer = controller ? setTimeout(function () { controller.abort(); }, 120000) : null;
+  fetch("https://crt.sh/?q=" + encodeURIComponent("%." + domain) + "&output=json", controller ? { signal: controller.signal } : {})
+    .then(function (res) {
+      if (!res.ok) { throw new Error("http " + res.status); }
+      return res.json();
+    })
+    .then(function (data) {
+      if (timer) { clearTimeout(timer); }
+      var seen = {};
+      (data || []).forEach(function (entry) {
+        String(entry.name_value || "").split("\n").forEach(function (name) {
+          name = name.trim().toLowerCase().replace(/^\*\./, "");
+          if (name && (name === domain || name.endsWith("." + domain)) && name.indexOf("@") === -1) {
+            seen[name] = true;
+          }
+        });
+      });
+      var names = Object.keys(seen).sort();
+      if (names.length === 0) {
+        subStatus.className = "status";
+        subStatus.textContent = "No subdomains were found in the public certificate logs for " + domain + ".";
+        return;
+      }
+      var shown = names.slice(0, 300);
+      var list = document.createElement("ul");
+      list.className = "sub-list";
+      shown.forEach(function (name) {
+        var li = document.createElement("li");
+        li.textContent = name;
+        list.appendChild(li);
+      });
+      result.appendChild(list);
+      subStatus.className = "status ok";
+      subStatus.textContent = "Found " + names.length + (names.length === 1 ? " subdomain" : " subdomains") + " for " + domain +
+        (names.length > shown.length ? ". Showing the first " + shown.length + "." : ".");
+    })
+    .catch(function (err) {
+      if (timer) { clearTimeout(timer); }
+      subStatus.className = "status error";
+      if (err && err.name === "AbortError") {
+        subStatus.textContent = "The search timed out after 2 minutes — crt.sh is slow for very large domains. Try again in a little while.";
+      } else {
+        subStatus.textContent = "The subdomain search failed. crt.sh may be busy; check your connection and try again.";
+      }
+    });
+});
+</script>
+</body>
+</html>
