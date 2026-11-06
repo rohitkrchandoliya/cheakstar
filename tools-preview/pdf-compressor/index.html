@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>PDF Compressor - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF Compressor</h1>
+<p class="tool-sub">Make a PDF smaller by re-rendering its pages as compressed images.</p>
+<div class="tool-card">
+  <p>Make a PDF smaller by re-building it as page images. Good for scanned documents and PDFs that a form refuses because of size.</p>
+
+  <label for="pdfc-file">Choose a PDF file</label>
+  <input id="pdfc-file" type="file" accept="application/pdf,.pdf">
+
+  <label for="pdfc-quality">Compression level</label>
+  <select id="pdfc-quality">
+    <option value="high">High quality — larger file, sharpest pages</option>
+    <option value="balanced" selected>Balanced — good size saving, clear pages</option>
+    <option value="small">Smallest file — pages look softer</option>
+  </select>
+
+  <div class="btn-row">
+    <button id="pdfc-run" class="btn" type="button" disabled>Compress PDF</button>
+  </div>
+  <p id="pdfc-status" class="status" aria-live="polite"></p>
+  <div id="pdfc-preview"></div>
+</div>
+<div class="note"><strong>Honest note:</strong> this method turns every page into an image, so the text in the compressed PDF is a picture — it can no longer be selected, copied or searched, and at the smallest setting text can look soft. If your PDF is already mostly text, it may not shrink much (it can even grow). Everything runs in your browser (PDF.js by Mozilla + jsPDF); nothing is uploaded.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var pdfcFile = null;
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+  function formatSize(bytes) {
+    if (bytes < 1024) { return bytes + " B"; }
+    if (bytes < 1024 * 1024) { return (bytes / 1024).toFixed(1) + " KB"; }
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+  }
+
+  var QUALITY = {
+    high: { scale: 2, jpeg: 0.85, label: "High quality" },
+    balanced: { scale: 1.5, jpeg: 0.7, label: "Balanced" },
+    small: { scale: 1, jpeg: 0.5, label: "Smallest file" }
+  };
+
+  $("pdfc-file").addEventListener("change", function (event) {
+    var files = event.target.files || [];
+    pdfcFile = files.length > 0 ? files[0] : null;
+    $("pdfc-run").disabled = !pdfcFile;
+    if (pdfcFile) { setStatus($("pdfc-status"), "Selected: " + pdfcFile.name + " (" + formatSize(pdfcFile.size) + ")", false); }
+    event.target.value = "";
+  });
+
+  $("pdfc-run").addEventListener("click", function () {
+    if (!pdfcFile) { return; }
+    if (typeof pdfjsLib === "undefined") {
+      setStatus($("pdfc-status"), "The PDF viewer library (PDF.js) did not load. Check your connection and reload the page.", true);
+      return;
+    }
+    if (typeof window.jspdf === "undefined") {
+      setStatus($("pdfc-status"), "The PDF writing library (jsPDF) did not load. Check your connection and reload the page.", true);
+      return;
+    }
+    var choice = QUALITY[$("pdfc-quality").value] || QUALITY.balanced;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    setStatus($("pdfc-status"), "Opening the PDF...", false);
+    $("pdfc-preview").innerHTML = "";
+    var originalSize = pdfcFile.size;
+    var reader = new FileReader();
+    reader.onload = function () {
+      pdfjsLib.getDocument({ data: new Uint8Array(reader.result) }).promise.then(function (pdf) {
+        var out = null;
+        var chain = Promise.resolve();
+        var totalPages = pdf.numPages;
+        var pagePreview = [];
+        for (var n = 1; n <= totalPages; n++) {
+          (function (pageNum) {
+            chain = chain.then(function () {
+              setStatus($("pdfc-status"), "Compressing page " + pageNum + " of " + totalPages + "...", false);
+              return pdf.getPage(pageNum).then(function (page) {
+                var viewport = page.getViewport({ scale: choice.scale });
+                var canvas = document.createElement("canvas");
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                var context = canvas.getContext("2d");
+                return page.render({ canvasContext: context, viewport: viewport }).promise.then(function () {
+                  var imgData = canvas.toDataURL("image/jpeg", choice.jpeg);
+                  var pageWidthPt = canvas.width / choice.scale;
+                  var pageHeightPt = canvas.height / choice.scale;
+                  if (!out) {
+                    out = new window.jspdf.jsPDF({ unit: "pt", format: [pageWidthPt, pageHeightPt], orientation: pageWidthPt > pageHeightPt ? "l" : "p" });
+                  } else {
+                    out.addPage([pageWidthPt, pageHeightPt], pageWidthPt > pageHeightPt ? "l" : "p");
+                  }
+                  out.addImage(imgData, "JPEG", 0, 0, pageWidthPt, pageHeightPt);
+                  if (pageNum === 1) {
+                    var thumb = document.createElement("img");
+                    thumb.src = imgData;
+                    thumb.alt = "Preview of compressed page 1";
+                    thumb.style.maxHeight = "200px";
+                    pagePreview.push(thumb);
+                  }
+                });
+              });
+            });
+          })(n);
+        }
+        chain.then(function () {
+          var blob = out.output("blob");
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement("a");
+          link.className = "download";
+          link.href = url;
+          var base = pdfcFile.name.replace(/\.pdf$/i, "");
+          link.download = base + "-compressed.pdf";
+          link.textContent = "Download compressed PDF (" + formatSize(blob.size) + ")";
+          var previewBox = $("pdfc-preview");
+          pagePreview.forEach(function (img) { previewBox.appendChild(img); });
+          previewBox.appendChild(document.createElement("br"));
+          previewBox.appendChild(link);
+          var saved = originalSize > 0 ? Math.round((1 - blob.size / originalSize) * 100) : 0;
+          if (blob.size < originalSize) {
+            setStatus($("pdfc-status"), "Done (" + choice.label + "): " + formatSize(originalSize) + " -> " + formatSize(blob.size) + " — about " + saved + "% smaller.", false);
+          } else {
+            setStatus($("pdfc-status"), "Done, but the result (" + formatSize(blob.size) + ") is not smaller than the original (" + formatSize(originalSize) + "). This PDF is probably already compact — the original is the better file to keep.", true);
+          }
+        }).catch(function () {
+          setStatus($("pdfc-status"), "Compressing failed. The PDF may be damaged or password-protected.", true);
+        });
+      }).catch(function () {
+        setStatus($("pdfc-status"), "Could not read this PDF. It may be damaged or password-protected.", true);
+      });
+    };
+    reader.onerror = function () { setStatus($("pdfc-status"), "Could not read the file.", true); };
+    reader.readAsArrayBuffer(pdfcFile);
+  });
+})();
+</script>
+</body>
+</html>
