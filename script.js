@@ -121,7 +121,10 @@ document.addEventListener("DOMContentLoaded", function () {
       grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/>',
       qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M20.5 14v.01M14 20.5v.01M17.5 17.5h3v3h-3z"/>',
       doc: '<path d="M6 2.8h8L19 8v13.2H6z"/><path d="M13.5 2.8V8H19"/>',
-      image: '<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16.5 16 12l-8.5 8.5"/>'
+      image: '<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16.5 16 12l-8.5 8.5"/>',
+      play: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5z"/>',
+      archive: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9"/><path d="M10 13h4"/>',
+      calc: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/>'
     };
     function icon(name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || ICONS.grid) + "</svg>"; }
     var CHEV = '<svg class="cs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg>';
@@ -143,45 +146,145 @@ document.addEventListener("DOMContentLoaded", function () {
       ]},
       { id: "tools", name: "Tools", links: [
         ["tools-preview/", "All Tools", "grid"]
+      ], cats: [
+        { id: "qr-video", name: "QR & Video Links", icon: "qr", links: [
+          ["tools-preview/qr-code-generator/", "QR Code Generator"],
+          ["tools-preview/qr-code-scanner/", "QR Code Scanner"],
+          ["tools-preview/youtube-thumbnail-downloader/", "YouTube Thumbnail Downloader"],
+          ["tools-preview/video-link-info/", "Video Link Info"]
+        ]},
+        { id: "image", name: "Image Tools", icon: "image", links: [
+          ["tools-preview/image-information/", "Image Information"],
+          ["tools-preview/image-compressor/", "Image Compressor"],
+          ["tools-preview/image-converter/", "Image Converter"],
+          ["tools-preview/image-resizer-cropper/", "Image Resizer & Cropper"],
+          ["tools-preview/passport-photo-maker/", "Passport Photo Maker"],
+          ["tools-preview/resize-image-to-kb/", "Resize Image to KB"],
+          ["tools-preview/color-picker-from-image/", "Color Picker from Image"],
+          ["tools-preview/favicon-generator/", "Favicon Generator"]
+        ]},
+        { id: "pdf", name: "PDF Tools", icon: "doc", links: [
+          ["tools-preview/pdf-merge/", "PDF Merge"],
+          ["tools-preview/pdf-split/", "PDF Split"],
+          ["tools-preview/images-to-pdf/", "Images to PDF"],
+          ["tools-preview/pdf-to-images/", "PDF to Images"],
+          ["tools-preview/pdf-compressor/", "PDF Compressor"],
+          ["tools-preview/rotate-pdf/", "Rotate PDF"],
+          ["tools-preview/pdf-to-text/", "PDF to Text"],
+          ["tools-preview/text-to-pdf/", "Text to PDF"]
+        ]},
+        { id: "audio-video", name: "Audio & Video Tools", icon: "play", links: [
+          ["tools-preview/media-info/", "Media Info"],
+          ["tools-preview/audio-converter/", "Audio Converter"],
+          ["tools-preview/extract-audio/", "Extract Audio from Video"],
+          ["tools-preview/video-trimmer/", "Video Trimmer"],
+          ["tools-preview/gif-maker/", "GIF Maker"],
+          ["tools-preview/video-converter/", "Video Converter"],
+          ["tools-preview/video-compressor/", "Video Compressor"],
+          ["tools-preview/video-speed-changer/", "Video Speed Changer"],
+          ["tools-preview/audio-merger/", "Audio Merger"],
+          ["tools-preview/video-merger/", "Video Merger"],
+          ["tools-preview/voice-recorder/", "Voice Recorder"],
+          ["tools-preview/screen-recorder/", "Screen Recorder"]
+        ]},
+        { id: "text", name: "Text Tools", icon: "pen", links: [
+          ["tools-preview/word-counter/", "Word & Character Counter"],
+          ["tools-preview/case-converter/", "Case Converter & Line Tools"],
+          ["tools-preview/csv-json-converter/", "CSV / JSON Converter"],
+          ["tools-preview/base64-encoder-decoder/", "Base64 Encoder & Decoder"],
+          ["tools-preview/json-formatter/", "JSON Formatter & Validator"],
+          ["tools-preview/text-diff-checker/", "Text Diff Checker"],
+          ["tools-preview/url-encoder-decoder/", "URL Encoder & Decoder"]
+        ]},
+        { id: "security", name: "Security & OSINT", icon: "shield", links: [
+          ["tools-preview/dns-lookup/", "DNS Lookup"],
+          ["tools-preview/rdap-whois-lookup/", "Domain Info (WHOIS / RDAP)"],
+          ["tools-preview/ip-lookup/", "IP Address Lookup"],
+          ["tools-preview/whats-my-ip/", "What's My IP"],
+          ["tools-preview/subdomain-finder/", "Subdomain Finder"],
+          ["tools-preview/photo-privacy-checker/", "Photo Privacy Checker (EXIF)"],
+          ["tools-preview/phone-number-checker/", "Phone Number Checker"],
+          ["tools-preview/security-headers-check/", "Security Headers Check"],
+          ["tools-preview/email-breach-check/", "Email Breach Check"],
+          ["tools-preview/password-breach-check/", "Leaked Password Check"]
+        ]},
+        { id: "files", name: "Daily File Tools", icon: "archive", links: [
+          ["tools-preview/zip-extractor/", "ZIP Extractor"],
+          ["tools-preview/file-hash-checker/", "File Hash Checker"]
+        ]},
+        { id: "calculators", name: "Calculators", icon: "calc", links: [
+          ["tools-preview/age-calculator/", "Age Calculator"],
+          ["tools-preview/emi-calculator/", "EMI Calculator"],
+          ["tools-preview/sip-calculator/", "SIP Calculator"],
+          ["tools-preview/gst-calculator/", "GST Calculator"],
+          ["tools-preview/date-difference-calculator/", "Date Difference Calculator"],
+          ["tools-preview/percentage-calculator/", "Percentage Calculator"],
+          ["tools-preview/unit-converter/", "Unit Converter"]
+        ]}
       ]}
     ];
+    var TOOL_CATS = NAV[2].cats;
 
     // Which link is the current page?
     var path = window.location.pathname || "/";
-    var currentHref = null, currentGroup = "main";
+    var currentHref = null, currentGroup = "main", currentCat = null, pageGroup = null;
     (function detectCurrent() {
       var tp = path.indexOf("/tools-preview/");
       if (tp >= 0) {
         var rest = path.slice(tp + "/tools-preview/".length);
         var seg = rest.split("/")[0];
         currentGroup = "tools";
-        if (seg === "qr-code-generator") currentHref = "tools-preview/qr-code-generator/";
-        else if (seg === "pdf-compressor") currentHref = "tools-preview/pdf-compressor/";
-        else if (seg === "image-compressor") currentHref = "tools-preview/image-compressor/";
-        else currentHref = "tools-preview/";
+        pageGroup = "tools";
+        if (seg && seg !== "index.html") {
+          for (var c = 0; c < TOOL_CATS.length; c++) {
+            for (var i = 0; i < TOOL_CATS[c].links.length; i++) {
+              if (TOOL_CATS[c].links[i][0] === "tools-preview/" + seg + "/") {
+                currentHref = TOOL_CATS[c].links[i][0];
+                currentCat = TOOL_CATS[c].id;
+                return;
+              }
+            }
+          }
+        }
+        currentHref = "tools-preview/"; // tools index or an unknown tools path
         return;
       }
       var file = path.split("/").pop() || "index.html";
       if (file === "") file = "index.html";
       for (var g = 0; g < NAV.length; g++) {
         for (var i = 0; i < NAV[g].links.length; i++) {
-          if (NAV[g].links[i][0] === file) { currentHref = file; currentGroup = NAV[g].id; return; }
+          if (NAV[g].links[i][0] === file) { currentHref = file; currentGroup = NAV[g].id; pageGroup = NAV[g].id; return; }
         }
       }
-      currentHref = file; // e.g. a blog article: no nav item, Main stays the default group
+      currentHref = file; // e.g. a blog article: no nav item, no forced group
     })();
 
-    // Group open states: stored prefs win, except the current page's group always opens.
-    var storedGroups = {};
+    // Accordion state — EXCLUSIVE: at most one top-level group and at most
+    // one tool category are open at any time, so the sidebar never turns
+    // into a wall of open sections. The current page's group/category is
+    // forced open on load; otherwise the single stored open section wins,
+    // falling back to Main / no category. Both maps are persisted whole, so
+    // at most one "true" is ever stored. The tools pages (tools.js) use the
+    // same keys and the same rules — state carries across the whole site.
+    var storedGroups = {}, storedCats = {};
     try { storedGroups = JSON.parse(lsGet("csGroups") || "{}") || {}; } catch (e) { storedGroups = {}; }
-    var groupOpen = {};
-    NAV.forEach(function (g) {
-      var open = g.id === "main";
-      if (typeof storedGroups[g.id] === "boolean") open = storedGroups[g.id];
-      if (g.id === currentGroup) open = true;
-      groupOpen[g.id] = open;
-    });
+    try { storedCats = JSON.parse(lsGet("csToolCats") || "{}") || {}; } catch (e) { storedCats = {}; }
+    var groupOpen = {}, catOpen = {};
+    (function resolveOpen() {
+      var og = pageGroup, oc = currentCat, g, c;
+      if (!og) { for (g = 0; g < NAV.length; g++) { if (storedGroups[NAV[g].id] === true) { og = NAV[g].id; break; } } }
+      if (!og) og = "main";
+      NAV.forEach(function (gr) { groupOpen[gr.id] = gr.id === og; });
+      if (!oc) { for (c = 0; c < TOOL_CATS.length; c++) { if (storedCats[TOOL_CATS[c].id] === true) { oc = TOOL_CATS[c].id; break; } } }
+      TOOL_CATS.forEach(function (ct) { catOpen[ct.id] = ct.id === oc; });
+    })();
     function persistGroups() { lsSet("csGroups", JSON.stringify(groupOpen)); }
+    function persistCats() { lsSet("csToolCats", JSON.stringify(catOpen)); }
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (ch) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+      });
+    }
 
     // Build the shell DOM.
     var html = "";
@@ -196,8 +299,19 @@ document.addEventListener("DOMContentLoaded", function () {
       html += '<button class="cs-group-head" type="button" aria-expanded="' + (groupOpen[g.id] ? "true" : "false") + '"><span class="cs-group-name">' + g.name + "</span>" + CHEV + "</button>";
       html += '<div class="cs-group-body"><div class="cs-group-inner">';
       g.links.forEach(function (l) {
-        html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + l[1] + '">' + icon(l[2]) + '<span class="cs-label">' + l[1] + "</span></a>";
+        html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '">' + icon(l[2]) + '<span class="cs-label">' + esc(l[1]) + "</span></a>";
       });
+      if (g.cats) {
+        g.cats.forEach(function (ct) {
+          html += '<div class="cs-subgroup' + (catOpen[ct.id] ? " open" : "") + '" data-cat="' + ct.id + '">';
+          html += '<button class="cs-subgroup-head" type="button" aria-expanded="' + (catOpen[ct.id] ? "true" : "false") + '" data-label="' + esc(ct.name) + '">' + icon(ct.icon) + '<span class="cs-label">' + esc(ct.name) + "</span>" + CHEV + "</button>";
+          html += '<div class="cs-subgroup-body"><div class="cs-subgroup-inner">';
+          ct.links.forEach(function (l) {
+            html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '"><span class="cs-label">' + esc(l[1]) + "</span></a>";
+          });
+          html += "</div></div></div>";
+        });
+      }
       html += "</div></div></div>";
     });
     html += '<div class="cs-noresults" id="csNoResults" hidden>No page matches your search.</div>';
@@ -227,27 +341,64 @@ document.addEventListener("DOMContentLoaded", function () {
     var side = document.getElementById("csSide");
     var navEl = document.getElementById("csNav");
 
-    // Groups: expand / collapse.
+    // Apply the exclusive open states to the DOM (classes + aria only).
+    function applyOpenStates() {
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
+        var open = !!groupOpen[group.getAttribute("data-group")];
+        group.classList.toggle("open", open);
+        group.querySelector(".cs-group-head").setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-subgroup"), function (sub) {
+        var open = !!catOpen[sub.getAttribute("data-cat")];
+        sub.classList.toggle("open", open);
+        sub.querySelector(".cs-subgroup-head").setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    }
+    function setOpenGroup(id) { // id or null: exclusive — at most one group open
+      NAV.forEach(function (g) { groupOpen[g.id] = g.id === id; });
+      persistGroups();
+      applyOpenStates();
+    }
+    function setOpenCat(id) { // id or null: exclusive — at most one category open
+      TOOL_CATS.forEach(function (c) { catOpen[c.id] = c.id === id; });
+      persistCats();
+      applyOpenStates();
+    }
+
+    // Groups: exclusive accordion — opening one closes the others;
+    // clicking the open group closes it.
     var groupHeads = side.querySelectorAll(".cs-group-head");
     Array.prototype.forEach.call(groupHeads, function (head) {
       head.addEventListener("click", function () {
-        var group = head.parentNode;
-        var id = group.getAttribute("data-group");
-        var open = group.classList.toggle("open");
-        head.setAttribute("aria-expanded", open ? "true" : "false");
-        groupOpen[id] = open;
-        persistGroups();
+        var id = head.parentNode.getAttribute("data-group");
+        setOpenGroup(groupOpen[id] ? null : id);
+      });
+    });
+    // Tool categories: same exclusive accordion, one level down. In rail
+    // mode the category links are hidden, so a click first expands the
+    // sidebar and then opens just that category.
+    var subHeads = side.querySelectorAll(".cs-subgroup-head");
+    Array.prototype.forEach.call(subHeads, function (head) {
+      head.addEventListener("click", function () {
+        var id = head.parentNode.getAttribute("data-cat");
+        if (document.body.classList.contains("cs-rail") && !mqMobile.matches) {
+          document.body.classList.remove("cs-rail");
+          lsSet("csRail", "0");
+          applyRail();
+          setOpenGroup("tools");
+          setOpenCat(id);
+          return;
+        }
+        setOpenCat(catOpen[id] ? null : id);
       });
     });
     function applyGroupStates() {
       Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
-        var id = group.getAttribute("data-group");
-        var open = !!groupOpen[id];
-        group.classList.toggle("open", open);
-        group.querySelector(".cs-group-head").setAttribute("aria-expanded", open ? "true" : "false");
         group.style.display = "";
         Array.prototype.forEach.call(group.querySelectorAll("a"), function (a) { a.style.display = ""; });
       });
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-subgroup"), function (sub) { sub.style.display = ""; });
+      applyOpenStates();
       document.getElementById("csNoResults").hidden = true;
     }
 
@@ -259,7 +410,21 @@ document.addEventListener("DOMContentLoaded", function () {
       var total = 0;
       Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
         var count = 0;
-        Array.prototype.forEach.call(group.querySelectorAll("a"), function (a) {
+        // Categories first: hide non-matching tool links, drop empty
+        // categories, open the ones with matches (filtering is transient —
+        // the stored exclusive state is restored when the box is cleared).
+        Array.prototype.forEach.call(group.querySelectorAll(".cs-subgroup"), function (sub) {
+          var subCount = 0;
+          Array.prototype.forEach.call(sub.querySelectorAll("a"), function (a) {
+            var hit = a.getAttribute("data-label").toLowerCase().indexOf(q) >= 0;
+            a.style.display = hit ? "" : "none";
+            if (hit) subCount++;
+          });
+          sub.style.display = subCount ? "" : "none";
+          if (subCount) sub.classList.add("open");
+          count += subCount;
+        });
+        Array.prototype.forEach.call(group.querySelectorAll(".cs-group-inner > a"), function (a) {
           var hit = a.getAttribute("data-label").toLowerCase().indexOf(q) >= 0;
           a.style.display = hit ? "" : "none";
           if (hit) count++;
@@ -281,9 +446,22 @@ document.addEventListener("DOMContentLoaded", function () {
         if (rail && !mqMobile.matches) a.title = a.getAttribute("data-label");
         else a.removeAttribute("title");
       });
+      Array.prototype.forEach.call(navEl.querySelectorAll(".cs-subgroup-head"), function (h) {
+        if (rail && !mqMobile.matches) h.title = h.getAttribute("data-label");
+        else h.removeAttribute("title");
+      });
     }
     if (lsGet("csRail") === "1" && !mqMobile.matches) document.body.classList.add("cs-rail");
     applyRail();
+
+    // Bring the current page's link into view inside the scrolling nav, so
+    // the gold highlight is never hidden below the fold or the footer.
+    var activeLink = navEl.querySelector("a.active");
+    if (activeLink && activeLink.scrollIntoView) {
+      setTimeout(function () {
+        try { activeLink.scrollIntoView({ block: "center" }); } catch (e) { /* ignore */ }
+      }, 60);
+    }
     railBtn.addEventListener("click", function () {
       var rail = document.body.classList.toggle("cs-rail");
       lsSet("csRail", rail ? "1" : "0");
@@ -389,6 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!side || !foot) return;
 
     var USER_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.2 3.8-4.8 7-4.8s5.8 1.6 7 4.8"/></svg>';
+    var GEAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/></svg>';
     var OUT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4"/><path d="M14 8l3.5 4L14 16"/><path d="M17 12H9.5"/></svg>';
     function esc(s) {
       return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -421,6 +600,9 @@ document.addEventListener("DOMContentLoaded", function () {
         '<div class="cs-acc-meta"><span class="cs-acc-name">' + esc(name) + "</span>" +
         '<span class="cs-acc-email">' + esc(user.email || "") + "</span></div></div>" +
         '<a href="account.html">' + USER_ICON + '<span class="cs-label">My Account</span></a>' +
+        // Settings is login-only, so its link exists only in this
+        // signed-in render (added 2026-11-06, settings/gating build).
+        '<a href="settings.html">' + GEAR_ICON + '<span class="cs-label">Settings</span></a>' +
         '<button type="button" class="cs-acc-out" id="csAccSignOut">' + OUT_ICON + '<span class="cs-label">Sign Out</span></button>';
       var out = bodyEl.querySelector("#csAccSignOut");
       if (out) out.addEventListener("click", function () {
