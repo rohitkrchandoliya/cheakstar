@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>JSON Formatter &amp; Validator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">JSON Formatter &amp; Validator</h1>
+<p class="tool-sub">Pretty-print JSON and pinpoint the error when it is invalid.</p>
+<div class="tool-card">
+  <p>Paste JSON to check it and read it easily. Valid JSON is pretty-printed; invalid JSON gets a plain-English note about where the problem is.</p>
+
+  <label for="jf-input">JSON input</label>
+  <textarea id="jf-input" rows="10" placeholder='Paste JSON here, for example: {"name": "Cheakstar", "tools": 50}'></textarea>
+
+  <div class="row2">
+    <div>
+      <label for="jf-indent">Indentation</label>
+      <select id="jf-indent">
+        <option value="2" selected>2 spaces</option>
+        <option value="4">4 spaces</option>
+        <option value="tab">Tab</option>
+        <option value="0">Minified (one line)</option>
+      </select>
+    </div>
+    <div>
+      <label for="jf-keys">Object keys</label>
+      <select id="jf-keys">
+        <option value="keep" selected>Keep original order</option>
+        <option value="sort">Sort keys A to Z</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="jf-run" class="btn" type="button">Format and validate</button>
+    <button id="jf-copy" class="btn ghost" type="button">Copy formatted JSON</button>
+  </div>
+  <p id="jf-status" class="status" role="status"></p>
+
+  <label for="jf-output">Formatted JSON</label>
+  <textarea id="jf-output" rows="12" readonly placeholder="The formatted JSON will appear here."></textarea>
+  <p class="status" id="jf-stats"></p>
+</div>
+<div class="note"><strong>Privacy:</strong> your JSON is parsed only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var jfStatus = document.getElementById("jf-status");
+
+function sortKeysDeep(value) {
+  if (Array.isArray(value)) { return value.map(sortKeysDeep); }
+  if (value && typeof value === "object") {
+    var out = {};
+    Object.keys(value).sort().forEach(function (k) { out[k] = sortKeysDeep(value[k]); });
+    return out;
+  }
+  return value;
+}
+
+function countStats(value, stats) {
+  if (Array.isArray(value)) {
+    value.forEach(function (v) { countStats(v, stats); });
+  } else if (value && typeof value === "object") {
+    Object.keys(value).forEach(function (k) { stats.keys++; countStats(value[k], stats); });
+  } else {
+    stats.values++;
+  }
+}
+
+document.getElementById("jf-run").addEventListener("click", function () {
+  var input = document.getElementById("jf-input").value;
+  var output = document.getElementById("jf-output");
+  var statsEl = document.getElementById("jf-stats");
+  if (!input.trim()) {
+    jfStatus.className = "status error";
+    jfStatus.textContent = "Paste some JSON first.";
+    return;
+  }
+  try {
+    var data = JSON.parse(input);
+    if (document.getElementById("jf-keys").value === "sort") { data = sortKeysDeep(data); }
+    var indentChoice = document.getElementById("jf-indent").value;
+    var indent = indentChoice === "tab" ? "\t" : parseInt(indentChoice, 10);
+    output.value = JSON.stringify(data, null, indent);
+    var stats = { keys: 0, values: 0 };
+    countStats(data, stats);
+    var typeName = Array.isArray(data) ? "array" : (data === null ? "null" : typeof data);
+    statsEl.textContent = "Top level: " + typeName + ". Keys found: " + stats.keys + ". Single values found: " + stats.values + ".";
+    jfStatus.className = "status ok";
+    jfStatus.textContent = "Valid JSON. Formatted below.";
+  } catch (err) {
+    output.value = "";
+    statsEl.textContent = "";
+    var message = err && err.message ? err.message : "Invalid JSON.";
+    var posMatch = message.match(/position (\d+)/i);
+    var pointer = "";
+    if (posMatch) {
+      var pos = parseInt(posMatch[1], 10);
+      var before = input.slice(0, pos);
+      var line = before.split("\n").length;
+      var col = pos - before.lastIndexOf("\n");
+      var near = input.slice(Math.max(0, pos - 12), pos + 12).replace(/\n/g, " ");
+      pointer = " The problem is near line " + line + ", column " + col + ", around: \"..." + near + "...\"";
+    }
+    jfStatus.className = "status error";
+    jfStatus.textContent = "Invalid JSON: " + message + pointer;
+  }
+});
+
+document.getElementById("jf-copy").addEventListener("click", function () {
+  var out = document.getElementById("jf-output");
+  if (!out.value) {
+    jfStatus.className = "status error";
+    jfStatus.textContent = "Format the JSON first, then copy.";
+    return;
+  }
+  function done() {
+    jfStatus.className = "status ok";
+    jfStatus.textContent = "Formatted JSON copied to the clipboard.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(out.value).then(done).catch(function () { out.select(); document.execCommand("copy"); done(); });
+  } else { out.select(); document.execCommand("copy"); done(); }
+});
+</script>
+</body>
+</html>
