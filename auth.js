@@ -482,6 +482,25 @@
       }, function (err) { throw new Error(friendly(err)); });
     },
 
+    /* ---- settings preferences (added 2026-11-06, settings/gating build) ----
+       Preferences live in user_metadata through the same merge-safe save
+       favourites use: every key already stored is read back and spread
+       first, so saving a preference can never wipe another field. */
+    savePrefs: function (patch) {
+      if (!patch || typeof patch !== "object") return Promise.resolve(currentUser);
+      return saveMeta(patch);
+    },
+
+    /* Clear the saved lists on this device and on the account copy. */
+    clearFavorites: function () {
+      saveFavorites([]);
+      mirrorToAccount();
+    },
+    clearRecent: function () {
+      saveRecent([]);
+      mirrorToAccount();
+    },
+
     /* ---- favourites + recent ---- */
     getFavorites: getFavorites,
     isFavorite: function (slug) { return getFavorites().indexOf(slug) >= 0; },
