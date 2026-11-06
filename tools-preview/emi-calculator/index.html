@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>EMI Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">EMI Calculator</h1>
 <p class="tool-sub">Monthly instalment, total interest and total payment for any loan.</p>
 <div class="tool-card">
-  <p>Work out the monthly instalment (EMI) for a home, car, personal or education loan, with the total interest and total payment over the full term.</p>
+  <p>For a home, car, personal or education loan: enter the loan amount, the interest rate and the time period.</p>
 
   <label for="emi-amount">Loan amount (₹)</label>
   <input id="emi-amount" type="number" min="0" step="any" value="500000">
@@ -31,10 +30,10 @@
     </div>
   </div>
   <div class="btn-row">
-    <button id="emi-run" class="btn" type="button">Calculate EMI</button>
+    <button id="emi-run" class="btn" type="button" data-autorun>Calculate EMI</button>
   </div>
   <p id="emi-status" class="status" role="status"></p>
-  <div class="result" id="emi-result" hidden>
+  <div class="result" id="emi-result" hidden data-result>
     <p class="big" id="emi-monthly"></p>
     <div id="emi-rows"></div>
   </div>
@@ -92,5 +91,7 @@ document.getElementById("emi-run").addEventListener("click", function () {
   emiStatus.textContent = "Calculation complete.";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
