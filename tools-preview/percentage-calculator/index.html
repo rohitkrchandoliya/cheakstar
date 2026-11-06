@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Percentage Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Percentage Calculator</h1>
+<p class="tool-sub">Percentage of a number, percentage change, and one number as a percent of another.</p>
+<div class="tool-card">
+  <h2 style="margin-top:0">What is X% of Y?</h2>
+  <div class="row2">
+    <div>
+      <label for="pc1-x">Percentage (%)</label>
+      <input id="pc1-x" type="number" step="any" value="18">
+    </div>
+    <div>
+      <label for="pc1-y">Of this number</label>
+      <input id="pc1-y" type="number" step="any" value="1000">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="pc1-run" class="btn" type="button">Calculate</button>
+  </div>
+  <p class="status" id="pc1-out"></p>
+</div>
+<div class="tool-card">
+  <h2 style="margin-top:0">X is what percent of Y?</h2>
+  <div class="row2">
+    <div>
+      <label for="pc2-x">This number (part)</label>
+      <input id="pc2-x" type="number" step="any" value="250">
+    </div>
+    <div>
+      <label for="pc2-y">Of this number (whole)</label>
+      <input id="pc2-y" type="number" step="any" value="1000">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="pc2-run" class="btn" type="button">Calculate</button>
+  </div>
+  <p class="status" id="pc2-out"></p>
+</div>
+<div class="tool-card">
+  <h2 style="margin-top:0">Percentage increase or decrease</h2>
+  <div class="row2">
+    <div>
+      <label for="pc3-from">From this value</label>
+      <input id="pc3-from" type="number" step="any" value="800">
+    </div>
+    <div>
+      <label for="pc3-to">To this value</label>
+      <input id="pc3-to" type="number" step="any" value="1000">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="pc3-run" class="btn" type="button">Calculate change</button>
+  </div>
+  <p class="status" id="pc3-out"></p>
+</div>
+<div class="note"><strong>Tip:</strong> for marks, use the second calculator — your marks as the part, total marks as the whole. Everything is calculated on this device only.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+function fmt(n) {
+  return n.toLocaleString("en-IN", { maximumFractionDigits: 4 });
+}
+function num(id) { return parseFloat(document.getElementById(id).value); }
+function show(id, text, isError) {
+  var el = document.getElementById(id);
+  el.textContent = text;
+  el.className = isError ? "status error" : "status ok";
+}
+
+document.getElementById("pc1-run").addEventListener("click", function () {
+  var x = num("pc1-x"), y = num("pc1-y");
+  if (isNaN(x) || isNaN(y)) { show("pc1-out", "Enter both numbers.", true); return; }
+  show("pc1-out", fmt(x) + "% of " + fmt(y) + " is " + fmt(x / 100 * y) + ".", false);
+});
+
+document.getElementById("pc2-run").addEventListener("click", function () {
+  var x = num("pc2-x"), y = num("pc2-y");
+  if (isNaN(x) || isNaN(y)) { show("pc2-out", "Enter both numbers.", true); return; }
+  if (y === 0) { show("pc2-out", "The whole cannot be zero.", true); return; }
+  show("pc2-out", fmt(x) + " is " + fmt(x / y * 100) + "% of " + fmt(y) + ".", false);
+});
+
+document.getElementById("pc3-run").addEventListener("click", function () {
+  var from = num("pc3-from"), to = num("pc3-to");
+  if (isNaN(from) || isNaN(to)) { show("pc3-out", "Enter both values.", true); return; }
+  if (from === 0) { show("pc3-out", "The starting value cannot be zero.", true); return; }
+  var change = (to - from) / Math.abs(from) * 100;
+  var word = change > 0 ? "increase" : (change < 0 ? "decrease" : "change");
+  show("pc3-out", "From " + fmt(from) + " to " + fmt(to) + " is a " + fmt(Math.abs(change)) + "% " + word +
+    " (a difference of " + fmt(to - from) + ").", false);
+});
+</script>
+</body>
+</html>
