@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSINT Starter Tools - DNS Lookup, Domain Info, IP Lookup, What's My IP - Cheakstar Tools</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  label { display: block; margin-top: 1rem; font-weight: 600; }
+  input[type="text"] { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; font-family: inherit; font-size: 1rem; }
+  select { padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; font-size: 1rem; }
+  button { margin-top: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; }
+  button:hover { background: #123a5c; }
+  button:disabled { background: #9aa5b1; cursor: default; }
+  button.small { margin-top: 0.5rem; margin-right: 0.5rem; padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+  .error { color: #b91c1c; }
+  .ok { color: #166534; }
+  .result { border: 1px solid var(--line); padding: 1rem; margin-top: 1rem; }
+  .result p { margin: 0.25rem 0; }
+  .result .big { font-size: 1.25rem; font-weight: 700; color: var(--navy); }
+  table { border-collapse: collapse; margin-top: 0.75rem; width: 100%; }
+  th, td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; font-size: 0.95rem; word-break: break-word; }
+  th { background: #f8f5ec; color: var(--navy); }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .row { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
+  .row .grow { flex: 1 1 200px; }
+  @media (max-width: 560px) { .row { flex-direction: column; align-items: stretch; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>OSINT Starter Tools</h1>
+  <p>Look up DNS records, domain registration details, and IP address information using free public services. Everything runs in your browser. No account or sign-in is needed.</p>
+</header>
+
+<div class="privacy">
+  <strong>How these tools work.</strong> Your lookups are answered by free public services: Google and Cloudflare for DNS, the public RDAP directory for domain registration, and ipwho.is for IP information. The domain or IP address you type is sent to that service so it can answer your query. Nothing is stored by this page, and no sign-in is needed.
+</div>
+
+<h2>1. DNS Lookup</h2>
+<p>Find the DNS records of any domain: A, AAAA, MX, TXT, NS, CNAME, or SOA. Answered by Google DNS-over-HTTPS, with Cloudflare as a fallback if Google does not respond.</p>
+
+<div class="row">
+  <div class="grow">
+    <label for="dns-domain">Domain name</label>
+    <input id="dns-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
+  </div>
+  <div>
+    <label for="dns-type">Record type</label>
+    <select id="dns-type">
+      <option value="A" selected>A</option>
+      <option value="AAAA">AAAA</option>
+      <option value="MX">MX</option>
+      <option value="TXT">TXT</option>
+      <option value="NS">NS</option>
+      <option value="CNAME">CNAME</option>
+      <option value="SOA">SOA</option>
+    </select>
+  </div>
+</div>
+<div>
+  <button id="dns-lookup" type="button">Look up DNS</button>
+</div>
+<div class="result" id="dns-result" hidden>
+  <p class="big" id="dns-title"></p>
+  <table>
+    <thead><tr><th>Name</th><th>Type</th><th>TTL</th><th>Value</th></tr></thead>
+    <tbody id="dns-body"></tbody>
+  </table>
+  <p class="note" id="dns-source"></p>
+</div>
+<p id="dns-status" class="note" aria-live="polite"></p>
+
+<h2>2. Domain Info (WHOIS / RDAP)</h2>
+<p>See who registered a domain, when it was created and when it expires, its nameservers, and its status. Answered by the public RDAP directory (the official successor to WHOIS).</p>
+
+<label for="rdap-domain">Domain name</label>
+<input id="rdap-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
+<div>
+  <button id="rdap-lookup" type="button">Look up domain</button>
+</div>
+<div class="result" id="rdap-result" hidden>
+  <p class="big" id="rdap-title"></p>
+  <p id="rdap-registrar"></p>
+  <p id="rdap-created"></p>
+  <p id="rdap-expires"></p>
+  <p id="rdap-updated"></p>
+  <p id="rdap-nameservers"></p>
+  <p id="rdap-status"></p>
+  <p class="note" id="rdap-source"></p>
+</div>
+<p id="rdap-status-msg" class="note" aria-live="polite"></p>
+
+<h2>3. IP Address Lookup</h2>
+<p>Find the country, city, ISP, network (ASN), and timezone of any IPv4 or IPv6 address. Answered by the free ipwho.is service (no key needed).</p>
+
+<label for="ip-input">IP address</label>
+<input id="ip-input" type="text" placeholder="8.8.8.8" autocomplete="off" spellcheck="false">
+<div>
+  <button id="ip-lookup" type="button">Look up IP</button>
+</div>
+<div class="result" id="ip-result" hidden>
+  <p class="big" id="ip-title"></p>
+  <p id="ip-location"></p>
+  <p id="ip-isp"></p>
+  <p id="ip-asn"></p>
+  <p id="ip-timezone"></p>
+  <p id="ip-coords"></p>
+  <p class="note">Source: ipwho.is (free tier). Location is approximate and comes from the IP address registry, not from GPS.</p>
+</div>
+<p id="ip-status" class="note" aria-live="polite"></p>
+
+<h2>4. What's My IP</h2>
+<p>See your own public IP address, location, and internet provider, as the internet sees you.</p>
+
+<div>
+  <button id="myip-refresh" type="button">Show my IP</button>
+</div>
+<div class="result" id="myip-result" hidden>
+  <p class="big" id="myip-title"></p>
+  <p id="myip-location"></p>
+  <p id="myip-isp"></p>
+  <p id="myip-asn"></p>
+  <p id="myip-timezone"></p>
+  <p class="note" id="myip-source"></p>
+</div>
+<p id="myip-status" class="note" aria-live="polite"></p>
+
+<p class="note">Free-service limits: ipwho.is allows a shared number of free lookups per day for this website, so very heavy use may be refused for a while. If a lookup service is down, the tool shows a plain error message instead of a blank page.</p>
+
+<script>
+(function () {
+  "use strict";
+
+  var TYPE_NAMES = { 1: "A", 2: "NS", 5: "CNAME", 6: "SOA", 15: "MX", 16: "TXT", 28: "AAAA" };
+
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "note error" : "note";
+  }
+
+  function cleanDomain(raw) {
+    var d = (raw || "").trim().toLowerCase();
+    d = d.replace(/^https?:\/\//, "").replace(/^www\./, "");
+    d = d.split("/")[0].split("?")[0].split("#")[0];
+    return d;
+  }
+
+  function validDomain(d) {
+    return /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/.test(d);
+  }
+
+  function validIp(ip) {
+    var v4 = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+    var v6 = /^([0-9a-f]{0,4}:){2,7}[0-9a-f]{0,4}$/i;
+    return v4.test(ip) || v6.test(ip);
+  }
+
+  function setLoading(button, loading) {
+    button.disabled = loading;
+    button.textContent = loading ? "Please wait..." : button.getAttribute("data-label");
+  }
+
+  function initButton(button) {
+    button.setAttribute("data-label", button.textContent);
+  }
+
+  function fetchJson(url, timeoutMs) {
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 15000);
+    return fetch(url, { signal: controller.signal, headers: { "Accept": "application/json" } })
+      .then(function (res) {
+        clearTimeout(timer);
+        if (!res.ok) { throw new Error("Service returned HTTP " + res.status + "."); }
+        return res.json();
+      })
+      .catch(function (err) {
+        clearTimeout(timer);
+        throw err;
+      });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // ---------- 1. DNS Lookup ----------
+  var dnsBtn = document.getElementById("dns-lookup");
+  initButton(dnsBtn);
+  dnsBtn.addEventListener("click", function () {
+    var domain = cleanDomain(document.getElementById("dns-domain").value);
+    var type = document.getElementById("dns-type").value;
+    var statusEl = document.getElementById("dns-status");
+    var resultEl = document.getElementById("dns-result");
+    resultEl.hidden = true;
+    if (!validDomain(domain)) {
+      setStatus(statusEl, "Enter a valid domain name, for example example.com.", true);
+      return;
+    }
+    setLoading(dnsBtn, true);
+    setStatus(statusEl, "Looking up " + type + " records for " + domain + "...", false);
+    var googleUrl = "https://dns.google/resolve?name=" + encodeURIComponent(domain) + "&type=" + type;
+    var cfUrl = "https://cloudflare-dns.com/dns-query?name=" + encodeURIComponent(domain) + "&type=" + type;
+    fetchJson(googleUrl)
+      .catch(function () { return fetchJson(cfUrl).then(function (data) { data._source = "Cloudflare DNS"; return data; }); })
+      .then(function (data) {
+        if (data.Status !== 0) {
+          var reason = data.Status === 3 ? "The domain does not exist (NXDOMAIN)."
+            : "The DNS service could not answer (status " + data.Status + ").";
+          throw new Error(reason);
+        }
+        if (!data.Answer || data.Answer.length === 0) {
+          throw new Error("No " + type + " records found for " + domain + ".");
+        }
+        document.getElementById("dns-title").textContent = type + " records for " + domain;
+        var rows = "";
+        data.Answer.forEach(function (a) {
+          rows += "<tr><td>" + escapeHtml(a.name) + "</td><td>" + escapeHtml(TYPE_NAMES[a.type] || a.type) + "</td><td>" + escapeHtml(a.TTL) + "</td><td>" + escapeHtml(a.data) + "</td></tr>";
+        });
+        document.getElementById("dns-body").innerHTML = rows;
+        document.getElementById("dns-source").textContent = "Source: " + (data._source || "Google DNS-over-HTTPS") + ".";
+        resultEl.hidden = false;
+        setStatus(statusEl, data.Answer.length + " record(s) found.", false);
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) ? err.message : "The lookup failed.";
+        if (err && err.name === "AbortError") { msg = "The lookup timed out. Check your connection and try again."; }
+        if (msg.indexOf("Failed to fetch") !== -1 || msg.indexOf("NetworkError") !== -1) {
+          msg = "Could not reach the DNS service. Check your connection and try again.";
+        }
+        setStatus(statusEl, msg, true);
+      })
+      .finally(function () { setLoading(dnsBtn, false); });
+  });
+
+  // ---------- 2. Domain Info (RDAP) ----------
+  var rdapBtn = document.getElementById("rdap-lookup");
+  initButton(rdapBtn);
+  rdapBtn.addEventListener("click", function () {
+    var domain = cleanDomain(document.getElementById("rdap-domain").value);
+    var statusEl = document.getElementById("rdap-status-msg");
+    var resultEl = document.getElementById("rdap-result");
+    resultEl.hidden = true;
+    if (!validDomain(domain)) {
+      setStatus(statusEl, "Enter a valid domain name, for example example.com.", true);
+      return;
+    }
+    setLoading(rdapBtn, true);
+    setStatus(statusEl, "Looking up registration details for " + domain + "...", false);
+    var tld = domain.split(".").pop();
+    var directUrl = null;
+    if (tld === "com" || tld === "net") {
+      directUrl = "https://rdap.verisign.com/" + tld + "/v1/domain/" + encodeURIComponent(domain);
+    }
+    fetchJson("https://rdap.org/domain/" + encodeURIComponent(domain))
+      .catch(function () {
+        if (directUrl) { return fetchJson(directUrl); }
+        throw new Error("Could not reach the RDAP service. Check your connection and try again.");
+      })
+      .then(function (data) {
+        if (!data || data.objectClassName !== "domain" || !data.ldhName) {
+          throw new Error("No registration record found for " + domain + ". It may not be registered.");
+        }
+        var events = {};
+        (data.events || []).forEach(function (e) {
+          events[e.eventAction] = e.eventDate;
+        });
+        var registrar = "Not listed";
+        (data.entities || []).forEach(function (ent) {
+          if ((ent.roles || []).indexOf("registrar") !== -1) {
+            var name = "";
+            (ent.vcardArray && ent.vcardArray[1] || []).forEach(function (prop) {
+              if (prop[0] === "fn") { name = prop[3]; }
+            });
+            registrar = name || ent.handle || "Not listed";
+          }
+        });
+        var nameservers = (data.nameservers || []).map(function (ns) { return ns.ldhName; }).filter(Boolean);
+        document.getElementById("rdap-title").textContent = "Domain: " + (data.ldhName || domain);
+        document.getElementById("rdap-registrar").textContent = "Registrar: " + registrar;
+        document.getElementById("rdap-created").textContent = "Registered: " + (events.registration ? events.registration.slice(0, 10) : "Not listed");
+        document.getElementById("rdap-expires").textContent = "Expires: " + (events.expiration ? events.expiration.slice(0, 10) : "Not listed");
+        document.getElementById("rdap-updated").textContent = "Last changed: " + (events["last changed"] ? events["last changed"].slice(0, 10) : "Not listed");
+        document.getElementById("rdap-nameservers").textContent = "Nameservers: " + (nameservers.length ? nameservers.join(", ") : "Not listed");
+        document.getElementById("rdap-status").textContent = "Status: " + ((data.status || []).join(", ") || "Not listed");
+        document.getElementById("rdap-source").textContent = "Source: RDAP (rdap.org).";
+        resultEl.hidden = false;
+        setStatus(statusEl, "Registration details found.", false);
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) ? err.message : "The lookup failed.";
+        if (err && err.name === "AbortError") { msg = "The lookup timed out. Check your connection and try again."; }
+        if (msg.indexOf("Failed to fetch") !== -1 || msg.indexOf("NetworkError") !== -1 || msg.indexOf("HTTP 404") !== -1) {
+          msg = "No registration record found for " + domain + ", or the RDAP service could not be reached.";
+        }
+        setStatus(statusEl, msg, true);
+      })
+      .finally(function () { setLoading(rdapBtn, false); });
+  });
+
+  // ---------- 3. IP Address Lookup ----------
+  var ipBtn = document.getElementById("ip-lookup");
+  initButton(ipBtn);
+  ipBtn.addEventListener("click", function () {
+    var ip = (document.getElementById("ip-input").value || "").trim();
+    var statusEl = document.getElementById("ip-status");
+    var resultEl = document.getElementById("ip-result");
+    resultEl.hidden = true;
+    if (!validIp(ip)) {
+      setStatus(statusEl, "Enter a valid IPv4 or IPv6 address, for example 8.8.8.8.", true);
+      return;
+    }
+    setLoading(ipBtn, true);
+    setStatus(statusEl, "Looking up " + ip + "...", false);
+    fetchJson("https://ipwho.is/" + encodeURIComponent(ip))
+      .then(function (data) {
+        if (!data || data.success === false) {
+          throw new Error((data && data.message) ? data.message : "No information found for " + ip + ".");
+        }
+        renderIpResult(data, "ip");
+        resultEl.hidden = false;
+        setStatus(statusEl, "Information found for " + ip + ".", false);
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) ? err.message : "The lookup failed.";
+        if (err && err.name === "AbortError") { msg = "The lookup timed out. Check your connection and try again."; }
+        if (msg.indexOf("Failed to fetch") !== -1 || msg.indexOf("NetworkError") !== -1) {
+          msg = "Could not reach the IP lookup service. Check your connection and try again.";
+        }
+        setStatus(statusEl, msg, true);
+      })
+      .finally(function () { setLoading(ipBtn, false); });
+  });
+
+  function renderIpResult(data, prefix) {
+    var el;
+    el = document.getElementById(prefix + "-title");
+    if (el) el.textContent = "IP: " + data.ip + " (" + (data.type || "unknown type") + ")";
+    var place = [data.city, data.region, data.country].filter(Boolean).join(", ");
+    el = document.getElementById(prefix + "-location");
+    if (el) el.textContent = "Location: " + (place || "Not listed") + (data.postal ? " " + data.postal : "");
+    var conn = data.connection || {};
+    el = document.getElementById(prefix + "-isp");
+    if (el) el.textContent = "ISP: " + (conn.isp || "Not listed") + (conn.org ? " (" + conn.org + ")" : "");
+    el = document.getElementById(prefix + "-asn");
+    if (el) el.textContent = "ASN: " + (conn.asn ? "AS" + conn.asn : "Not listed") + (conn.domain ? " (" + conn.domain + ")" : "");
+    var tz = data.timezone || {};
+    el = document.getElementById(prefix + "-timezone");
+    if (el) el.textContent = "Timezone: " + (tz.id || "Not listed") + (tz.utc ? " (UTC" + tz.utc + ")" : "");
+    if (prefix === "ip") {
+      el = document.getElementById("ip-coords");
+      if (el) el.textContent = "Coordinates: " + data.latitude + ", " + data.longitude;
+    }
+  }
+
+  // ---------- 4. What's My IP ----------
+  var myipBtn = document.getElementById("myip-refresh");
+  initButton(myipBtn);
+  myipBtn.addEventListener("click", function () {
+    var statusEl = document.getElementById("myip-status");
+    var resultEl = document.getElementById("myip-result");
+    resultEl.hidden = true;
+    setLoading(myipBtn, true);
+    setStatus(statusEl, "Checking your IP address...", false);
+    fetchJson("https://ipwho.is/")
+      .then(function (data) {
+        if (!data || data.success === false || !data.ip) {
+          throw new Error("Could not find your IP address. Check your connection and try again.");
+        }
+        renderIpResult(data, "myip");
+        document.getElementById("myip-source").textContent = "Source: ipwho.is (free tier).";
+        resultEl.hidden = false;
+        setStatus(statusEl, "Your public IP address is shown above.", false);
+      })
+      .catch(function () {
+        // Fallback: ipify only returns the address itself, without location.
+        fetchJson("https://api.ipify.org?format=json")
+          .then(function (data) {
+            if (!data || !data.ip) { throw new Error("no ip"); }
+            document.getElementById("myip-title").textContent = "IP: " + data.ip;
+            document.getElementById("myip-location").textContent = "Location: Not available (fallback service only returns the address).";
+            document.getElementById("myip-isp").textContent = "ISP: Not available.";
+            document.getElementById("myip-asn").textContent = "ASN: Not available.";
+            document.getElementById("myip-timezone").textContent = "Timezone: Not available.";
+            document.getElementById("myip-source").textContent = "Source: ipify (fallback, address only).";
+            resultEl.hidden = false;
+            setStatus(statusEl, "Your public IP address is shown above. Location details were not available this time.", false);
+          })
+          .catch(function () {
+            setStatus(statusEl, "Could not reach the IP services. Check your connection and try again.", true);
+          });
+      })
+      .finally(function () { setLoading(myipBtn, false); });
+  });
+
+  // Run "What's My IP" once when the page loads, so the visitor sees their address right away.
+  myipBtn.click();
+})();
+</script>
+</body>
+</html>
