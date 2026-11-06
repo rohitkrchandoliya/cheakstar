@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>CSV &lt;-&gt; JSON Converter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -37,16 +36,16 @@
   </div>
 
   <label for="cj-input">Input</label>
-  <textarea id="cj-input" rows="10" placeholder="Paste CSV (with a header row) or JSON here..."></textarea>
+  <textarea id="cj-input" class="tall" rows="10" placeholder="Paste CSV (with a header row) or JSON here..."></textarea>
 
   <div class="btn-row">
     <button id="cj-run" class="btn" type="button">Convert</button>
-    <button id="cj-download" class="btn ghost" type="button" disabled>Download result</button>
+    <button id="cj-download" class="btn ghost" type="button" disabled data-gate-run>Download result</button>
   </div>
   <p id="cj-status" class="status" role="status"></p>
 
   <label for="cj-output">Result</label>
-  <textarea id="cj-output" rows="10" readonly placeholder="The converted data will appear here."></textarea>
+  <textarea id="cj-output" class="tall" rows="10" readonly placeholder="The converted data will appear here." data-result></textarea>
 </div>
 <div class="note"><strong>How CSV to JSON works:</strong> the first row is treated as the header, and every following row becomes one JSON object. All values stay text, exactly as written in the CSV. For JSON to CSV, paste an array of objects (or an array of arrays); the columns are the keys found across all objects. Your data never leaves this browser tab.</div>
 </main>
@@ -182,5 +181,7 @@ cjDownloadBtn.addEventListener("click", function () {
   setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
