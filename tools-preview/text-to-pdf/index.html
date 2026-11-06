@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Text to PDF - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Text to PDF</h1>
+<p class="tool-sub">Type or paste text and download it as a clean PDF.</p>
+<div class="tool-card">
+  <p>Type or paste plain text and turn it into a clean, properly paginated PDF — for notes, letters and simple documents.</p>
+
+  <label for="txt2pdf-text">Your text</label>
+  <textarea id="txt2pdf-text" rows="14" placeholder="Type or paste your text here..."></textarea>
+
+  <div class="row2">
+    <div>
+      <label for="txt2pdf-name">File name (without .pdf)</label>
+      <input id="txt2pdf-name" type="text" value="document">
+    </div>
+    <div>
+      <label for="txt2pdf-size">Font size</label>
+      <select id="txt2pdf-size">
+        <option value="11">11 pt</option>
+        <option value="12" selected>12 pt</option>
+        <option value="14">14 pt</option>
+        <option value="16">16 pt</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="txt2pdf-run" class="btn" type="button">Create PDF</button>
+  </div>
+  <p id="txt2pdf-status" class="status" aria-live="polite"></p>
+</div>
+<div class="note"><strong>Note:</strong> the PDF uses the standard Helvetica font, which suits plain English text; special symbols and emoji may not render. Long lines wrap automatically and long documents flow onto extra pages. Everything runs in your browser (jsPDF, MIT licence); nothing is uploaded.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+
+  $("txt2pdf-run").addEventListener("click", function () {
+    if (typeof window.jspdf === "undefined") {
+      setStatus($("txt2pdf-status"), "The PDF writing library (jsPDF) did not load. Check your connection and reload the page.", true);
+      return;
+    }
+    var text = $("txt2pdf-text").value;
+    if (!text.trim()) {
+      setStatus($("txt2pdf-status"), "Write or paste some text first.", true);
+      return;
+    }
+    var name = ($("txt2pdf-name").value || "document").trim().replace(/[\\/:*?"<>|]/g, "") || "document";
+    var fontSize = parseInt($("txt2pdf-size").value, 10) || 12;
+    try {
+      var doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" });
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(fontSize);
+      var margin = 54;
+      var pageWidth = doc.internal.pageSize.getWidth();
+      var pageHeight = doc.internal.pageSize.getHeight();
+      var maxWidth = pageWidth - margin * 2;
+      var lineHeight = fontSize * 1.4;
+      var lines = doc.splitTextToSize(text, maxWidth);
+      var y = margin;
+      lines.forEach(function (line) {
+        if (y + lineHeight > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(line, margin, y);
+        y += lineHeight;
+      });
+      var pageCount = doc.getNumberOfPages();
+      doc.save(name + ".pdf");
+      setStatus($("txt2pdf-status"), "Done. Created " + name + ".pdf with " + pageCount + (pageCount === 1 ? " page" : " pages") + ".", false);
+    } catch (err) {
+      setStatus($("txt2pdf-status"), "Creating the PDF failed in this browser. Try shorter text or a different browser.", true);
+    }
+  });
+})();
+</script>
+</body>
+</html>
