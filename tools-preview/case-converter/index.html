@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Case Converter &amp; Line Tools - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,10 +15,10 @@
 <h1 class="tool-title">Case Converter &amp; Line Tools</h1>
 <p class="tool-sub">Change text case, remove duplicate lines, sort lines and clean up spaces.</p>
 <div class="tool-card">
-  <p>Change the case of your text and clean up lists of lines — all in one place.</p>
+  <p>Paste your text, pick a case style, and the result appears below — then copy it, or send it back as input to apply a line tool next.</p>
 
   <label for="cc-input">Your text</label>
-  <textarea id="cc-input" rows="9" placeholder="Type or paste your text here..."></textarea>
+  <textarea id="cc-input" class="tall" rows="9" placeholder="Type or paste your text here..."></textarea>
 
   <h3>Change case</h3>
   <div class="btn-row">
@@ -41,9 +40,9 @@
   </div>
 
   <label for="cc-output">Result</label>
-  <textarea id="cc-output" rows="9" readonly placeholder="The result will appear here."></textarea>
+  <textarea id="cc-output" class="tall" rows="9" readonly placeholder="The result will appear here." data-result></textarea>
   <div class="btn-row">
-    <button id="cc-copy" class="btn" type="button">Copy result</button>
+    <button id="cc-copy" class="btn" type="button" data-result data-result-soft data-result-peer="#cc-output">Copy result</button>
     <button id="cc-use" class="btn ghost" type="button">Use result as input</button>
   </div>
   <p id="cc-status" class="status" role="status"></p>
@@ -156,5 +155,7 @@ document.getElementById("cc-use").addEventListener("click", function () {
   ccStatus.textContent = "Result moved to the input box, ready for the next change.";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
