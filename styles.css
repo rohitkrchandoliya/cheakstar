@@ -61,6 +61,9 @@ a{overflow-wrap:anywhere}
 /* ==== Cheakstar shell (2026-11-06): sidebar, preloader, animations, polish.
    Everything below is additive. The rules above stay byte-identical;
    the shell markup is injected by script.js only when JS runs. ==== */
+/* The hidden attribute always wins: elements that carry their own display
+   rule (badges, buttons) must still disappear when hidden is set. */
+[hidden]{display:none!important}
 ::selection{background:var(--gold);color:#0a1628}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 html{scrollbar-color:var(--gold2) var(--navy2)}
@@ -273,3 +276,9 @@ img.cs-avatar{object-fit:cover;display:block}
 .auth-page .sub{margin-left:auto;margin-right:auto;margin-bottom:4px}
 .auth-links{max-width:460px;margin:22px auto 0;text-align:center;color:var(--muted);font-size:.92rem}
 .auth-foot{text-align:center;color:var(--muted);font-size:.88rem;padding:28px 16px 32px}
+
+/* --- account v3 (2026-11-06): two-factor warning banner on My Account --- */
+.acct-warn{background:rgba(216,164,64,.14);border:1px solid rgba(216,164,64,.6);border-radius:10px;padding:18px 22px;margin-bottom:22px;color:#f2d492}
+.acct-warn strong{color:#fff}
+.acct-warn p{margin-bottom:8px}
+.acct-warn .btn{margin-top:6px}
