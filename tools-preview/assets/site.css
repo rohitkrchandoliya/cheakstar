@@ -57,3 +57,357 @@ pre,code{white-space:pre-wrap;word-break:break-word}
 body{overflow-wrap:break-word}
 a{overflow-wrap:anywhere}
 }
+
+/* ==== Cheakstar shell (2026-11-06): sidebar, preloader, animations, polish.
+   Everything below is additive. The rules above stay byte-identical;
+   the shell markup is injected by script.js only when JS runs. ==== */
+/* The hidden attribute always wins: elements that carry their own display
+   rule (badges, buttons) must still disappear when hidden is set. */
+[hidden]{display:none!important}
+::selection{background:var(--gold);color:#0a1628}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+html{scrollbar-color:var(--gold2) var(--navy2)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:6px;border:2px solid var(--navy2)}
+::-webkit-scrollbar-thumb:hover{background:var(--gold2)}
+.btn{transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.navlinks a{background-image:linear-gradient(var(--gold),var(--gold));background-repeat:no-repeat;background-size:0% 2px;background-position:0 100%;transition:background-size .3s ease,color .2s ease}
+.navlinks a:hover{text-decoration:none;background-size:100% 2px}
+
+/* --- shell layout: JS adds .cs-shell to body, then the injected sidebar
+   replaces the top header (which remains the no-JS fallback). --- */
+body.cs-shell header.site{display:none}
+body.cs-shell{transition:margin-left .3s ease}
+@media (min-width:769px){
+body.cs-shell{margin-left:260px}
+body.cs-shell.cs-rail{margin-left:64px}
+}
+
+/* --- sidebar --- */
+.cs-side{position:fixed;top:0;left:0;height:100vh;height:100dvh;width:260px;background:linear-gradient(180deg,var(--navy2),var(--navy));border-right:2px solid var(--gold);z-index:95;display:flex;flex-direction:column;color:var(--ink);transition:width .3s ease,transform .32s ease}
+.cs-side-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+.cs-logo{font-size:1.3rem;font-weight:700;letter-spacing:.5px;color:#fff;white-space:nowrap}
+.cs-logo span{color:var(--gold)}
+.cs-logo:hover{text-decoration:none}
+.cs-logo-mini{display:none;font-size:1.05rem}
+.cs-side-close{display:none;background:none;border:1px solid var(--line);color:var(--ink);width:34px;height:34px;border-radius:8px;font-size:1.15rem;line-height:1;cursor:pointer;flex:none}
+.cs-filter{padding:2px 14px 10px}
+.cs-filter input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font-size:.9rem;font-family:inherit}
+.cs-filter input::placeholder{color:var(--muted)}
+.cs-filter input:focus{border-color:var(--gold);outline:none}
+.cs-nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 10px 12px;scrollbar-width:thin}
+.cs-group{margin-top:4px}
+.cs-group-head{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;color:var(--gold);font-family:inherit;font-size:.76rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:11px 8px 7px;cursor:pointer}
+.cs-chev{flex:none;transition:transform .3s ease;stroke:var(--gold)}
+.cs-group.open>.cs-group-head .cs-chev{transform:rotate(180deg)}
+.cs-group-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.cs-group.open .cs-group-body{grid-template-rows:1fr}
+.cs-group-inner{overflow:hidden;min-height:0}
+/* --- nested tool categories inside the Tools group (unified sidebar) --- */
+.cs-subgroup{margin-top:2px}
+.cs-subgroup-head{display:flex;align-items:center;gap:11px;width:100%;background:none;border:0;color:var(--ink);font-family:inherit;font-size:.95rem;font-weight:600;padding:8px 10px;border-radius:8px;cursor:pointer;text-align:left;transition:background-color .2s ease}
+.cs-subgroup-head:hover{background-color:rgba(212,175,55,.08)}
+.cs-subgroup-head>svg:first-child{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s ease}
+.cs-subgroup-head:hover>svg:first-child{stroke:var(--gold)}
+.cs-subgroup-head .cs-label{flex:1}
+.cs-subgroup-head .cs-chev{width:13px;height:13px}
+.cs-subgroup.open .cs-subgroup-head .cs-chev{transform:rotate(180deg)}
+.cs-subgroup-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.cs-subgroup.open .cs-subgroup-body{grid-template-rows:1fr}
+.cs-subgroup-inner{overflow:hidden;min-height:0}
+.cs-subgroup-inner a{padding-left:24px;font-size:.93rem}
+.cs-nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;color:var(--ink);font-size:.95rem;position:relative;background-image:linear-gradient(var(--gold),var(--gold));background-repeat:no-repeat;background-size:0% 2px;background-position:12px calc(100% - 4px);transition:background-color .2s ease,background-size .3s ease,color .2s ease}
+.cs-nav a:hover{text-decoration:none;background-color:rgba(212,175,55,.08);background-size:calc(100% - 24px) 2px}
+.cs-nav a svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s ease}
+.cs-nav a:hover svg{stroke:var(--gold)}
+.cs-nav a.active{color:#fff;background-color:rgba(212,175,55,.13);box-shadow:inset 3px 0 0 var(--gold)}
+.cs-nav a.active svg{stroke:var(--gold)}
+.cs-label{line-height:1.35}
+.cs-noresults{padding:14px 10px;color:var(--muted);font-size:.9rem}
+.cs-side-foot{padding:10px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.cs-rail-toggle{width:100%;padding:9px;border-radius:8px;background:rgba(212,175,55,.12);border:1px solid var(--line);color:var(--gold);font-weight:600;cursor:pointer;font-size:.88rem;font-family:inherit;transition:background .2s ease}
+.cs-rail-toggle:hover{background:rgba(212,175,55,.22)}
+
+/* --- collapsed icon rail (desktop only) --- */
+@media (min-width:769px){
+body.cs-rail .cs-side{width:64px}
+body.cs-rail .cs-logo-full{display:none}
+body.cs-rail .cs-logo-mini{display:inline}
+body.cs-rail .cs-side-head{justify-content:center;padding:16px 6px 8px}
+body.cs-rail .cs-filter{display:none}
+body.cs-rail .cs-group-head{justify-content:center;padding:12px 0 4px}
+body.cs-rail .cs-group-head .cs-group-name,body.cs-rail .cs-chev{display:none}
+body.cs-rail .cs-group-head::after{content:"";display:block;width:22px;border-top:1px solid var(--line)}
+body.cs-rail .cs-nav{padding:2px 8px 12px}
+body.cs-rail .cs-nav a{justify-content:center;padding:10px 0;background-image:none}
+body.cs-rail .cs-nav a .cs-label{display:none}
+body.cs-rail .cs-subgroup-head{justify-content:center;padding:10px 0}
+body.cs-rail .cs-subgroup-head .cs-label,body.cs-rail .cs-subgroup-head .cs-chev{display:none}
+body.cs-rail .cs-subgroup-head>svg:first-child{stroke:var(--gold)}
+body.cs-rail .cs-subgroup-body{display:none}
+body.cs-rail .cs-side-foot{padding:10px 8px}
+}
+
+/* --- mobile top bar + drawer --- */
+.cs-topbar{display:none}
+.cs-backdrop{position:fixed;inset:0;background:rgba(4,8,16,.62);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:90}
+@media (max-width:768px){
+.cs-topbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:80;background:var(--navy2);border-bottom:2px solid var(--gold);padding:9px 14px;transition:transform .3s ease}
+.cs-topbar.cs-top-hidden{transform:translateY(-100%)}
+.cs-topbar .cs-logo{font-size:1.12rem}
+.cs-burger{background:none;border:1px solid var(--line);border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.cs-burger svg{width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round}
+.cs-side{transform:translateX(-106%);width:min(300px,86vw);z-index:96}
+body.cs-drawer .cs-side{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.55)}
+body.cs-drawer .cs-backdrop{opacity:1;pointer-events:auto}
+body.cs-drawer{overflow:hidden}
+.cs-side-close{display:block}
+.cs-side-foot{display:none}
+}
+
+/* --- scroll progress + back to top --- */
+.cs-progress{position:fixed;top:0;left:0;height:3px;width:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));transform-origin:0 50%;transform:scaleX(0);z-index:130;pointer-events:none}
+.cs-top-btn{position:fixed;right:18px;bottom:18px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--navy2);color:var(--gold);cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease,background .2s ease;z-index:75;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.cs-top-btn svg{width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.cs-top-btn.show{opacity:1;pointer-events:auto;transform:none}
+.cs-top-btn:hover{background:var(--navy3)}
+
+/* --- preloader (cybersecurity theme) --- */
+.cs-preloader{position:fixed;inset:0;z-index:200;background:radial-gradient(ellipse at 50% 38%,var(--navy3) 0%,var(--navy) 62%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s ease,transform .5s ease,visibility .5s;animation:csPreFailsafe .6s ease 3.4s forwards}
+.cs-preloader.cs-done{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.05)}
+@keyframes csPreFailsafe{to{opacity:0;visibility:hidden}}
+.cs-pre-shield{width:86px;height:86px;filter:drop-shadow(0 0 14px rgba(212,175,55,.35))}
+.cs-pre-shield path{fill:rgba(212,175,55,.05);stroke:var(--gold);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:100;stroke-dashoffset:100;animation:csDraw 1.05s ease forwards}
+.cs-pre-shield .cs-pre-check{fill:none;stroke:#fff;animation-delay:.5s}
+@keyframes csDraw{to{stroke-dashoffset:0}}
+.cs-pre-brand{font-size:1.45rem;font-weight:700;letter-spacing:.34em;text-indent:.34em;color:#fff}
+.cs-pre-brand span{color:var(--gold)}
+.cs-pre-bar{width:min(260px,70vw);height:4px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.cs-pre-bar i{display:block;height:100%;width:38%;border-radius:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:csScan 1.05s ease-in-out infinite}
+@keyframes csScan{0%{transform:translateX(-115%)}100%{transform:translateX(285%)}}
+.cs-pre-status{color:var(--muted);font-size:.84rem;letter-spacing:.09em;font-family:Consolas,Menlo,"Courier New",monospace;min-height:1.25em;text-align:center}
+
+/* --- page entry + reveal on scroll --- */
+body.cs-loaded .hero .wrap{animation:csRise .7s ease both}
+@keyframes csRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+body.cs-anim .cs-reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+body.cs-anim .cs-reveal.revealed{opacity:1;transform:none}
+
+/* --- reduced motion: everything settles instantly --- */
+@media (prefers-reduced-motion:reduce){
+html{scroll-behavior:auto}
+.cs-preloader{animation:none}
+.cs-pre-bar i{animation:none}
+.cs-pre-shield path{animation:none;stroke-dashoffset:0}
+body.cs-loaded .hero .wrap{animation:none}
+body.cs-anim .cs-reveal{opacity:1;transform:none;transition:none}
+.cs-side,.cs-group-body,.cs-subgroup-body,.cs-topbar,.cs-top-btn,body.cs-shell{transition:none}
+}
+
+/* --- print: shell never prints --- */
+@media print{
+.cs-side,.cs-topbar,.cs-backdrop,.cs-progress,.cs-top-btn,.cs-preloader{display:none!important}
+body.cs-shell{margin-left:0!important}
+}
+
+/* --- page headings: h1 mirrors h2 (pages promoted to a single h1, 2026-11-06) --- */
+h1{font-size:1.9rem;color:#fff;margin-bottom:8px}
+h1 .gold{color:var(--gold)}
+
+/* --- website accounts (2026-11-06): auth pages, account page, sidebar block --- */
+.auth-card{max-width:460px;margin:6px auto 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:26px}
+.auth-field{margin-bottom:16px}
+.auth-field label{display:block;color:#fff;font-weight:600;font-size:.95rem;margin-bottom:6px}
+.auth-field input{width:100%;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font-size:1rem;font-family:inherit}
+.auth-field input::placeholder{color:var(--muted)}
+.auth-field input:focus{border-color:var(--gold);outline:none}
+.auth-field .hint{color:var(--muted);font-size:.82rem;margin-top:5px}
+.auth-msg{border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:.93rem;color:var(--muted)}
+.auth-msg.error{background:rgba(216,64,64,.13);border:1px solid rgba(216,64,64,.55);color:#ffb9b9}
+.auth-msg.success{background:rgba(52,168,83,.13);border:1px solid rgba(52,168,83,.55);color:#b9efcb}
+.auth-msg.info{background:var(--navy2);border:1px solid var(--line)}
+.btn.auth-submit{width:100%;text-align:center;border:0;cursor:pointer;font-family:inherit;font-size:1rem}
+.btn.auth-submit:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}
+button.btn.ghost{cursor:pointer;font-family:inherit;font-size:1rem}
+.auth-alt{margin-top:16px;color:var(--muted);font-size:.93rem;text-align:center}
+.acct-head{display:flex;align-items:center;gap:16px}
+.acct-avatar{width:64px;height:64px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:1.6rem;display:flex;align-items:center;justify-content:center;flex:none}
+.acct-who{min-width:0}
+.acct-who p{overflow-wrap:anywhere}
+
+/* sidebar account block */
+.cs-account{border-top:1px solid rgba(255,255,255,.08);padding:6px 10px 10px;flex:none}
+.cs-acc-head{color:var(--gold);font-size:.76rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:8px 8px 5px}
+.cs-acc-body a,.cs-acc-out{display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border-radius:8px;color:var(--ink);font-size:.95rem;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;transition:background-color .2s ease,color .2s ease}
+.cs-acc-body a:hover,.cs-acc-out:hover{text-decoration:none;background-color:rgba(212,175,55,.08)}
+.cs-acc-body a svg,.cs-acc-out svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cs-acc-body a:hover svg,.cs-acc-out:hover svg{stroke:var(--gold)}
+.cs-acc-who{display:flex;align-items:center;gap:10px;padding:4px 8px 8px}
+.cs-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex:none}
+.cs-acc-meta{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.cs-acc-name{color:#fff;font-weight:600;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-acc-email{color:var(--muted);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:769px){
+body.cs-rail .cs-account{padding:6px 8px 10px}
+body.cs-rail .cs-acc-head{display:none}
+body.cs-rail .cs-acc-who{justify-content:center;padding:4px 0 8px}
+body.cs-rail .cs-acc-meta{display:none}
+body.cs-rail .cs-acc-body a,body.cs-rail .cs-acc-out{justify-content:center;padding:10px 0}
+body.cs-rail .cs-acc-body a .cs-label,body.cs-rail .cs-acc-out .cs-label{display:none}
+}
+@media (max-width:480px){
+.auth-card{padding:20px 16px}
+.acct-head{flex-direction:column;align-items:flex-start}
+}
+@media print{
+.cs-account{display:none!important}
+}
+
+/* --- account v2 (2026-11-06): profile edit, verified badge, sessions, 2FA --- */
+.acct-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.acct-avatar.sm{width:44px;height:44px;font-size:1.05rem}
+img.cs-avatar{object-fit:cover;display:block}
+.verified-badge{display:inline-block;background:rgba(52,168,83,.16);border:1px solid rgba(52,168,83,.6);color:#b9efcb;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:.02em}
+.verified-badge.warn{background:rgba(216,164,64,.14);border-color:rgba(216,164,64,.6);color:#f2d492}
+.auth-field input[disabled]{opacity:.65;cursor:not-allowed}
+.btn.acct-btn{width:auto;padding-left:30px;padding-right:30px}
+.btn.acct-mini{padding:6px 14px;font-size:.88rem;margin-left:8px}
+.photo-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.photo-row input[type="file"]{color:var(--muted);font-size:.9rem;font-family:inherit}
+.sess-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.sess-label{flex:0 0 110px;color:var(--muted);font-size:.92rem}
+.sess-value{color:var(--ink);overflow-wrap:anywhere}
+.mfa-qr{background:#fff;border-radius:10px;padding:14px;width:228px;max-width:100%}
+.mfa-qr img{display:block;width:200px;height:200px}
+.mfa-secret{font-family:Consolas,Menlo,"Courier New",monospace;font-size:1rem;letter-spacing:.08em;color:var(--gold);overflow-wrap:anywhere;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px;padding:10px 12px;max-width:460px}
+
+/* --- standalone auth pages (2026-11-06): login, signup, reset password.
+   Dedicated pages like professional sites: no site shell (these pages do
+   not load script.js), only a logo strip, the centred card, links, footer. --- */
+.auth-page{background:radial-gradient(ellipse at 50% 0%,var(--navy3) 0%,var(--navy) 58%)}
+.auth-strip{display:flex;justify-content:center;padding:20px 16px 16px;background:var(--navy2);border-bottom:2px solid var(--gold)}
+.auth-page section{padding:40px 0 10px}
+.auth-page h1,.auth-page .sub{text-align:center}
+.auth-page .sub{margin-left:auto;margin-right:auto;margin-bottom:4px}
+.auth-links{max-width:460px;margin:22px auto 0;text-align:center;color:var(--muted);font-size:.92rem}
+.auth-foot{text-align:center;color:var(--muted);font-size:.88rem;padding:28px 16px 32px}
+
+/* --- account v3 (2026-11-06): two-factor warning banner on My Account --- */
+.acct-warn{background:rgba(216,164,64,.14);border:1px solid rgba(216,164,64,.6);border-radius:10px;padding:18px 22px;margin-bottom:22px;color:#f2d492}
+.acct-warn strong{color:#fff}
+.acct-warn p{margin-bottom:8px}
+.acct-warn .btn{margin-top:6px}
+
+/* --- full-site polish (2026-11-06): one token pass over cards, buttons,
+   fields and prose rhythm. Fixes D1-D18 of
+   FULL-SITE-POLISH-AUDIT-2026-11-06.md. Everything above stays untouched;
+   these rules win by cascade order or higher specificity. --- */
+/* Buttons: one font and line-height for every .btn, anchor or button, so
+   mixed rows compute to the same 48px height (was 46 vs 50-52px). */
+.btn{font-family:inherit;font-size:1rem;line-height:1.5;border:1.5px solid transparent}
+/* Cards: flex columns, so the footer link pins to the card's bottom edge
+   in every grid row (was floating 25-175px above it, varying per card);
+   the link also gains a full tap zone on touch screens. */
+.card{display:flex;flex-direction:column}
+.card .tag{align-self:flex-start}
+.card .go{margin-top:auto;padding:12px 0 9px}
+/* The same link outside a card (notes, article footers) gets its weight. */
+.go{display:inline-block;font-weight:600}
+/* Lists inside cards: no dangling divider under the last item. */
+ul.clean li:last-child{border-bottom:none;padding-bottom:0}
+/* One fine-print style for the privacy lines in cards and notes
+   (replaces three one-off inline font-size styles). */
+.fineprint{font-size:.82rem;color:var(--muted);margin-top:10px}
+/* The one mid-page sub-heading size (books/training used 1.4/1.5rem
+   one-offs via inline styles). */
+.h2-sub{font-size:1.45rem;margin-top:44px}
+/* Shell tap targets reach 44px: menu button, drawer close, group heads,
+   nav rows, rail toggle, and the account page's mini buttons. */
+.cs-burger{width:44px;height:44px}
+.cs-side-close{width:44px;height:44px}
+body:not(.cs-rail) .cs-group-head{padding:15px 8px 12px}
+.cs-nav a{padding-top:10px;padding-bottom:10px}
+.cs-rail-toggle{padding:11px}
+.cs-acc-body a,.cs-acc-out{padding-top:10px;padding-bottom:10px}
+.btn.acct-mini{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+/* Sidebar search field matches the auth fields: 46px tall, 16px font
+   (was 39px / 14.4px, which also made iOS Safari zoom on focus). */
+.cs-filter input{padding:10px 12px;font-size:1rem}
+/* Prose rhythm for article, policy and snapshot content (their bare
+   paragraphs and headings previously had 0px gaps — a wall of text). */
+.prose>p{margin-bottom:18px}
+.prose>p:last-child{margin-bottom:0}
+.prose>.sub{margin-bottom:30px}
+.prose>h2{font-size:1.45rem;margin-top:36px;margin-bottom:10px}
+.prose>h3{font-size:1.25rem;margin-top:32px;margin-bottom:10px}
+.prose>ul{list-style:disc;padding-left:22px;margin-bottom:18px}
+.prose>ul li{margin-bottom:6px}
+.prose>ol{padding-left:24px;margin-bottom:18px}
+.prose>ol li{margin-bottom:8px}
+/* Auth pages: the gradient falloff stretches over the full canvas
+   instead of ending in a visible tonal step on tall screens. */
+.auth-page{background-size:100% 100%;background-repeat:no-repeat}
+
+/* ================================================================
+   Settings + login-gating + theme (added 2026-11-06, settings/gating
+   build). Everything in this block is additive: the light palette is a
+   variable override, and the preloader, code/log panels and the QR
+   display card deliberately stay dark in both themes.
+   ================================================================ */
+:root{color-scheme:dark}
+[data-theme="light"]{color-scheme:light;
+  --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5;
+  --gold:#a8842a; --gold2:#8f6f1f;
+  --ink:#152540; --muted:#51637e; --card:#ffffff;
+  --line:rgba(21,37,64,.16)}
+[data-theme="light"] .logo,[data-theme="light"] .cs-logo,
+[data-theme="light"] h1,[data-theme="light"] h2,
+[data-theme="light"] .hero h1,[data-theme="light"] .card h3,
+[data-theme="light"] .note strong,[data-theme="light"] .auth-field label,
+[data-theme="light"] .cs-acc-name,[data-theme="light"] .acct-warn strong{color:var(--ink)}
+[data-theme="light"] .cs-nav a.active{color:var(--ink)}
+[data-theme="light"] .auth-msg.error{color:#b3261e}
+[data-theme="light"] .auth-msg.success{color:#146c2e}
+[data-theme="light"] .mfa-secret{color:var(--ink)}
+html[data-textsize="large"]{font-size:112.5%}
+html[data-motion="reduced"] *,html[data-motion="reduced"] *::before,html[data-motion="reduced"] *::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important;scroll-behavior:auto!important}
+
+/* Form fixes (global): native dropdown lists follow the theme, and
+   placeholders stay readable (explicit opacity fixes Firefox dimming). */
+select option{color:var(--ink);background-color:var(--navy2)}
+.auth-field input::placeholder{color:#c7d3e8;opacity:1}
+[data-theme="light"] .auth-field input::placeholder{color:#68798f}
+
+/* Login gate (gate.js) */
+.gate-wrap{position:relative}
+.gate-blur{filter:blur(12px);pointer-events:none;user-select:none;-webkit-user-select:none}
+.gate-card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;z-index:6}
+.gate-card-box{background:var(--card);border:1px solid var(--gold);border-radius:10px;padding:20px 22px;text-align:center;max-width:430px;width:100%;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.gate-card-box h3{color:var(--ink);font-size:1.12rem;margin:8px 0 6px}
+.gate-card-box p{color:var(--muted);font-size:.95rem}
+.gate-lock{color:var(--gold);line-height:0}
+.gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.gate-btns .btn{margin-top:0}
+.gate-micro{color:var(--muted);font-size:.84rem;margin-top:10px}
+.gate-standalone{display:flex;justify-content:center;margin:20px 0}
+.gate-hint{background:rgba(212,175,55,.12);border:1px solid var(--line);border-radius:8px;padding:10px 16px;color:var(--ink);font-size:.94rem;margin-bottom:20px;max-width:760px}
+.gate-note{background:var(--navy2);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;color:var(--ink);margin-bottom:20px}
+.gate-blog-zone{position:relative}
+.gate-fade{height:72px;margin-top:-72px;position:relative;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0),var(--navy))}
+
+/* Settings page */
+.set-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.set-row h4{color:var(--ink);font-size:1rem;margin-bottom:4px}
+.set-row p{color:var(--muted);font-size:.92rem;max-width:520px}
+.set-ctl{flex-shrink:0;min-width:210px}
+.set-ctl label.radio-line{display:block;color:var(--muted);margin:5px 0;cursor:pointer;font-size:.95rem}
+.set-ctl input[type="radio"],.set-ctl input[type="checkbox"]{accent-color:var(--gold);margin-right:7px}
+.set-ctl select{width:100%;padding:10px 12px;font:inherit;font-size:.95rem;color:var(--ink);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px}
+[data-theme="light"] .set-ctl select{background:#fff}
+.danger-zone{border:1px solid rgba(255,120,120,.55)}
+.danger-zone h3{color:#ff9c9c}
+[data-theme="light"] .danger-zone h3{color:#b3261e}
+@media (max-width:640px){.set-row{flex-direction:column}.set-ctl{min-width:0;width:100%}}
