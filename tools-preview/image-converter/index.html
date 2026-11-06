@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Image Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Converter</h1>
+<p class="tool-sub">Convert an image between JPG, PNG and WebP.</p>
+<div class="tool-card">
+  <p>Convert an image between JPG, PNG, and WebP. The file never leaves your device.</p>
+
+  <label for="convert-file">Choose an image</label>
+  <input id="convert-file" type="file" accept="image/jpeg,image/png,image/webp">
+
+  <div class="preview" id="convert-preview"></div>
+  <p class="status" id="convert-info"></p>
+
+  <label for="convert-format">Convert to</label>
+  <select id="convert-format">
+    <option value="image/jpeg">JPEG (.jpg)</option>
+    <option value="image/png">PNG (.png)</option>
+    <option value="image/webp">WebP (.webp)</option>
+  </select>
+
+  <div class="btn-row">
+    <button id="convert-run" class="btn" type="button" disabled>Convert</button>
+    <button id="convert-download" class="btn ghost" type="button" disabled>Download converted image</button>
+  </div>
+  <p class="status" id="convert-result"></p>
+  <p id="convert-status" class="status" role="status"></p>
+  <p class="status">Converting to PNG from a photo usually makes a larger file, because PNG is lossless. Converting to JPEG drops transparency: transparent areas become white. HEIC photos from iPhones are not supported in this version.</p>
+</div>
+<div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/img-tools.js"></script>
+<script>
+"use strict";
+var IT = window.ImgTools;
+var convertFileInput = document.getElementById("convert-file");
+var convertRunBtn = document.getElementById("convert-run");
+var convertDownloadBtn = document.getElementById("convert-download");
+var convertStatusEl = document.getElementById("convert-status");
+var convertInfoEl = document.getElementById("convert-info");
+var convertResultEl = document.getElementById("convert-result");
+var convertImg = null;
+var convertFile = null;
+var convertBlob = null;
+
+convertFileInput.addEventListener("change", function () {
+  var file = convertFileInput.files[0];
+  if (!file) { return; }
+  IT.readImageFile(file).then(function (img) {
+    convertImg = img;
+    convertFile = file;
+    convertBlob = null;
+    convertDownloadBtn.disabled = true;
+    convertResultEl.textContent = "";
+    var preview = document.getElementById("convert-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "240px";
+    preview.appendChild(thumb);
+    convertInfoEl.textContent = img.naturalWidth + " x " + img.naturalHeight
+      + " px, " + IT.formatSize(file.size) + ", " + file.type + ".";
+    convertRunBtn.disabled = false;
+    convertStatusEl.textContent = "";
+  }).catch(function (err) {
+    convertStatusEl.textContent = err.message;
+    convertStatusEl.className = "status error";
+  });
+});
+
+convertRunBtn.addEventListener("click", async function () {
+  if (!convertImg || !convertFile) { return; }
+  var mime = document.getElementById("convert-format").value;
+  if (mime === convertFile.type) {
+    convertStatusEl.textContent = "The image is already in that format.";
+    convertStatusEl.className = "status error";
+    return;
+  }
+  convertStatusEl.className = "status";
+  convertStatusEl.textContent = "Converting...";
+  try {
+    var canvas = IT.drawImageToCanvas(convertImg, convertImg.naturalWidth, convertImg.naturalHeight);
+    var quality = mime === "image/png" ? undefined : 0.92;
+    convertBlob = await IT.canvasToBlob(canvas, mime, quality);
+    convertResultEl.textContent = "Result: " + IT.formatSize(convertBlob.size) + " (" + mime + ").";
+    convertStatusEl.textContent = "Converted.";
+    convertDownloadBtn.disabled = false;
+  } catch (err) {
+    convertStatusEl.textContent = err.message;
+    convertStatusEl.className = "status error";
+  }
+});
+
+convertDownloadBtn.addEventListener("click", function () {
+  if (!convertBlob || !convertFile) { return; }
+  IT.triggerDownload(convertBlob, IT.baseName(convertFile.name) + "-converted." + IT.extensionFor(convertBlob.type));
+});
+</script>
+</body>
+</html>
