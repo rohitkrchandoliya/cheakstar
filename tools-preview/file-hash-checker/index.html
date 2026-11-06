@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>File Hash Checker - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,7 +20,7 @@
   <label for="hash-file">Choose a file</label>
   <input id="hash-file" type="file">
   <p id="hash-status" class="status" role="status"></p>
-  <div class="result" id="hash-result" hidden>
+  <div class="result" id="hash-result" hidden data-result>
     <p class="big">File fingerprints</p>
     <p class="kv"><b>File:</b> <span id="hash-name"></span></p>
     <p class="kv"><b>Size:</b> <span id="hash-size"></span></p>
@@ -159,5 +158,7 @@ document.getElementById("hash-file").addEventListener("change", function (event)
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
