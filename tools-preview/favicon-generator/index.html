@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Favicon Generator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Favicon Generator</h1>
 <p class="tool-sub">Turn an image into a favicon set: an ICO file plus PNG icons in common sizes.</p>
 <div class="tool-card">
-  <p>Turn a logo or image into a complete favicon set for a website: a classic favicon.ico plus PNG icons in the sizes browsers, phones and bookmarks ask for.</p>
+  <p>The set includes a classic favicon.ico plus PNG icons in the sizes browsers, phones and bookmarks ask for.</p>
 
   <label for="fav-file">Choose an image (a square logo works best)</label>
   <input id="fav-file" type="file" accept="image/*">
@@ -24,9 +23,9 @@
   <p id="fav-status" class="status" role="status"></p>
 
   <div class="btn-row">
-    <button id="fav-zip" class="btn" type="button" disabled>Download full set as ZIP</button>
+    <button id="fav-zip" class="btn" type="button" disabled data-gate-run>Download full set as ZIP</button>
   </div>
-  <div id="fav-list"></div>
+  <div id="fav-list" data-result></div>
   <p class="status">In your website's HTML head, the usual lines are: &lt;link rel="icon" href="/favicon.ico" sizes="any"&gt; and &lt;link rel="apple-touch-icon" href="/favicon-180.png"&gt;. Put the files in the site's root folder.</p>
 </div>
 <div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never uploaded. Non-square images are centred on a square canvas, so nothing is stretched.</div>
@@ -186,5 +185,7 @@ document.getElementById("fav-zip").addEventListener("click", async function () {
   }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
