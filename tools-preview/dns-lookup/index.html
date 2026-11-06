@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>DNS Lookup - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,10 +20,10 @@
   <label for="dns-domain">Domain name</label>
   <input id="dns-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="dns-run" class="btn" type="button">Look up DNS records</button>
+    <button id="dns-run" class="btn" type="button" data-autorun>Look up DNS records</button>
   </div>
   <p id="dns-status" class="status" role="status"></p>
-  <div id="dns-result"></div>
+  <div id="dns-result" data-result></div>
 </div>
 <div class="note"><strong>Privacy note:</strong> the lookup sends the domain name to Google Public DNS (dns.google), or to Cloudflare DNS if Google does not answer. Nothing is sent to Cheakstar.</div>
 </main>
@@ -126,5 +125,7 @@ document.getElementById("dns-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
