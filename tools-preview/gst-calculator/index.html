@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>GST Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">GST Calculator</h1>
 <p class="tool-sub">Add GST to a price, or take GST out of an inclusive price.</p>
 <div class="tool-card">
-  <p>Add GST to a price, or work out the base price inside a GST-inclusive amount — for bills, quotations and invoices.</p>
+  <p>For bills, quotations and invoices: pick a standard GST slab or a custom rate, and see the CGST/SGST or IGST split.</p>
 
   <label for="gst-mode">What do you want to do?</label>
   <select id="gst-mode">
@@ -43,10 +42,10 @@
   <label for="gst-custom">Custom GST rate (%) — used only with "Custom rate"</label>
   <input id="gst-custom" type="number" min="0" step="any" placeholder="e.g. 2.5">
   <div class="btn-row">
-    <button id="gst-run" class="btn" type="button">Calculate GST</button>
+    <button id="gst-run" class="btn" type="button" data-autorun>Calculate GST</button>
   </div>
   <p id="gst-status" class="status" role="status"></p>
-  <div class="result" id="gst-result" hidden>
+  <div class="result" id="gst-result" hidden data-result>
     <p class="big" id="gst-headline"></p>
     <div id="gst-rows"></div>
   </div>
@@ -111,5 +110,7 @@ document.getElementById("gst-run").addEventListener("click", function () {
   gstStatus.textContent = "Calculation complete.";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
