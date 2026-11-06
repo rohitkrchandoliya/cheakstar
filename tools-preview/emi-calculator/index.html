@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>EMI Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">EMI Calculator</h1>
+<p class="tool-sub">Monthly instalment, total interest and total payment for any loan.</p>
+<div class="tool-card">
+  <p>Work out the monthly instalment (EMI) for a home, car, personal or education loan, with the total interest and total payment over the full term.</p>
+
+  <label for="emi-amount">Loan amount (₹)</label>
+  <input id="emi-amount" type="number" min="0" step="any" value="500000">
+  <div class="row2">
+    <div>
+      <label for="emi-rate">Interest rate (% per year)</label>
+      <input id="emi-rate" type="number" min="0" step="any" value="9">
+    </div>
+    <div>
+      <label for="emi-years">Time period (years)</label>
+      <input id="emi-years" type="number" min="0" step="any" value="5">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="emi-run" class="btn" type="button">Calculate EMI</button>
+  </div>
+  <p id="emi-status" class="status" role="status"></p>
+  <div class="result" id="emi-result" hidden>
+    <p class="big" id="emi-monthly"></p>
+    <div id="emi-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Note:</strong> this uses the standard reducing-balance EMI formula with monthly rests, the way most Indian banks calculate. Your bank's actual EMI can differ slightly because of fees, insurance, or the exact start date. Figures are estimates for planning, not a loan offer.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var emiStatus = document.getElementById("emi-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("emi-run").addEventListener("click", function () {
+  var P = parseFloat(document.getElementById("emi-amount").value);
+  var annual = parseFloat(document.getElementById("emi-rate").value);
+  var years = parseFloat(document.getElementById("emi-years").value);
+  var rows = document.getElementById("emi-rows");
+  rows.innerHTML = "";
+  document.getElementById("emi-result").hidden = true;
+  if (!(P > 0) || !(years > 0) || isNaN(annual) || annual < 0) {
+    emiStatus.className = "status error";
+    emiStatus.textContent = "Enter a loan amount above zero, an interest rate (0 or more), and a time period above zero.";
+    return;
+  }
+  var n = Math.round(years * 12);
+  var r = annual / 1200;
+  var emi = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  var total = emi * n;
+  var interest = total - P;
+  document.getElementById("emi-monthly").textContent = "Monthly EMI: " + inr(emi);
+  addRow(rows, "Loan amount", inr(P));
+  addRow(rows, "Interest rate", annual + "% per year");
+  addRow(rows, "Time period", years + " years (" + n + " monthly payments)");
+  addRow(rows, "Total interest", inr(interest));
+  addRow(rows, "Total payment", inr(total));
+  addRow(rows, "Interest share", (interest / total * 100).toFixed(1) + "% of everything you pay is interest");
+  document.getElementById("emi-result").hidden = false;
+  emiStatus.className = "status ok";
+  emiStatus.textContent = "Calculation complete.";
+});
+</script>
+</body>
+</html>
