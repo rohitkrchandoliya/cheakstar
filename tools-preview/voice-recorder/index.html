@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Voice Recorder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Voice Recorder</h1>
+<p class="tool-sub">Record from your microphone and download the recording.</p>
+<div class="tool-card">
+  <p>The recording never leaves this device — it is made and stored only in this browser tab. Use it for a voice note, a song idea or a quick dictation.</p>
+
+  <div class="btn-row">
+    <button id="vr-start" class="btn" type="button">Start recording</button>
+    <button id="vr-stop" class="btn ghost" type="button" disabled>Stop recording</button>
+  </div>
+  <p id="vr-status" class="status" role="status">Ready. Your browser will ask for microphone permission when you start.</p>
+  <p class="status" id="vr-timer"></p>
+
+  <div id="vr-result" hidden>
+    <h3>Your recording</h3>
+    <audio id="vr-player" controls style="width:100%"></audio>
+    <div class="btn-row">
+      <a id="vr-download" class="btn" href="#" download="voice-recording.webm">Download recording</a>
+    </div>
+    <p class="status" id="vr-meta"></p>
+  </div>
+</div>
+<div class="note"><strong>Format note:</strong> recordings are saved in the format your browser records best (usually WebM or OGG). Use the Audio Converter tool on this site if you need MP3. Closing this tab without downloading loses the recording — nothing is kept on any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var vrStartBtn = document.getElementById("vr-start");
+var vrStopBtn = document.getElementById("vr-stop");
+var vrStatusEl = document.getElementById("vr-status");
+var vrTimerEl = document.getElementById("vr-timer");
+var vrRecorder = null;
+var vrChunks = [];
+var vrStream = null;
+var vrStartedAt = 0;
+var vrTimerId = null;
+var vrUrl = null;
+
+function vrFormatTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+vrStartBtn.addEventListener("click", function () {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined") {
+    vrStatusEl.textContent = "This browser cannot record audio. Try Chrome, Edge, Firefox or Safari on a recent device.";
+    vrStatusEl.className = "status error";
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+    vrStream = stream;
+    vrChunks = [];
+    vrRecorder = new MediaRecorder(stream);
+    vrRecorder.addEventListener("dataavailable", function (e) {
+      if (e.data && e.data.size > 0) { vrChunks.push(e.data); }
+    });
+    vrRecorder.addEventListener("stop", vrOnStop);
+    vrRecorder.start(250);
+    vrStartedAt = Date.now();
+    vrTimerEl.textContent = "Recording... 0:00";
+    vrTimerId = setInterval(function () {
+      vrTimerEl.textContent = "Recording... " + vrFormatTime((Date.now() - vrStartedAt) / 1000);
+    }, 500);
+    vrStartBtn.disabled = true;
+    vrStopBtn.disabled = false;
+    document.getElementById("vr-result").hidden = true;
+    vrStatusEl.className = "status";
+    vrStatusEl.textContent = "Recording now. Speak into your microphone, then press Stop.";
+  }).catch(function () {
+    vrStatusEl.textContent = "Microphone permission was not given, or no microphone was found. Allow microphone access for this site in your browser settings and try again.";
+    vrStatusEl.className = "status error";
+  });
+});
+
+vrStopBtn.addEventListener("click", function () {
+  if (vrRecorder && vrRecorder.state !== "inactive") { vrRecorder.stop(); }
+});
+
+function vrOnStop() {
+  clearInterval(vrTimerId);
+  vrTimerEl.textContent = "";
+  if (vrStream) { vrStream.getTracks().forEach(function (t) { t.stop(); }); vrStream = null; }
+  vrStartBtn.disabled = false;
+  vrStopBtn.disabled = true;
+  var type = (vrRecorder && vrRecorder.mimeType) || "audio/webm";
+  var blob = new Blob(vrChunks, { type: type });
+  if (vrUrl) { URL.revokeObjectURL(vrUrl); }
+  vrUrl = URL.createObjectURL(blob);
+  var ext = type.indexOf("ogg") !== -1 ? "ogg" : (type.indexOf("mp4") !== -1 ? "m4a" : (type.indexOf("mpeg") !== -1 ? "mp3" : "webm"));
+  var player = document.getElementById("vr-player");
+  player.src = vrUrl;
+  var dl = document.getElementById("vr-download");
+  dl.href = vrUrl;
+  dl.download = "voice-recording." + ext;
+  document.getElementById("vr-meta").textContent = "Length about " + vrFormatTime((Date.now() - vrStartedAt) / 1000) +
+    ", size " + (blob.size / 1024).toFixed(1) + " KB, format " + type + ".";
+  document.getElementById("vr-result").hidden = false;
+  vrStatusEl.className = "status ok";
+  vrStatusEl.textContent = "Recording finished. Listen to it above, then download it.";
+}
+</script>
+</body>
+</html>
