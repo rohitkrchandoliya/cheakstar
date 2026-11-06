@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Date Difference Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Date Difference Calculator</h1>
+<p class="tool-sub">Days between two dates, plus add or subtract days from a date.</p>
+<div class="tool-card">
+  <h2 style="margin-top:0">Days between two dates</h2>
+  <div class="row2">
+    <div>
+      <label for="dd-from">From date</label>
+      <input id="dd-from" type="date">
+    </div>
+    <div>
+      <label for="dd-to">To date</label>
+      <input id="dd-to" type="date">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="dd-run" class="btn" type="button">Calculate difference</button>
+  </div>
+  <p id="dd-status" class="status" role="status"></p>
+  <div class="result" id="dd-result" hidden>
+    <p class="big" id="dd-headline"></p>
+    <div id="dd-rows"></div>
+  </div>
+</div>
+<div class="tool-card">
+  <h2 style="margin-top:0">Add or subtract days</h2>
+  <div class="row2">
+    <div>
+      <label for="dd-base">Start date</label>
+      <input id="dd-base" type="date">
+    </div>
+    <div>
+      <label for="dd-days">Number of days</label>
+      <input id="dd-days" type="number" step="1" value="30">
+    </div>
+  </div>
+  <label for="dd-op">Operation</label>
+  <select id="dd-op">
+    <option value="add">Add days</option>
+    <option value="sub">Subtract days</option>
+  </select>
+  <div class="btn-row">
+    <button id="dd-run2" class="btn" type="button">Calculate new date</button>
+  </div>
+  <p id="dd-status2" class="status" role="status"></p>
+  <div class="result" id="dd-result2" hidden>
+    <p class="big" id="dd-headline2"></p>
+  </div>
+</div>
+<div class="note"><strong>Privacy:</strong> dates are calculated only in this browser tab and are never sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function parseLocalDate(value) {
+  if (!value) { return null; }
+  var parts = value.split("-");
+  var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  return isNaN(d.getTime()) ? null : d;
+}
+function niceDate(d) {
+  return WEEKDAYS[d.getDay()] + ", " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("dd-run").addEventListener("click", function () {
+  var status = document.getElementById("dd-status");
+  var from = parseLocalDate(document.getElementById("dd-from").value);
+  var to = parseLocalDate(document.getElementById("dd-to").value);
+  var rows = document.getElementById("dd-rows");
+  rows.innerHTML = "";
+  document.getElementById("dd-result").hidden = true;
+  if (!from || !to) {
+    status.className = "status error";
+    status.textContent = "Choose both dates.";
+    return;
+  }
+  var diffMs = to - from;
+  var days = Math.round(diffMs / 86400000);
+  var absDays = Math.abs(days);
+  // Calendar breakdown between the earlier and later date.
+  var early = days >= 0 ? from : to;
+  var late = days >= 0 ? to : from;
+  var years = late.getFullYear() - early.getFullYear();
+  var months = late.getMonth() - early.getMonth();
+  var d = late.getDate() - early.getDate();
+  if (d < 0) {
+    months--;
+    d += new Date(late.getFullYear(), late.getMonth(), 0).getDate();
+  }
+  if (months < 0) { years--; months += 12; }
+  document.getElementById("dd-headline").textContent =
+    absDays + (absDays === 1 ? " day" : " days") + (days < 0 ? " (the To date is earlier)" : "");
+  addRow(rows, "In weeks", Math.floor(absDays / 7) + " weeks and " + (absDays % 7) + " days");
+  addRow(rows, "In years, months, days", years + " years, " + months + " months, " + d + " days");
+  addRow(rows, "In hours", (absDays * 24).toLocaleString("en-IN"));
+  addRow(rows, "From", niceDate(from));
+  addRow(rows, "To", niceDate(to));
+  document.getElementById("dd-result").hidden = false;
+  status.className = "status ok";
+  status.textContent = "Difference calculated.";
+});
+
+document.getElementById("dd-run2").addEventListener("click", function () {
+  var status = document.getElementById("dd-status2");
+  var base = parseLocalDate(document.getElementById("dd-base").value);
+  var days = parseInt(document.getElementById("dd-days").value, 10);
+  document.getElementById("dd-result2").hidden = true;
+  if (!base || isNaN(days)) {
+    status.className = "status error";
+    status.textContent = "Choose a start date and enter the number of days.";
+    return;
+  }
+  var out = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  out.setDate(out.getDate() + (document.getElementById("dd-op").value === "sub" ? -days : days));
+  document.getElementById("dd-headline2").textContent = "Result: " + niceDate(out);
+  document.getElementById("dd-result2").hidden = false;
+  status.className = "status ok";
+  status.textContent = "New date calculated.";
+});
+</script>
+</body>
+</html>
