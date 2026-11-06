@@ -1,102 +1,21 @@
-/* Cheakstar Tools — shared shell: preloader, sidebar navigation, mobile
-   drawer, scroll progress, back-to-top and reveal animations.
-   Vanilla JS, no dependencies. Every block is isolated so one failure can
-   never break the page or trap the preloader. */
+/* Cheakstar Tools — unified shell. This is the SAME sidebar as the main
+   website (script.js): same groups, same nested tool categories, same
+   account block, same preloader, and the same localStorage keys
+   (csGroups / csToolCats / csRail / csPreSeen), so the sidebar looks and
+   behaves identically on main pages and tool pages, and its state
+   carries across both. Vanilla JS, no dependencies. Every block is
+   failure-isolated: if anything throws, the page keeps working. */
 (function () {
   "use strict";
-
-  var GROUPS = [
-    ["QR & Video Links", [
-      ["qr-code-generator", "QR Code Generator"],
-      ["qr-code-scanner", "QR Code Scanner"],
-      ["youtube-thumbnail-downloader", "YouTube Thumbnail Downloader"],
-      ["video-link-info", "Video Link Info"]
-    ]],
-    ["Image Tools", [
-      ["image-information", "Image Information"],
-      ["image-compressor", "Image Compressor"],
-      ["image-converter", "Image Converter"],
-      ["image-resizer-cropper", "Image Resizer & Cropper"],
-      ["passport-photo-maker", "Passport Photo Maker"],
-      ["resize-image-to-kb", "Resize Image to KB"],
-      ["color-picker-from-image", "Color Picker from Image"],
-      ["favicon-generator", "Favicon Generator"]
-    ]],
-    ["PDF Tools", [
-      ["pdf-merge", "PDF Merge"],
-      ["pdf-split", "PDF Split"],
-      ["images-to-pdf", "Images to PDF"],
-      ["pdf-to-images", "PDF to Images"],
-      ["pdf-compressor", "PDF Compressor"],
-      ["rotate-pdf", "Rotate PDF"],
-      ["pdf-to-text", "PDF to Text"],
-      ["text-to-pdf", "Text to PDF"]
-    ]],
-    ["Audio & Video Tools", [
-      ["media-info", "Media Info"],
-      ["audio-converter", "Audio Converter"],
-      ["extract-audio", "Extract Audio from Video"],
-      ["video-trimmer", "Video Trimmer"],
-      ["gif-maker", "GIF Maker"],
-      ["video-converter", "Video Converter"],
-      ["video-compressor", "Video Compressor"],
-      ["video-speed-changer", "Video Speed Changer"],
-      ["audio-merger", "Audio Merger"],
-      ["video-merger", "Video Merger"],
-      ["voice-recorder", "Voice Recorder"],
-      ["screen-recorder", "Screen Recorder"]
-    ]],
-    ["Text Tools", [
-      ["word-counter", "Word & Character Counter"],
-      ["case-converter", "Case Converter & Line Tools"],
-      ["csv-json-converter", "CSV / JSON Converter"],
-      ["base64-encoder-decoder", "Base64 Encoder & Decoder"],
-      ["json-formatter", "JSON Formatter & Validator"],
-      ["text-diff-checker", "Text Diff Checker"],
-      ["url-encoder-decoder", "URL Encoder & Decoder"]
-    ]],
-    ["Security & OSINT", [
-      ["dns-lookup", "DNS Lookup"],
-      ["rdap-whois-lookup", "Domain Info (WHOIS / RDAP)"],
-      ["ip-lookup", "IP Address Lookup"],
-      ["whats-my-ip", "What's My IP"],
-      ["subdomain-finder", "Subdomain Finder"],
-      ["photo-privacy-checker", "Photo Privacy Checker (EXIF)"],
-      ["phone-number-checker", "Phone Number Checker"],
-      ["security-headers-check", "Security Headers Check"],
-      ["email-breach-check", "Email Breach Check"],
-      ["password-breach-check", "Leaked Password Check"]
-    ]],
-    ["Daily File Tools", [
-      ["zip-extractor", "ZIP Extractor"],
-      ["file-hash-checker", "File Hash Checker"]
-    ]],
-    ["Calculators", [
-      ["age-calculator", "Age Calculator"],
-      ["emi-calculator", "EMI Calculator"],
-      ["sip-calculator", "SIP Calculator"],
-      ["gst-calculator", "GST Calculator"],
-      ["date-difference-calculator", "Date Difference Calculator"],
-      ["percentage-calculator", "Percentage Calculator"],
-      ["unit-converter", "Unit Converter"]
-    ]]
-  ];
-
-  function store(key) {
-    try { return window.localStorage.getItem(key); } catch (e) { return null; }
-  }
-  function storeSet(key, value) {
-    try { window.localStorage.setItem(key, value); } catch (e) { /* private mode */ }
-  }
-  function sessionGet(key) {
-    try { return window.sessionStorage.getItem(key); } catch (e) { return null; }
-  }
-  function sessionSet(key, value) {
-    try { window.sessionStorage.setItem(key, value); } catch (e) { /* ignore */ }
-  }
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
+  function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) {} }
+  var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   // Root prefix of the tools package, from this script's own URL
-  // ("<root>assets/tools.js"), so links work at any mount path.
+  // ("<tools-root>assets/tools.js"), so links work at any mount path.
+  // The main website root is one level above the tools root.
   var rootPrefix = "../";
   try {
     var scriptEl = document.currentScript;
@@ -106,305 +25,579 @@
       if (idx > -1) { rootPrefix = scriptEl.src.slice(0, idx); }
     }
   } catch (e) { /* keep fallback */ }
+  var sitePrefix = rootPrefix + "../";
 
-  // Current tool slug from the URL ("" on the index page).
-  var currentSlug = "";
+  /* ---------------- Preloader (same design and timing as the main site) ---------------- */
+  var preStart = Date.now();
+  var pre = null, statusTimer = null, preHidden = false;
   try {
-    var parts = window.location.pathname.split("/").filter(function (s) { return s.length > 0; });
-    var last = parts[parts.length - 1] || "";
-    var parent = parts[parts.length - 2] || "";
-    var candidate = (last === "index.html") ? parent : last;
-    GROUPS.forEach(function (g) {
-      g[1].forEach(function (t) { if (t[0] === candidate) { currentSlug = candidate; } });
-    });
-  } catch (e) { /* ignore */ }
+    var seen = !!ssGet("csPreSeen");
+    ssSet("csPreSeen", "1");
+    pre = document.createElement("div");
+    pre.className = "cs-preloader";
+    pre.id = "csPreloader";
+    pre.setAttribute("aria-hidden", "true");
+    pre.innerHTML =
+      '<svg class="cs-pre-shield" viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path pathLength="100" d="M12 2.8l7.2 2.9v5.5c0 4.6-3 7.7-7.2 9.2C7.8 18.9 4.8 15.8 4.8 11.2V5.7z"/>' +
+      '<path class="cs-pre-check" pathLength="100" d="M8.9 11.9l2.1 2.1 4-4.1"/></svg>' +
+      '<div class="cs-pre-brand">CHEAK<span>STAR</span></div>' +
+      '<div class="cs-pre-bar"><i></i></div>' +
+      '<div class="cs-pre-status" id="csPreStatus">Initialising secure session</div>';
+    document.body.insertBefore(pre, document.body.firstChild);
+    if (!reduced) {
+      var phases = ["Initialising secure session", "Scanning modules", "Verifying integrity", "Loading interface"];
+      var phase = 0, statusEl = document.getElementById("csPreStatus");
+      statusTimer = setInterval(function () {
+        phase = Math.min(phase + 1, phases.length - 1);
+        if (statusEl) statusEl.textContent = phases[phase];
+      }, 420);
+    }
+    window.__csPreSeen = seen;
+  } catch (e) { pre = null; }
 
-  var reducedMotion = false;
-  try {
-    reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  } catch (e) { /* ignore */ }
-
-  /* ---------- Preloader ---------- */
-  var preHidden = false;
-  function hidePreloader() {
-    if (preHidden) { return; }
+  function hidePre() {
+    if (preHidden) return;
     preHidden = true;
-    var pre = document.getElementById("ck-preloader");
-    if (pre) {
-      pre.classList.add("ck-done");
-      setTimeout(function () { if (pre.parentNode) { pre.parentNode.removeChild(pre); } }, 700);
-    }
-    sessionSet("ck_pre_seen", "1");
+    if (statusTimer) { clearInterval(statusTimer); statusTimer = null; }
+    var minMs = reduced ? 0 : (window.__csPreSeen ? 120 : 500);
+    var wait = Math.max(0, minMs - (Date.now() - preStart));
+    setTimeout(function () {
+      document.body.classList.add("cs-loaded");
+      if (pre) {
+        pre.classList.add("cs-done");
+        setTimeout(function () { if (pre && pre.parentNode) pre.parentNode.removeChild(pre); }, 700);
+      }
+    }, wait);
   }
-  try {
-    var pre2 = document.createElement("div");
-    pre2.id = "ck-preloader";
-    pre2.setAttribute("aria-hidden", "true");
-    pre2.innerHTML =
-      '<div class="ck-pre-inner">' +
-      '<svg class="ck-pre-shield" viewBox="0 0 64 64" fill="none" aria-hidden="true">' +
-      '<path d="M32 4 L54 12 V30 C54 45 45 55 32 60 C19 55 10 45 10 30 V12 Z" stroke="#d4af37" stroke-width="3" fill="rgba(212,175,55,.08)"/>' +
-      '<path d="M21 32 H28 L31 24 L35 40 L38 32 H43" stroke="#d4af37" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-      "</svg>" +
-      '<div class="ck-pre-brand">CHEAK<span>STAR</span></div>' +
-      '<div class="ck-pre-scan"><i></i></div>' +
-      '<div class="ck-pre-text">scanning environment - loading secure tools</div>' +
-      "</div>";
-    document.body.insertBefore(pre2, document.body.firstChild);
-    var repeatVisit = sessionGet("ck_pre_seen") === "1";
-    if (reducedMotion) {
-      hidePreloader();
-    } else if (repeatVisit) {
-      // Shortened on repeat in-session visits.
-      setTimeout(hidePreloader, 250);
-      window.addEventListener("load", hidePreloader);
-    } else {
-      window.addEventListener("load", function () { setTimeout(hidePreloader, 150); });
-    }
-    // Hard failsafe: the preloader can never trap the page.
-    setTimeout(hidePreloader, 1800);
-    window.addEventListener("error", function () { setTimeout(hidePreloader, 400); });
-  } catch (e) {
-    setTimeout(hidePreloader, 300);
+  if (document.readyState === "complete") hidePre();
+  else {
+    window.addEventListener("load", hidePre);
+    document.addEventListener("DOMContentLoaded", function () { setTimeout(hidePre, 450); });
   }
+  setTimeout(hidePre, 1800); // hard failsafe: the overlay can never trap the page
 
-  /* ---------- Sidebar + mobile top bar ---------- */
+  /* ---------------- Sidebar shell (identical structure to the main site) ---------------- */
   try {
-    if (store("ck_side_collapsed") === "1") {
-      document.body.classList.add("ck-collapsed");
+    var ICONS = {
+      home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.8V21h14V9.8"/><path d="M9.5 21v-6h5v6"/>',
+      book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+      cap: '<path d="M2.5 9.2 12 4.5l9.5 4.7L12 13.9z"/><path d="M6.5 11.4v4.3c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.3"/><path d="M21.5 9.2v4.6"/>',
+      shield: '<path d="M12 3l7 2.8v5.4c0 4.4-2.9 7.4-7 8.8-4.1-1.4-7-4.4-7-8.8V5.8z"/><path d="M9.2 11.8l2 2 3.8-3.8"/>',
+      pen: '<path d="M12 20h9"/><path d="M16.6 3.6a2.1 2.1 0 0 1 3 3L8 18.2l-4.2 1.1L4.9 15z"/>',
+      info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.2"/><path d="M12 7.8h.01"/>',
+      mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/>',
+      checklist: '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3.4 5.5 4.9 7 7.4 4.3"/><path d="M3.4 11.5 4.9 13l2.5-2.7"/><path d="M3.4 17.5 4.9 19l2.5-2.7"/>',
+      gift: '<rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9"/><path d="M12 8v13"/><path d="M12 8c-4 0-4.6-4.6-2.1-4.6C11.7 3.4 12 8 12 8z"/><path d="M12 8c4 0 4.6-4.6 2.1-4.6C12.3 3.4 12 8 12 8z"/>',
+      cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 2.5V6M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/>',
+      grid: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/>',
+      qr: '<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><path d="M14 14h3v3h-3z"/><path d="M20.5 14v.01M14 20.5v.01M17.5 17.5h3v3h-3z"/>',
+      doc: '<path d="M6 2.8h8L19 8v13.2H6z"/><path d="M13.5 2.8V8H19"/>',
+      image: '<rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M20.5 16.5 16 12l-8.5 8.5"/>',
+      play: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5z"/>',
+      archive: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9"/><path d="M10 13h4"/>',
+      calc: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/>'
+    };
+    function icon(name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || ICONS.grid) + "</svg>"; }
+    var CHEV = '<svg class="cs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg>';
+
+    function siteLink(file, label, ic) { return [sitePrefix + file, label, ic]; }
+    function toolLink(slug, label) { return [rootPrefix + slug + "/", label]; }
+    var NAV = [
+      { id: "main", name: "Main", links: [
+        siteLink("index.html", "Home", "home"),
+        siteLink("books.html", "Books & Store", "book"),
+        siteLink("training.html", "Training", "cap"),
+        siteLink("services.html", "Security Services", "shield"),
+        siteLink("blog.html", "Blog", "pen"),
+        siteLink("about.html", "About", "info"),
+        siteLink("contact.html", "Contact", "mail")
+      ]},
+      { id: "learn", name: "Learn Free", links: [
+        siteLink("checklist.html", "Free Checklist", "checklist"),
+        siteLink("free-resources.html", "Free Resources", "gift"),
+        siteLink("knowledge-brain.html", "Knowledge Brain", "cpu")
+      ]},
+      { id: "tools", name: "Tools", links: [
+        [rootPrefix + "index.html", "All Tools", "grid"]
+      ], cats: [
+        { id: "qr-video", name: "QR & Video Links", icon: "qr", links: [
+          toolLink("qr-code-generator", "QR Code Generator"),
+          toolLink("qr-code-scanner", "QR Code Scanner"),
+          toolLink("youtube-thumbnail-downloader", "YouTube Thumbnail Downloader"),
+          toolLink("video-link-info", "Video Link Info")
+        ]},
+        { id: "image", name: "Image Tools", icon: "image", links: [
+          toolLink("image-information", "Image Information"),
+          toolLink("image-compressor", "Image Compressor"),
+          toolLink("image-converter", "Image Converter"),
+          toolLink("image-resizer-cropper", "Image Resizer & Cropper"),
+          toolLink("passport-photo-maker", "Passport Photo Maker"),
+          toolLink("resize-image-to-kb", "Resize Image to KB"),
+          toolLink("color-picker-from-image", "Color Picker from Image"),
+          toolLink("favicon-generator", "Favicon Generator")
+        ]},
+        { id: "pdf", name: "PDF Tools", icon: "doc", links: [
+          toolLink("pdf-merge", "PDF Merge"),
+          toolLink("pdf-split", "PDF Split"),
+          toolLink("images-to-pdf", "Images to PDF"),
+          toolLink("pdf-to-images", "PDF to Images"),
+          toolLink("pdf-compressor", "PDF Compressor"),
+          toolLink("rotate-pdf", "Rotate PDF"),
+          toolLink("pdf-to-text", "PDF to Text"),
+          toolLink("text-to-pdf", "Text to PDF")
+        ]},
+        { id: "audio-video", name: "Audio & Video Tools", icon: "play", links: [
+          toolLink("media-info", "Media Info"),
+          toolLink("audio-converter", "Audio Converter"),
+          toolLink("extract-audio", "Extract Audio from Video"),
+          toolLink("video-trimmer", "Video Trimmer"),
+          toolLink("gif-maker", "GIF Maker"),
+          toolLink("video-converter", "Video Converter"),
+          toolLink("video-compressor", "Video Compressor"),
+          toolLink("video-speed-changer", "Video Speed Changer"),
+          toolLink("audio-merger", "Audio Merger"),
+          toolLink("video-merger", "Video Merger"),
+          toolLink("voice-recorder", "Voice Recorder"),
+          toolLink("screen-recorder", "Screen Recorder")
+        ]},
+        { id: "text", name: "Text Tools", icon: "pen", links: [
+          toolLink("word-counter", "Word & Character Counter"),
+          toolLink("case-converter", "Case Converter & Line Tools"),
+          toolLink("csv-json-converter", "CSV / JSON Converter"),
+          toolLink("base64-encoder-decoder", "Base64 Encoder & Decoder"),
+          toolLink("json-formatter", "JSON Formatter & Validator"),
+          toolLink("text-diff-checker", "Text Diff Checker"),
+          toolLink("url-encoder-decoder", "URL Encoder & Decoder")
+        ]},
+        { id: "security", name: "Security & OSINT", icon: "shield", links: [
+          toolLink("dns-lookup", "DNS Lookup"),
+          toolLink("rdap-whois-lookup", "Domain Info (WHOIS / RDAP)"),
+          toolLink("ip-lookup", "IP Address Lookup"),
+          toolLink("whats-my-ip", "What's My IP"),
+          toolLink("subdomain-finder", "Subdomain Finder"),
+          toolLink("photo-privacy-checker", "Photo Privacy Checker (EXIF)"),
+          toolLink("phone-number-checker", "Phone Number Checker"),
+          toolLink("security-headers-check", "Security Headers Check"),
+          toolLink("email-breach-check", "Email Breach Check"),
+          toolLink("password-breach-check", "Leaked Password Check")
+        ]},
+        { id: "files", name: "Daily File Tools", icon: "archive", links: [
+          toolLink("zip-extractor", "ZIP Extractor"),
+          toolLink("file-hash-checker", "File Hash Checker")
+        ]},
+        { id: "calculators", name: "Calculators", icon: "calc", links: [
+          toolLink("age-calculator", "Age Calculator"),
+          toolLink("emi-calculator", "EMI Calculator"),
+          toolLink("sip-calculator", "SIP Calculator"),
+          toolLink("gst-calculator", "GST Calculator"),
+          toolLink("date-difference-calculator", "Date Difference Calculator"),
+          toolLink("percentage-calculator", "Percentage Calculator"),
+          toolLink("unit-converter", "Unit Converter")
+        ]}
+      ]}
+    ];
+    var TOOL_CATS = NAV[2].cats;
+
+    // Which link is the current page? Tool pages always live in the Tools
+    // group; the current tool (if any) also marks its category.
+    var currentHref = rootPrefix + "index.html", currentCat = null;
+    (function detectCurrent() {
+      var parts = window.location.pathname.split("/").filter(function (s) { return s.length > 0; });
+      var last = parts[parts.length - 1] || "";
+      var parent = parts[parts.length - 2] || "";
+      var candidate = (last === "index.html") ? parent : last;
+      for (var c = 0; c < TOOL_CATS.length; c++) {
+        for (var i = 0; i < TOOL_CATS[c].links.length; i++) {
+          if (TOOL_CATS[c].links[i][0] === rootPrefix + candidate + "/") {
+            currentHref = TOOL_CATS[c].links[i][0];
+            currentCat = TOOL_CATS[c].id;
+            return;
+          }
+        }
+      }
+    })();
+
+    // Accordion state — EXCLUSIVE, same rules and same storage keys as the
+    // main site: at most one group and at most one category open at a time.
+    // Tool pages force the Tools group open; a tool page also forces its
+    // own category open. Otherwise the single stored open section wins.
+    var storedGroups = {}, storedCats = {};
+    try { storedGroups = JSON.parse(lsGet("csGroups") || "{}") || {}; } catch (e) { storedGroups = {}; }
+    try { storedCats = JSON.parse(lsGet("csToolCats") || "{}") || {}; } catch (e) { storedCats = {}; }
+    var groupOpen = {}, catOpen = {};
+    (function resolveOpen() {
+      var og = "tools", oc = currentCat, g, c;
+      if (!og) { for (g = 0; g < NAV.length; g++) { if (storedGroups[NAV[g].id] === true) { og = NAV[g].id; break; } } }
+      if (!og) og = "main";
+      NAV.forEach(function (gr) { groupOpen[gr.id] = gr.id === og; });
+      if (!oc) { for (c = 0; c < TOOL_CATS.length; c++) { if (storedCats[TOOL_CATS[c].id] === true) { oc = TOOL_CATS[c].id; break; } } }
+      TOOL_CATS.forEach(function (ct) { catOpen[ct.id] = ct.id === oc; });
+    })();
+    function persistGroups() { lsSet("csGroups", JSON.stringify(groupOpen)); }
+    function persistCats() { lsSet("csToolCats", JSON.stringify(catOpen)); }
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (ch) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+      });
     }
 
-    var backdrop = document.createElement("div");
-    backdrop.className = "ck-backdrop";
-    document.body.appendChild(backdrop);
-
-    var topbar = document.createElement("div");
-    topbar.className = "ck-topbar";
-    var burger = document.createElement("button");
-    burger.className = "ck-burger";
-    burger.type = "button";
-    burger.setAttribute("aria-label", "Open the tools menu");
-    burger.innerHTML = "<span></span><span></span><span></span>";
-    var topLogo = document.createElement("a");
-    topLogo.className = "ck-topbar-logo";
-    topLogo.href = rootPrefix + "index.html";
-    topLogo.innerHTML = "CHEAK<span>STAR</span>";
-    topbar.appendChild(burger);
-    topbar.appendChild(topLogo);
-    document.body.appendChild(topbar);
-
-    var sidebar = document.createElement("aside");
-    sidebar.className = "ck-sidebar";
-    sidebar.id = "ck-sidebar";
-    sidebar.setAttribute("aria-label", "Tools navigation");
-
-    var head = document.createElement("div");
-    head.className = "ck-side-head";
-    var logo = document.createElement("a");
-    logo.className = "ck-logo";
-    logo.href = rootPrefix + "index.html";
-    logo.innerHTML = "CHEAK<span>STAR</span>";
-    var collapseBtn = document.createElement("button");
-    collapseBtn.className = "ck-collapse";
-    collapseBtn.type = "button";
-    collapseBtn.setAttribute("aria-label", "Collapse or expand the sidebar");
-    collapseBtn.textContent = "«";
-    var closeBtn = document.createElement("button");
-    closeBtn.className = "ck-close";
-    closeBtn.type = "button";
-    closeBtn.setAttribute("aria-label", "Close the tools menu");
-    closeBtn.textContent = "✕";
-    head.appendChild(logo);
-    head.appendChild(collapseBtn);
-    head.appendChild(closeBtn);
-    sidebar.appendChild(head);
-
-    var nav = document.createElement("nav");
-    nav.className = "ck-nav";
-
-    var allLink = document.createElement("a");
-    allLink.className = "ck-all-link" + (currentSlug === "" ? " active" : "");
-    allLink.href = rootPrefix + "index.html";
-    var allInitial = document.createElement("span");
-    allInitial.className = "ck-ginitial";
-    allInitial.textContent = "A";
-    var allLabel = document.createElement("span");
-    allLabel.className = "ck-all-label";
-    allLabel.textContent = "All Tools";
-    allLink.appendChild(allInitial);
-    allLink.appendChild(allLabel);
-    allLink.title = "All Tools";
-    nav.appendChild(allLink);
-
-    var openGroups = [];
-    try { openGroups = JSON.parse(store("ck_side_groups") || "[]"); } catch (e) { openGroups = []; }
-
-    GROUPS.forEach(function (group, gi) {
-      var gName = group[0];
-      var tools = group[1];
-      var hasCurrent = tools.some(function (t) { return t[0] === currentSlug; });
-      var g = document.createElement("div");
-      g.className = "ck-group" + ((hasCurrent || openGroups.indexOf(gName) !== -1) ? " open" : "");
-      var gHead = document.createElement("button");
-      gHead.className = "ck-group-head";
-      gHead.type = "button";
-      gHead.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
-      var initial = document.createElement("span");
-      initial.className = "ck-ginitial";
-      initial.textContent = gName.charAt(0);
-      var name = document.createElement("span");
-      name.className = "ck-gname";
-      name.textContent = gName;
-      var chev = document.createElement("span");
-      chev.className = "ck-chev";
-      chev.textContent = "▾";
-      gHead.appendChild(initial);
-      gHead.appendChild(name);
-      gHead.appendChild(chev);
-      gHead.title = gName;
-      var gBody = document.createElement("div");
-      gBody.className = "ck-group-body";
-      var gInner = document.createElement("div");
-      gInner.className = "ck-group-inner";
-      tools.forEach(function (t) {
-        var a = document.createElement("a");
-        a.className = "ck-link" + (t[0] === currentSlug ? " active" : "");
-        a.href = rootPrefix + t[0] + "/";
-        a.textContent = t[1];
-        a.title = t[1];
-        if (t[0] === currentSlug) { a.setAttribute("aria-current", "page"); }
-        gInner.appendChild(a);
+    // Build the shell DOM — the same markup the main site builds.
+    var html = "";
+    html += '<aside class="cs-side" id="csSide" aria-label="Site navigation">';
+    html += '<div class="cs-side-head"><a class="cs-logo cs-logo-full" href="' + sitePrefix + 'index.html">CHEAK<span>STAR</span></a>' +
+            '<a class="cs-logo cs-logo-mini" href="' + sitePrefix + 'index.html" aria-label="Cheakstar home">C<span>S</span></a>' +
+            '<button class="cs-side-close" id="csSideClose" type="button" aria-label="Close menu">&times;</button></div>';
+    html += '<div class="cs-filter"><input type="search" id="csFilter" placeholder="Search pages" aria-label="Search pages" autocomplete="off"></div>';
+    html += '<nav class="cs-nav" id="csNav">';
+    NAV.forEach(function (g) {
+      html += '<div class="cs-group' + (groupOpen[g.id] ? " open" : "") + '" data-group="' + g.id + '">';
+      html += '<button class="cs-group-head" type="button" aria-expanded="' + (groupOpen[g.id] ? "true" : "false") + '"><span class="cs-group-name">' + g.name + "</span>" + CHEV + "</button>";
+      html += '<div class="cs-group-body"><div class="cs-group-inner">';
+      g.links.forEach(function (l) {
+        html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '">' + icon(l[2]) + '<span class="cs-label">' + esc(l[1]) + "</span></a>";
       });
-      gBody.appendChild(gInner);
-      gHead.addEventListener("click", function () {
-        if (document.body.classList.contains("ck-collapsed") && window.innerWidth > 860) {
-          // In rail mode a group click first expands the sidebar.
-          document.body.classList.remove("ck-collapsed");
-          storeSet("ck_side_collapsed", "0");
-          g.classList.add("open");
-          gHead.setAttribute("aria-expanded", "true");
-          return;
-        }
-        g.classList.toggle("open");
-        gHead.setAttribute("aria-expanded", g.classList.contains("open") ? "true" : "false");
-        var names = [];
-        nav.querySelectorAll(".ck-group.open .ck-gname").forEach(function (el) { names.push(el.textContent); });
-        storeSet("ck_side_groups", JSON.stringify(names));
-      });
-      g.appendChild(gHead);
-      g.appendChild(gBody);
-      nav.appendChild(g);
-    });
-    sidebar.appendChild(nav);
-
-    var foot = document.createElement("div");
-    foot.className = "ck-side-foot";
-    var sitePrefix = rootPrefix + "../";
-    [["Home", "index.html"], ["Blog", "blog.html"], ["About", "about.html"], ["Contact", "contact.html"]].forEach(function (l) {
-      var a = document.createElement("a");
-      a.href = sitePrefix + l[1];
-      a.textContent = l[0];
-      foot.appendChild(a);
-    });
-    var copy = document.createElement("span");
-    copy.className = "ck-copy";
-    copy.textContent = "© " + new Date().getFullYear() + " Cheakstar";
-    foot.appendChild(copy);
-    sidebar.appendChild(foot);
-    document.body.appendChild(sidebar);
-
-    collapseBtn.addEventListener("click", function () {
-      var collapsed = document.body.classList.toggle("ck-collapsed");
-      storeSet("ck_side_collapsed", collapsed ? "1" : "0");
-    });
-
-    function openDrawer() { document.body.classList.add("ck-drawer-open"); }
-    function closeDrawer() { document.body.classList.remove("ck-drawer-open"); }
-    burger.addEventListener("click", openDrawer);
-    closeBtn.addEventListener("click", closeDrawer);
-    backdrop.addEventListener("click", closeDrawer);
-    sidebar.addEventListener("click", function (event) {
-      if (event.target.closest("a")) { closeDrawer(); }
-    });
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") { closeDrawer(); }
-    });
-
-    // Mobile top bar: hide on scroll down, show on scroll up.
-    var lastY = window.scrollY || 0;
-    var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) { return; }
-      ticking = true;
-      window.requestAnimationFrame(function () {
-        ticking = false;
-        var y = window.scrollY || 0;
-        if (window.innerWidth <= 860 && !document.body.classList.contains("ck-drawer-open")) {
-          if (y > 90 && y > lastY + 4) { topbar.classList.add("ck-hidden"); }
-          else if (y < lastY - 4 || y <= 90) { topbar.classList.remove("ck-hidden"); }
-        } else {
-          topbar.classList.remove("ck-hidden");
-        }
-        lastY = y;
-      });
-    }, { passive: true });
-  } catch (e) { /* sidebar is an enhancement; the page still works */ }
-
-  /* ---------- Scroll progress + back-to-top ---------- */
-  try {
-    var progress = document.createElement("div");
-    progress.id = "ck-progress";
-    document.body.appendChild(progress);
-    var topBtn = document.createElement("button");
-    topBtn.id = "ck-top";
-    topBtn.type = "button";
-    topBtn.setAttribute("aria-label", "Back to top");
-    topBtn.textContent = "↑";
-    document.body.appendChild(topBtn);
-    topBtn.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-    });
-    var ticking2 = false;
-    window.addEventListener("scroll", function () {
-      if (ticking2) { return; }
-      ticking2 = true;
-      window.requestAnimationFrame(function () {
-        ticking2 = false;
-        var doc = document.documentElement;
-        var max = doc.scrollHeight - window.innerHeight;
-        var y = window.scrollY || 0;
-        progress.style.width = (max > 0 ? Math.round((y / max) * 100) : 0) + "%";
-        topBtn.classList.toggle("ck-show", y > 600);
-      });
-    }, { passive: true });
-  } catch (e) { /* ignore */ }
-
-  /* ---------- Reveal on scroll (index cards) ---------- */
-  try {
-    var revealEls = document.querySelectorAll(".tool-card-item");
-    if (revealEls.length > 0) {
-      if (reducedMotion || typeof IntersectionObserver === "undefined") {
-        // Everything stays visible.
-      } else {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("ck-in");
-              io.unobserve(entry.target);
-            }
+      if (g.cats) {
+        g.cats.forEach(function (ct) {
+          html += '<div class="cs-subgroup' + (catOpen[ct.id] ? " open" : "") + '" data-cat="' + ct.id + '">';
+          html += '<button class="cs-subgroup-head" type="button" aria-expanded="' + (catOpen[ct.id] ? "true" : "false") + '" data-label="' + esc(ct.name) + '">' + icon(ct.icon) + '<span class="cs-label">' + esc(ct.name) + "</span>" + CHEV + "</button>";
+          html += '<div class="cs-subgroup-body"><div class="cs-subgroup-inner">';
+          ct.links.forEach(function (l) {
+            html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '"><span class="cs-label">' + esc(l[1]) + "</span></a>";
           });
-        }, { threshold: 0.08 });
-        revealEls.forEach(function (el) {
-          el.classList.add("ck-reveal");
-          io.observe(el);
+          html += "</div></div></div>";
         });
       }
-    }
-  } catch (e) { /* content stays visible */ }
+      html += "</div></div></div>";
+    });
+    html += '<div class="cs-noresults" id="csNoResults" hidden>No page matches your search.</div>';
+    html += "</nav>";
+    html += '<div class="cs-side-foot"><button class="cs-rail-toggle" id="csRailToggle" type="button" aria-label="Collapse or expand the sidebar"></button></div>';
+    html += "</aside>";
+    html += '<div class="cs-backdrop" id="csBackdrop"></div>';
+    html += '<header class="cs-topbar" id="csTopbar"><button class="cs-burger" id="csBurger" type="button" aria-label="Open menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
+            '<a class="cs-logo" href="' + sitePrefix + 'index.html">CHEAK<span>STAR</span></a></header>';
+    html += '<div class="cs-progress" id="csProgress"></div>';
+    html += '<button class="cs-top-btn" id="csTopBtn" type="button" aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg></button>';
 
-  /* ---------- Footer year (site footer kept by the assembler) ---------- */
-  try {
-    var yearEl = document.getElementById("year");
-    if (yearEl) { yearEl.textContent = String(new Date().getFullYear()); }
-  } catch (e) { /* ignore */ }
+    var holder = document.createElement("div");
+    holder.innerHTML = html;
+    var mainEl = document.querySelector("main");
+    while (holder.firstChild) {
+      var node = holder.firstChild;
+      if (node.id === "csTopbar" && mainEl && mainEl.parentNode) {
+        // The sticky top bar must sit in flow before the page content.
+        mainEl.parentNode.insertBefore(node, mainEl);
+      } else {
+        document.body.appendChild(node);
+      }
+    }
+    document.body.classList.add("cs-shell");
+
+    var mqMobile = window.matchMedia("(max-width: 768px)");
+    var side = document.getElementById("csSide");
+    var navEl = document.getElementById("csNav");
+
+    // Apply the exclusive open states to the DOM (classes + aria only).
+    function applyOpenStates() {
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
+        var open = !!groupOpen[group.getAttribute("data-group")];
+        group.classList.toggle("open", open);
+        group.querySelector(".cs-group-head").setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-subgroup"), function (sub) {
+        var open = !!catOpen[sub.getAttribute("data-cat")];
+        sub.classList.toggle("open", open);
+        sub.querySelector(".cs-subgroup-head").setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    }
+    function setOpenGroup(id) { // id or null: exclusive — at most one group open
+      NAV.forEach(function (g) { groupOpen[g.id] = g.id === id; });
+      persistGroups();
+      applyOpenStates();
+    }
+    function setOpenCat(id) { // id or null: exclusive — at most one category open
+      TOOL_CATS.forEach(function (c) { catOpen[c.id] = c.id === id; });
+      persistCats();
+      applyOpenStates();
+    }
+
+    // Groups: exclusive accordion — opening one closes the others;
+    // clicking the open group closes it.
+    var groupHeads = side.querySelectorAll(".cs-group-head");
+    Array.prototype.forEach.call(groupHeads, function (head) {
+      head.addEventListener("click", function () {
+        var id = head.parentNode.getAttribute("data-group");
+        setOpenGroup(groupOpen[id] ? null : id);
+      });
+    });
+    // Tool categories: same exclusive accordion, one level down. In rail
+    // mode the category links are hidden, so a click first expands the
+    // sidebar and then opens just that category.
+    var subHeads = side.querySelectorAll(".cs-subgroup-head");
+    Array.prototype.forEach.call(subHeads, function (head) {
+      head.addEventListener("click", function () {
+        var id = head.parentNode.getAttribute("data-cat");
+        if (document.body.classList.contains("cs-rail") && !mqMobile.matches) {
+          document.body.classList.remove("cs-rail");
+          lsSet("csRail", "0");
+          applyRail();
+          setOpenGroup("tools");
+          setOpenCat(id);
+          return;
+        }
+        setOpenCat(catOpen[id] ? null : id);
+      });
+    });
+    function applyGroupStates() {
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
+        group.style.display = "";
+        Array.prototype.forEach.call(group.querySelectorAll("a"), function (a) { a.style.display = ""; });
+      });
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-subgroup"), function (sub) { sub.style.display = ""; });
+      applyOpenStates();
+      document.getElementById("csNoResults").hidden = true;
+    }
+
+    // Filter box: live-filter links, auto-open groups with matches.
+    var filterInput = document.getElementById("csFilter");
+    filterInput.addEventListener("input", function () {
+      var q = filterInput.value.trim().toLowerCase();
+      if (!q) { applyGroupStates(); return; }
+      var total = 0;
+      Array.prototype.forEach.call(side.querySelectorAll(".cs-group"), function (group) {
+        var count = 0;
+        Array.prototype.forEach.call(group.querySelectorAll(".cs-subgroup"), function (sub) {
+          var subCount = 0;
+          Array.prototype.forEach.call(sub.querySelectorAll("a"), function (a) {
+            var hit = a.getAttribute("data-label").toLowerCase().indexOf(q) >= 0;
+            a.style.display = hit ? "" : "none";
+            if (hit) subCount++;
+          });
+          sub.style.display = subCount ? "" : "none";
+          if (subCount) sub.classList.add("open");
+          count += subCount;
+        });
+        Array.prototype.forEach.call(group.querySelectorAll(".cs-group-inner > a"), function (a) {
+          var hit = a.getAttribute("data-label").toLowerCase().indexOf(q) >= 0;
+          a.style.display = hit ? "" : "none";
+          if (hit) count++;
+        });
+        group.style.display = count ? "" : "none";
+        if (count) group.classList.add("open");
+        total += count;
+      });
+      document.getElementById("csNoResults").hidden = total !== 0;
+    });
+
+    // Rail (desktop collapse) with persistence + tooltips via title.
+    var railBtn = document.getElementById("csRailToggle");
+    function applyRail() {
+      var rail = document.body.classList.contains("cs-rail");
+      railBtn.textContent = rail ? "»" : "« Collapse";
+      railBtn.setAttribute("aria-expanded", rail ? "false" : "true");
+      Array.prototype.forEach.call(navEl.querySelectorAll("a"), function (a) {
+        if (rail && !mqMobile.matches) a.title = a.getAttribute("data-label");
+        else a.removeAttribute("title");
+      });
+      Array.prototype.forEach.call(navEl.querySelectorAll(".cs-subgroup-head"), function (h) {
+        if (rail && !mqMobile.matches) h.title = h.getAttribute("data-label");
+        else h.removeAttribute("title");
+      });
+    }
+    if (lsGet("csRail") === "1" && !mqMobile.matches) document.body.classList.add("cs-rail");
+    applyRail();
+
+    // Bring the current page's link into view inside the scrolling nav, so
+    // the gold highlight is never hidden below the fold or the footer.
+    var activeLink = navEl.querySelector("a.active");
+    if (activeLink && activeLink.scrollIntoView) {
+      setTimeout(function () {
+        try { activeLink.scrollIntoView({ block: "center" }); } catch (e) { /* ignore */ }
+      }, 60);
+    }
+
+    // Drawer (mobile).
+    function openDrawer() { document.body.classList.add("cs-drawer"); }
+    function closeDrawer() { document.body.classList.remove("cs-drawer"); }
+    document.getElementById("csBurger").addEventListener("click", openDrawer);
+    document.getElementById("csSideClose").addEventListener("click", closeDrawer);
+    document.getElementById("csBackdrop").addEventListener("click", closeDrawer);
+    Array.prototype.forEach.call(navEl.querySelectorAll("a"), function (a) {
+      a.addEventListener("click", function () { if (mqMobile.matches) closeDrawer(); });
+    });
+    if (mqMobile.addEventListener) mqMobile.addEventListener("change", function () {
+      if (!mqMobile.matches) { closeDrawer(); applyRail(); }
+    });
+
+    // Keyboard: Esc closes the drawer; Ctrl/Cmd+B toggles sidebar.
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeDrawer();
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "b" || e.key === "B")) {
+        var t = e.target;
+        if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+        e.preventDefault();
+        if (mqMobile.matches) document.body.classList.toggle("cs-drawer");
+        else railBtn.click();
+      }
+    });
+
+    // Scroll UI: progress bar, back-to-top, mobile top-bar auto-hide.
+    var progress = document.getElementById("csProgress");
+    var topBtn = document.getElementById("csTopBtn");
+    var topbar = document.getElementById("csTopbar");
+    var lastY = window.scrollY || 0, topHidden = false, ticking = false;
+    function setTopHidden(v) {
+      if (v === topHidden) return;
+      topHidden = v;
+      topbar.classList.toggle("cs-top-hidden", v);
+    }
+    function onScrollUI() {
+      ticking = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.transform = "scaleX(" + (max > 0 ? Math.min(1, y / max) : 0) + ")";
+      topBtn.classList.toggle("show", y > 600);
+      if (!mqMobile.matches || document.body.classList.contains("cs-drawer")) { setTopHidden(false); lastY = y; return; }
+      if (y < 100) setTopHidden(false);
+      else if (Math.abs(y - lastY) > 4) setTopHidden(y > lastY);
+      lastY = y;
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(onScrollUI); }
+    }, { passive: true });
+    onScrollUI();
+    topBtn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+    });
+
+    // Reveal on scroll (cards, notes, section children) — top-level items only.
+    if (!reduced && "IntersectionObserver" in window) {
+      var seenEls = [], elSet = [];
+      var candidates = document.querySelectorAll(".card, .note, section > .wrap > *");
+      Array.prototype.forEach.call(candidates, function (el) { if (elSet.indexOf(el) < 0) elSet.push(el); });
+      var tops = elSet.filter(function (el) {
+        return !elSet.some(function (other) { return other !== el && other.contains(el); });
+      });
+      tops.forEach(function (el) { el.classList.add("cs-reveal"); seenEls.push(el); });
+      document.body.classList.add("cs-anim");
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -4% 0px" });
+      seenEls.forEach(function (el) { io.observe(el); });
+      setTimeout(function () { // failsafe: nothing stays hidden
+        seenEls.forEach(function (el) { el.classList.add("revealed"); });
+      }, 1600);
+    }
+  } catch (e) {
+    // Shell failed: the page keeps working without the sidebar.
+    try {
+      document.body.classList.remove("cs-shell");
+      document.body.classList.remove("cs-rail");
+      document.body.classList.remove("cs-drawer");
+      Array.prototype.forEach.call(document.querySelectorAll(".cs-side,.cs-topbar,.cs-backdrop,.cs-progress,.cs-top-btn"), function (n) {
+        if (n.parentNode) n.parentNode.removeChild(n);
+      });
+    } catch (e2) {}
+  }
 })();
+
+// ==== Cheakstar sidebar account block (same as the main site).
+// Failure-isolated: renders instantly in the signed-out state, loads the
+// main site's auth.js lazily, then updates when the account state is
+// known. If anything fails, the block stays in its signed-out form. ====
+(function () {
+  "use strict";
+  try {
+    var side = document.getElementById("csSide");
+    var foot = side ? side.querySelector(".cs-side-foot") : null;
+    if (!side || !foot) return;
+
+    // Site root prefix, derived from this script's own URL exactly as in
+    // the shell above: auth.js and the account pages live at the site
+    // root, one level above the tools root.
+    var rootPrefix = "../";
+    try {
+      var scriptEl = document.currentScript;
+      if (scriptEl && scriptEl.src) {
+        var marker = "assets/tools.js";
+        var idx = scriptEl.src.indexOf(marker);
+        if (idx > -1) { rootPrefix = scriptEl.src.slice(0, idx); }
+      }
+    } catch (e) { /* keep fallback */ }
+    var sitePrefix = rootPrefix + "../";
+
+    var USER_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-3.2 3.8-4.8 7-4.8s5.8 1.6 7 4.8"/></svg>';
+    var GEAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/></svg>';
+    var OUT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4"/><path d="M14 8l3.5 4L14 16"/><path d="M17 12H9.5"/></svg>';
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    var block = document.createElement("div");
+    block.className = "cs-account";
+    block.id = "csAccount";
+    block.innerHTML = '<div class="cs-acc-head">Account</div><div class="cs-acc-body" id="csAccBody"></div>';
+    side.insertBefore(block, foot);
+    var bodyEl = block.querySelector("#csAccBody");
+
+    function render(user) {
+      if (!user) {
+        bodyEl.innerHTML =
+          '<a href="' + sitePrefix + 'login.html">' + USER_ICON + '<span class="cs-label">Login</span></a>' +
+          '<a href="' + sitePrefix + 'signup.html">' + USER_ICON + '<span class="cs-label">Sign Up</span></a>';
+        return;
+      }
+      var meta = user.user_metadata || {};
+      var name = meta.display_name || user.email || "Account";
+      var initial = name.charAt(0).toUpperCase() || "A";
+      var avatarHtml = (typeof meta.avatar === "string" && meta.avatar.indexOf("data:image/") === 0)
+        ? '<img class="cs-avatar" src="' + esc(meta.avatar) + '" alt="">'
+        : '<div class="cs-avatar" aria-hidden="true">' + esc(initial) + "</div>";
+      bodyEl.innerHTML =
+        '<div class="cs-acc-who">' + avatarHtml +
+        '<div class="cs-acc-meta"><span class="cs-acc-name">' + esc(name) + "</span>" +
+        '<span class="cs-acc-email">' + esc(user.email || "") + "</span></div></div>" +
+        '<a href="' + sitePrefix + 'account.html">' + USER_ICON + '<span class="cs-label">My Account</span></a>' +
+        // Settings is login-only, so its link exists only in this
+        // signed-in render (added 2026-11-06, settings/gating build).
+        '<a href="' + sitePrefix + 'settings.html">' + GEAR_ICON + '<span class="cs-label">Settings</span></a>' +
+        '<button type="button" class="cs-acc-out" id="csAccSignOut">' + OUT_ICON + '<span class="cs-label">Sign Out</span></button>';
+      var out = bodyEl.querySelector("#csAccSignOut");
+      if (out) out.addEventListener("click", function () {
+        if (window.CSAuth) window.CSAuth.signOut().then(function () { window.location.reload(); });
+      });
+    }
+    render(null); // instant signed-out state; updated when CSAuth resolves
+
+    var hooked = false;
+    function hook() {
+      if (hooked || !window.CSAuth) return hooked;
+      hooked = true;
+      try {
+        window.CSAuth.onChange(function (user) { render(user); });
+        window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
+      } catch (e) {}
+      return true;
+    }
+    if (!hook()) {
+      var s = document.createElement("script");
+      s.src = sitePrefix + "auth.js";
+      s.async = true;
+      s.onload = function () { hook(); };
+      (document.head || document.documentElement).appendChild(s);
+      var tries = 0;
+      var iv = setInterval(function () { if (hook() || ++tries > 40) clearInterval(iv); }, 250);
+    }
+  } catch (e) {}
+})();
+
+/* ---------- Footer year (site footer kept by the assembler) ---------- */
+document.addEventListener("DOMContentLoaded", function () {
+  var y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+});
