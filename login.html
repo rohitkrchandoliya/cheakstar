@@ -11,13 +11,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/login.html">
 <link rel="stylesheet" href="styles.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
-</head><body>
-<header class="site"><div class="wrap nav">
-<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
-<nav class="navlinks">
-<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-</nav></div></header>
+</head><body class="auth-page">
+<header class="auth-strip"><a class="cs-logo" href="index.html">CHEAK<span>STAR</span></a></header>
 <section><div class="wrap">
 <h1>Welcome <span class="gold">Back</span></h1>
 <p class="sub">Sign in to your Cheakstar account to reach your saved favourite tools and your recently used tools. Every tool on this website stays free, signed in or not.</p>
@@ -47,13 +42,21 @@
     <p class="auth-alt">New to Cheakstar? <a href="signup.html">Create an account</a></p>
     <p class="auth-alt" style="margin-top:6px"><a href="reset-password.html">Forgot your password?</a></p>
   </form>
+
+  <form id="mfaForm" novalidate hidden>
+    <p style="margin-bottom:14px">Your account has two-factor authentication on. Enter the 6-digit code from your authenticator app to finish signing in.</p>
+    <div class="auth-field">
+      <label for="loginMfaCode">Authenticator code</label>
+      <input type="text" id="loginMfaCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456">
+    </div>
+    <div class="auth-msg error" id="mfaError" role="alert" hidden></div>
+    <button class="btn auth-submit" type="submit" id="mfaSubmit">Verify and sign in</button>
+    <p class="auth-alt">Lost access to your authenticator app? <a href="contact.html">Contact us</a> and we will help you regain access after verifying your identity.</p>
+  </form>
 </div>
+<div class="auth-links"><a href="index.html">Back to home</a> · <a href="privacy-policy.html">Privacy Policy</a> · <a href="contact.html">Contact</a></div>
 </div></section>
-<footer class="site"><div class="wrap foot">
-<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
-<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
-</div></footer>
-<script src="script.js"></script>
+<footer class="auth-foot">© 2026 Cheakstar Private Limited · Jaipur, India</footer>
 <script src="auth.js"></script>
 <script>
 (function () {
@@ -63,20 +66,77 @@
   var signedInBox = document.getElementById("loginSignedIn");
   var errorBox = document.getElementById("loginError");
   var submitBtn = document.getElementById("loginSubmit");
+  var mfaForm = document.getElementById("mfaForm");
+  var mfaError = document.getElementById("mfaError");
+  var mfaBtn = document.getElementById("mfaSubmit");
 
   function showError(msg) { errorBox.textContent = msg; errorBox.hidden = !msg; }
+  function showMfaError(msg) { mfaError.textContent = msg; mfaError.hidden = !msg; }
   function userLabel(user) {
     var meta = user.user_metadata || {};
     return meta.display_name ? meta.display_name + " (" + user.email + ")" : user.email;
   }
+
+  function showMfa() {
+    form.hidden = true;
+    signedInBox.hidden = true;
+    notice.hidden = true;
+    mfaForm.hidden = false;
+  }
+
+  // After the password step: a session that still owes a two-factor code
+  // (aal1 while aal2 is available) must complete the challenge before
+  // going any further. If the two-factor status cannot be checked, the
+  // sign-in is NOT waved through — the visitor stays here with a message.
+  function proceedAfterPassword() {
+    window.CSAuth.getAAL().then(function (aal) {
+      if (aal.currentLevel === "aal1" && aal.nextLevel === "aal2") {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Sign In";
+        showMfa();
+      } else {
+        window.location.href = "account.html";
+      }
+    }, function () {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign In";
+      notice.textContent = "We could not verify your two-factor status just now. Please try again.";
+      notice.hidden = false;
+    });
+  }
+
+  var renderCheckedFor = null;
   function render(user) {
     if (user) {
+      // A visitor who lands here already signed in but still owing a
+      // two-factor code gets the challenge form, not the account box.
+      if (renderCheckedFor !== user.id) {
+        renderCheckedFor = user.id;
+        window.CSAuth.getAAL().then(function (aal) {
+          if (aal.currentLevel === "aal1" && aal.nextLevel === "aal2") { showMfa(); return; }
+          document.getElementById("loginWho").textContent = userLabel(user);
+          signedInBox.hidden = false;
+          form.hidden = true;
+          mfaForm.hidden = true;
+          notice.hidden = true;
+        }, function () {
+          document.getElementById("loginWho").textContent = userLabel(user);
+          signedInBox.hidden = false;
+          form.hidden = true;
+          notice.textContent = "We could not verify your two-factor status just now. Please try again.";
+          notice.hidden = false;
+        });
+        return;
+      }
+      if (!mfaForm.hidden) return; // challenge already on screen
       document.getElementById("loginWho").textContent = userLabel(user);
       signedInBox.hidden = false;
       form.hidden = true;
       notice.hidden = true;
     } else {
+      renderCheckedFor = null;
       signedInBox.hidden = true;
+      mfaForm.hidden = true;
       form.hidden = false;
       if (!window.CSAuth.isAvailable()) {
         notice.textContent = "The sign-in service could not be reached just now. The form still works if the service recovers, otherwise please try again in a little while.";
@@ -101,11 +161,32 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Signing in…";
     window.CSAuth.signIn(email, password).then(function () {
-      window.location.href = "account.html";
+      proceedAfterPassword();
     }, function (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Sign In";
       showError(err.message || "Sign-in failed. Please try again.");
+    });
+  });
+
+  mfaForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    showMfaError("");
+    var code = document.getElementById("loginMfaCode").value.replace(/\D/g, "");
+    if (code.length !== 6) { showMfaError("Please enter the 6-digit code from your authenticator app."); return; }
+    mfaBtn.disabled = true;
+    mfaBtn.textContent = "Verifying…";
+    window.CSAuth.mfaStatus().then(function (st) {
+      if (!st.enabled || !st.factorId) {
+        throw new Error("Two-factor is on for this account, but no authenticator was found. Please contact us for help.");
+      }
+      return window.CSAuth.mfaChallengeAndVerify(st.factorId, code);
+    }).then(function () {
+      window.location.href = "account.html";
+    }, function (err) {
+      mfaBtn.disabled = false;
+      mfaBtn.textContent = "Verify and sign in";
+      showMfaError(err.message || "That code is not correct. Check your authenticator app and try again.");
     });
   });
 
