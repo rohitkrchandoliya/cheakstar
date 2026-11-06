@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>QR Code Scanner - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">QR Code Scanner</h1>
+<p class="tool-sub">Read a QR code from an uploaded image and see what it contains.</p>
+<div class="tool-card">
+  <p>Upload an image of a QR code — a photo or a screenshot — and see what it contains before you act on it. Useful for checking where a payment or login QR really leads.</p>
+
+  <label for="qrs-file">Choose an image with a QR code</label>
+  <input id="qrs-file" type="file" accept="image/*">
+  <div class="preview" id="qrs-preview"></div>
+
+  <div class="result" id="qrs-result" hidden>
+    <p class="big">QR code contents</p>
+    <p class="kv"><b>Type:</b> <span id="qrs-type"></span></p>
+    <p class="kv"><b>Content:</b> <span id="qrs-text"></span></p>
+    <p id="qrs-action"></p>
+  </div>
+  <p id="qrs-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Safety:</strong> scanning shows you the contents first — it never opens a link or starts a payment by itself. The image is decoded only in this browser tab and is never uploaded.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/img-tools.js"></script>
+<script>
+"use strict";
+var IT = window.ImgTools;
+var qrsStatus = document.getElementById("qrs-status");
+
+document.getElementById("qrs-file").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) { return; }
+  document.getElementById("qrs-result").hidden = true;
+  if (typeof jsQR === "undefined") {
+    qrsStatus.className = "status error";
+    qrsStatus.textContent = "The QR scanning library could not be loaded. Check your connection and reload the page.";
+    return;
+  }
+  qrsStatus.className = "status";
+  qrsStatus.textContent = "Scanning the image for a QR code...";
+  IT.readImageFile(file).then(function (img) {
+    var preview = document.getElementById("qrs-preview");
+    preview.innerHTML = "";
+    var thumb = img.cloneNode(false);
+    thumb.style.maxHeight = "240px";
+    preview.appendChild(thumb);
+    var canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) { throw new Error("canvas"); }
+    ctx.drawImage(img, 0, 0);
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (!code || !code.data) {
+      qrsStatus.className = "status error";
+      qrsStatus.textContent = "No QR code was found in this image. A clearer, larger or straighter photo of the code usually works.";
+      return;
+    }
+    var text = code.data;
+    document.getElementById("qrs-text").textContent = text;
+    var typeText = "Plain text";
+    var action = document.getElementById("qrs-action");
+    action.innerHTML = "";
+    if (/^https?:\/\//i.test(text)) {
+      typeText = "Website link";
+      var a = document.createElement("a");
+      a.href = text;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = "Open this link — only if it is the site you expected";
+      action.appendChild(a);
+    } else if (/^upi:\/\//i.test(text)) {
+      typeText = "UPI payment request";
+      var note = document.createElement("span");
+      note.textContent = "This is a payment QR. Opening it in a UPI app would ask you to pay — never pay a QR you received unexpectedly, and remember: receiving money never needs a PIN.";
+      action.appendChild(note);
+    } else if (/^WIFI:/i.test(text)) {
+      typeText = "Wi-Fi network details";
+    } else if (/^tel:/i.test(text)) {
+      typeText = "Phone number";
+    } else if (/^mailto:/i.test(text)) {
+      typeText = "Email address";
+    } else if (/^sms:/i.test(text) || /^smsto:/i.test(text)) {
+      typeText = "SMS message";
+    }
+    document.getElementById("qrs-type").textContent = typeText;
+    document.getElementById("qrs-result").hidden = false;
+    qrsStatus.className = "status ok";
+    qrsStatus.textContent = "QR code read successfully.";
+  }).catch(function () {
+    qrsStatus.className = "status error";
+    qrsStatus.textContent = "This image could not be read by the browser. Try a JPG or PNG screenshot of the QR code.";
+  });
+});
+</script>
+</body>
+</html>
