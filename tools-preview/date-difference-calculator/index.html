@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Date Difference Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -28,10 +27,10 @@
     </div>
   </div>
   <div class="btn-row">
-    <button id="dd-run" class="btn" type="button">Calculate difference</button>
+    <button id="dd-run" class="btn" type="button" data-autorun>Calculate difference</button>
   </div>
   <p id="dd-status" class="status" role="status"></p>
-  <div class="result" id="dd-result" hidden>
+  <div class="result" id="dd-result" hidden data-result>
     <p class="big" id="dd-headline"></p>
     <div id="dd-rows"></div>
   </div>
@@ -57,7 +56,7 @@
     <button id="dd-run2" class="btn" type="button">Calculate new date</button>
   </div>
   <p id="dd-status2" class="status" role="status"></p>
-  <div class="result" id="dd-result2" hidden>
+  <div class="result" id="dd-result2" hidden data-result>
     <p class="big" id="dd-headline2"></p>
   </div>
 </div>
@@ -148,5 +147,7 @@ document.getElementById("dd-run2").addEventListener("click", function () {
   status.textContent = "New date calculated.";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
