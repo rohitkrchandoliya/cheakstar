@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Color Picker from Image - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -22,7 +21,7 @@
   <input id="cp-file" type="file" accept="image/*">
   <div class="preview" id="cp-preview"></div>
 
-  <div class="result" id="cp-result" hidden>
+  <div class="result" id="cp-result" hidden data-result>
     <p class="big">Picked colour</p>
     <div id="cp-swatch" style="height:64px;border-radius:10px;border:1px solid var(--line);margin-bottom:12px"></div>
     <p class="kv"><b>HEX:</b> <span class="mono" id="cp-hex"></span></p>
@@ -124,5 +123,7 @@ document.getElementById("cp-copy").addEventListener("click", function () {
   }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
