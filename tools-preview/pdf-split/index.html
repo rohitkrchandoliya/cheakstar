@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>PDF Split — Extract &amp; Delete Pages - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF Split — Extract &amp; Delete Pages</h1>
+<p class="tool-sub">Extract chosen pages from a PDF, or delete pages from it.</p>
+<div class="tool-card">
+  <p>Split a PDF by taking pages out of it. Add a PDF, type the pages you want (for example 1,3-5), then extract just those pages as a new PDF — or delete those pages and keep the rest.</p>
+
+  <label for="split-files">Choose PDF files</label>
+  <input id="split-files" type="file" accept="application/pdf,.pdf" multiple>
+  <div id="split-list"></div>
+  <p id="split-status" class="status" aria-live="polite"></p>
+</div>
+<div class="note"><strong>Your files stay on your device.</strong> Splitting runs entirely in your browser using the open-source pdf-lib library (MIT licence). Nothing is uploaded to any server. The original file is never changed — you always download a new PDF.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var splitFiles = [];
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+  function downloadBlob(blob, filename) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+  }
+  function parseRanges(text, maxPage) {
+    // Accepts "1,3-5,7" (1-based). Returns sorted unique page numbers, or null on bad input.
+    var result = [];
+    var parts = text.split(",");
+    for (var i = 0; i < parts.length; i++) {
+      var part = parts[i].trim();
+      if (!part) { return null; }
+      var dash = part.indexOf("-");
+      if (dash >= 0) {
+        var start = parseInt(part.slice(0, dash), 10);
+        var end = parseInt(part.slice(dash + 1), 10);
+        if (isNaN(start) || isNaN(end) || start < 1 || end < start || end > maxPage) { return null; }
+        for (var p = start; p <= end; p++) { if (result.indexOf(p) === -1) { result.push(p); } }
+      } else {
+        var n = parseInt(part, 10);
+        if (isNaN(n) || n < 1 || n > maxPage || String(n) !== part) { return null; }
+        if (result.indexOf(n) === -1) { result.push(n); }
+      }
+    }
+    result.sort(function (a, b) { return a - b; });
+    return result;
+  }
+  function libsReady() {
+    if (typeof PDFLib === "undefined") {
+      setStatus($("split-status"), "The PDF library (pdf-lib) did not load. Check your connection and reload the page.", true);
+      return false;
+    }
+    return true;
+  }
+
+  function renderSplitList() {
+    var list = $("split-list");
+    list.innerHTML = "";
+    splitFiles.forEach(function (entry, idx) {
+      var row = document.createElement("div");
+      row.className = "file-row";
+      var name = document.createElement("p");
+      name.className = "fname";
+      name.textContent = entry.file.name;
+      var pages = document.createElement("p");
+      pages.className = "pages";
+      pages.textContent = entry.pageCount + (entry.pageCount === 1 ? " page" : " pages");
+      var rangeLabel = document.createElement("label");
+      rangeLabel.textContent = "Pages, e.g. 1,3-5";
+      var range = document.createElement("input");
+      range.type = "text";
+      range.placeholder = "1,3-5";
+      range.setAttribute("aria-label", "Pages to extract or delete from " + entry.file.name);
+      range.addEventListener("input", function () { entry.rangeText = range.value; });
+      entry.rangeText = entry.rangeText || "";
+      range.value = entry.rangeText;
+      var extractBtn = document.createElement("button");
+      extractBtn.type = "button";
+      extractBtn.className = "btn small";
+      extractBtn.textContent = "Extract these pages";
+      extractBtn.addEventListener("click", function () { extractPages(entry); });
+      var deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "btn small ghost";
+      deleteBtn.textContent = "Delete these pages";
+      deleteBtn.addEventListener("click", function () { deletePages(entry); });
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn small ghost";
+      removeBtn.textContent = "Remove file";
+      removeBtn.addEventListener("click", function () { splitFiles.splice(idx, 1); renderSplitList(); });
+      row.appendChild(name);
+      row.appendChild(pages);
+      row.appendChild(rangeLabel);
+      row.appendChild(range);
+      row.appendChild(document.createElement("br"));
+      row.appendChild(extractBtn);
+      row.appendChild(deleteBtn);
+      row.appendChild(removeBtn);
+      list.appendChild(row);
+    });
+  }
+
+  $("split-files").addEventListener("change", function (event) {
+    var files = Array.prototype.slice.call(event.target.files || []);
+    if (!libsReady()) { return; }
+    if (files.length === 0) { return; }
+    setStatus($("split-status"), "Reading " + files.length + (files.length === 1 ? " file" : " files") + "...", false);
+    files.forEach(function (file) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        PDFLib.PDFDocument.load(reader.result).then(function (doc) {
+          splitFiles.push({ file: file, bytes: reader.result, pageCount: doc.getPageCount() });
+          renderSplitList();
+          setStatus($("split-status"), file.name + " ready (" + doc.getPageCount() + " pages).", false);
+        }).catch(function () {
+          setStatus($("split-status"), "Could not read " + file.name + " as a PDF. It may be damaged or password-protected.", true);
+        });
+      };
+      reader.onerror = function () { setStatus($("split-status"), "Could not read " + file.name + ".", true); };
+      reader.readAsArrayBuffer(file);
+    });
+    event.target.value = "";
+  });
+
+  function extractPages(entry) {
+    if (!libsReady()) { return; }
+    var pages = parseRanges(entry.rangeText || "", entry.pageCount);
+    if (!pages) {
+      setStatus($("split-status"), "Enter valid pages for " + entry.file.name + ", e.g. 1,3-5 (this file has " + entry.pageCount + " pages).", true);
+      return;
+    }
+    setStatus($("split-status"), "Extracting pages...", false);
+    PDFLib.PDFDocument.load(entry.bytes).then(function (src) {
+      return PDFLib.PDFDocument.create().then(function (out) {
+        return out.copyPages(src, pages.map(function (p) { return p - 1; })).then(function (copied) {
+          copied.forEach(function (page) { out.addPage(page); });
+          return out.save();
+        });
+      });
+    }).then(function (bytes) {
+      downloadBlob(new Blob([bytes], { type: "application/pdf" }), "extracted-pages.pdf");
+      setStatus($("split-status"), "Done. Extracted " + pages.length + (pages.length === 1 ? " page" : " pages") + " from " + entry.file.name + ".", false);
+    }).catch(function () {
+      setStatus($("split-status"), "Extracting failed for " + entry.file.name + ".", true);
+    });
+  }
+
+  function deletePages(entry) {
+    if (!libsReady()) { return; }
+    var pages = parseRanges(entry.rangeText || "", entry.pageCount);
+    if (!pages) {
+      setStatus($("split-status"), "Enter valid pages for " + entry.file.name + ", e.g. 1,3-5 (this file has " + entry.pageCount + " pages).", true);
+      return;
+    }
+    if (pages.length >= entry.pageCount) {
+      setStatus($("split-status"), "You cannot delete all pages of " + entry.file.name + ". Leave at least one page.", true);
+      return;
+    }
+    setStatus($("split-status"), "Deleting pages...", false);
+    PDFLib.PDFDocument.load(entry.bytes).then(function (doc) {
+      var indices = pages.map(function (p) { return p - 1; }).sort(function (a, b) { return b - a; });
+      indices.forEach(function (i) { doc.removePage(i); });
+      return doc.save();
+    }).then(function (bytes) {
+      downloadBlob(new Blob([bytes], { type: "application/pdf" }), "pages-deleted.pdf");
+      setStatus($("split-status"), "Done. Deleted " + pages.length + (pages.length === 1 ? " page" : " pages") + " from " + entry.file.name + ". " + (entry.pageCount - pages.length) + " pages remain.", false);
+    }).catch(function () {
+      setStatus($("split-status"), "Deleting failed for " + entry.file.name + ".", true);
+    });
+  }
+})();
+</script>
+</body>
+</html>
