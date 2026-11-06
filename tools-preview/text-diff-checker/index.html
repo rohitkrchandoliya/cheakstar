@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Text Diff Checker - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Text Diff Checker</h1>
+<p class="tool-sub">Compare two texts line by line: what was added, removed or kept.</p>
+<div class="tool-card">
+  <p>Compare two versions of a text, line by line. Lines only in the first text are shown as removed, lines only in the second as added, and matching lines as unchanged.</p>
+
+  <div class="row2">
+    <div>
+      <label for="diff-a">First text (original)</label>
+      <textarea id="diff-a" rows="9" placeholder="Paste the original text here..."></textarea>
+    </div>
+    <div>
+      <label for="diff-b">Second text (changed)</label>
+      <textarea id="diff-b" rows="9" placeholder="Paste the changed text here..."></textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="diff-run" class="btn" type="button">Compare texts</button>
+  </div>
+  <p id="diff-status" class="status" role="status"></p>
+  <div id="diff-result"></div>
+</div>
+<div class="note"><strong>Privacy:</strong> both texts are compared only in this browser tab and are never sent to any server. The comparison is line-based, so a small edit inside a line shows the whole line as removed plus added.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var diffStatus = document.getElementById("diff-status");
+
+function lcsDiff(aLines, bLines) {
+  var n = aLines.length, m = bLines.length;
+  var dp = [];
+  for (var i = 0; i <= n; i++) { dp.push(new Array(m + 1).fill(0)); }
+  for (var x = n - 1; x >= 0; x--) {
+    for (var y = m - 1; y >= 0; y--) {
+      dp[x][y] = aLines[x] === bLines[y] ? dp[x + 1][y + 1] + 1 : Math.max(dp[x + 1][y], dp[x][y + 1]);
+    }
+  }
+  var ops = [];
+  var i2 = 0, j2 = 0;
+  while (i2 < n && j2 < m) {
+    if (aLines[i2] === bLines[j2]) { ops.push({ type: "same", text: aLines[i2] }); i2++; j2++; }
+    else if (dp[i2 + 1][j2] >= dp[i2][j2 + 1]) { ops.push({ type: "removed", text: aLines[i2] }); i2++; }
+    else { ops.push({ type: "added", text: bLines[j2] }); j2++; }
+  }
+  while (i2 < n) { ops.push({ type: "removed", text: aLines[i2] }); i2++; }
+  while (j2 < m) { ops.push({ type: "added", text: bLines[j2] }); j2++; }
+  return ops;
+}
+
+document.getElementById("diff-run").addEventListener("click", function () {
+  var aText = document.getElementById("diff-a").value;
+  var bText = document.getElementById("diff-b").value;
+  var result = document.getElementById("diff-result");
+  result.innerHTML = "";
+  if (!aText && !bText) {
+    diffStatus.className = "status error";
+    diffStatus.textContent = "Paste text in at least one of the two boxes.";
+    return;
+  }
+  var aLines = aText === "" ? [] : aText.split("\n");
+  var bLines = bText === "" ? [] : bText.split("\n");
+  if (aLines.length * bLines.length > 4000000) {
+    diffStatus.className = "status error";
+    diffStatus.textContent = "These texts are very large for a line-by-line comparison in the browser. Try comparing a smaller part at a time.";
+    return;
+  }
+  var ops = lcsDiff(aLines, bLines);
+  var added = 0, removed = 0, same = 0;
+  var table = document.createElement("table");
+  table.className = "tbl";
+  var tbody = document.createElement("tbody");
+  ops.forEach(function (op) {
+    var tr = document.createElement("tr");
+    var mark = document.createElement("td");
+    mark.style.width = "3rem";
+    var cell = document.createElement("td");
+    cell.textContent = op.text === "" ? "(empty line)" : op.text;
+    if (op.type === "added") {
+      added++;
+      mark.textContent = "+ Added";
+      mark.className = "pass";
+      tr.style.background = "rgba(46,160,90,.13)";
+    } else if (op.type === "removed") {
+      removed++;
+      mark.textContent = "− Removed";
+      mark.className = "fail";
+      tr.style.background = "rgba(200,60,60,.13)";
+    } else {
+      same++;
+      mark.textContent = "= Same";
+      mark.className = "na";
+    }
+    tr.appendChild(mark);
+    tr.appendChild(cell);
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  result.appendChild(table);
+  diffStatus.className = "status ok";
+  diffStatus.textContent = "Comparison done: " + added + " added, " + removed + " removed, " + same + " unchanged" +
+    (added === 0 && removed === 0 ? ". The two texts are identical, line for line." : ".");
+});
+</script>
+</body>
+</html>
