@@ -191,3 +191,7 @@ body.cs-anim .cs-reveal{opacity:1;transform:none;transition:none}
 .cs-side,.cs-topbar,.cs-backdrop,.cs-progress,.cs-top-btn,.cs-preloader{display:none!important}
 body.cs-shell{margin-left:0!important}
 }
+
+/* --- page headings: h1 mirrors h2 (pages promoted to a single h1, 2026-11-06) --- */
+h1{font-size:1.9rem;color:#fff;margin-bottom:8px}
+h1 .gold{color:var(--gold)}
