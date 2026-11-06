@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Video Link Info - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Video Link Info</h1>
+<p class="tool-sub">See a YouTube or Vimeo video's title, channel and thumbnail from its link.</p>
+<div class="tool-card">
+  <p>This uses the free oEmbed service (noembed as a fallback). It does not download the video.</p>
+
+  <label for="info-input">Video link</label>
+  <input id="info-input" type="text" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off">
+  <div class="btn-row">
+    <button id="info-fetch" class="btn" type="button">Look up video info</button>
+  </div>
+  <p id="info-status" class="status" role="status"></p>
+  <div id="info-results" aria-live="polite"></div>
+</div>
+<div class="note"><strong>Privacy note:</strong> the lookup contacts YouTube's or Vimeo's public oEmbed service (or noembed), and the thumbnail loads from that platform's image servers. No data is sent to Cheakstar.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var infoInput = document.getElementById("info-input");
+var infoStatus = document.getElementById("info-status");
+var infoResults = document.getElementById("info-results");
+
+function oembedEndpoints(url) {
+  var encoded = encodeURIComponent(url);
+  if (/youtu\.?be/.test(url)) {
+    return [
+      "https://www.youtube.com/oembed?url=" + encoded + "&format=json",
+      "https://noembed.com/embed?url=" + encoded
+    ];
+  }
+  if (/vimeo\.com/.test(url)) {
+    return [
+      "https://vimeo.com/api/oembed.json?url=" + encoded,
+      "https://noembed.com/embed?url=" + encoded
+    ];
+  }
+  return ["https://noembed.com/embed?url=" + encoded];
+}
+
+function fetchJson(url) {
+  return fetch(url).then(function (response) {
+    if (!response.ok) { throw new Error("Request failed."); }
+    return response.json();
+  });
+}
+
+function tryEndpoints(endpoints, index) {
+  if (index >= endpoints.length) {
+    throw new Error("No info available for this link.");
+  }
+  return fetchJson(endpoints[index]).catch(function () {
+    return tryEndpoints(endpoints, index + 1);
+  });
+}
+
+function showVideoInfo(data, url) {
+  infoResults.innerHTML = "";
+  var card = document.createElement("div");
+  card.className = "info-card";
+  if (data.thumbnail_url) {
+    var img = document.createElement("img");
+    img.src = data.thumbnail_url;
+    img.alt = "Video thumbnail";
+    card.appendChild(img);
+  }
+  var title = document.createElement("h3");
+  title.textContent = data.title || "Untitled video";
+  card.appendChild(title);
+  var author = document.createElement("p");
+  author.textContent = "Channel: " + (data.author_name || "Unknown");
+  card.appendChild(author);
+  var provider = document.createElement("p");
+  provider.textContent = "Platform: " + (data.provider_name || "Unknown");
+  card.appendChild(provider);
+  var link = document.createElement("a");
+  link.href = url;
+  link.textContent = "Watch the video";
+  link.target = "_blank";
+  link.rel = "noopener";
+  card.appendChild(link);
+  infoResults.appendChild(card);
+  infoStatus.textContent = "Video info loaded.";
+  infoStatus.className = "status ok";
+}
+
+document.getElementById("info-fetch").addEventListener("click", function () {
+  var url = infoInput.value.trim();
+  if (!/^https?:\/\/.+/.test(url)) {
+    infoStatus.textContent = "Enter a full video link starting with http:// or https://.";
+    infoStatus.className = "status error";
+    return;
+  }
+  infoStatus.textContent = "Looking up video info...";
+  infoStatus.className = "status";
+  tryEndpoints(oembedEndpoints(url), 0).then(function (data) {
+    if (!data || !data.title) { throw new Error("No info available for this link."); }
+    showVideoInfo(data, url);
+  }).catch(function () {
+    infoResults.innerHTML = "";
+    infoStatus.textContent = "Could not get info for this link. Check that it is a public YouTube or Vimeo video and try again.";
+    infoStatus.className = "status error";
+  });
+});
+</script>
+</body>
+</html>
