@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>URL Encoder &amp; Decoder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">URL Encoder &amp; Decoder</h1>
+<p class="tool-sub">Encode or decode URL (percent-encoded) text safely.</p>
+<div class="tool-card">
+  <p>URLs cannot contain spaces and many special characters, so they are stored in percent-encoded form (a space becomes %20). Encode text to make it URL-safe, or decode an encoded URL back to readable text.</p>
+
+  <label for="url-mode">Mode</label>
+  <select id="url-mode">
+    <option value="component">Encode / decode a part of a URL (query value, search text — safest)</option>
+    <option value="full">Encode / decode a full URL (keeps :, /, ? and &amp; as they are)</option>
+  </select>
+
+  <label for="url-input">Input</label>
+  <textarea id="url-input" rows="6" placeholder="Type text to encode, or paste encoded text to decode..."></textarea>
+
+  <div class="btn-row">
+    <button id="url-encode" class="btn" type="button">Encode</button>
+    <button id="url-decode" class="btn ghost" type="button">Decode</button>
+    <button id="url-copy" class="btn ghost" type="button">Copy result</button>
+  </div>
+  <p id="url-status" class="status" role="status"></p>
+
+  <label for="url-output">Result</label>
+  <textarea id="url-output" rows="6" readonly placeholder="The result will appear here."></textarea>
+</div>
+<div class="note"><strong>Which mode?</strong> "Part of a URL" encodes everything special, including / and ?, so the result can sit safely inside a link. "Full URL" leaves the structure of a complete link (https://, /, ?, &amp;) untouched and only encodes the unsafe characters. Your text never leaves this browser tab.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var urlStatus = document.getElementById("url-status");
+var urlOutput = document.getElementById("url-output");
+
+function urlMode() { return document.getElementById("url-mode").value; }
+
+document.getElementById("url-encode").addEventListener("click", function () {
+  var input = document.getElementById("url-input").value;
+  try {
+    urlOutput.value = urlMode() === "full" ? encodeURI(input) : encodeURIComponent(input);
+    urlStatus.className = "status ok";
+    urlStatus.textContent = "Encoded.";
+  } catch (err) {
+    urlStatus.className = "status error";
+    urlStatus.textContent = "Encoding failed: the text contains an incomplete character pair (a lone half of an emoji or symbol).";
+  }
+});
+
+document.getElementById("url-decode").addEventListener("click", function () {
+  var input = document.getElementById("url-input").value;
+  try {
+    urlOutput.value = urlMode() === "full" ? decodeURI(input) : decodeURIComponent(input);
+    urlStatus.className = "status ok";
+    urlStatus.textContent = "Decoded.";
+  } catch (err) {
+    urlStatus.className = "status error";
+    urlStatus.textContent = "Decoding failed: the input has an incomplete percent sequence (like a trailing % or %2). Check the text and try again.";
+  }
+});
+
+document.getElementById("url-copy").addEventListener("click", function () {
+  if (!urlOutput.value) {
+    urlStatus.className = "status error";
+    urlStatus.textContent = "There is no result to copy yet.";
+    return;
+  }
+  function done() {
+    urlStatus.className = "status ok";
+    urlStatus.textContent = "Result copied to the clipboard.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(urlOutput.value).then(done).catch(function () { urlOutput.select(); document.execCommand("copy"); done(); });
+  } else { urlOutput.select(); document.execCommand("copy"); done(); }
+});
+</script>
+</body>
+</html>
