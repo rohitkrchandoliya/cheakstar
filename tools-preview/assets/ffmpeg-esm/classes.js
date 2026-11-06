@@ -131,6 +131,7 @@ export class FFmpeg {
      * await ffmpeg.writeFile("video.avi", ...);
      * // ffmpeg -i video.avi video.mp4
      * await ffmpeg.exec(["-i", "video.avi", "video.mp4"]);
+     * const data = ffmpeg.readFile("video.mp4");
      * ```
      *
      * @returns `0` if no error, `!= 0` if timeout (1) or error.
@@ -156,7 +157,6 @@ export class FFmpeg {
      * const ffmpeg = new FFmpeg();
      * await ffmpeg.load();
      * await ffmpeg.writeFile("video.avi", ...);
-     * await ffmpeg.writeFile("text.txt", "hello world");
      * // Getting duration of a video in seconds: ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 video.avi -o output.txt
      * await ffmpeg.ffprobe(["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", "video.avi", "-o", "output.txt"]);
      * const data = ffmpeg.readFile("output.txt");
@@ -241,7 +241,6 @@ export class FFmpeg {
      * ```ts
      * const ffmpeg = new FFmpeg();
      * await ffmpeg.load();
-     * await ffmpeg.writeFile("video.avi", ...);
      * const data = await ffmpeg.readFile("video.mp4");
      * ```
      *
