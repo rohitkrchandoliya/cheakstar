@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>CSV &lt;-&gt; JSON Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">CSV &lt;-&gt; JSON Converter</h1>
+<p class="tool-sub">Convert CSV to JSON and JSON back to CSV, with a preview.</p>
+<div class="tool-card">
+  <p>Convert data between CSV (spreadsheet style) and JSON (developer style), in both directions.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cj-direction">Direction</label>
+      <select id="cj-direction">
+        <option value="csv2json">CSV to JSON</option>
+        <option value="json2csv">JSON to CSV</option>
+      </select>
+    </div>
+    <div>
+      <label for="cj-indent">JSON spacing (for CSV to JSON)</label>
+      <select id="cj-indent">
+        <option value="2" selected>2 spaces (readable)</option>
+        <option value="0">Compact (one line)</option>
+        <option value="4">4 spaces</option>
+      </select>
+    </div>
+  </div>
+
+  <label for="cj-input">Input</label>
+  <textarea id="cj-input" rows="10" placeholder="Paste CSV (with a header row) or JSON here..."></textarea>
+
+  <div class="btn-row">
+    <button id="cj-run" class="btn" type="button">Convert</button>
+    <button id="cj-download" class="btn ghost" type="button" disabled>Download result</button>
+  </div>
+  <p id="cj-status" class="status" role="status"></p>
+
+  <label for="cj-output">Result</label>
+  <textarea id="cj-output" rows="10" readonly placeholder="The converted data will appear here."></textarea>
+</div>
+<div class="note"><strong>How CSV to JSON works:</strong> the first row is treated as the header, and every following row becomes one JSON object. All values stay text, exactly as written in the CSV. For JSON to CSV, paste an array of objects (or an array of arrays); the columns are the keys found across all objects. Your data never leaves this browser tab.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cjInput = document.getElementById("cj-input");
+var cjOutput = document.getElementById("cj-output");
+var cjStatus = document.getElementById("cj-status");
+var cjDownloadBtn = document.getElementById("cj-download");
+var cjLastKind = "json";
+
+function parseCSV(text) {
+  var rows = [];
+  var row = [];
+  var field = "";
+  var inQuotes = false;
+  var i = 0;
+  text = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  while (i < text.length) {
+    var ch = text.charAt(i);
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text.charAt(i + 1) === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += ch; i++; continue;
+    }
+    if (ch === '"') { inQuotes = true; i++; continue; }
+    if (ch === ",") { row.push(field); field = ""; i++; continue; }
+    if (ch === "\n") { row.push(field); field = ""; rows.push(row); row = []; i++; continue; }
+    field += ch; i++;
+  }
+  row.push(field);
+  rows.push(row);
+  // Drop fully-empty trailing rows.
+  while (rows.length > 0 && rows[rows.length - 1].every(function (c) { return c === ""; })) { rows.pop(); }
+  return rows;
+}
+
+function csvToJson(text) {
+  var rows = parseCSV(text);
+  if (rows.length < 1) { throw new Error("No rows found in the CSV input."); }
+  var headers = rows[0];
+  var objects = [];
+  for (var r = 1; r < rows.length; r++) {
+    var obj = {};
+    headers.forEach(function (h, idx) { obj[h] = rows[r][idx] === undefined ? "" : rows[r][idx]; });
+    objects.push(obj);
+  }
+  return { data: objects, count: objects.length };
+}
+
+function csvEscape(value) {
+  var s = value === null || value === undefined ? "" : String(value);
+  if (/[",\n]/.test(s)) { return '"' + s.replace(/"/g, '""') + '"'; }
+  return s;
+}
+
+function jsonToCsv(text) {
+  var data = JSON.parse(text);
+  if (!Array.isArray(data)) { throw new Error("JSON to CSV needs an array at the top level — an array of objects, or an array of arrays."); }
+  if (data.length === 0) { return { data: "", count: 0 }; }
+  if (Array.isArray(data[0])) {
+    return { data: data.map(function (r) { return r.map(csvEscape).join(","); }).join("\n"), count: data.length };
+  }
+  var keys = [];
+  data.forEach(function (item) {
+    if (item && typeof item === "object") {
+      Object.keys(item).forEach(function (k) { if (keys.indexOf(k) === -1) { keys.push(k); } });
+    }
+  });
+  if (keys.length === 0) { throw new Error("The array items are not objects, so there are no columns to write."); }
+  var lines = [keys.map(csvEscape).join(",")];
+  data.forEach(function (item) {
+    lines.push(keys.map(function (k) {
+      var v = item ? item[k] : "";
+      if (v && typeof v === "object") { v = JSON.stringify(v); }
+      return csvEscape(v);
+    }).join(","));
+  });
+  return { data: lines.join("\n"), count: data.length };
+}
+
+document.getElementById("cj-run").addEventListener("click", function () {
+  var direction = document.getElementById("cj-direction").value;
+  var input = cjInput.value;
+  if (!input.trim()) {
+    cjStatus.className = "status error";
+    cjStatus.textContent = "Paste some data first.";
+    cjDownloadBtn.disabled = true;
+    return;
+  }
+  try {
+    if (direction === "csv2json") {
+      var res = csvToJson(input);
+      var indent = parseInt(document.getElementById("cj-indent").value, 10);
+      cjOutput.value = JSON.stringify(res.data, null, indent === 0 ? 0 : indent);
+      cjLastKind = "json";
+      cjStatus.className = "status ok";
+      cjStatus.textContent = "Converted " + res.count + (res.count === 1 ? " row" : " rows") + " of CSV into a JSON array.";
+    } else {
+      var res2 = jsonToCsv(input);
+      cjOutput.value = res2.data;
+      cjLastKind = "csv";
+      cjStatus.className = "status ok";
+      cjStatus.textContent = "Converted JSON into CSV with " + res2.count + (res2.count === 1 ? " row" : " rows") + ".";
+    }
+    cjDownloadBtn.disabled = cjOutput.value.length === 0;
+  } catch (err) {
+    cjOutput.value = "";
+    cjDownloadBtn.disabled = true;
+    cjStatus.className = "status error";
+    cjStatus.textContent = "Could not convert: " + err.message;
+  }
+});
+
+cjDownloadBtn.addEventListener("click", function () {
+  if (!cjOutput.value) { return; }
+  var isJson = cjLastKind === "json";
+  var blob = new Blob([cjOutput.value], { type: isJson ? "application/json" : "text/csv" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = isJson ? "converted.json" : "converted.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+});
+</script>
+</body>
+</html>
