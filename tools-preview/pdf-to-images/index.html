@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>PDF to Images - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF to Images</h1>
+<p class="tool-sub">Render every page of a PDF as a JPG or PNG image.</p>
+<div class="tool-card">
+  <p>Render every page of a PDF as a JPG or PNG image and download the pages you need — for example, to attach one page of a document as a photo.</p>
+
+  <label for="pdf2img-file">Choose a PDF file</label>
+  <input id="pdf2img-file" type="file" accept="application/pdf,.pdf">
+  <label for="pdf2img-format">Image format</label>
+  <select id="pdf2img-format">
+    <option value="png">PNG</option>
+    <option value="jpeg">JPG</option>
+  </select>
+  <div class="btn-row">
+    <button id="pdf2img-render" class="btn" type="button" disabled>Render pages as images</button>
+  </div>
+  <p id="pdf2img-status" class="status" aria-live="polite"></p>
+  <div id="pdf2img-pages" class="page-grid"></div>
+</div>
+<div class="note"><strong>Your files stay on your device.</strong> Rendering runs entirely in your browser using PDF.js by Mozilla (Apache-2.0 licence). Nothing is uploaded to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+(function () {
+  "use strict";
+  var pdf2imgFile = null;
+  function $(id) { return document.getElementById(id); }
+  function setStatus(el, text, isError) {
+    el.textContent = text;
+    el.className = isError ? "status error" : "status ok";
+  }
+
+  $("pdf2img-file").addEventListener("change", function (event) {
+    var files = event.target.files || [];
+    pdf2imgFile = files.length > 0 ? files[0] : null;
+    $("pdf2img-render").disabled = !pdf2imgFile;
+    if (pdf2imgFile) { setStatus($("pdf2img-status"), "Selected: " + pdf2imgFile.name, false); }
+    event.target.value = "";
+  });
+
+  $("pdf2img-render").addEventListener("click", function () {
+    if (!pdf2imgFile) { return; }
+    if (typeof pdfjsLib === "undefined") {
+      setStatus($("pdf2img-status"), "The PDF viewer library (PDF.js) did not load. Check your connection and reload the page.", true);
+      return;
+    }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    setStatus($("pdf2img-status"), "Rendering pages...", false);
+    $("pdf2img-pages").innerHTML = "";
+    var reader = new FileReader();
+    reader.onload = function () {
+      var loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(reader.result) });
+      loadingTask.promise.then(function (pdf) {
+        setStatus($("pdf2img-status"), "Rendering " + pdf.numPages + (pdf.numPages === 1 ? " page" : " pages") + "...", false);
+        var format = $("pdf2img-format").value;
+        var rendered = 0;
+        for (var n = 1; n <= pdf.numPages; n++) {
+          (function (pageNum) {
+            pdf.getPage(pageNum).then(function (page) {
+              var viewport = page.getViewport({ scale: 2 });
+              var canvas = document.createElement("canvas");
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              var context = canvas.getContext("2d");
+              return page.render({ canvasContext: context, viewport: viewport }).promise.then(function () {
+                var card = document.createElement("div");
+                card.className = "page-card";
+                var label = document.createElement("p");
+                label.textContent = "Page " + pageNum + " (" + viewport.width + " x " + viewport.height + " px)";
+                var link = document.createElement("a");
+                link.className = "download";
+                link.textContent = "Download page " + pageNum + " as " + format.toUpperCase();
+                link.href = canvas.toDataURL(format === "jpeg" ? "image/jpeg" : "image/png", 0.92);
+                link.download = "page-" + pageNum + "." + (format === "jpeg" ? "jpg" : "png");
+                card.appendChild(canvas);
+                card.appendChild(label);
+                card.appendChild(link);
+                $("pdf2img-pages").appendChild(card);
+                rendered++;
+                if (rendered === pdf.numPages) {
+                  setStatus($("pdf2img-status"), "Done. Rendered " + pdf.numPages + (pdf.numPages === 1 ? " page" : " pages") + ". Click a page link to download it.", false);
+                }
+              });
+            });
+          })(n);
+        }
+      }).catch(function () {
+        setStatus($("pdf2img-status"), "Could not read this PDF. It may be damaged or password-protected.", true);
+      });
+    };
+    reader.onerror = function () { setStatus($("pdf2img-status"), "Could not read the file.", true); };
+    reader.readAsArrayBuffer(pdf2imgFile);
+  });
+})();
+</script>
+</body>
+</html>
