@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Website Security Headers Check - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Website Security Headers Check</h1>
+<p class="tool-sub">Grade a website's security headers with the free MDN Observatory service.</p>
+<div class="tool-card">
+  <p>Grade a website's security headers with the MDN Observatory (Mozilla's current service). These headers are instructions a site sends your browser to protect you — against script injection, clickjacking, insecure connections and more.</p>
+
+  <label for="headers-host">Website address</label>
+  <input id="headers-host" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
+  <div class="btn-row">
+    <button id="headers-run" class="btn" type="button">Check security headers</button>
+  </div>
+  <p id="headers-status" class="status" role="status"></p>
+  <div class="result" id="headers-result" hidden>
+    <p><span class="grade" id="headers-grade"></span></p>
+    <p class="big" id="headers-score"></p>
+    <div id="headers-summary"></div>
+    <div id="headers-tests"></div>
+    <p style="margin-top:14px"><a id="headers-report" href="#" target="_blank" rel="noopener">Full report on MDN Observatory</a></p>
+  </div>
+</div>
+<div class="note"><strong>Notes:</strong> the check runs on Mozilla's MDN Observatory service (the old observatory.mozilla.org API was retired in October 2024; this tool uses the current v2 API). One scan per minute per website is allowed, and a recent result may be shown from the service's cache — that is normal. The scan looks at the public homepage only. Nothing is sent to Cheakstar.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var headersStatus = document.getElementById("headers-status");
+
+var TEST_DESCRIPTIONS = {
+  "content-security-policy": "Controls which sources the page may load scripts, styles and images from. It is the main defence against cross-site scripting (XSS).",
+  "cookies": "Checks that cookies carry the Secure, HttpOnly and SameSite flags, so they are not stolen or sent to other sites.",
+  "cross-origin-embedder-policy": "Stops the page loading cross-origin content that has not opted in, isolating it from other sites.",
+  "cross-origin-opener-policy": "Isolates this window from pages it links to, so a malicious page cannot script-control it.",
+  "cross-origin-resource-policy": "Tells browsers whether other sites may load this site's resources, blocking cross-site data leaks.",
+  "cross-origin-resource-sharing": "Controls which other websites may read this site's responses through JavaScript (CORS).",
+  "redirection": "Checks that visitors arriving over plain HTTP are redirected to HTTPS, so traffic cannot be intercepted.",
+  "redirections": "Checks that visitors arriving over plain HTTP are redirected to HTTPS, so traffic cannot be intercepted.",
+  "referrer-policy": "Controls how much of the page address is shared when a visitor clicks a link to another site.",
+  "strict-transport-security": "Forces browsers to always use HTTPS for this site (HSTS), preventing downgrade attacks.",
+  "subresource-integrity": "Lets the browser verify that scripts and styles loaded from CDNs have not been tampered with.",
+  "x-content-type-options": "Stops browsers guessing a file's type (MIME sniffing), which can turn an upload into executable content.",
+  "x-frame-options": "Stops other sites embedding this page in a frame — the main defence against clickjacking."
+};
+
+function cleanHost(raw) {
+  var h = (raw || "").trim().toLowerCase();
+  h = h.replace(/^https?:\/\//, "");
+  h = h.split("/")[0].split("?")[0].split("#")[0];
+  h = h.split("@").pop(); // drop any userinfo
+  h = h.split(":")[0]; // drop port — the service scans the standard site
+  h = h.replace(/\.$/, "");
+  return h;
+}
+
+function fetchJsonWithTimeout(url, options, ms) {
+  var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  var timer = controller ? setTimeout(function () { controller.abort(); }, ms) : null;
+  var opts = options || {};
+  if (controller) { opts.signal = controller.signal; }
+  return fetch(url, opts).then(function (res) {
+    if (timer) { clearTimeout(timer); }
+    return res;
+  }).catch(function (err) {
+    if (timer) { clearTimeout(timer); }
+    throw err;
+  });
+}
+
+function addSummaryRow(container, label, value) {
+  if (value === undefined || value === null || value === "") { return; }
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function renderHeaders(host, summary, tests) {
+  document.getElementById("headers-grade").textContent = summary.grade || "?";
+  document.getElementById("headers-score").textContent =
+    (typeof summary.score === "number" ? "Score: " + summary.score + " out of 100" : "Score not reported");
+  var sum = document.getElementById("headers-summary");
+  sum.innerHTML = "";
+  var passed = summary.tests_passed, quantity = summary.tests_quantity;
+  if (typeof passed === "number" && typeof quantity === "number") {
+    addSummaryRow(sum, "Tests passed", passed + " of " + quantity);
+  }
+  if (summary.status_code) { addSummaryRow(sum, "Website answered", "HTTP " + summary.status_code); }
+  if (summary.scanned_at) {
+    var d = new Date(summary.scanned_at);
+    addSummaryRow(sum, "Scanned at", isNaN(d.getTime()) ? summary.scanned_at : d.toLocaleString("en-IN"));
+  }
+
+  var testsBox = document.getElementById("headers-tests");
+  testsBox.innerHTML = "";
+  var keys = Object.keys(tests || {});
+  if (keys.length === 0) {
+    var note = document.createElement("p");
+    note.className = "status";
+    note.textContent = "The detailed per-test results were not available for this scan. Open the full report below to see them on MDN Observatory.";
+    testsBox.appendChild(note);
+  }
+  keys.forEach(function (key) {
+    var t = tests[key] || {};
+    var row = document.createElement("div");
+    row.className = "test-row";
+    var name = document.createElement("span");
+    name.className = "tname";
+    name.textContent = t.title || t.name || key;
+    row.appendChild(name);
+    row.appendChild(document.createTextNode(" — "));
+    var verdict = document.createElement("span");
+    if (t.pass === true) { verdict.textContent = "Pass"; verdict.className = "pass"; }
+    else if (t.pass === false) { verdict.textContent = "Fail"; verdict.className = "fail"; }
+    else { verdict.textContent = "Not applicable"; verdict.className = "na"; }
+    row.appendChild(verdict);
+    if (typeof t.score_modifier === "number" && t.score_modifier !== 0) {
+      row.appendChild(document.createTextNode(" (" + (t.score_modifier > 0 ? "+" : "") + t.score_modifier + " points)"));
+    } else if (typeof t.score_modifier === "number") {
+      row.appendChild(document.createTextNode(" (0 points)"));
+    }
+    var why = document.createElement("div");
+    why.className = "why";
+    why.textContent = TEST_DESCRIPTIONS[key] || "A security-header test run by the MDN Observatory. Open the full report for the technical detail.";
+    row.appendChild(why);
+    testsBox.appendChild(row);
+  });
+
+  document.getElementById("headers-report").href =
+    "https://developer.mozilla.org/en-US/observatory/analyze?host=" + encodeURIComponent(host);
+  document.getElementById("headers-result").hidden = false;
+}
+
+document.getElementById("headers-run").addEventListener("click", function () {
+  var host = cleanHost(document.getElementById("headers-host").value);
+  document.getElementById("headers-result").hidden = true;
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(host)) {
+    headersStatus.className = "status error";
+    headersStatus.textContent = "Enter a valid website address, for example example.com.";
+    return;
+  }
+  headersStatus.className = "status";
+  headersStatus.textContent = "Asking MDN Observatory to scan " + host + ". A fresh scan can take up to a minute...";
+  var scanUrl = "https://observatory-api.mdn.mozilla.net/api/v2/scan?host=" + encodeURIComponent(host);
+  var analyzeUrl = "https://observatory-api.mdn.mozilla.net/api/v2/analyze?host=" + encodeURIComponent(host);
+  fetchJsonWithTimeout(scanUrl, { method: "POST" }, 90000).then(function (res) {
+    if (res.status === 429) { throw new Error("ratelimit"); }
+    return res.json().catch(function () { return {}; }).then(function (data) { return { res: res, data: data }; });
+  }).then(function (bundle) {
+    var data = bundle.data || {};
+    if (data.error) {
+      throw new Error("api:" + (typeof data.error === "string" ? data.error : "The service could not scan this site."));
+    }
+    if (data.tests && Object.keys(data.tests).length > 0) {
+      return { summary: data, tests: data.tests };
+    }
+    // The scan response carries the summary only; the per-test detail
+    // comes from the analyze endpoint of the same v2 API.
+    return fetchJsonWithTimeout(analyzeUrl, { method: "GET" }, 60000).then(function (res) {
+      return res.json().catch(function () { return {}; });
+    }).then(function (analyze) {
+      var tests = (analyze && analyze.tests) || (analyze && analyze.scan && analyze.scan.tests) || {};
+      var summary = data;
+      if (!summary.grade && analyze && analyze.scan) { summary = analyze.scan; }
+      return { summary: summary, tests: tests };
+    }).catch(function () {
+      return { summary: data, tests: {} };
+    });
+  }).then(function (out) {
+    renderHeaders(host, out.summary, out.tests);
+    headersStatus.className = "status ok";
+    headersStatus.textContent = "Scan complete for " + host + ".";
+  }).catch(function (err) {
+    headersStatus.className = "status error";
+    if (err && err.message === "ratelimit") {
+      headersStatus.textContent = "The Observatory is rate-limiting scans right now (one scan per minute per website). Wait a minute and try again — a cached result is normal.";
+    } else if (err && typeof err.message === "string" && err.message.indexOf("api:") === 0) {
+      headersStatus.textContent = "MDN Observatory could not scan this site: " + err.message.slice(4) + " The site may be unreachable, may block scanners, or the address may be wrong.";
+    } else if (err && err.name === "AbortError") {
+      headersStatus.textContent = "The scan took too long and timed out. Try again in a minute — results are often cached by then.";
+    } else {
+      headersStatus.textContent = "The check could not be completed. The MDN Observatory service may be unreachable from your connection — try again in a little while.";
+    }
+  });
+});
+</script>
+</body>
+</html>
