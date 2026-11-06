@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Case Converter &amp; Line Tools - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Case Converter &amp; Line Tools</h1>
+<p class="tool-sub">Change text case, remove duplicate lines, sort lines and clean up spaces.</p>
+<div class="tool-card">
+  <p>Change the case of your text and clean up lists of lines — all in one place.</p>
+
+  <label for="cc-input">Your text</label>
+  <textarea id="cc-input" rows="9" placeholder="Type or paste your text here..."></textarea>
+
+  <h3>Change case</h3>
+  <div class="btn-row">
+    <button class="btn small" type="button" data-case="upper">UPPERCASE</button>
+    <button class="btn small" type="button" data-case="lower">lowercase</button>
+    <button class="btn small" type="button" data-case="title">Title Case</button>
+    <button class="btn small" type="button" data-case="sentence">Sentence case</button>
+    <button class="btn small" type="button" data-case="toggle">tOGGLE cASE</button>
+  </div>
+
+  <h3>Line tools</h3>
+  <div class="btn-row">
+    <button class="btn small ghost" type="button" data-line="dedupe">Remove duplicate lines</button>
+    <button class="btn small ghost" type="button" data-line="sort-az">Sort lines A to Z</button>
+    <button class="btn small ghost" type="button" data-line="sort-za">Sort lines Z to A</button>
+    <button class="btn small ghost" type="button" data-line="spaces">Remove extra spaces</button>
+    <button class="btn small ghost" type="button" data-line="empty">Remove empty lines</button>
+    <button class="btn small ghost" type="button" data-line="reverse">Reverse line order</button>
+  </div>
+
+  <label for="cc-output">Result</label>
+  <textarea id="cc-output" rows="9" readonly placeholder="The result will appear here."></textarea>
+  <div class="btn-row">
+    <button id="cc-copy" class="btn" type="button">Copy result</button>
+    <button id="cc-use" class="btn ghost" type="button">Use result as input</button>
+  </div>
+  <p id="cc-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Privacy:</strong> your text is processed only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ccInput = document.getElementById("cc-input");
+var ccOutput = document.getElementById("cc-output");
+var ccStatus = document.getElementById("cc-status");
+
+function ccSetResult(text, message) {
+  ccOutput.value = text;
+  ccStatus.className = "status ok";
+  ccStatus.textContent = message;
+}
+
+function ccRequireInput() {
+  if (ccInput.value.length === 0) {
+    ccStatus.className = "status error";
+    ccStatus.textContent = "Type or paste some text first.";
+    return false;
+  }
+  return true;
+}
+
+function toTitleCase(text) {
+  return text.toLowerCase().replace(/(^|[\s.\n(])([a-z])/g, function (m, p1, p2) { return p1 + p2.toUpperCase(); });
+}
+function toSentenceCase(text) {
+  var lower = text.toLowerCase();
+  return lower.replace(/(^\s*[a-z])|([.!?]\s*[a-z])/g, function (m) { return m.toUpperCase(); });
+}
+function toToggleCase(text) {
+  return text.split("").map(function (ch) {
+    return ch === ch.toUpperCase() ? ch.toLowerCase() : ch.toUpperCase();
+  }).join("");
+}
+
+document.querySelectorAll("[data-case]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    if (!ccRequireInput()) { return; }
+    var mode = btn.getAttribute("data-case");
+    var text = ccInput.value;
+    var out = text;
+    if (mode === "upper") { out = text.toUpperCase(); }
+    if (mode === "lower") { out = text.toLowerCase(); }
+    if (mode === "title") { out = toTitleCase(text); }
+    if (mode === "sentence") { out = toSentenceCase(text); }
+    if (mode === "toggle") { out = toToggleCase(text); }
+    ccSetResult(out, "Case changed. " + out.length + " characters in the result.");
+  });
+});
+
+document.querySelectorAll("[data-line]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    if (!ccRequireInput()) { return; }
+    var mode = btn.getAttribute("data-line");
+    var lines = ccInput.value.split("\n");
+    var before = lines.length;
+    if (mode === "dedupe") {
+      var seen = {};
+      lines = lines.filter(function (line) {
+        if (seen[line]) { return false; }
+        seen[line] = true; return true;
+      });
+    }
+    if (mode === "sort-az") { lines.sort(function (a, b) { return a.localeCompare(b); }); }
+    if (mode === "sort-za") { lines.sort(function (a, b) { return b.localeCompare(a); }); }
+    if (mode === "spaces") { lines = lines.map(function (l) { return l.replace(/[ \t]+/g, " ").trim(); }); }
+    if (mode === "empty") { lines = lines.filter(function (l) { return l.trim().length > 0; }); }
+    if (mode === "reverse") { lines.reverse(); }
+    ccSetResult(lines.join("\n"), "Done. Lines: " + before + " -> " + lines.length + ".");
+  });
+});
+
+document.getElementById("cc-copy").addEventListener("click", function () {
+  if (!ccOutput.value) {
+    ccStatus.className = "status error";
+    ccStatus.textContent = "There is no result to copy yet.";
+    return;
+  }
+  function done() {
+    ccStatus.className = "status ok";
+    ccStatus.textContent = "Result copied to the clipboard.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ccOutput.value).then(done).catch(function () {
+      ccOutput.select();
+      document.execCommand("copy");
+      done();
+    });
+  } else {
+    ccOutput.select();
+    document.execCommand("copy");
+    done();
+  }
+});
+
+document.getElementById("cc-use").addEventListener("click", function () {
+  if (!ccOutput.value) { return; }
+  ccInput.value = ccOutput.value;
+  ccStatus.className = "status";
+  ccStatus.textContent = "Result moved to the input box, ready for the next change.";
+});
+</script>
+</body>
+</html>
