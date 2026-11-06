@@ -55,6 +55,9 @@
     if (low.indexOf("same password") >= 0) {
       return "The new password must be different from your current password.";
     }
+    if (low.indexOf("totp") >= 0 || low.indexOf("authenticator") >= 0) {
+      return "That code is not correct. Check your authenticator app and try again.";
+    }
     return raw;
   }
 
@@ -184,6 +187,40 @@
     return new Error("Could not reach the sign-in service. Please check your connection and try again.");
   }
 
+  /* Merge-safe metadata save: the keys already stored on the account
+     (favourites, recent, avatar, ...) are read back and spread first, so
+     saving one profile field can never wipe another. A patch value of
+     null or "" clears that key. */
+  function saveMeta(patch) {
+    var bad = needClient();
+    if (bad) return Promise.reject(bad);
+    if (!currentUser) return Promise.reject(new Error("You are not signed in."));
+    var data = {};
+    var meta = currentUser.user_metadata || {};
+    Object.keys(meta).forEach(function (k) { data[k] = meta[k]; });
+    Object.keys(patch).forEach(function (k) { data[k] = patch[k]; });
+    return client.auth.updateUser({ data: data }).then(function (res) {
+      if (res.error) throw new Error(friendly(res.error));
+      if (res.data && res.data.user) currentUser = res.data.user;
+      notify("USER_UPDATED");
+      return currentUser;
+    }, function (err) { throw new Error(friendly(err)); });
+  }
+
+  /* Shared MFA step: open a challenge for the factor, then verify the
+     6-digit code against it (used for enrolment, sign-in and turn-off). */
+  function mfaChallengeVerify(factorId, code) {
+    return client.auth.mfa.challenge({ factorId: factorId }).then(function (res) {
+      if (res.error) throw new Error(friendly(res.error));
+      var challengeId = res.data ? res.data.id : null;
+      if (!challengeId) throw new Error("Could not start the two-factor check. Please try again.");
+      return client.auth.mfa.verify({ factorId: factorId, challengeId: challengeId, code: code });
+    }).then(function (res) {
+      if (res.error) throw new Error(friendly(res.error));
+      return true;
+    }, function (err) { throw new Error(friendly(err)); });
+  }
+
   /* ---------------- public API ---------------- */
   window.CSAuth = {
     ready: ready,
@@ -264,6 +301,154 @@
           notify("USER_UPDATED");
           return true;
         }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    resendConfirmation: function (email) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      var target = email || (currentUser && currentUser.email) || "";
+      if (!target) return Promise.reject(new Error("No email address to send the confirmation to."));
+      return client.auth.resend({
+        type: "signup",
+        email: target,
+        options: { emailRedirectTo: pageUrl("account.html") }
+      }).then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        return true;
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    getSessionInfo: function () {
+      var info = {
+        user: currentUser,
+        emailConfirmed: !!(currentUser && currentUser.email_confirmed_at),
+        sessionCreatedAt: null
+      };
+      if (!currentUser) return Promise.resolve(info);
+      // supabase-js sessions carry no created-at field of their own; the
+      // honest "signed in at" timestamp lives on the user record.
+      info.sessionCreatedAt = currentUser.last_sign_in_at || null;
+      return Promise.resolve(info);
+    },
+
+    /* ---- profile: name, mobile number, photo (user_metadata) ---- */
+    updateProfile: function (fields) {
+      fields = fields || {};
+      var patch = {};
+      if (typeof fields.displayName !== "undefined") patch.display_name = String(fields.displayName).trim();
+      if (typeof fields.phone !== "undefined") patch.phone = String(fields.phone).trim();
+      if (!Object.keys(patch).length) return Promise.resolve(currentUser);
+      return saveMeta(patch);
+    },
+
+    setAvatar: function (dataUrl) {
+      if (typeof dataUrl !== "string" || dataUrl.indexOf("data:image/") !== 0) {
+        return Promise.reject(new Error("That photo could not be read. Please choose an image file."));
+      }
+      if (dataUrl.length > 40000) {
+        return Promise.reject(new Error("That photo is too large to save. Please choose a smaller image."));
+      }
+      return saveMeta({ avatar: dataUrl });
+    },
+
+    clearAvatar: function () {
+      return saveMeta({ avatar: "" });
+    },
+
+    /* The project's "Secure password change" setting is off, so updateUser
+       alone would change the password without checking the old one. The
+       current password is therefore verified explicitly first, by
+       re-authenticating with it; only then is the new password set. */
+    changePasswordWithCurrent: function (currentPw, newPw) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      if (!currentUser || !currentUser.email) {
+        return Promise.reject(new Error("You are not signed in."));
+      }
+      return client.auth.signInWithPassword({ email: currentUser.email, password: currentPw })
+        .then(function (res) {
+          if (res.error) {
+            var m = String(res.error.message || "").toLowerCase();
+            if (m.indexOf("invalid login credentials") >= 0) {
+              throw new Error("Your current password is not correct.");
+            }
+            throw new Error(friendly(res.error));
+          }
+          if (res.data && res.data.user) currentUser = res.data.user;
+          return client.auth.updateUser({ password: newPw }).then(function (u) {
+            if (u.error) throw new Error(friendly(u.error));
+            if (u.data && u.data.user) currentUser = u.data.user;
+            notify("USER_UPDATED");
+            return true;
+          });
+        }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    signOutAll: function () {
+      var done = function () { currentUser = null; notify("SIGNED_OUT"); };
+      if (!client) { done(); return Promise.resolve(); }
+      // scope "global" ends the session on every device, not just this one.
+      return client.auth.signOut({ scope: "global" }).then(done, done);
+    },
+
+    /* ---- two-factor authentication (TOTP, Supabase MFA) ---- */
+    mfaStatus: function () {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return client.auth.mfa.listFactors().then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        var totp = (res.data && res.data.totp) || [];
+        var verified = null;
+        totp.forEach(function (f) { if (!verified && f.status === "verified") verified = f; });
+        return {
+          enabled: !!verified,
+          factorId: verified ? verified.id : null,
+          createdAt: verified ? (verified.created_at || null) : null
+        };
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    mfaEnroll: function () {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return client.auth.mfa.enroll({ factorType: "totp", friendlyName: "Cheakstar 2FA" })
+        .then(function (res) {
+          if (res.error) throw new Error(friendly(res.error));
+          var d = res.data || {};
+          var t = d.totp || {};
+          return { factorId: d.id, qrCode: t.qr_code, secret: t.secret, uri: t.uri };
+        }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    mfaVerifyEnroll: function (factorId, code) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return mfaChallengeVerify(factorId, code);
+    },
+
+    mfaChallengeAndVerify: function (factorId, code) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return mfaChallengeVerify(factorId, code);
+    },
+
+    mfaUnenroll: function (factorId) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return client.auth.mfa.unenroll({ factorId: factorId }).then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        return true;
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
+    getAAL: function () {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      return client.auth.mfa.getAuthenticatorAssuranceLevel().then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        var d = res.data || {};
+        return { currentLevel: d.currentLevel, nextLevel: d.nextLevel };
+      }, function (err) { throw new Error(friendly(err)); });
     },
 
     /* ---- favourites + recent ---- */
