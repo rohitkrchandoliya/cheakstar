@@ -97,21 +97,34 @@ body.cs-shell.cs-rail{margin-left:64px}
 .cs-filter input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);font-size:.9rem;font-family:inherit}
 .cs-filter input::placeholder{color:var(--muted)}
 .cs-filter input:focus{border-color:var(--gold);outline:none}
-.cs-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:2px 10px 12px;scrollbar-width:thin}
+.cs-nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:2px 10px 12px;scrollbar-width:thin}
 .cs-group{margin-top:4px}
 .cs-group-head{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;color:var(--gold);font-family:inherit;font-size:.76rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:11px 8px 7px;cursor:pointer}
 .cs-chev{flex:none;transition:transform .3s ease;stroke:var(--gold)}
-.cs-group.open .cs-chev{transform:rotate(180deg)}
+.cs-group.open>.cs-group-head .cs-chev{transform:rotate(180deg)}
 .cs-group-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
 .cs-group.open .cs-group-body{grid-template-rows:1fr}
 .cs-group-inner{overflow:hidden;min-height:0}
+/* --- nested tool categories inside the Tools group (unified sidebar) --- */
+.cs-subgroup{margin-top:2px}
+.cs-subgroup-head{display:flex;align-items:center;gap:11px;width:100%;background:none;border:0;color:var(--ink);font-family:inherit;font-size:.95rem;font-weight:600;padding:8px 10px;border-radius:8px;cursor:pointer;text-align:left;transition:background-color .2s ease}
+.cs-subgroup-head:hover{background-color:rgba(212,175,55,.08)}
+.cs-subgroup-head>svg:first-child{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s ease}
+.cs-subgroup-head:hover>svg:first-child{stroke:var(--gold)}
+.cs-subgroup-head .cs-label{flex:1}
+.cs-subgroup-head .cs-chev{width:13px;height:13px}
+.cs-subgroup.open .cs-subgroup-head .cs-chev{transform:rotate(180deg)}
+.cs-subgroup-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.cs-subgroup.open .cs-subgroup-body{grid-template-rows:1fr}
+.cs-subgroup-inner{overflow:hidden;min-height:0}
+.cs-subgroup-inner a{padding-left:24px;font-size:.93rem}
 .cs-nav a{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;color:var(--ink);font-size:.95rem;position:relative;background-image:linear-gradient(var(--gold),var(--gold));background-repeat:no-repeat;background-size:0% 2px;background-position:12px calc(100% - 4px);transition:background-color .2s ease,background-size .3s ease,color .2s ease}
 .cs-nav a:hover{text-decoration:none;background-color:rgba(212,175,55,.08);background-size:calc(100% - 24px) 2px}
 .cs-nav a svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s ease}
 .cs-nav a:hover svg{stroke:var(--gold)}
 .cs-nav a.active{color:#fff;background-color:rgba(212,175,55,.13);box-shadow:inset 3px 0 0 var(--gold)}
 .cs-nav a.active svg{stroke:var(--gold)}
-.cs-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-label{line-height:1.35}
 .cs-noresults{padding:14px 10px;color:var(--muted);font-size:.9rem}
 .cs-side-foot{padding:10px 12px;border-top:1px solid rgba(255,255,255,.08)}
 .cs-rail-toggle{width:100%;padding:9px;border-radius:8px;background:rgba(212,175,55,.12);border:1px solid var(--line);color:var(--gold);font-weight:600;cursor:pointer;font-size:.88rem;font-family:inherit;transition:background .2s ease}
@@ -130,6 +143,10 @@ body.cs-rail .cs-group-head::after{content:"";display:block;width:22px;border-to
 body.cs-rail .cs-nav{padding:2px 8px 12px}
 body.cs-rail .cs-nav a{justify-content:center;padding:10px 0;background-image:none}
 body.cs-rail .cs-nav a .cs-label{display:none}
+body.cs-rail .cs-subgroup-head{justify-content:center;padding:10px 0}
+body.cs-rail .cs-subgroup-head .cs-label,body.cs-rail .cs-subgroup-head .cs-chev{display:none}
+body.cs-rail .cs-subgroup-head>svg:first-child{stroke:var(--gold)}
+body.cs-rail .cs-subgroup-body{display:none}
 body.cs-rail .cs-side-foot{padding:10px 8px}
 }
 
@@ -186,7 +203,7 @@ html{scroll-behavior:auto}
 .cs-pre-shield path{animation:none;stroke-dashoffset:0}
 body.cs-loaded .hero .wrap{animation:none}
 body.cs-anim .cs-reveal{opacity:1;transform:none;transition:none}
-.cs-side,.cs-group-body,.cs-topbar,.cs-top-btn,body.cs-shell{transition:none}
+.cs-side,.cs-group-body,.cs-subgroup-body,.cs-topbar,.cs-top-btn,body.cs-shell{transition:none}
 }
 
 /* --- print: shell never prints --- */
@@ -282,3 +299,115 @@ img.cs-avatar{object-fit:cover;display:block}
 .acct-warn strong{color:#fff}
 .acct-warn p{margin-bottom:8px}
 .acct-warn .btn{margin-top:6px}
+
+/* --- full-site polish (2026-11-06): one token pass over cards, buttons,
+   fields and prose rhythm. Fixes D1-D18 of
+   FULL-SITE-POLISH-AUDIT-2026-11-06.md. Everything above stays untouched;
+   these rules win by cascade order or higher specificity. --- */
+/* Buttons: one font and line-height for every .btn, anchor or button, so
+   mixed rows compute to the same 48px height (was 46 vs 50-52px). */
+.btn{font-family:inherit;font-size:1rem;line-height:1.5;border:1.5px solid transparent}
+/* Cards: flex columns, so the footer link pins to the card's bottom edge
+   in every grid row (was floating 25-175px above it, varying per card);
+   the link also gains a full tap zone on touch screens. */
+.card{display:flex;flex-direction:column}
+.card .tag{align-self:flex-start}
+.card .go{margin-top:auto;padding:12px 0 9px}
+/* The same link outside a card (notes, article footers) gets its weight. */
+.go{display:inline-block;font-weight:600}
+/* Lists inside cards: no dangling divider under the last item. */
+ul.clean li:last-child{border-bottom:none;padding-bottom:0}
+/* One fine-print style for the privacy lines in cards and notes
+   (replaces three one-off inline font-size styles). */
+.fineprint{font-size:.82rem;color:var(--muted);margin-top:10px}
+/* The one mid-page sub-heading size (books/training used 1.4/1.5rem
+   one-offs via inline styles). */
+.h2-sub{font-size:1.45rem;margin-top:44px}
+/* Shell tap targets reach 44px: menu button, drawer close, group heads,
+   nav rows, rail toggle, and the account page's mini buttons. */
+.cs-burger{width:44px;height:44px}
+.cs-side-close{width:44px;height:44px}
+body:not(.cs-rail) .cs-group-head{padding:15px 8px 12px}
+.cs-nav a{padding-top:10px;padding-bottom:10px}
+.cs-rail-toggle{padding:11px}
+.cs-acc-body a,.cs-acc-out{padding-top:10px;padding-bottom:10px}
+.btn.acct-mini{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+/* Sidebar search field matches the auth fields: 46px tall, 16px font
+   (was 39px / 14.4px, which also made iOS Safari zoom on focus). */
+.cs-filter input{padding:10px 12px;font-size:1rem}
+/* Prose rhythm for article, policy and snapshot content (their bare
+   paragraphs and headings previously had 0px gaps — a wall of text). */
+.prose>p{margin-bottom:18px}
+.prose>p:last-child{margin-bottom:0}
+.prose>.sub{margin-bottom:30px}
+.prose>h2{font-size:1.45rem;margin-top:36px;margin-bottom:10px}
+.prose>h3{font-size:1.25rem;margin-top:32px;margin-bottom:10px}
+.prose>ul{list-style:disc;padding-left:22px;margin-bottom:18px}
+.prose>ul li{margin-bottom:6px}
+.prose>ol{padding-left:24px;margin-bottom:18px}
+.prose>ol li{margin-bottom:8px}
+/* Auth pages: the gradient falloff stretches over the full canvas
+   instead of ending in a visible tonal step on tall screens. */
+.auth-page{background-size:100% 100%;background-repeat:no-repeat}
+
+/* ================================================================
+   Settings + login-gating + theme (added 2026-11-06, settings/gating
+   build). Everything in this block is additive: the light palette is a
+   variable override, and the preloader, code/log panels and the QR
+   display card deliberately stay dark in both themes.
+   ================================================================ */
+:root{color-scheme:dark}
+[data-theme="light"]{color-scheme:light;
+  --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5;
+  --gold:#a8842a; --gold2:#8f6f1f;
+  --ink:#152540; --muted:#51637e; --card:#ffffff;
+  --line:rgba(21,37,64,.16)}
+[data-theme="light"] .logo,[data-theme="light"] .cs-logo,
+[data-theme="light"] h1,[data-theme="light"] h2,
+[data-theme="light"] .hero h1,[data-theme="light"] .card h3,
+[data-theme="light"] .note strong,[data-theme="light"] .auth-field label,
+[data-theme="light"] .cs-acc-name,[data-theme="light"] .acct-warn strong{color:var(--ink)}
+[data-theme="light"] .cs-nav a.active{color:var(--ink)}
+[data-theme="light"] .auth-msg.error{color:#b3261e}
+[data-theme="light"] .auth-msg.success{color:#146c2e}
+[data-theme="light"] .mfa-secret{color:var(--ink)}
+html[data-textsize="large"]{font-size:112.5%}
+html[data-motion="reduced"] *,html[data-motion="reduced"] *::before,html[data-motion="reduced"] *::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important;scroll-behavior:auto!important}
+
+/* Form fixes (global): native dropdown lists follow the theme, and
+   placeholders stay readable (explicit opacity fixes Firefox dimming). */
+select option{color:var(--ink);background-color:var(--navy2)}
+.auth-field input::placeholder{color:#c7d3e8;opacity:1}
+[data-theme="light"] .auth-field input::placeholder{color:#68798f}
+
+/* Login gate (gate.js) */
+.gate-wrap{position:relative}
+.gate-blur{filter:blur(12px);pointer-events:none;user-select:none;-webkit-user-select:none}
+.gate-card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;z-index:6}
+.gate-card-box{background:var(--card);border:1px solid var(--gold);border-radius:10px;padding:20px 22px;text-align:center;max-width:430px;width:100%;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.gate-card-box h3{color:var(--ink);font-size:1.12rem;margin:8px 0 6px}
+.gate-card-box p{color:var(--muted);font-size:.95rem}
+.gate-lock{color:var(--gold);line-height:0}
+.gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.gate-btns .btn{margin-top:0}
+.gate-micro{color:var(--muted);font-size:.84rem;margin-top:10px}
+.gate-standalone{display:flex;justify-content:center;margin:20px 0}
+.gate-hint{background:rgba(212,175,55,.12);border:1px solid var(--line);border-radius:8px;padding:10px 16px;color:var(--ink);font-size:.94rem;margin-bottom:20px;max-width:760px}
+.gate-note{background:var(--navy2);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;color:var(--ink);margin-bottom:20px}
+.gate-blog-zone{position:relative}
+.gate-fade{height:72px;margin-top:-72px;position:relative;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0),var(--navy))}
+
+/* Settings page */
+.set-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.set-row h4{color:var(--ink);font-size:1rem;margin-bottom:4px}
+.set-row p{color:var(--muted);font-size:.92rem;max-width:520px}
+.set-ctl{flex-shrink:0;min-width:210px}
+.set-ctl label.radio-line{display:block;color:var(--muted);margin:5px 0;cursor:pointer;font-size:.95rem}
+.set-ctl input[type="radio"],.set-ctl input[type="checkbox"]{accent-color:var(--gold);margin-right:7px}
+.set-ctl select{width:100%;padding:10px 12px;font:inherit;font-size:.95rem;color:var(--ink);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:8px}
+[data-theme="light"] .set-ctl select{background:#fff}
+.danger-zone{border:1px solid rgba(255,120,120,.55)}
+.danger-zone h3{color:#ff9c9c}
+[data-theme="light"] .danger-zone h3{color:#b3261e}
+@media (max-width:640px){.set-row{flex-direction:column}.set-ctl{min-width:0;width:100%}}
