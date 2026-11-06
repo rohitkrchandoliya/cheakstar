@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Audio Merger - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Audio Merger</h1>
+<p class="tool-sub">Join two or more audio files into one MP3, in your chosen order.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). The combined size of all files should stay under about 50 MB; any single file over 100 MB is refused. The engine is a single-thread build, so merging is slower than a desktop app. Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Join two or more audio files into one MP3, played one after another in the order shown. Add files, arrange the order, then merge.</p>
+
+  <label for="am-files">Choose audio files</label>
+  <input id="am-files" type="file" accept="audio/*" multiple>
+  <div id="am-list"></div>
+
+  <div class="btn-row">
+    <button id="am-run" class="btn" type="button" disabled>Merge into one MP3</button>
+  </div>
+  <p id="am-status" class="status" role="status"></p>
+  <div id="am-result"></div>
+  <div id="am-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var amStatusEl = document.getElementById("am-status");
+var amFiles = [];
+
+AV.wirePage({
+  statusEl: amStatusEl,
+  logEl: document.getElementById("am-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+function renderAmList() {
+  var list = document.getElementById("am-list");
+  list.innerHTML = "";
+  amFiles.forEach(function (file, idx) {
+    var row = document.createElement("div");
+    row.className = "file-row";
+    var name = document.createElement("p");
+    name.className = "fname";
+    name.textContent = (idx + 1) + ". " + file.name;
+    var size = document.createElement("p");
+    size.className = "pages";
+    size.textContent = AV.formatBytes(file.size);
+    var up = document.createElement("button");
+    up.type = "button"; up.className = "btn small ghost"; up.textContent = "Move up"; up.disabled = idx === 0;
+    up.addEventListener("click", function () { var t = amFiles[idx - 1]; amFiles[idx - 1] = amFiles[idx]; amFiles[idx] = t; renderAmList(); });
+    var down = document.createElement("button");
+    down.type = "button"; down.className = "btn small ghost"; down.textContent = "Move down"; down.disabled = idx === amFiles.length - 1;
+    down.addEventListener("click", function () { var t = amFiles[idx + 1]; amFiles[idx + 1] = amFiles[idx]; amFiles[idx] = t; renderAmList(); });
+    var remove = document.createElement("button");
+    remove.type = "button"; remove.className = "btn small ghost"; remove.textContent = "Remove";
+    remove.addEventListener("click", function () { amFiles.splice(idx, 1); renderAmList(); });
+    row.appendChild(name); row.appendChild(size); row.appendChild(up); row.appendChild(down); row.appendChild(remove);
+    list.appendChild(row);
+  });
+  document.getElementById("am-run").disabled = amFiles.length < 2;
+}
+
+document.getElementById("am-files").addEventListener("change", function (event) {
+  var picked = Array.prototype.slice.call(event.target.files || []);
+  picked.forEach(function (f) { amFiles.push(f); });
+  renderAmList();
+  event.target.value = "";
+});
+
+document.getElementById("am-run").addEventListener("click", async function () {
+  if (amFiles.length < 2) { return; }
+  var showMsg = AV.statusFn(amStatusEl);
+  for (var i = 0; i < amFiles.length; i++) {
+    if (!AV.checkFile(amFiles[i], showMsg)) { return; }
+  }
+  amStatusEl.dataset.busy = "1";
+  var names = [];
+  try {
+    var ok = await AV.ensureEngine(showMsg);
+    if (!ok) { delete amStatusEl.dataset.busy; return; }
+    amStatusEl.className = "status";
+    amStatusEl.textContent = "Merging " + amFiles.length + " audio files...";
+    var args = [];
+    var filterInputs = "";
+    for (var j = 0; j < amFiles.length; j++) {
+      var inName = "in" + j + "." + (AV.extOf(amFiles[j].name) || "bin");
+      names.push(inName);
+      await AV.writeFile(inName, new Uint8Array(await amFiles[j].arrayBuffer()));
+      args.push("-i", inName);
+      filterInputs += "[" + j + ":a]";
+    }
+    args.push("-filter_complex", filterInputs + "concat=n=" + amFiles.length + ":v=0:a=1[out]",
+      "-map", "[out]", "-c:a", "libmp3lame", "-q:a", "4", "merged.mp3");
+    await AV.exec(args);
+    var data = await AV.readFile("merged.mp3");
+    var blob = new Blob([data], { type: "audio/mpeg" });
+    var url = URL.createObjectURL(blob);
+    var resultEl = document.getElementById("am-result");
+    resultEl.innerHTML = "";
+    var link = document.createElement("a");
+    link.className = "download";
+    link.href = url;
+    link.download = "merged-audio.mp3";
+    link.textContent = "Download merged-audio.mp3 (" + AV.formatBytes(blob.size) + ")";
+    resultEl.appendChild(link);
+    delete amStatusEl.dataset.busy;
+    amStatusEl.className = "status ok";
+    amStatusEl.textContent = "Done. " + amFiles.length + " files merged into one MP3.";
+  } catch (err) {
+    delete amStatusEl.dataset.busy;
+    amStatusEl.textContent = "Merging failed. One of the files may be damaged or in an unusual format. The engine log below shows the details.";
+    amStatusEl.className = "status error";
+  } finally {
+    names.forEach(function (n) { AV.deleteFile(n); });
+    AV.deleteFile("merged.mp3");
+  }
+});
+</script>
+</body>
+</html>
