@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>GST Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">GST Calculator</h1>
+<p class="tool-sub">Add GST to a price, or take GST out of an inclusive price.</p>
+<div class="tool-card">
+  <p>Add GST to a price, or work out the base price inside a GST-inclusive amount — for bills, quotations and invoices.</p>
+
+  <label for="gst-mode">What do you want to do?</label>
+  <select id="gst-mode">
+    <option value="add">Add GST to an amount (exclusive → inclusive)</option>
+    <option value="remove">Remove GST from an amount (inclusive → exclusive)</option>
+  </select>
+  <div class="row2">
+    <div>
+      <label for="gst-amount">Amount (₹)</label>
+      <input id="gst-amount" type="number" min="0" step="any" value="1000">
+    </div>
+    <div>
+      <label for="gst-rate">GST rate</label>
+      <select id="gst-rate">
+        <option value="0">0%</option>
+        <option value="5">5%</option>
+        <option value="12">12%</option>
+        <option value="18" selected>18%</option>
+        <option value="28">28%</option>
+        <option value="custom">Custom rate…</option>
+      </select>
+    </div>
+  </div>
+  <label for="gst-custom">Custom GST rate (%) — used only with "Custom rate"</label>
+  <input id="gst-custom" type="number" min="0" step="any" placeholder="e.g. 2.5">
+  <div class="btn-row">
+    <button id="gst-run" class="btn" type="button">Calculate GST</button>
+  </div>
+  <p id="gst-status" class="status" role="status"></p>
+  <div class="result" id="gst-result" hidden>
+    <p class="big" id="gst-headline"></p>
+    <div id="gst-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Note:</strong> within a state, the GST amount is half CGST and half SGST; between states it is fully IGST. This calculator shows the split both ways. Rates follow the standard GST slabs — check the current rate for your item before filing.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var gstStatus = document.getElementById("gst-status");
+
+function inr(n) {
+  return "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("gst-run").addEventListener("click", function () {
+  var mode = document.getElementById("gst-mode").value;
+  var amount = parseFloat(document.getElementById("gst-amount").value);
+  var rateChoice = document.getElementById("gst-rate").value;
+  var rate = rateChoice === "custom" ? parseFloat(document.getElementById("gst-custom").value) : parseFloat(rateChoice);
+  var rows = document.getElementById("gst-rows");
+  rows.innerHTML = "";
+  document.getElementById("gst-result").hidden = true;
+  if (!(amount >= 0) || isNaN(rate) || rate < 0) {
+    gstStatus.className = "status error";
+    gstStatus.textContent = "Enter an amount and a valid GST rate. With \"Custom rate\", type the rate in the custom box.";
+    return;
+  }
+  var base, tax, total;
+  if (mode === "add") {
+    base = amount;
+    tax = base * rate / 100;
+    total = base + tax;
+  } else {
+    total = amount;
+    base = total / (1 + rate / 100);
+    tax = total - base;
+  }
+  document.getElementById("gst-headline").textContent =
+    (mode === "add" ? "Total with GST: " : "Base price without GST: ") + inr(mode === "add" ? total : base);
+  addRow(rows, "Base amount (without GST)", inr(base));
+  addRow(rows, "GST at " + rate + "%", inr(tax));
+  addRow(rows, "CGST (" + (rate / 2) + "%, within a state)", inr(tax / 2));
+  addRow(rows, "SGST (" + (rate / 2) + "%, within a state)", inr(tax / 2));
+  addRow(rows, "IGST (" + rate + "%, between states)", inr(tax));
+  addRow(rows, "Total amount (with GST)", inr(total));
+  document.getElementById("gst-result").hidden = false;
+  gstStatus.className = "status ok";
+  gstStatus.textContent = "Calculation complete.";
+});
+</script>
+</body>
+</html>
