@@ -142,10 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ["knowledge-brain.html", "Knowledge Brain", "cpu"]
       ]},
       { id: "tools", name: "Tools", links: [
-        ["tools-preview/", "All Tools", "grid"],
-        ["tools-preview/qr-code-generator/", "QR Code Generator", "qr"],
-        ["tools-preview/pdf-compressor/", "PDF Compressor", "doc"],
-        ["tools-preview/image-compressor/", "Image Compressor", "image"]
+        ["tools-preview/", "All Tools", "grid"]
       ]}
     ];
 
