@@ -303,6 +303,25 @@
         }, function (err) { throw new Error(friendly(err)); });
     },
 
+    /* ---- change email (verified flow) ----
+       The project has "Secure email change" switched on, so updateUser
+       sends a confirmation link to BOTH the current and the new inbox;
+       the sign-in address changes only after both links are opened.
+       After the call, the returned user record carries the pending
+       address as new_email until the change completes. */
+    changeEmail: function (newEmail) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      var target = String(newEmail == null ? "" : newEmail).trim();
+      if (!target) return Promise.reject(new Error("Please enter the new email address."));
+      return client.auth.updateUser({ email: target }).then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        if (res.data && res.data.user) currentUser = res.data.user;
+        notify("USER_UPDATED");
+        return currentUser;
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
     resendConfirmation: function (email) {
       var bad = needClient();
       if (bad) return Promise.reject(bad);
@@ -392,20 +411,32 @@
     },
 
     /* ---- two-factor authentication (TOTP, Supabase MFA) ---- */
+    /* Never rejects on a bad factors answer: an unexpected response shape
+       (or a failed lookup, for example a session whose account no longer
+       exists) resolves with unknown:true, so the page can show its
+       "could not be checked" state instead of breaking. */
     mfaStatus: function () {
       var bad = needClient();
       if (bad) return Promise.reject(bad);
+      function unknown() {
+        return { enabled: false, factorId: null, createdAt: null, unknown: true };
+      }
       return client.auth.mfa.listFactors().then(function (res) {
-        if (res.error) throw new Error(friendly(res.error));
-        var totp = (res.data && res.data.totp) || [];
+        if (!res || res.error || !res.data) return unknown();
+        var totp = Array.isArray(res.data.totp) ? res.data.totp : null;
+        if (!totp && Array.isArray(res.data.all)) {
+          totp = res.data.all.filter(function (f) { return f && f.factor_type === "totp"; });
+        }
+        if (!totp) return unknown();
         var verified = null;
-        totp.forEach(function (f) { if (!verified && f.status === "verified") verified = f; });
+        totp.forEach(function (f) { if (!verified && f && f.status === "verified") verified = f; });
         return {
           enabled: !!verified,
           factorId: verified ? verified.id : null,
-          createdAt: verified ? (verified.created_at || null) : null
+          createdAt: verified ? (verified.created_at || null) : null,
+          unknown: false
         };
-      }, function (err) { throw new Error(friendly(err)); });
+      }, function () { return unknown(); });
     },
 
     mfaEnroll: function () {
