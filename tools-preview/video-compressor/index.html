@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Video Compressor - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Video Compressor</h1>
+<p class="tool-sub">Make a video file smaller: 720p or 480p at your chosen quality.</p>
+<div class="note"><strong>Honest limits, so there are no surprises:</strong> the media engine (ffmpeg) runs inside your browser and loads once (about 20&ndash;31 MB from a public CDN, then it is cached). Files up to about 50 MB work best; files over 100 MB are refused because browser memory is limited. The engine is a single-thread build, so compressing is slower than a desktop app. Your files are never uploaded anywhere.</div>
+<div class="tool-card">
+  <p><strong>Engine status:</strong> <span id="engine-status">Not loaded yet. The engine loads automatically the first time a tool needs it, or you can load it now.</span></p>
+  <div class="btn-row">
+    <button id="engine-load" class="btn ghost" type="button">Load engine now</button>
+  </div>
+</div>
+<div class="tool-card">
+  <p>Make a video file smaller for sharing on WhatsApp, email or uploads: scale it down to 720p or 480p and pick how much quality to keep.</p>
+
+  <label for="vcomp-file">Choose a video file</label>
+  <input id="vcomp-file" type="file" accept="video/*">
+  <p class="status" id="vcomp-basic"></p>
+
+  <div class="row2">
+    <div>
+      <label for="vcomp-size">Output size</label>
+      <select id="vcomp-size">
+        <option value="720">720p (HD, height up to 720)</option>
+        <option value="480">480p (SD, height up to 480)</option>
+      </select>
+    </div>
+    <div>
+      <label for="vcomp-crf">Quality</label>
+      <select id="vcomp-crf">
+        <option value="28">Smaller file (CRF 28)</option>
+        <option value="23" selected>Balanced (CRF 23)</option>
+        <option value="18">Higher quality (CRF 18)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="vcomp-run" class="btn" type="button" disabled>Compress video</button>
+  </div>
+  <p id="vcomp-status" class="status" role="status"></p>
+  <div id="vcomp-result"></div>
+  <div id="vcomp-log" class="log" aria-label="Engine log"></div>
+</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script src="../assets/av-engine.js"></script>
+<script>
+"use strict";
+var AV = window.AVEngine;
+var vcompStatusEl = document.getElementById("vcomp-status");
+var vcompFile = null;
+
+AV.wirePage({
+  statusEl: vcompStatusEl,
+  logEl: document.getElementById("vcomp-log"),
+  engineButton: document.getElementById("engine-load"),
+  engineStatus: document.getElementById("engine-status")
+});
+
+document.getElementById("vcomp-file").addEventListener("change", function (event) {
+  vcompFile = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+  document.getElementById("vcomp-run").disabled = !vcompFile;
+  if (vcompFile) { AV.showBasicInfo(vcompFile, document.getElementById("vcomp-basic")); }
+});
+
+document.getElementById("vcomp-run").addEventListener("click", function () {
+  if (!vcompFile) { return; }
+  if (!AV.checkFile(vcompFile, AV.statusFn(vcompStatusEl))) { return; }
+  var size = document.getElementById("vcomp-size").value;
+  var crf = document.getElementById("vcomp-crf").value;
+  var inputName = "input." + AV.extOf(vcompFile.name);
+  var before = vcompFile.size;
+  AV.runJob({
+    file: vcompFile,
+    args: ["-i", inputName, "-vf", "scale=-2:min(" + size + ",ih)", "-c:v", "libx264", "-preset", "veryfast", "-crf", crf, "-c:a", "aac", "-b:a", "128k", "output.mp4"],
+    outName: "output.mp4",
+    mime: "video/mp4",
+    downloadName: AV.baseName(vcompFile.name) + "-compressed.mp4",
+    statusEl: vcompStatusEl,
+    resultEl: document.getElementById("vcomp-result"),
+    busyText: "Compressing your video..."
+  }).then(function (blob) {
+    var saved = Math.round((1 - blob.size / before) * 100);
+    vcompStatusEl.textContent = "Done: " + AV.formatBytes(before) + " -> " + AV.formatBytes(blob.size) +
+      (blob.size < before ? " (about " + saved + "% smaller)." : " — the result is not smaller; the original was already compact.");
+  }).catch(function () { /* status already shows the error */ });
+});
+</script>
+</body>
+</html>
