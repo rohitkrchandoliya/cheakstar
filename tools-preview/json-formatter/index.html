@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>JSON Formatter &amp; Validator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -19,7 +18,7 @@
   <p>Paste JSON to check it and read it easily. Valid JSON is pretty-printed; invalid JSON gets a plain-English note about where the problem is.</p>
 
   <label for="jf-input">JSON input</label>
-  <textarea id="jf-input" rows="10" placeholder='Paste JSON here, for example: {"name": "Cheakstar", "tools": 50}'></textarea>
+  <textarea id="jf-input" class="tall" rows="10" placeholder='Paste JSON here, for example: {"name": "Cheakstar", "tools": 50}'></textarea>
 
   <div class="row2">
     <div>
@@ -42,12 +41,12 @@
 
   <div class="btn-row">
     <button id="jf-run" class="btn" type="button">Format and validate</button>
-    <button id="jf-copy" class="btn ghost" type="button">Copy formatted JSON</button>
+    <button id="jf-copy" class="btn ghost" type="button" data-result data-result-soft data-result-peer="#jf-output">Copy formatted JSON</button>
   </div>
   <p id="jf-status" class="status" role="status"></p>
 
   <label for="jf-output">Formatted JSON</label>
-  <textarea id="jf-output" rows="12" readonly placeholder="The formatted JSON will appear here."></textarea>
+  <textarea id="jf-output" class="tall" rows="12" readonly placeholder="The formatted JSON will appear here." data-result></textarea>
   <p class="status" id="jf-stats"></p>
 </div>
 <div class="note"><strong>Privacy:</strong> your JSON is parsed only in this browser tab and is never sent to any server.</div>
@@ -137,5 +136,7 @@ document.getElementById("jf-copy").addEventListener("click", function () {
   } else { out.select(); document.execCommand("copy"); done(); }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
