@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>PDF to Images - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">PDF to Images</h1>
 <p class="tool-sub">Render every page of a PDF as a JPG or PNG image.</p>
 <div class="tool-card">
-  <p>Render every page of a PDF as a JPG or PNG image and download the pages you need — for example, to attach one page of a document as a photo.</p>
+  <p>Download the pages you need — for example, to attach one page of a document as a photo.</p>
 
   <label for="pdf2img-file">Choose a PDF file</label>
   <input id="pdf2img-file" type="file" accept="application/pdf,.pdf">
@@ -29,7 +28,7 @@
     <button id="pdf2img-render" class="btn" type="button" disabled>Render pages as images</button>
   </div>
   <p id="pdf2img-status" class="status" aria-live="polite"></p>
-  <div id="pdf2img-pages" class="page-grid"></div>
+  <div id="pdf2img-pages" class="page-grid" data-result></div>
 </div>
 <div class="note"><strong>Your files stay on your device.</strong> Rendering runs entirely in your browser using PDF.js by Mozilla (Apache-2.0 licence). Nothing is uploaded to any server.</div>
 </main>
@@ -86,7 +85,7 @@
                 var label = document.createElement("p");
                 label.textContent = "Page " + pageNum + " (" + viewport.width + " x " + viewport.height + " px)";
                 var link = document.createElement("a");
-                link.className = "download";
+                link.className = "btn download";
                 link.textContent = "Download page " + pageNum + " as " + format.toUpperCase();
                 link.href = canvas.toDataURL(format === "jpeg" ? "image/jpeg" : "image/png", 0.92);
                 link.download = "page-" + pageNum + "." + (format === "jpeg" ? "jpg" : "png");
@@ -111,5 +110,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
