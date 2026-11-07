@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Image Compressor - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Image Compressor</h1>
 <p class="tool-sub">Shrink a JPG, PNG or WebP image to a smaller file size.</p>
 <div class="tool-card">
-  <p>Shrink a JPG, PNG, or WebP image to a smaller file size, for example to fit a form upload limit.</p>
+  <p>Two ways to shrink: set a quality level, or set a target size in KB and let the tool find the best fit — for example when a form upload limit refuses your photo.</p>
 
   <label for="compress-file">Choose an image</label>
   <input id="compress-file" type="file" accept="image/jpeg,image/png,image/webp">
@@ -49,7 +48,7 @@
 
   <div class="btn-row">
     <button id="compress-run" class="btn" type="button" disabled>Compress</button>
-    <button id="compress-download" class="btn ghost" type="button" disabled>Download compressed image</button>
+    <button id="compress-download" class="btn ghost" type="button" disabled data-gate-run>Download compressed image</button>
   </div>
   <p class="status" id="compress-result"></p>
   <p id="compress-status" class="status" role="status"></p>
@@ -173,5 +172,7 @@ compressDownloadBtn.addEventListener("click", function () {
   IT.triggerDownload(compressBlob, IT.baseName(compressFile.name) + "-compressed." + IT.extensionFor(compressBlob.type));
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
