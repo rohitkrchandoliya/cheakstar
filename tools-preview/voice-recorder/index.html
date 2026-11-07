@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Voice Recorder - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -25,7 +24,7 @@
   <p id="vr-status" class="status" role="status">Ready. Your browser will ask for microphone permission when you start.</p>
   <p class="status" id="vr-timer"></p>
 
-  <div id="vr-result" hidden>
+  <div id="vr-result" hidden data-result>
     <h3>Your recording</h3>
     <audio id="vr-player" controls style="width:100%"></audio>
     <div class="btn-row">
@@ -118,5 +117,7 @@ function vrOnStop() {
   vrStatusEl.textContent = "Recording finished. Listen to it above, then download it.";
 }
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
