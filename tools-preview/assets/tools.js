@@ -13,6 +13,30 @@
   function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) {} }
   var reduced = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
+  /* ---------------- Appearance (saved theme choices) ----------------
+     The visitor's theme mode, motion and text-size choices live in
+     localStorage (set on the Settings page of the main site; the full
+     runtime is theme.js there). Apply the same choices here so tool
+     pages honour them exactly like the rest of the website — the
+     stylesheet switches on the data-theme attribute. The device copy
+     survives refresh and sign-out; nothing here clears it. */
+  (function applyAppearance() {
+    try {
+      var mqLight = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+      var mode = lsGet("ck_theme_mode") || "system";
+      var dark = mode === "dark" || (mode !== "light" && !(mqLight && mqLight.matches));
+      var rootEl = document.documentElement;
+      rootEl.setAttribute("data-theme", dark ? "dark" : "light");
+      rootEl.setAttribute("data-motion", lsGet("ck_reduce_motion") === "1" ? "reduced" : "full");
+      rootEl.setAttribute("data-textsize", lsGet("ck_text_size") === "large" ? "large" : "comfortable");
+      if (mqLight && mqLight.addEventListener) {
+        mqLight.addEventListener("change", function () {
+          if ((lsGet("ck_theme_mode") || "system") === "system") applyAppearance();
+        });
+      }
+    } catch (e) { /* appearance is cosmetic; never break the page */ }
+  })();
+
   // Root prefix of the tools package, from this script's own URL
   // ("<tools-root>assets/tools.js"), so links work at any mount path.
   // The main website root is one level above the tools root.
