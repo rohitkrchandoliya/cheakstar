@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Text to PDF - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,10 +15,10 @@
 <h1 class="tool-title">Text to PDF</h1>
 <p class="tool-sub">Type or paste text and download it as a clean PDF.</p>
 <div class="tool-card">
-  <p>Type or paste plain text and turn it into a clean, properly paginated PDF — for notes, letters and simple documents.</p>
+  <p>For notes, letters and simple documents — set a file name and font size, then download the PDF.</p>
 
   <label for="txt2pdf-text">Your text</label>
-  <textarea id="txt2pdf-text" rows="14" placeholder="Type or paste your text here..."></textarea>
+  <textarea id="txt2pdf-text" class="tall" rows="14" placeholder="Type or paste your text here..."></textarea>
 
   <div class="row2">
     <div>
@@ -38,7 +37,7 @@
   </div>
 
   <div class="btn-row">
-    <button id="txt2pdf-run" class="btn" type="button">Create PDF</button>
+    <button id="txt2pdf-run" class="btn" type="button" data-gate-run>Create PDF</button>
   </div>
   <p id="txt2pdf-status" class="status" aria-live="polite"></p>
 </div>
@@ -68,7 +67,7 @@
       setStatus($("txt2pdf-status"), "Write or paste some text first.", true);
       return;
     }
-    var name = ($("txt2pdf-name").value || "document").trim().replace(/[\\/:*?"<>|]/g, "") || "document";
+    var name = ($("txt2pdf-name").value || "document").trim().replace(/[\\\/:*?"<>|]/g, "") || "document";
     var fontSize = parseInt($("txt2pdf-size").value, 10) || 12;
     try {
       var doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" });
@@ -98,5 +97,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
