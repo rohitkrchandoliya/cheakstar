@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Website Security Headers Check - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,15 +15,15 @@
 <h1 class="tool-title">Website Security Headers Check</h1>
 <p class="tool-sub">Grade a website's security headers with the free MDN Observatory service.</p>
 <div class="tool-card">
-  <p>Grade a website's security headers with the MDN Observatory (Mozilla's current service). These headers are instructions a site sends your browser to protect you — against script injection, clickjacking, insecure connections and more.</p>
+  <p>These headers are instructions a site sends your browser to protect you — against script injection, clickjacking, insecure connections and more.</p>
 
   <label for="headers-host">Website address</label>
   <input id="headers-host" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="headers-run" class="btn" type="button">Check security headers</button>
+    <button id="headers-run" class="btn" type="button" data-autorun>Check security headers</button>
   </div>
   <p id="headers-status" class="status" role="status"></p>
-  <div class="result" id="headers-result" hidden>
+  <div class="result" id="headers-result" hidden data-result>
     <p><span class="grade" id="headers-grade"></span></p>
     <p class="big" id="headers-score"></p>
     <div id="headers-summary"></div>
@@ -203,5 +202,7 @@ document.getElementById("headers-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
