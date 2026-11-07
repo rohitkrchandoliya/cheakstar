@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>PDF Merge - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,13 +15,13 @@
 <h1 class="tool-title">PDF Merge</h1>
 <p class="tool-sub">Combine several PDFs into one PDF, in your chosen order.</p>
 <div class="tool-card">
-  <p>Combine several PDFs into one. Add your files, set the order with Move up / Move down, then merge.</p>
+  <p>Add your files, set the order with Move up / Move down, then merge.</p>
 
   <label for="merge-files">Choose PDF files</label>
   <input id="merge-files" type="file" accept="application/pdf,.pdf" multiple>
   <div id="merge-list"></div>
   <div class="btn-row">
-    <button id="merge-all" class="btn" type="button" disabled>Merge all into one PDF</button>
+    <button id="merge-all" class="btn" type="button" disabled data-gate-run>Merge all into one PDF</button>
   </div>
   <p id="merge-status" class="status" aria-live="polite"></p>
 </div>
@@ -157,5 +156,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
