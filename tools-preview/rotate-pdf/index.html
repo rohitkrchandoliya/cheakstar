@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Rotate PDF - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Rotate PDF</h1>
 <p class="tool-sub">Rotate all pages, or chosen pages, of a PDF by 90, 180 or 270 degrees.</p>
 <div class="tool-card">
-  <p>Fix sideways or upside-down pages. Rotate every page, or only the pages you list, by 90, 180 or 270 degrees.</p>
+  <p>Fix sideways or upside-down pages — every page, or only the pages you list.</p>
 
   <label for="rot-file">Choose a PDF file</label>
   <input id="rot-file" type="file" accept="application/pdf,.pdf">
@@ -43,7 +42,7 @@
   <input id="rot-pages" type="text" placeholder="1,3-5">
 
   <div class="btn-row">
-    <button id="rot-run" class="btn" type="button" disabled>Rotate and download</button>
+    <button id="rot-run" class="btn" type="button" disabled data-gate-run>Rotate and download</button>
   </div>
   <p id="rot-status" class="status" aria-live="polite"></p>
 </div>
@@ -151,5 +150,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
