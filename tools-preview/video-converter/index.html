@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Video Converter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -39,7 +38,7 @@
     <button id="vc-run" class="btn" type="button" disabled>Convert video</button>
   </div>
   <p id="vc-status" class="status" role="status"></p>
-  <div id="vc-result"></div>
+  <div id="vc-result" data-result></div>
   <div id="vc-log" class="log" aria-label="Engine log"></div>
 </div>
 </main>
@@ -95,5 +94,7 @@ document.getElementById("vc-run").addEventListener("click", function () {
   }).catch(function () { /* status already shows the error */ });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
