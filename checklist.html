@@ -10,9 +10,9 @@
   <meta property="og:description" content="A free, interactive bug bounty checklist by Cheakstar — from permission and scope to recon, testing, evidence and reports. For authorized targets and legal labs only.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/checklist.html">
-<link rel="stylesheet" href="styles.css?v=20261106c">
+<link rel="stylesheet" href="styles.css?v=20261106d">
 <style>
-.progress-wrap{background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:20px 24px;margin-bottom:34px}
+.progress-wrap{background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:24px;margin-bottom:34px}
 .progress-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
 .progress-top strong{color:#fff;font-size:1.05rem}
 .progress-top span{color:var(--gold);font-weight:700}
@@ -30,17 +30,17 @@ ul.tasks label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;color
 ul.tasks input[type=checkbox]{width:20px;height:20px;margin-top:3px;accent-color:var(--gold);flex:none;cursor:pointer}
 ul.tasks input[type=checkbox]:checked + span{color:var(--muted);text-decoration:line-through}
 .sec-link{margin-top:16px;font-size:.93rem;color:var(--muted)}
-.warn{background:rgba(212,175,55,.1);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:16px 20px;color:var(--ink);margin-bottom:30px}
+.warn{background:rgba(212,175,55,.1);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:18px 22px;color:var(--ink);margin-bottom:30px}
 .warn strong{color:var(--gold)}
-.reset-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-weight:600;padding:9px 20px;border-radius:6px;cursor:pointer;font-size:.95rem}
-.reset-btn:hover{background:rgba(212,175,55,.12)}
+.reset-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);font-weight:700;padding:12px 26px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:1rem;line-height:1.5;transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.reset-btn:hover{background:rgba(212,175,55,.12);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
 <header class="site"><div class="wrap nav">
 <a class="logo" href="index.html">CHEAK<span>STAR</span></a>
 <nav class="navlinks">
-<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html" class="active">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </nav></div></header>
 <section><div class="wrap">
 <h1>Bug Bounty <span class="gold">Checklist</span></h1>
@@ -171,7 +171,7 @@ ul.tasks input[type=checkbox]:checked + span{color:var(--muted);text-decoration:
 </div>
 <div class="note" style="margin-top:6px"><strong>Want the whole path in one place?</strong> All 23 of our books — including every title named on this page — are together in <a href="https://payhip.com/b/93Thw" target="_blank" rel="noopener">The Complete Library</a> bundle in our store.</div>
 
-<div style="margin-top:26px"><button class="reset-btn" id="reset">Reset my ticks</button></div><div class="note" style="margin-top:26px"><p>Want the checklist and the free chapter by email?</p><a class="go" href="https://forms.gle/QQgMB7MBCoScuHVh7">Get the Free Chapter &amp; Checklist by Email</a><p style="font-size:small">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
+<div style="margin-top:26px"><button class="reset-btn" id="reset">Reset my ticks</button></div><div class="note" style="margin-top:26px"><p>Want the checklist and the free chapter by email?</p><a class="go" href="https://forms.gle/QQgMB7MBCoScuHVh7">Get the Free Chapter &amp; Checklist by Email</a><p class="fineprint">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
 </div></section>
 <footer class="site"><div class="wrap foot">
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
