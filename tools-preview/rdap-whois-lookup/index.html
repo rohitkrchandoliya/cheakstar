@@ -3,91 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
-<title>RDAP / Whois Lookup - Free Online Tool - Cheakstar Tools</title>
+<title>Domain Info (WHOIS / RDAP) - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/tools.css">
+
 </head>
 <body>
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
-<h1 class="tool-title">RDAP / Whois Lookup</h1>
-<p class="tool-sub">Check who registered a domain, when it was created and when it expires.</p>
+<h1 class="tool-title">Domain Info (WHOIS / RDAP)</h1>
+<p class="tool-sub">See a domain's registrar, creation and expiry dates, nameservers and status.</p>
 <div class="tool-card">
-  <p>See a domain's registration details before you trust a site or buy a domain. Lookups come from public RDAP directory services, and the returned data is decided by the registrar — it is never stored here.</p>
-  <form id="rdap-form">
-    <label for="rdap-domain">Domain name</label>
-    <input id="rdap-domain" name="domain" type="text" autocomplete="off" spellcheck="false" placeholder="example.com">
-    <button type="submit">Look up domain</button>
-  </form>
-  <div class="result" id="rdap-result" hidden></div>
+  <p>This is the modern RDAP version of a WHOIS lookup: the record comes from the registry for that domain ending, via rdap.org.</p>
+
+  <label for="rdap-domain">Domain name</label>
+  <input id="rdap-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
+  <div class="btn-row">
+    <button id="rdap-run" class="btn" type="button" data-autorun>Look up domain info</button>
+  </div>
   <p id="rdap-status" class="status" role="status"></p>
+  <div class="result" id="rdap-result" hidden data-result>
+    <p class="big">Domain information</p>
+    <div id="rdap-rows"></div>
+  </div>
 </div>
-<div class="note"><strong>Note:</strong> privacy protection hides owner contact details for many domains. Some TLDs are not published through RDAP and return no record. Lookup errors are shown with the reason, not swallowed.</div>
+<div class="note"><strong>Notes:</strong> the lookup uses the public RDAP service (rdap.org, which redirects to the registry for that domain ending). Owner names and emails are hidden by most registries for privacy — that is normal, and this tool cannot reveal them. Nothing is sent to Cheakstar.</div>
 </main>
 <footer class="site"><div class="wrap foot">
 <div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
 </div></footer>
 <script src="../assets/tools.js"></script>
-<script src="../assets/img-tools.js"></script>
 <script>
 "use strict";
-var rdapResult = document.getElementById("rdap-result");
 var rdapStatus = document.getElementById("rdap-status");
 
-document.getElementById("rdap-form").addEventListener("submit", function (event) {
-  event.preventDefault();
-  var input = document.getElementById("rdap-domain").value.trim().toLowerCase().split("/")[0];
-  if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/.test(input)) {
-    rdapResult.hidden = true;
+function cleanDomain(raw) {
+  var d = (raw || "").trim().toLowerCase();
+  d = d.replace(/^https?:\/\//, "");
+  d = d.split("/")[0].split("?")[0].split("#")[0];
+  d = d.split(":")[0];
+  d = d.replace(/\.$/, "");
+  return d;
+}
+
+function addRow(container, label, value) {
+  if (value === undefined || value === null || value === "") { return; }
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function formatDate(iso) {
+  if (!iso) { return ""; }
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) { return iso; }
+  return d.toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }) +
+    " (" + d.toISOString().slice(0, 10) + ")";
+}
+
+function registrarName(data) {
+  var entities = data.entities || [];
+  for (var i = 0; i < entities.length; i++) {
+    var roles = entities[i].roles || [];
+    if (roles.indexOf("registrar") !== -1) {
+      var vcard = entities[i].vcardArray;
+      if (Array.isArray(vcard) && Array.isArray(vcard[1])) {
+        for (var j = 0; j < vcard[1].length; j++) {
+          if (vcard[1][j][0] === "fn") { return vcard[1][j][3]; }
+        }
+      }
+      return entities[i].handle || "";
+    }
+  }
+  return "";
+}
+
+function rdapUrlFor(domain) {
+  if (domain.endsWith(".com")) { return "https://rdap.verisign.com/com/v1/domain/" + encodeURIComponent(domain); }
+  if (domain.endsWith(".net")) { return "https://rdap.verisign.com/net/v1/domain/" + encodeURIComponent(domain); }
+  return "https://rdap.org/domain/" + encodeURIComponent(domain);
+}
+
+document.getElementById("rdap-run").addEventListener("click", function () {
+  var domain = cleanDomain(document.getElementById("rdap-domain").value);
+  var resultBox = document.getElementById("rdap-result");
+  var rows = document.getElementById("rdap-rows");
+  rows.innerHTML = "";
+  resultBox.hidden = true;
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(domain)) {
     rdapStatus.className = "status error";
     rdapStatus.textContent = "Enter a valid domain name, for example example.com.";
     return;
   }
-  rdapResult.hidden = true;
   rdapStatus.className = "status";
-  rdapStatus.textContent = "Looking up " + input + "...";
-  fetch("https://rdap.org/domain/" + encodeURIComponent(input), { headers: { Accept: "application/rdap+json" } })
-    .then(function (res) {
-      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
-    })
-    .then(function (result) {
-      if (!result.ok || !result.data || result.data.errorCode) {
-        rdapStatus.className = "status error";
-        rdapStatus.textContent = "No registration record was returned for " + input + ". The domain may be unregistered, or its TLD may not publish RDAP records.";
-        return;
-      }
-      var d = result.data;
-      var data = [
-        ["Domain", d.ldnName || input],
-        ["Registrar", (d.entities && d.entities[0] && d.entities[0].vcardArray && d.entities[0].vcardArray[1].length > 1 && d.entities[0].vcardArray[1][1] && d.entities[0].vcardArray[1][1][3]) || "Not published"],
-        ["Registered", new Date((d.events || []).filter(function (ev) { return ev.eventAction === "registration"; })[0].eventDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
-        ["Expires", new Date((d.events || []).filter(function (ev) { return ev.eventAction === "expiration"; })[0].eventDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
-        ["Updated", new Date((d.events || []).filter(function (ev) { return ev.eventAction === "last changed"; })[0].eventDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })],
-        ["Status", d.status.map(function (s) { return s; }).join(", ")],
-        ["Nameservers", (d.nameservers || []).map(function (n) { return n.ldnName; }).join(", ")]
-      ];
-      rdapResult.innerHTML = "";
-      data.forEach(function (row) {
-        var p = document.createElement("p");
-        p.className = "kv";
-        var b = document.createElement("b");
-        b.textContent = row[0] + ": ";
-        p.appendChild(b);
-        p.appendChild(document.createTextNode(row[1]));
-        rdapResult.appendChild(p);
-      });
-      rdapResult.hidden = false;
-      rdapStatus.className = "status ok";
-      rdapStatus.textContent = "Record found.";
-    })
-    .catch(function () {
-      rdapStatus.className = "status error";
-      rdapStatus.textContent = "The RDAP directory could not be reached. Check your connection and try again.";
-    });
+  rdapStatus.textContent = "Looking up " + domain + "...";
+  fetch(rdapUrlFor(domain), { headers: { "Accept": "application/rdap+json, application/json" } }).then(function (res) {
+    if (res.status === 404) { throw new Error("notfound"); }
+    if (!res.ok) { throw new Error("http " + res.status); }
+    return res.json();
+  }).then(function (data) {
+    addRow(rows, "Domain", data.ldhName || domain);
+    addRow(rows, "Registrar", registrarName(data));
+    var events = {};
+    (data.events || []).forEach(function (e) { events[e.eventAction] = e.eventDate; });
+    addRow(rows, "Created", formatDate(events.registration));
+    addRow(rows, "Expires", formatDate(events.expiration));
+    addRow(rows, "Last changed", formatDate(events["last changed"]));
+    if (Array.isArray(data.status) && data.status.length) {
+      addRow(rows, "Status", data.status.join(", "));
+    }
+    if (Array.isArray(data.nameservers) && data.nameservers.length) {
+      addRow(rows, "Nameservers", data.nameservers.map(function (ns) { return ns.ldhName || ns.handle || ""; }).filter(Boolean).join(", "));
+    }
+    if (data.port43) { addRow(rows, "WHOIS server", data.port43); }
+    resultBox.hidden = false;
+    rdapStatus.className = "status ok";
+    rdapStatus.textContent = "Registration record for " + domain + ".";
+  }).catch(function (err) {
+    rdapStatus.className = "status error";
+    if (err && err.message === "notfound") {
+      rdapStatus.textContent = "No registration record was found for " + domain + ". It may be unregistered, or its registry may not publish RDAP data.";
+    } else {
+      rdapStatus.textContent = "The RDAP lookup failed. Check your connection and try again.";
+    }
+  });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
