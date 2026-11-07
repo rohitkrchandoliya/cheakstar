@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Leaderboard — Cheakstar Rewards</title>
+<meta name="description" content="The Cheakstar leaderboard: members ranked by reward points earned from genuine active time on the site — reading, learning, using tools and playing games.">
+<meta property="og:title" content="Leaderboard — Cheakstar Rewards">
+<meta property="og:description" content="Reward points for genuine active time on Cheakstar. See the top members, your own rank, and how the ranks work.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/leaderboard.html">
+<link rel="stylesheet" href="styles.css?v=20261106d">
+<style>
+  .lb-table{width:100%;border-collapse:collapse;margin-top:10px}
+  .lb-table th,.lb-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  .lb-table th{color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+  .lb-table td.num,.lb-table th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .lb-table tr.me td{background:var(--navy3);font-weight:700}
+  .lb-pos{display:inline-block;min-width:2.2em;font-weight:700;color:var(--gold)}
+  .tier{display:inline-block;padding:2px 10px;border:1px solid var(--gold);border-radius:999px;color:var(--gold);font-size:.8rem;font-weight:700;white-space:nowrap}
+  .lb-big{font-size:2rem;font-weight:700;color:#fff;line-height:1.2}
+  .lb-rank-name{color:var(--gold);font-weight:700}
+  .lb-note{color:var(--muted);font-size:.92rem}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+
+<div class="hero"><div class="wrap">
+<h1>Cheakstar <span class="gold">Leaderboard</span></h1>
+<p>Reward points are earned with genuine active time on this website — reading articles, learning, using the free tools and playing games. One full active minute earns one point. This board honours the members who spend their learning time here.</p>
+</div></div>
+
+<section><div class="wrap">
+
+  <!-- Your position -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:10px">Your Rank</h3>
+    <div id="lbMine">
+      <p class="lb-note" id="lbMineLoading">Loading your position…</p>
+      <div id="lbMineGuest" hidden>
+        <p class="lb-note">You are browsing as a guest. The active time from this visit is kept in this browser, and it joins your account as points when you sign in — nothing is lost.</p>
+        <p style="margin-top:12px"><a class="btn" href="login.html">Sign in</a> <a class="btn ghost" href="signup.html">Create a free account</a></p>
+        <p class="lb-note" id="lbGuestPoints" style="margin-top:12px"></p>
+      </div>
+      <div id="lbMineUser" hidden>
+        <p class="lb-big"><span id="lbMyPoints">0</span> points · <span class="lb-rank-name" id="lbMyRank">Newcomer</span></p>
+        <p class="lb-note" id="lbMyLine"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 100 -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Top 100 Members</h3>
+    <p class="lb-note">Only display names, points and ranks are ever shown here — never email addresses or any private detail. Any member can hide their name from this board in Settings, at any time.</p>
+    <p class="lb-note" id="lbBoardMsg" style="margin-top:10px">Loading the leaderboard…</p>
+    <table class="lb-table" id="lbTable" hidden>
+      <thead><tr><th>#</th><th>Member</th><th>Rank</th><th class="num">Points</th></tr></thead>
+      <tbody id="lbBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Rank ladder -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">The Ranks</h3>
+    <p class="lb-note">Everyone starts as a Newcomer. Points never expire and ranks never go down.</p>
+    <table class="lb-table">
+      <thead><tr><th>Rank</th><th class="num">Points needed</th><th class="num">Active time, about</th></tr></thead>
+      <tbody id="lbLadder"></tbody>
+    </table>
+  </div>
+
+  <div class="note"><strong>Honest rules, in plain words:</strong> points are counted only while you are genuinely active — the tab open in front of you and real activity on the page. Time with the site left open and untouched does not earn points, only one tab earns at a time, and at most 240 points (four active hours) can be earned in a day. Points have <strong>no cash value</strong>: they cannot be bought, sold, exchanged or withdrawn. They are recognition of your learning time, and nothing more.</div>
+
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js?v=20261106c"></script>
+<script src="auth.js?v=20261106c"></script>
+<script src="rewards.js?v=20261106a"></script>
+<script>
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function fmtTime(points) {
+    var mins = points;
+    if (mins < 60) return mins + " min";
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return m ? (h + " h " + m + " min") : (h + " h");
+  }
+
+  /* Rank ladder */
+  var ladder = $("lbLadder");
+  window.CSRewards.RANKS.forEach(function (r) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td><span class=\"tier\">" + esc(r[1]) + "</span></td>" +
+      "<td class=\"num\">" + r[0].toLocaleString("en-IN") + "</td>" +
+      "<td class=\"num\">" + esc(fmtTime(r[0])) + "</td>";
+    ladder.appendChild(tr);
+  });
+
+  /* Your position — live from the rewards module */
+  var myName = null;
+  window.CSRewards.onUpdate(function (snap) {
+    $("lbMineLoading").hidden = true;
+    if (!snap.signedIn) {
+      $("lbMineGuest").hidden = false;
+      $("lbMineUser").hidden = true;
+      $("lbGuestPoints").textContent = snap.points > 0
+        ? "So far in this browser: " + snap.points + " points (" + snap.rank + "). Sign in to add them to your account."
+        : "";
+      return;
+    }
+    $("lbMineGuest").hidden = true;
+    $("lbMineUser").hidden = false;
+    if (snap.points == null) { $("lbMyLine").textContent = "Loading…"; return; }
+    $("lbMyPoints").textContent = snap.points.toLocaleString("en-IN");
+    $("lbMyRank").textContent = snap.rank || "Newcomer";
+    var parts = [];
+    if (snap.position) parts.push("You are #" + snap.position + " on the leaderboard.");
+    var nx = window.CSRewards.nextRank(snap.points);
+    if (nx) parts.push("Next rank: " + nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go).");
+    else parts.push("You hold the highest rank.");
+    if (snap.pointsToday != null) parts.push("Earned today: " + snap.pointsToday + " of 240 points.");
+    if (snap.showOnLeaderboard === false) parts.push("Your name is currently hidden from the public board; your own position above is always visible to you.");
+    $("lbMyLine").textContent = parts.join(" ");
+    markMyRow();
+  });
+  if (window.CSAuth) {
+    window.CSAuth.onChange(function (user) {
+      var meta = (user && user.user_metadata) || {};
+      myName = meta.display_name || null;
+      markMyRow();
+    });
+  }
+
+  /* Top 100 */
+  var boardRows = [];
+  function markMyRow() {
+    if (!myName) return;
+    Array.prototype.forEach.call($("lbBody").children, function (tr) {
+      if (tr.getAttribute("data-name") === myName) tr.className = "me";
+    });
+  }
+  window.CSRewards.getLeaderboard(100).then(function (rows) {
+    boardRows = rows || [];
+    if (!boardRows.length) {
+      $("lbBoardMsg").textContent = "No members on the board yet. Be the first: sign in, spend some active learning time on the site, and your name will appear here.";
+      return;
+    }
+    $("lbBoardMsg").hidden = true;
+    $("lbTable").hidden = false;
+    var body = $("lbBody");
+    boardRows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      tr.setAttribute("data-name", r.name);
+      tr.innerHTML = "<td><span class=\"lb-pos\">" + r.position + "</span></td>" +
+        "<td>" + esc(r.name) + "</td>" +
+        "<td><span class=\"tier\">" + esc(r.rank) + "</span></td>" +
+        "<td class=\"num\">" + Number(r.points).toLocaleString("en-IN") + "</td>";
+      body.appendChild(tr);
+    });
+    markMyRow();
+  }, function () {
+    $("lbBoardMsg").textContent = "The leaderboard could not be loaded just now. Please check your connection and refresh the page.";
+  });
+})();
+</script>
+</body></html>
