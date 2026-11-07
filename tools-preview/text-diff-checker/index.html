@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Text Diff Checker - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,24 +15,24 @@
 <h1 class="tool-title">Text Diff Checker</h1>
 <p class="tool-sub">Compare two texts line by line: what was added, removed or kept.</p>
 <div class="tool-card">
-  <p>Compare two versions of a text, line by line. Lines only in the first text are shown as removed, lines only in the second as added, and matching lines as unchanged.</p>
+  <p>Lines only in the first text are shown as removed, lines only in the second as added, and matching lines as unchanged.</p>
 
   <div class="row2">
     <div>
       <label for="diff-a">First text (original)</label>
-      <textarea id="diff-a" rows="9" placeholder="Paste the original text here..."></textarea>
+      <textarea id="diff-a" class="tall" rows="9" placeholder="Paste the original text here..."></textarea>
     </div>
     <div>
       <label for="diff-b">Second text (changed)</label>
-      <textarea id="diff-b" rows="9" placeholder="Paste the changed text here..."></textarea>
+      <textarea id="diff-b" class="tall" rows="9" placeholder="Paste the changed text here..."></textarea>
     </div>
   </div>
 
   <div class="btn-row">
-    <button id="diff-run" class="btn" type="button">Compare texts</button>
+    <button id="diff-run" class="btn" type="button" data-autorun>Compare texts</button>
   </div>
   <p id="diff-status" class="status" role="status"></p>
-  <div id="diff-result"></div>
+  <div id="diff-result" data-result></div>
 </div>
 <div class="note"><strong>Privacy:</strong> both texts are compared only in this browser tab and are never sent to any server. The comparison is line-based, so a small edit inside a line shows the whole line as removed plus added.</div>
 </main>
@@ -121,5 +120,7 @@ document.getElementById("diff-run").addEventListener("click", function () {
     (added === 0 && removed === 0 ? ". The two texts are identical, line for line." : ".");
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
