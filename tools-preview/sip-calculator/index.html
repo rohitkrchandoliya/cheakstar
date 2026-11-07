@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>SIP Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -31,10 +30,10 @@
     </div>
   </div>
   <div class="btn-row">
-    <button id="sip-run" class="btn" type="button">Calculate SIP value</button>
+    <button id="sip-run" class="btn" type="button" data-autorun>Calculate SIP value</button>
   </div>
   <p id="sip-status" class="status" role="status"></p>
-  <div class="result" id="sip-result" hidden>
+  <div class="result" id="sip-result" hidden data-result>
     <p class="big" id="sip-future"></p>
     <div id="sip-rows"></div>
   </div>
@@ -90,5 +89,7 @@ document.getElementById("sip-run").addEventListener("click", function () {
   sipStatus.textContent = "Calculation complete. Remember: real returns vary year to year.";
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
