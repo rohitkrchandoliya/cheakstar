@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Image Resizer &amp; Cropper - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Image Resizer &amp; Cropper</h1>
 <p class="tool-sub">Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets.</p>
 <div class="tool-card">
-  <p>Resize an image to exact pixels, or crop it to an aspect ratio. Includes passport-photo size presets.</p>
+  <p>Start from a size preset — including two passport-photo sizes — or enter exact pixels, then crop to a fixed aspect ratio or free-crop.</p>
 
   <label for="resize-file">Choose an image</label>
   <input id="resize-file" type="file" accept="image/jpeg,image/png,image/webp">
@@ -60,7 +59,7 @@
 
   <div class="btn-row">
     <button id="resize-run" class="btn" type="button" disabled>Apply crop &amp; resize</button>
-    <button id="resize-download" class="btn ghost" type="button" disabled>Download resized image</button>
+    <button id="resize-download" class="btn ghost" type="button" disabled data-gate-run>Download resized image</button>
   </div>
   <p class="status" id="resize-result"></p>
   <p id="resize-status" class="status" role="status"></p>
@@ -200,5 +199,7 @@ resizeDownloadBtn.addEventListener("click", function () {
   IT.triggerDownload(resizeBlob, IT.baseName(resizeFile.name) + "-resized." + IT.extensionFor(resizeBlob.type));
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
