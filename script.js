@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var OUT_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4"/><path d="M14 8l3.5 4L14 16"/><path d="M17 12H9.5"/></svg>';
     function esc(s) {
       return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
     }
 
