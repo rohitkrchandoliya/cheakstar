@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Phone Number Checker - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,10 +20,10 @@
   <label for="phone-input">Phone number (with country code)</label>
   <input id="phone-input" type="tel" placeholder="+91 98765 43210" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="phone-run" class="btn" type="button">Check number</button>
+    <button id="phone-run" class="btn" type="button" data-autorun>Check number</button>
   </div>
   <p id="phone-status" class="status" role="status"></p>
-  <div class="result" id="phone-result" hidden>
+  <div class="result" id="phone-result" hidden data-result>
     <p class="big">Number details</p>
     <div id="phone-rows"></div>
   </div>
@@ -184,5 +183,7 @@ document.getElementById("phone-run").addEventListener("click", function () {
   }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
