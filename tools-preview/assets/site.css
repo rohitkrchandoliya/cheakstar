@@ -32,7 +32,7 @@ h2 .gold{color:var(--gold)}
 .sub{color:var(--muted);margin-bottom:30px;max-width:760px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
-.card h3{color:#fff;font-size:1.15rem;margin-bottom:8px}
+.card h3,.card h2{color:#fff;font-size:1.15rem;margin-bottom:8px}
 .card p{color:var(--muted);font-size:.97rem}
 .card .go{display:inline-block;margin-top:14px;font-weight:600}
 .tag{display:inline-block;background:rgba(212,175,55,.15);color:var(--gold);border:1px solid var(--line);font-size:.78rem;padding:2px 10px;border-radius:20px;margin-bottom:12px}
@@ -224,6 +224,8 @@ h1 .gold{color:var(--gold)}
 .auth-field input::placeholder{color:var(--muted)}
 .auth-field input:focus{border-color:var(--gold);outline:none}
 .auth-field .hint{color:var(--muted);font-size:.82rem;margin-top:5px}
+.show-pw{display:block;color:var(--muted);font-size:.92rem;cursor:pointer;margin:0 0 16px}
+.show-pw input{width:auto;margin:0 8px 0 0;vertical-align:middle}
 .auth-msg{border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:.93rem;color:var(--muted)}
 .auth-msg.error{background:rgba(216,64,64,.13);border:1px solid rgba(216,64,64,.55);color:#ffb9b9}
 .auth-msg.success{background:rgba(52,168,83,.13);border:1px solid rgba(52,168,83,.55);color:#b9efcb}
@@ -364,7 +366,7 @@ body:not(.cs-rail) .cs-group-head{padding:15px 8px 12px}
   --line:rgba(21,37,64,.16)}
 [data-theme="light"] .logo,[data-theme="light"] .cs-logo,
 [data-theme="light"] h1,[data-theme="light"] h2,
-[data-theme="light"] .hero h1,[data-theme="light"] .card h3,
+[data-theme="light"] .hero h1,[data-theme="light"] .card h3,[data-theme="light"] .card h2,
 [data-theme="light"] .note strong,[data-theme="light"] .auth-field label,
 [data-theme="light"] .cs-acc-name,[data-theme="light"] .acct-warn strong{color:var(--ink)}
 [data-theme="light"] .cs-nav a.active{color:var(--ink)}
