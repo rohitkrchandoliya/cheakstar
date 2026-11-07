@@ -42,7 +42,7 @@
 <h1>My <span class="gold">Account</span></h1>
 <p class="sub">Your profile, your security settings and the tools you use most.</p>
 
-<p id="accountLoading" style="color:var(--muted)">Loading your account…</p>
+  <p id="accountLoading" style="color:var(--muted)">Loading your account…</p>
 
 <div id="accountSignedOut" hidden>
   <div class="note"><strong>You are not signed in.</strong> Sign in to see your profile, your favourite tools and your recently used tools — or create a free account in a minute.<p style="margin-top:12px"><a class="btn" href="login.html">Sign In</a> <a class="btn ghost" href="signup.html" style="margin-left:8px">Create Account</a></p></div>
@@ -96,7 +96,7 @@
       </form>
       <p class="hint" id="emailPending" hidden style="margin-top:10px"></p>
     </div>
-
+    
     <h3 style="margin:24px 0 12px">Edit profile</h3>
     <form id="profileForm" novalidate>
       <div class="auth-field">
@@ -123,6 +123,38 @@
     </form>
   </div>
 
+  <!-- G. My Points & Rank (Cheakstar Rewards) -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">My Points &amp; Rank</h3>
+    <p style="color:var(--muted);margin-bottom:14px">You earn 1 point for every full minute you are genuinely active on this website — reading, learning, using tools or playing games. Points have no cash value; they are recognition of your learning time.</p>
+    <p id="ptsLoading" style="color:var(--muted)">Loading your points…</p>
+    <div id="ptsBody" hidden>
+      <div class="sess-row"><span class="sess-label">Points</span><span class="sess-value" id="ptsTotal">0</span></div>
+      <div class="sess-row"><span class="sess-label">Rank</span><span class="sess-value" id="ptsRank">Newcomer</span></div>
+      <div class="sess-row"><span class="sess-label">Leaderboard position</span><span class="sess-value" id="ptsPos">—</span></div>
+      <div class="sess-row"><span class="sess-label">Earned today</span><span class="sess-value" id="ptsToday">0 of 240 points</span></div>
+      <div class="sess-row"><span class="sess-label">Next rank</span><span class="sess-value" id="ptsNext">—</span></div>
+      <form id="ptsForm" novalidate style="max-width:460px;margin-top:18px">
+        <div class="auth-field">
+          <label for="ptsName">Name shown on the leaderboard</label>
+          <input type="text" id="ptsName" maxlength="40" autocomplete="nickname" placeholder="Your display name">
+          <p class="hint">Only this name, your points and your rank are shown on the public leaderboard. Your email address is never shown.</p>
+        </div>
+        <div class="auth-field">
+          <label for="ptsShow" style="display:flex;gap:10px;align-items:center;font-weight:400">
+            <input type="checkbox" id="ptsShow" checked style="width:auto">
+            Show my name on the public leaderboard
+          </label>
+          <p class="hint">Turn this off to hide your name from the public board. You will still earn points and always see your own position here.</p>
+        </div>
+        <div class="auth-msg error" id="ptsError" role="alert" hidden></div>
+        <div class="auth-msg success" id="ptsMsg" hidden>Your leaderboard settings have been saved.</div>
+        <button class="btn auth-submit acct-btn" type="submit" id="ptsSave">Save leaderboard settings</button>
+      </form>
+      <p style="margin-top:14px"><a class="go" href="leaderboard.html">See the leaderboard →</a></p>
+    </div>
+  </div>
+  
   <!-- Security controls (password, two-factor) and preferences live in
        Settings since 2026-11-06; this page keeps identity + activity. -->
   <div class="note" style="margin-bottom:22px"><strong>Password, two-factor authentication and preferences</strong> — change your password, manage two-factor authentication, appearance and your data from <a href="settings.html">Settings</a>.<p style="margin-top:12px"><a class="btn ghost" href="settings.html">Open Settings</a></p></div>
@@ -167,6 +199,52 @@
 </div></footer>
 <script src="script.js?v=20261106e"></script>
 <script src="auth.js?v=20261106e"></script>
+<script src="rewards.js?v=20261106a"></script>
+<script>
+(function () {
+  "use strict";
+  if (!window.CSRewards) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var filled = false;
+
+  window.CSRewards.onUpdate(function (snap) {
+    if (!snap.signedIn || snap.points == null) return;
+    $("ptsLoading").hidden = true;
+    $("ptsBody").hidden = false;
+    $("ptsTotal").textContent = Number(snap.points).toLocaleString("en-IN");
+    $("ptsRank").textContent = snap.rank || "Newcomer";
+    $("ptsPos").textContent = snap.position ? ("#" + snap.position) : "—";
+    $("ptsToday").textContent = (snap.pointsToday != null ? snap.pointsToday : 0) + " of 240 points";
+    var nx = window.CSRewards.nextRank(snap.points);
+    $("ptsNext").textContent = nx
+      ? (nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go)")
+      : "You hold the highest rank";
+    if (!filled) {
+      filled = true;
+      if (snap.showOnLeaderboard === false) $("ptsShow").checked = false;
+      var user = window.CSAuth && window.CSAuth.getUser ? window.CSAuth.getUser() : null;
+      var meta = (user && user.user_metadata) || {};
+      if (meta.display_name) $("ptsName").value = meta.display_name;
+    }
+  });
+    
+  $("ptsForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    $("ptsError").hidden = true;
+    $("ptsMsg").hidden = true;
+    $("ptsSave").disabled = true;
+    window.CSRewards.setProfile($("ptsName").value.trim() || null, $("ptsShow").checked)
+      .then(function () {
+        $("ptsSave").disabled = false;
+        $("ptsMsg").hidden = false;
+      }, function () {
+        $("ptsSave").disabled = false;
+        $("ptsError").textContent = "Your settings could not be saved just now. Please try again.";
+        $("ptsError").hidden = false;
+      });
+  });
+})();
+</script>
 <script src="theme.js?v=20261106a"></script>
 <script>
 (function () {
@@ -223,7 +301,7 @@
       el.textContent = name.charAt(0).toUpperCase() || "A";
     }
   }
-
+  
   var profileDirty = false;
   var pendingAvatar = null;   // data URL chosen but not saved yet
   var avatarRemoved = false;  // photo marked for removal, not saved yet
@@ -287,7 +365,7 @@
       $("photoPreview").textContent = ($("profName").value.trim() || name).charAt(0).toUpperCase() || "A";
     }
   });
-
+    
   $("profileForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     show($("profileError"), "");
@@ -429,7 +507,7 @@
       $("sessNet").textContent = "Network details could not be loaded right now.";
     });
   }
-
+  
   /* ---------------- sign out ---------------- */
   $("acctSignOut").addEventListener("click", function () {
     window.CSAuth.signOut().then(function () { window.location.href = "index.html"; });
