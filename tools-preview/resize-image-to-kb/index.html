@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Resize Image to KB - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -40,7 +39,7 @@
 
   <div class="btn-row">
     <button id="kb-run" class="btn" type="button" disabled>Resize to target size</button>
-    <button id="kb-download" class="btn ghost" type="button" disabled>Download resized image</button>
+    <button id="kb-download" class="btn ghost" type="button" disabled data-gate-run>Download resized image</button>
   </div>
   <p class="status" id="kb-result"></p>
   <p id="kb-status" class="status" role="status"></p>
@@ -152,5 +151,7 @@ kbDownloadBtn.addEventListener("click", function () {
   IT.triggerDownload(kbBlob, IT.baseName(kbFile.name) + "-" + document.getElementById("kb-target").value + "kb." + IT.extensionFor(kbBlob.type));
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
