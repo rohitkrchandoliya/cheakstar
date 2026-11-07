@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Contact — Cheakstar</title>
-  <meta name="description" content="Contact Cheakstar Private Limited — reach us through LinkedIn or our official store for books, training and website security checks.">
+  <meta name="description" content="Contact Cheakstar Private Limited — send us a message through our contact form, or reach us through LinkedIn or our official store for books, training and website security checks.">
   <meta property="og:title" content="Contact — Cheakstar">
-  <meta property="og:description" content="Contact Cheakstar Private Limited — reach us through LinkedIn or our official store for books, training and website security checks.">
+  <meta property="og:description" content="Contact Cheakstar Private Limited — send us a message through our contact form, or reach us through LinkedIn or our official store for books, training and website security checks.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/contact.html">
 <script>
@@ -29,7 +29,7 @@
   } catch (e) {}
 })();
 </script>
-<link rel="stylesheet" href="styles.css?v=20261106e">
+<link rel="stylesheet" href="styles.css?v=20261107a">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
 <header class="site"><div class="wrap nav">
@@ -45,14 +45,48 @@
 <div class="card"><span class="tag">Orders &amp; Books</span><h2>Our Store</h2><p>Bought a book and something went wrong — a download that failed, or the wrong file? Use the contact/message option on the store and tell us your order details; we will sort it out.</p><a class="go" href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Go to the store →</a></div>
 <div class="card"><span class="tag">Free Learning</span><h2>ByteShield</h2><p>Our free cybersecurity and Python tutorials are published as ByteShield on YouTube, Instagram and Facebook — search "ByteShield" on your platform of choice.</p><a class="go" href="books.html">Or start with a book →</a></div>
 </div>
-<!-- Message form slot: the enquiry form itself lands here in the
-     additions phase; the login gate (gate.js) already guards the slot,
-     so signed-out visitors meet the lock card here while the public
-     channels above stay open to everyone. -->
+<!-- Message form: delivered by Web3Forms straight to the Cheakstar
+     inbox. The login gate (gate.js) guards the slot, so signed-out
+     visitors meet the lock card here while the public channels above
+     stay open to everyone. -->
 <div class="card" style="margin-top:40px">
   <h2>Send us a message</h2>
   <div id="contactFormSlot">
-    <p>You are signed in. Our online message form is being set up — for now, the fastest way to reach us is LinkedIn or the store's message option above, and we reply to every genuine message.</p>
+    <p style="margin-bottom:18px">Write to us right here — your message is delivered straight to our inbox, and we reply to every genuine message.</p>
+    <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="d75a0e10-c3e7-46d8-8194-1fc8cc8e864c">
+      <input type="hidden" name="subject" value="New message from the Cheakstar website contact form">
+      <input type="hidden" name="from_name" value="Cheakstar Website Contact Form">
+      <div class="auth-field">
+        <label for="cfName">Your name</label>
+        <input id="cfName" name="name" type="text" required autocomplete="name" placeholder="Your full name">
+      </div>
+      <div class="auth-field">
+        <label for="cfEmail">Your email</label>
+        <input id="cfEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+        <p class="hint">We reply to this address, so please check it carefully.</p>
+      </div>
+      <div class="auth-field">
+        <label for="cfTopic">Topic</label>
+        <select id="cfTopic" name="topic">
+          <option value="General question">General question</option>
+          <option value="Books and orders">Books and orders</option>
+          <option value="Training">Training</option>
+          <option value="Security services">Security services</option>
+          <option value="Website feedback">Website feedback</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="auth-field">
+        <label for="cfMessage">Your message</label>
+        <textarea id="cfMessage" name="message" required placeholder="How can we help?"></textarea>
+      </div>
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+      <div class="auth-msg success" id="cfSuccess" role="status" hidden>Thank you — your message has been sent. We reply to every genuine message, usually within a couple of working days.</div>
+      <div class="auth-msg error" id="cfError" role="alert" hidden>Sorry — your message could not be sent just now. Please try again in a moment, or reach us through LinkedIn or the store above.</div>
+      <button class="btn auth-submit" type="submit" id="cfSubmit">Send Message</button>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:10px">This form is delivered by Web3Forms, a form-delivery service: what you write here is sent to our inbox and is not stored on this website. See our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+    </form>
   </div>
 </div>
 <div class="note" style="margin-top:40px"><strong>For a website security check:</strong> message us on LinkedIn with your website's address and a line about your business. Remember — checks begin only after scope is agreed and you have given written authorization for your own website.</div>
@@ -64,4 +98,30 @@
 <script src="script.js?v=20261106e"></script>
 <script src="theme.js?v=20261106a"></script>
 <script src="gate.js?v=20261106a" data-cs-gate-run="contact"></script>
+<script>
+/* Contact form: submit to Web3Forms without leaving the page and
+   report the outcome in place. Without JavaScript the form still
+   posts normally to the same service. */
+(function () {
+  var form = document.getElementById("contactForm");
+  if (!form) return;
+  var btn = document.getElementById("cfSubmit");
+  var ok = document.getElementById("cfSuccess");
+  var err = document.getElementById("cfError");
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return;
+    ok.hidden = true; err.hidden = true;
+    btn.disabled = true; btn.textContent = "Sending...";
+    fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(form) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.success) { form.reset(); ok.hidden = false; }
+        else { err.hidden = false; }
+      })
+      .catch(function () { err.hidden = false; })
+      .then(function () { btn.disabled = false; btn.textContent = "Send Message"; });
+  });
+})();
+</script>
 </body></html>
