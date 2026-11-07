@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Leaked Password Check - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,15 +15,15 @@
 <h1 class="tool-title">Leaked Password Check</h1>
 <p class="tool-sub">Check a password against real breach data — without sending the password anywhere.</p>
 <div class="tool-card">
-  <p>Check whether a password has appeared in known data breaches — without sending the password anywhere. Only the first 5 characters of its scrambled fingerprint (SHA-1 hash) are sent to the Have I Been Pwned service; the match is completed on this device. This is called k-anonymity, and it is the safe standard way to do this check.</p>
+  <p>Only the first 5 characters of its scrambled fingerprint (SHA-1 hash) are sent to the Have I Been Pwned service; the match is completed on this device. This is called k-anonymity, and it is the safe standard way to do this check.</p>
 
   <label for="pw-input">Password to check</label>
   <input id="pw-input" type="password" placeholder="Type the password to test" autocomplete="off">
   <div class="btn-row">
-    <button id="pw-run" class="btn" type="button">Check password</button>
+    <button id="pw-run" class="btn" type="button" data-autorun>Check password</button>
   </div>
   <p id="pw-status" class="status" role="status"></p>
-  <div id="pw-result"></div>
+  <div id="pw-result" data-result></div>
 </div>
 <div class="note"><strong>Safety:</strong> the password itself never leaves this page, and the box is cleared as soon as the check runs. Even so, do not type a password you currently use on an important account into any website as a habit — use this to test old or candidate passwords. Cheakstar receives nothing.</div>
 </main>
@@ -105,5 +104,7 @@ document.getElementById("pw-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
