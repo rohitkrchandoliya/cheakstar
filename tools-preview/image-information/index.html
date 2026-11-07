@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Image Information - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,14 +15,14 @@
 <h1 class="tool-title">Image Information</h1>
 <p class="tool-sub">See an image's size, dimensions and the camera details (EXIF) stored inside it.</p>
 <div class="tool-card">
-  <p>Pick any image to see its file details, and — for photos — the camera details (EXIF) stored inside it: camera model, date taken, exposure settings and sometimes the GPS location. Everything is read on this device.</p>
+  <p>Everything is read on this device. For any image you get its file details; for photos you also get the EXIF data recorded by the camera — model, date taken, exposure settings and sometimes the GPS location.</p>
 
   <label for="info-file">Choose an image</label>
   <input id="info-file" type="file" accept="image/*">
 
   <div class="preview" id="info-preview"></div>
 
-  <div class="result" id="info-result" hidden>
+  <div class="result" id="info-result" hidden data-result>
     <p class="big">Image information</p>
     <div id="info-basic"></div>
     <h3 style="margin-top:16px">Camera details (EXIF)</h3>
@@ -169,5 +168,7 @@ infoFileInput.addEventListener("change", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
