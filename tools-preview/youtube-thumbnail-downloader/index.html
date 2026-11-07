@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>YouTube Thumbnail Downloader - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,10 +20,10 @@
   <label for="thumb-input">YouTube link or video ID</label>
   <input id="thumb-input" type="text" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off">
   <div class="btn-row">
-    <button id="thumb-fetch" class="btn" type="button">Get thumbnails</button>
+    <button id="thumb-fetch" class="btn" type="button" data-autorun>Get thumbnails</button>
   </div>
   <p id="thumb-status" class="status" role="status"></p>
-  <div id="thumb-results" class="thumb-grid" aria-live="polite"></div>
+  <div id="thumb-results" class="thumb-grid" aria-live="polite" data-result></div>
 </div>
 <div class="note">
   <strong>Guide: download your own YouTube videos, legally.</strong>
@@ -158,5 +157,7 @@ document.getElementById("thumb-fetch").addEventListener("click", function () {
   loadThumbnails(videoId);
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
