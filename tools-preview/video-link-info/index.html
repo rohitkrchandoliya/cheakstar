@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Video Link Info - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,10 +20,10 @@
   <label for="info-input">Video link</label>
   <input id="info-input" type="text" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off">
   <div class="btn-row">
-    <button id="info-fetch" class="btn" type="button">Look up video info</button>
+    <button id="info-fetch" class="btn" type="button" data-autorun>Look up video info</button>
   </div>
   <p id="info-status" class="status" role="status"></p>
-  <div id="info-results" aria-live="polite"></div>
+  <div id="info-results" aria-live="polite" data-result></div>
 </div>
 <div class="note"><strong>Privacy note:</strong> the lookup contacts YouTube's or Vimeo's public oEmbed service (or noembed), and the thumbnail loads from that platform's image servers. No data is sent to Cheakstar.</div>
 </main>
@@ -121,5 +120,7 @@ document.getElementById("info-fetch").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
