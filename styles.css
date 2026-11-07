@@ -245,7 +245,7 @@ button.btn.ghost{cursor:pointer;font-family:inherit;font-size:1rem}
 .cs-acc-body a,.cs-acc-out{display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border-radius:8px;color:var(--ink);font-size:.95rem;background:none;border:0;cursor:pointer;font-family:inherit;text-align:left;transition:background-color .2s ease,color .2s ease}
 .cs-acc-body a:hover,.cs-acc-out:hover{text-decoration:none;background-color:rgba(212,175,55,.08)}
 .cs-acc-body a svg,.cs-acc-out svg{flex:none;width:20px;height:20px;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cs-acc-body a:hover svg,.cs-acc-out svg:hover{stroke:var(--gold)}
+.cs-acc-body a:hover svg,.cs-acc-out:hover svg{stroke:var(--gold)}
 .cs-acc-who{display:flex;align-items:center;gap:10px;padding:4px 8px 8px}
 .cs-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex:none}
 .cs-acc-meta{display:flex;flex-direction:column;min-width:0;line-height:1.3}
