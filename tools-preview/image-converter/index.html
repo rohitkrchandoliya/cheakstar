@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Image Converter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Image Converter</h1>
 <p class="tool-sub">Convert an image between JPG, PNG and WebP.</p>
 <div class="tool-card">
-  <p>Convert an image between JPG, PNG, and WebP. The file never leaves your device.</p>
+  <p>The file never leaves your device.</p>
 
   <label for="convert-file">Choose an image</label>
   <input id="convert-file" type="file" accept="image/jpeg,image/png,image/webp">
@@ -33,7 +32,7 @@
 
   <div class="btn-row">
     <button id="convert-run" class="btn" type="button" disabled>Convert</button>
-    <button id="convert-download" class="btn ghost" type="button" disabled>Download converted image</button>
+    <button id="convert-download" class="btn ghost" type="button" disabled data-gate-run>Download converted image</button>
   </div>
   <p class="status" id="convert-result"></p>
   <p id="convert-status" class="status" role="status"></p>
@@ -112,5 +111,7 @@ convertDownloadBtn.addEventListener("click", function () {
   IT.triggerDownload(convertBlob, IT.baseName(convertFile.name) + "-converted." + IT.extensionFor(convertBlob.type));
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
