@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>URL Encoder &amp; Decoder - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">URL Encoder &amp; Decoder</h1>
 <p class="tool-sub">Encode or decode URL (percent-encoded) text safely.</p>
 <div class="tool-card">
-  <p>URLs cannot contain spaces and many special characters, so they are stored in percent-encoded form (a space becomes %20). Encode text to make it URL-safe, or decode an encoded URL back to readable text.</p>
+  <p>URLs cannot contain spaces and many special characters, so they are stored in percent-encoded form (a space becomes %20).</p>
 
   <label for="url-mode">Mode</label>
   <select id="url-mode">
@@ -25,17 +24,17 @@
   </select>
 
   <label for="url-input">Input</label>
-  <textarea id="url-input" rows="6" placeholder="Type text to encode, or paste encoded text to decode..."></textarea>
+  <textarea id="url-input" class="tall" rows="6" placeholder="Type text to encode, or paste encoded text to decode..."></textarea>
 
   <div class="btn-row">
     <button id="url-encode" class="btn" type="button">Encode</button>
     <button id="url-decode" class="btn ghost" type="button">Decode</button>
-    <button id="url-copy" class="btn ghost" type="button">Copy result</button>
+    <button id="url-copy" class="btn ghost" type="button" data-result data-result-soft data-result-peer="#url-output">Copy result</button>
   </div>
   <p id="url-status" class="status" role="status"></p>
 
   <label for="url-output">Result</label>
-  <textarea id="url-output" rows="6" readonly placeholder="The result will appear here."></textarea>
+  <textarea id="url-output" class="tall" rows="6" readonly placeholder="The result will appear here." data-result></textarea>
 </div>
 <div class="note"><strong>Which mode?</strong> "Part of a URL" encodes everything special, including / and ?, so the result can sit safely inside a link. "Full URL" leaves the structure of a complete link (https://, /, ?, &amp;) untouched and only encodes the unsafe characters. Your text never leaves this browser tab.</div>
 </main>
@@ -90,5 +89,7 @@ document.getElementById("url-copy").addEventListener("click", function () {
   } else { urlOutput.select(); document.execCommand("copy"); done(); }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
