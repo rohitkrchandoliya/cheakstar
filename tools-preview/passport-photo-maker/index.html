@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Passport Photo Maker - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -24,8 +23,8 @@
   <div id="crop-container"><img id="pp-image" alt="Photo to crop" hidden></div>
 
   <div class="btn-row">
-    <button id="pp-single" class="btn" type="button" disabled>Download passport photo (JPG)</button>
-    <button id="pp-sheet" class="btn ghost" type="button" disabled>Download 4 x 6 sheet — 8 copies</button>
+    <button id="pp-single" class="btn" type="button" disabled data-gate-run>Download passport photo (JPG)</button>
+    <button id="pp-sheet" class="btn ghost" type="button" disabled data-gate-run>Download 4 x 6 sheet — 8 copies</button>
   </div>
   <p id="pp-status" class="status" role="status"></p>
   <p class="status">Sizes use 300 dpi: the photo itself is 413 x 531 pixels (35 x 45 mm), and the sheet is 1800 x 1200 pixels (6 x 4 inches). Drag the photo to move it, and use the corners of the frame to zoom. Always check the official photo rules of the form or authority you are submitting to — background colour, glasses and head-covering rules differ.</p>
@@ -143,5 +142,7 @@ ppSheetBtn.addEventListener("click", async function () {
   }
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
