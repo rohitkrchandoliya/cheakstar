@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Unit Converter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Unit Converter</h1>
 <p class="tool-sub">Convert length, weight, temperature and data size units.</p>
 <div class="tool-card">
-  <p>Convert everyday units: length, weight, temperature and data size. Pick a category, enter a value, and the conversion updates as you type.</p>
+  <p>Pick a category, enter a value, and the conversion updates as you type.</p>
 
   <label for="uc-category">Category</label>
   <select id="uc-category">
@@ -43,7 +42,7 @@
   <div class="btn-row">
     <button id="uc-swap" class="btn ghost" type="button">Swap units</button>
   </div>
-  <div class="result" style="margin-top:16px">
+  <div class="result" style="margin-top:16px" data-result>
     <p class="big" id="uc-result">—</p>
     <p class="status" id="uc-note"></p>
   </div>
@@ -167,5 +166,7 @@ document.getElementById("uc-swap").addEventListener("click", function () {
 });
 fillUnits();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
