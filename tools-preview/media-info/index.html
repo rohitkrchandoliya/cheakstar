@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Media Info - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -32,7 +31,7 @@
   <div class="btn-row">
     <button id="mi-run" class="btn" type="button" disabled>Read full codec details</button>
   </div>
-  <div class="result" id="mi-result" hidden>
+  <div class="result" id="mi-result" hidden data-result>
     <p class="big">Media information</p>
     <div id="mi-rows"></div>
   </div>
@@ -117,5 +116,7 @@ document.getElementById("mi-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
