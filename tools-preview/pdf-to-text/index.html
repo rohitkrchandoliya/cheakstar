@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>PDF to Text - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,17 +15,17 @@
 <h1 class="tool-title">PDF to Text</h1>
 <p class="tool-sub">Pull the text out of a PDF and download it as a .txt file.</p>
 <div class="tool-card">
-  <p>Pull the readable text out of a PDF. Preview it here, then download it as a plain .txt file.</p>
+  <p>Read the extracted text in the preview first; if it looks right, save it as a plain text file.</p>
 
   <label for="pdf2txt-file">Choose a PDF file</label>
   <input id="pdf2txt-file" type="file" accept="application/pdf,.pdf">
   <div class="btn-row">
     <button id="pdf2txt-run" class="btn" type="button" disabled>Extract text</button>
-    <button id="pdf2txt-download" class="btn ghost" type="button" disabled>Download .txt</button>
+    <button id="pdf2txt-download" class="btn ghost" type="button" disabled data-gate-run>Download .txt</button>
   </div>
   <p id="pdf2txt-status" class="status" aria-live="polite"></p>
   <label for="pdf2txt-out">Extracted text</label>
-  <textarea id="pdf2txt-out" rows="12" readonly placeholder="The extracted text will appear here."></textarea>
+  <textarea id="pdf2txt-out" class="tall" rows="12" readonly placeholder="The extracted text will appear here." data-result></textarea>
 </div>
 <div class="note"><strong>Honest note:</strong> this reads the text stored inside the PDF. Scanned PDFs are pictures of pages — they contain no stored text, so extraction will come back empty for them (that needs OCR, which this free tool does not do). Everything runs in your browser using PDF.js by Mozilla; nothing is uploaded.</div>
 </main>
@@ -127,5 +126,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
