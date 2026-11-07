@@ -67,8 +67,8 @@
       setStatus($("txt2pdf-status"), "Write or paste some text first.", true);
       return;
     }
-    var name = ($("txt2pdf-name").value || "document").trim().replace(/[\\\/:*?"<>|]/g, "") || "document";
-    var fontSize = parseInt($(txt2pdf-size").value, 10) || 12;
+    var name = ($("txt2pdf-name").value || "document").trim().replace(/[\\/:*?"<>|]/g, "") || "document";
+    var fontSize = parseInt($("txt2pdf-size").value, 10) || 12;
     try {
       var doc = new window.jspdf.jsPDF({ unit: "pt", format: "a4" });
       doc.setFont("helvetica", "normal");
