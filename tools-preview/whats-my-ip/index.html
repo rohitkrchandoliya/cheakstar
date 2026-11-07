@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>What's My IP - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -19,10 +18,10 @@
   <p>It loads automatically when the page opens. If you use a VPN, you will see the VPN's address and location instead of your own.</p>
 
   <div class="btn-row">
-    <button id="myip-run" class="btn" type="button">Refresh my IP details</button>
+    <button id="myip-run" class="btn" type="button" data-autorun>Refresh my IP details</button>
   </div>
   <p id="myip-status" class="status" role="status"></p>
-  <div class="result" id="myip-result" hidden>
+  <div class="result" id="myip-result" hidden data-result>
     <p class="big">Your connection</p>
     <div id="myip-rows"></div>
   </div>
@@ -110,5 +109,7 @@ function lookupOwnIp() {
 document.getElementById("myip-run").addEventListener("click", lookupOwnIp);
 lookupOwnIp();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
