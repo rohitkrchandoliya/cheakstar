@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>IP Address Lookup - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,15 +15,15 @@
 <h1 class="tool-title">IP Address Lookup</h1>
 <p class="tool-sub">Find the country, city, ISP and network of any IPv4 or IPv6 address.</p>
 <div class="tool-card">
-  <p>Find the public details of any IPv4 or IPv6 address: country, city, internet provider, network and timezone. IP locations are approximate — they point to the provider's network, not to a person's house.</p>
+  <p>IP locations are approximate — they point to the provider's network, not to a person's house.</p>
 
   <label for="ip-input">IP address</label>
   <input id="ip-input" type="text" placeholder="8.8.8.8 or 2401:4900:1c08:abcd:1234:5678:9abc:def0" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="ip-run" class="btn" type="button">Look up IP address</button>
+    <button id="ip-run" class="btn" type="button" data-autorun>Look up IP address</button>
   </div>
   <p id="ip-status" class="status" role="status"></p>
-  <div class="result" id="ip-result" hidden>
+  <div class="result" id="ip-result" hidden data-result>
     <p class="big">IP information</p>
     <div id="ip-rows"></div>
   </div>
@@ -112,5 +111,7 @@ document.getElementById("ip-run").addEventListener("click", function () {
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
