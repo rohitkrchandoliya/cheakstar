@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Images to PDF - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Images to PDF</h1>
 <p class="tool-sub">Turn JPG or PNG images into a single PDF, one image per page.</p>
 <div class="tool-card">
-  <p>Turn photos or scans (JPG or PNG) into a single PDF, one image per page — handy for forms that ask for one PDF instead of many photos.</p>
+  <p>Handy for forms that ask for one PDF instead of many photos: add your images and each one becomes a page.</p>
 
   <label for="img-files">Choose images (JPG or PNG)</label>
   <input id="img-files" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple>
@@ -27,7 +26,7 @@
     <option value="fit">Fit to image size</option>
   </select>
   <div class="btn-row">
-    <button id="img-convert" class="btn" type="button" disabled>Create PDF from images</button>
+    <button id="img-convert" class="btn" type="button" disabled data-gate-run>Create PDF from images</button>
   </div>
   <p id="img-status" class="status" aria-live="polite"></p>
 </div>
@@ -117,5 +116,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
