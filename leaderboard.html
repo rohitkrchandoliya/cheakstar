@@ -10,7 +10,7 @@
 <meta property="og:description" content="Reward points for genuine active time on Cheakstar. See the top members, your own rank, and how the ranks work.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/leaderboard.html">
-<link rel="stylesheet" href="styles.css?v=20261106d">
+<link rel="stylesheet" href="styles.css?v=20261107b">
 <style>
   .lb-table{width:100%;border-collapse:collapse;margin-top:10px}
   .lb-table th,.lb-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
@@ -22,6 +22,21 @@
   .lb-big{font-size:2rem;font-weight:700;color:#fff;line-height:1.2}
   .lb-rank-name{color:var(--gold);font-weight:700}
   .lb-note{color:var(--muted);font-size:.92rem}
+  .tier svg{vertical-align:-2px;margin-right:5px}
+  .lb-ava{width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:10px;background:var(--navy3)}
+  .lb-ini{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;vertical-align:middle;margin-right:10px}
+  .lb-podium{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap;margin:16px 0 4px}
+  .lb-pod{flex:1 1 160px;text-align:center;background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:16px 12px 14px}
+  .lb-pod.first{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .lb-pod.me{background:var(--navy3);outline:2px solid var(--gold)}
+  .lb-pod-crown{height:36px;display:flex;align-items:flex-end;justify-content:center}
+  .lb-pod-ava{width:72px;height:72px;border-radius:50%;object-fit:cover;display:block;margin:6px auto 8px;background:var(--navy3)}
+  .lb-pod-ini{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:1.7rem;margin:6px auto 8px}
+  .lb-pod-pos{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+  .lb-pod-name{font-weight:700;color:var(--ink);font-size:1.06rem;margin-top:2px;overflow-wrap:anywhere}
+  .lb-pod-points{font-size:1.35rem;font-weight:700;color:var(--ink)}
+  .lb-pod-points span{font-size:.85rem;font-weight:400;color:var(--muted)}
+  .lb-pod-time{color:var(--muted);font-size:.88rem}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
@@ -55,15 +70,24 @@
     </div>
   </div>
 
-  <!-- Top 100 -->
+  <!-- Top 103: the first three are honoured as winner cards above
+       the table; the board never shows more than 103 members. -->
   <div class="card" style="margin-bottom:22px">
-    <h3 style="margin-bottom:6px">Top 100 Members</h3>
-    <p class="lb-note">Only display names, points and ranks are ever shown here — never email addresses or any private detail. Any member can hide their name from this board in Settings, at any time.</p>
+    <h3 style="margin-bottom:6px">Top 103 Members</h3>
+    <p class="lb-note">Only display names, points, ranks and profile photos are ever shown here — a photo appears only while its owner keeps &quot;show on the leaderboard&quot; switched on — and email addresses or other private details are never shown. Any member can hide themselves from this board in Settings or My Account, at any time.</p>
     <p class="lb-note" id="lbBoardMsg" style="margin-top:10px">Loading the leaderboard…</p>
+    <div class="lb-podium" id="lbPodium" hidden></div>
     <table class="lb-table" id="lbTable" hidden>
       <thead><tr><th>#</th><th>Member</th><th>Rank</th><th class="num">Points</th></tr></thead>
       <tbody id="lbBody"></tbody>
     </table>
+  </div>
+
+  <!-- Your position: shown when the signed-in member sits outside the
+       top 103, or earns points while hidden from the public board. -->
+  <div class="card" id="lbYourStrip" style="margin-bottom:22px" hidden>
+    <h3 style="margin-bottom:6px">Your Position</h3>
+    <p class="lb-note" id="lbYourLine"></p>
   </div>
 
   <!-- Rank ladder -->
@@ -83,9 +107,9 @@
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
-<script src="script.js?v=20261106c"></script>
+<script src="script.js?v=20261107b"></script>
 <script src="auth.js?v=20261106c"></script>
-<script src="rewards.js?v=20261106a"></script>
+<script src="rewards.js?v=20261107b"></script>
 <script>
 (function () {
   "use strict";
@@ -105,8 +129,9 @@
   /* Rank ladder */
   var ladder = $("lbLadder");
   window.CSRewards.RANKS.forEach(function (r) {
+    var lv = window.CSRewards.levelByName(r[1]);
     var tr = document.createElement("tr");
-    tr.innerHTML = "<td><span class=\"tier\">" + esc(r[1]) + "</span></td>" +
+    tr.innerHTML = "<td><span class=\"tier\" style=\"color:" + lv.color + ";border-color:" + lv.color + "\">" + window.CSRewards.iconSvg(r[1], 14) + esc(r[1]) + "</span></td>" +
       "<td class=\"num\">" + r[0].toLocaleString("en-IN") + "</td>" +
       "<td class=\"num\">" + esc(fmtTime(r[0])) + "</td>";
     ladder.appendChild(tr);
@@ -122,7 +147,27 @@
      renders from a fresh status pull. */
   var myName = null;
   var authSettled = !window.CSAuth; // no auth module: nothing to wait for
+
+  /* "Your position" strip under the board: for members who earn
+     points but do not appear in the public top 103 — either because
+     their true position is lower, or because they hide their name
+     from the board. Their own position is always visible to them. */
+  function renderStrip(snap) {
+    var strip = $("lbYourStrip");
+    if (!snap.signedIn || snap.points == null || snap.points <= 0) { strip.hidden = true; return; }
+    var outside = !!(snap.position && snap.position > 103);
+    var hiddenFromBoard = snap.showOnLeaderboard === false;
+    if (!outside && !hiddenFromBoard) { strip.hidden = true; return; }
+    var txt = "You are #" + (snap.position || "—") + " overall, with " +
+      Number(snap.points).toLocaleString("en-IN") + " points (" + (snap.rank || "Newcomer") + ").";
+    if (outside) txt += " The public board shows the top 103 members — keep earning active-time points to climb onto it.";
+    if (hiddenFromBoard) txt += " Your name is currently hidden from the public board; this position is visible only to you.";
+    $("lbYourLine").textContent = txt;
+    strip.hidden = false;
+  }
+
   function renderMine(snap) {
+    renderStrip(snap);
     $("lbMineLoading").hidden = true;
     if (!snap.signedIn) {
       $("lbMineGuest").hidden = false;
@@ -167,32 +212,76 @@
     });
   }
 
-  /* Top 100 */
+  /* Top 103 — the first three members are honoured as winner cards
+     (podium), the rest follow in the table. The board never shows
+     more than 103 members. */
   var boardRows = [];
+  var CROWN_COLORS = { 1: "#d4af37", 2: "#c0c0c8", 3: "#cd7f32" };
+  function avatarHtml(r, imgCls, iniCls) {
+    if (r.avatar) return "<img class=\"" + imgCls + "\" src=\"" + r.avatar + "\" alt=\"\">";
+    var initial = (r.name || "M").charAt(0).toUpperCase() || "M";
+    return "<span class=\"" + iniCls + "\" aria-hidden=\"true\">" + esc(initial) + "</span>";
+  }
+  function badgeHtml(rankName) {
+    var lv = window.CSRewards.levelByName(rankName);
+    return "<span class=\"tier\" style=\"color:" + lv.color + ";border-color:" + lv.color + "\">" +
+      window.CSRewards.iconSvg(rankName, 13) + esc(rankName) + "</span>";
+  }
+  function renderPodium(top) {
+    var pod = $("lbPodium");
+    pod.innerHTML = "";
+    if (!top.length) { pod.hidden = true; return; }
+    // Winners' order: 2nd, 1st, 3rd, so the champion stands in the middle.
+    var order = [];
+    if (top[1]) order.push(top[1]);
+    if (top[0]) order.push(top[0]);
+    if (top[2]) order.push(top[2]);
+    order.forEach(function (r) {
+      var d = document.createElement("div");
+      d.className = "lb-pod" + (r.position === 1 ? " first" : "");
+      d.setAttribute("data-name", r.name);
+      d.innerHTML =
+        "<div class=\"lb-pod-crown\">" + window.CSRewards.crownSvg(CROWN_COLORS[r.position] || "#d4af37", r.position === 1 ? 34 : 28) + "</div>" +
+        avatarHtml(r, "lb-pod-ava", "lb-pod-ini") +
+        "<div class=\"lb-pod-pos\">Rank #" + r.position + "</div>" +
+        "<div class=\"lb-pod-name\">" + esc(r.name) + "</div>" +
+        "<div style=\"margin:7px 0\">" + badgeHtml(r.rank) + "</div>" +
+        "<div class=\"lb-pod-points\">" + Number(r.points).toLocaleString("en-IN") + " <span>points</span></div>" +
+        "<div class=\"lb-pod-time\">" + esc(fmtTime(r.points)) + " of active time</div>";
+      pod.appendChild(d);
+    });
+    pod.hidden = false;
+  }
   function markMyRow() {
     if (!myName) return;
     Array.prototype.forEach.call($("lbBody").children, function (tr) {
       if (tr.getAttribute("data-name") === myName) tr.className = "me";
     });
+    Array.prototype.forEach.call($("lbPodium").children, function (d) {
+      if (d.getAttribute("data-name") === myName) d.classList.add("me");
+    });
   }
-  window.CSRewards.getLeaderboard(100).then(function (rows) {
+  window.CSRewards.getLeaderboard(103).then(function (rows) {
     boardRows = rows || [];
     if (!boardRows.length) {
       $("lbBoardMsg").textContent = "No members on the board yet. Be the first: sign in, spend some active learning time on the site, and your name will appear here.";
       return;
     }
     $("lbBoardMsg").hidden = true;
-    $("lbTable").hidden = false;
+    renderPodium(boardRows.slice(0, 3));
+    var rest = boardRows.slice(3);
     var body = $("lbBody");
-    boardRows.forEach(function (r) {
+    body.innerHTML = "";
+    rest.forEach(function (r) {
       var tr = document.createElement("tr");
       tr.setAttribute("data-name", r.name);
       tr.innerHTML = "<td><span class=\"lb-pos\">" + r.position + "</span></td>" +
-        "<td>" + esc(r.name) + "</td>" +
-        "<td><span class=\"tier\">" + esc(r.rank) + "</span></td>" +
+        "<td>" + avatarHtml(r, "lb-ava", "lb-ini") + esc(r.name) + "</td>" +
+        "<td>" + badgeHtml(r.rank) + "</td>" +
         "<td class=\"num\">" + Number(r.points).toLocaleString("en-IN") + "</td>";
       body.appendChild(tr);
     });
+    $("lbTable").hidden = rest.length === 0;
     markMyRow();
   }, function () {
     $("lbBoardMsg").textContent = "The leaderboard could not be loaded just now. Please check your connection and refresh the page.";
