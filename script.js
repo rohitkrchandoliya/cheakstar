@@ -1,4 +1,36 @@
 // Cheakstar — tiny helpers only. No tracking, no external calls.
+
+// Appearance: apply the visitor's saved theme choices on every page.
+// The choices live in localStorage (set on the Settings page; the full
+// runtime, including account sync, is theme.js). Pages that do not load
+// theme.js still honour the choices here, because this file loads on
+// every page and the stylesheet switches on the data-theme attribute.
+// The device copy survives refresh and sign-out; nothing here clears it.
+(function () {
+  try {
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+    function currentMode() {
+      try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
+    }
+    function applyAppearance() {
+      var mode = currentMode();
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark" : "light");
+      try {
+        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
+        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
+      } catch (e) {}
+    }
+    applyAppearance();
+    if (mq && mq.addEventListener) {
+      mq.addEventListener("change", function () {
+        if (currentMode() === "system") applyAppearance();
+      });
+    }
+  } catch (e) { /* appearance is cosmetic; never break the page */ }
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
   var y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
