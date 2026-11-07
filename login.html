@@ -56,6 +56,7 @@
       <label for="loginPassword">Password</label>
       <input type="password" id="loginPassword" name="password" autocomplete="current-password" required placeholder="Your password">
     </div>
+    <label class="show-pw"><input type="checkbox" id="loginShowPw">Show password</label>
     <div class="auth-msg error" id="loginError" role="alert" hidden></div>
     <button class="btn auth-submit" type="submit" id="loginSubmit">Sign In</button>
     <p class="auth-alt">New to Cheakstar? <a href="signup.html">Create an account</a></p>
@@ -70,6 +71,7 @@
     </div>
     <div class="auth-msg error" id="mfaError" role="alert" hidden></div>
     <button class="btn auth-submit" type="submit" id="mfaSubmit">Verify and sign in</button>
+    <p class="auth-alt"><a href="#" id="mfaBack">Back to the password step</a></p>
     <p class="auth-alt">Lost access to your authenticator app? <a href="contact.html">Contact us</a> and we will help you regain access after verifying your identity.</p>
   </form>
 </div>
@@ -203,6 +205,22 @@
 
   document.getElementById("loginSignOut").addEventListener("click", function () {
     window.CSAuth.signOut().then(function () { window.location.reload(); });
+  });
+
+  // Show-password toggle for the password field.
+  var showPw = document.getElementById("loginShowPw");
+  if (showPw) showPw.addEventListener("change", function () {
+    document.getElementById("loginPassword").type = showPw.checked ? "text" : "password";
+  });
+
+  // Two-factor step: go back to the password form.
+  document.getElementById("mfaBack").addEventListener("click", function (ev) {
+    ev.preventDefault();
+    showMfaError("");
+    mfaForm.hidden = true;
+    signedInBox.hidden = true;
+    notice.hidden = true;
+    form.hidden = false;
   });
 
   form.addEventListener("submit", function (ev) {
