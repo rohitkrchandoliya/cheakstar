@@ -112,9 +112,17 @@
     ladder.appendChild(tr);
   });
 
-  /* Your position — live from the rewards module */
+  /* Your position — live from the rewards module.
+     Sign-in state settles asynchronously: the stored session token is
+     refreshed as the page loads, and until then the rewards module can
+     only report a guest snapshot. Rendering that early report settled
+     this card on the guest message even for signed-in members (found
+     in the 7 Nov live check). So, like the account page, the card
+     keeps its loading state until CSAuth.ready has settled, and then
+     renders from a fresh status pull. */
   var myName = null;
-  window.CSRewards.onUpdate(function (snap) {
+  var authSettled = !window.CSAuth; // no auth module: nothing to wait for
+  function renderMine(snap) {
     $("lbMineLoading").hidden = true;
     if (!snap.signedIn) {
       $("lbMineGuest").hidden = false;
@@ -138,12 +146,24 @@
     if (snap.showOnLeaderboard === false) parts.push("Your name is currently hidden from the public board; your own position above is always visible to you.");
     $("lbMyLine").textContent = parts.join(" ");
     markMyRow();
+  }
+  window.CSRewards.onUpdate(function (snap) {
+    // Before the sign-in state settles, a guest report is not yet
+    // trustworthy — hold the loading state instead of flashing it.
+    if (!authSettled && !snap.signedIn) return;
+    renderMine(snap);
   });
   if (window.CSAuth) {
     window.CSAuth.onChange(function (user) {
       var meta = (user && user.user_metadata) || {};
       myName = meta.display_name || null;
       markMyRow();
+      window.CSRewards.refreshStatus();
+    });
+    window.CSAuth.ready.then(function () {
+      authSettled = true;
+      window.CSRewards.refreshStatus();
+      renderMine(window.CSRewards.snapshot());
     });
   }
 
