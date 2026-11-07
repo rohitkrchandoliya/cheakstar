@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Cheakstar Blog</title>
+  <link>https://rohitkrchandoliya.github.io/cheakstar/blog.html</link>
+  <description>Practical cybersecurity articles from Cheakstar Private Limited, Jaipur — simple, honest guides for beginners and small businesses.</description>
+  <language>en</language>
+  <atom:link href="https://rohitkrchandoliya.github.io/cheakstar/feed.xml" rel="self" type="application/rss+xml"/>
+  <item>
+    <title>Password Habits That Actually Work (and Take Ten Minutes)</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/password-habits-that-actually-work.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/password-habits-that-actually-work.html</guid>
+    <description>Forget complicated rules. Three password habits, set up in ten minutes, prevent most account takeovers.</description>
+  </item>
+  <item>
+    <title>Software Updates: The Security Habit Hiding in Plain Sight</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/software-updates-security-habit.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/software-updates-security-habit.html</guid>
+    <description>Most real attacks use flaws that were already fixed. A beginner-friendly guide to updates: what they patch, what to switch on, and what to ignore.</description>
+  </item>
+  <item>
+    <title>How to Spot a Phishing Message in Under a Minute</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/how-to-spot-a-phishing-message.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/how-to-spot-a-phishing-message.html</guid>
+    <description>Five calm checks that expose most phishing messages - and the one habit that defeats the rest.</description>
+  </item>
+  <item>
+    <title>Learning Cybersecurity From Zero: A Roadmap Without the Noise</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/learning-cybersecurity-from-zero-roadmap.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/learning-cybersecurity-from-zero-roadmap.html</guid>
+    <description>A staged roadmap for cybersecurity beginners: what to learn first, what to skip for now, and how to know you are progressing.</description>
+  </item>
+  <item>
+    <title>Password Habits, Part Two: The Cleanup Most People Skip</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/password-habits-part-two-cleanup.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/password-habits-part-two-cleanup.html</guid>
+    <description>Your passwords are unique and two-factor is on. Now finish the job: old accounts, recovery paths and backup codes, cleaned up in one sitting.</description>
+  </item>
+  <item>
+    <title>What Is API Security? A Beginner's Plain-English Guide</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/what-is-api-security-beginner-guide.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/what-is-api-security-beginner-guide.html</guid>
+    <description>APIs run the modern internet - and fail in simple, repeated ways. A beginner-friendly tour of what API security means and why it matters.</description>
+  </item>
+  <item>
+    <title>What Is Bug Bounty? A Beginner's Honest Starting Guide</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/what-is-bug-bounty-beginner-guide.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/what-is-bug-bounty-beginner-guide.html</guid>
+    <description>Bug bounty explained plainly: what it is, what it is not, and the honest order in which a beginner should learn it.</description>
+  </item>
+  <item>
+    <title>Why Permission Comes First in Hacking - Always</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/why-permission-comes-first-in-hacking.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/why-permission-comes-first-in-hacking.html</guid>
+    <description>The legal and ethical line that separates security research from crime, explained for beginners - and why professionals guard it fiercely.</description>
+  </item>
+  <item>
+    <title>Your Browser Is a Vault: Simple Ways to Keep It Locked</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/securing-your-browser-simple-ways.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/securing-your-browser-simple-ways.html</guid>
+    <description>You live inside your browser - email, banking, work and study. Five plain habits that keep the most-used app on your devices properly secured.</description>
+  </item>
+  <item>
+    <title>The Six-Digit Code Scam: How Messaging Accounts Get Stolen</title>
+    <link>https://rohitkrchandoliya.github.io/cheakstar/six-digit-code-scam-messaging-accounts.html</link>
+    <guid isPermaLink="true">https://rohitkrchandoliya.github.io/cheakstar/six-digit-code-scam-messaging-accounts.html</guid>
+    <description>A friend - or a stranger - asks for a six-digit code that just arrived on your phone. Handing it over hands over your account. How the trick works and the one rule that defeats it.</description>
+  </item>
+</channel>
+</rss>
