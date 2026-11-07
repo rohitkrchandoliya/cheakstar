@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Word &amp; Character Counter - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -19,9 +18,9 @@
   <p>Type or paste your text and get instant counts — for essays, articles, applications and social posts with length limits. Counting happens as you type, on this device only.</p>
 
   <label for="wc-text">Your text</label>
-  <textarea id="wc-text" rows="10" placeholder="Start typing or paste your text here..."></textarea>
+  <textarea id="wc-text" class="tall" rows="10" placeholder="Start typing or paste your text here..."></textarea>
 
-  <div class="stats">
+  <div class="stats" data-result>
     <div class="stat"><span class="value" id="wc-words">0</span><span class="label">Words</span></div>
     <div class="stat"><span class="value" id="wc-chars">0</span><span class="label">Characters</span></div>
     <div class="stat"><span class="value" id="wc-chars-nospace">0</span><span class="label">Characters (no spaces)</span></div>
@@ -32,7 +31,7 @@
   </div>
 
   <h3>Most used words</h3>
-  <p class="status" id="wc-topwords">Your top keywords will appear here (common words like "the" and "and" are excluded).</p>
+  <p class="status" id="wc-topwords" data-result>Your top keywords will appear here (common words like "the" and "and" are excluded).</p>
   <div class="btn-row">
     <button id="wc-clear" class="btn ghost" type="button">Clear text</button>
   </div>
@@ -94,5 +93,7 @@ document.getElementById("wc-clear").addEventListener("click", function () {
 });
 wcUpdate();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
