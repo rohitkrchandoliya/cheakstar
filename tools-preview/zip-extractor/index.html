@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>ZIP Extractor - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -21,7 +20,7 @@
   <label for="zip-file">Choose a ZIP file</label>
   <input id="zip-file" type="file" accept=".zip,application/zip,application/x-zip-compressed">
   <p id="zip-status" class="status" role="status"></p>
-  <div id="zip-result"></div>
+  <div id="zip-result" data-result></div>
 </div>
 <div class="note"><strong>Notes:</strong> password-protected ZIP files cannot be opened (the password format is not supported in the browser). Very large ZIPs are limited by your device's memory. Folders are shown for context; only files can be downloaded.</div>
 </main>
@@ -115,5 +114,7 @@ document.getElementById("zip-file").addEventListener("change", function (event) 
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
