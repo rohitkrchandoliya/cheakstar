@@ -195,6 +195,7 @@
         <label for="pwConfirm">Confirm new password</label>
         <input type="password" id="pwConfirm" autocomplete="new-password" placeholder="Type the new password again">
       </div>
+      <label class="show-pw"><input type="checkbox" id="pwShowPw">Show passwords</label>
       <div class="auth-msg error" id="pwError" role="alert" hidden></div>
       <div class="auth-msg success" id="pwMsg" hidden>Your password has been changed.</div>
       <button class="btn auth-submit acct-btn" type="submit" id="pwSubmit">Change password</button>
@@ -241,7 +242,7 @@
     <div class="auth-msg error" id="mfaError" role="alert" hidden style="margin-top:16px"></div>
     <div class="auth-msg success" id="mfaMsg" hidden style="margin-top:16px"></div>
     <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:16px">If you lose access to your authenticator app, contact us through the <a href="contact.html">contact page</a> and we will help you regain access after verifying your identity.</p>
-    <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:8px">Tip: after turning this on, add the same account to a second authenticator app as a backup, so a lost phone does not lock you out.</p>
+    <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:8px;overflow-wrap:break-word">Tip: after turning this on, add the same account to a second authenticator app as a backup, so a lost phone does not lock you out.</p>
   </div>
 
   <!-- Danger zone -->
@@ -433,6 +434,15 @@
   }
 
   /* ---------------- change password (moved from My Account) ---------------- */
+  // Show-passwords toggle for the three password fields.
+  var pwShowPw = $("pwShowPw");
+  if (pwShowPw) pwShowPw.addEventListener("change", function () {
+    var t = pwShowPw.checked ? "text" : "password";
+    $("pwCurrent").type = t;
+    $("pwNew").type = t;
+    $("pwConfirm").type = t;
+  });
+
   $("pwForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     show($("pwError"), "");
