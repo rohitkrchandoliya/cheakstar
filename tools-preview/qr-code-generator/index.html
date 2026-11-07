@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>QR Code Generator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -26,7 +25,7 @@
 
   <div id="fields-text">
     <label for="input-text">Link or text</label>
-    <textarea id="input-text" rows="3" placeholder="https://example.com" style="min-height:80px"></textarea>
+    <textarea id="input-text" rows="2" class="compact" placeholder="https://example.com"></textarea>
   </div>
 
   <div id="fields-wifi" hidden>
@@ -80,12 +79,12 @@
   <p class="status">The preview below always stays the same size on screen. The size setting only changes the downloaded file.</p>
 
   <div class="btn-row">
-    <button id="generate" class="btn" type="button">Generate QR code</button>
-    <button id="download" class="btn ghost" type="button" disabled>Download PNG</button>
-    <button id="download-svg" class="btn ghost" type="button" disabled>Download SVG</button>
+    <button id="generate" class="btn" type="button" data-autorun>Generate QR code</button>
+    <button id="download" class="btn ghost" type="button" disabled data-result data-result-soft data-result-peer="#qr-display">Download PNG</button>
+    <button id="download-svg" class="btn ghost" type="button" disabled data-result data-result-soft data-result-peer="#qr-display">Download SVG</button>
   </div>
 
-  <div class="qr-display" id="qr-display"><span class="qr-empty">Your QR code will appear here, always at this size.</span></div>
+  <div class="qr-display" id="qr-display" data-result><span class="qr-empty">Your QR code will appear here, always at this size.</span></div>
   <div class="qr-render-hidden" id="qrcode" aria-hidden="true"></div>
   <p id="status" class="status" role="status"></p>
 </div>
@@ -235,5 +234,7 @@ downloadSvgBtn.addEventListener("click", function () {
   setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
