@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>QR Code Scanner - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,13 +15,13 @@
 <h1 class="tool-title">QR Code Scanner</h1>
 <p class="tool-sub">Read a QR code from an uploaded image and see what it contains.</p>
 <div class="tool-card">
-  <p>Upload an image of a QR code — a photo or a screenshot — and see what it contains before you act on it. Useful for checking where a payment or login QR really leads.</p>
+  <p>See what a code contains before you act on it — useful for checking where a payment or login QR really leads.</p>
 
   <label for="qrs-file">Choose an image with a QR code</label>
   <input id="qrs-file" type="file" accept="image/*">
   <div class="preview" id="qrs-preview"></div>
 
-  <div class="result" id="qrs-result" hidden>
+  <div class="result" id="qrs-result" hidden data-result>
     <p class="big">QR code contents</p>
     <p class="kv"><b>Type:</b> <span id="qrs-type"></span></p>
     <p class="kv"><b>Content:</b> <span id="qrs-text"></span></p>
@@ -110,5 +109,7 @@ document.getElementById("qrs-file").addEventListener("change", function (event) 
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
