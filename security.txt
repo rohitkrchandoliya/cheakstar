@@ -1,0 +1,6 @@
+Contact: https://rohitkrchandoliya.github.io/cheakstar/contact.html
+Contact: mailto:rohittestingmail@gmail.com
+Expires: 2027-11-06T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://rohitkrchandoliya.github.io/cheakstar/security.txt
+Policy: https://rohitkrchandoliya.github.io/cheakstar/privacy-policy.html
