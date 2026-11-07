@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Screen Recorder - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">Screen Recorder</h1>
 <p class="tool-sub">Record your screen, with optional microphone sound, and download the video.</p>
 <div class="tool-card">
-  <p>Record your screen — a tab, a window or the whole display — with optional microphone narration, then download the video. Useful for tutorials, demos and bug reports. The recording is made only in this browser tab; nothing is uploaded.</p>
+  <p>Useful for tutorials, demos and bug reports. The recording is made only in this browser tab; nothing is uploaded.</p>
 
   <label class="check-line"><input id="sr-mic" type="checkbox" checked> Also record my microphone (narration)</label>
 
@@ -27,7 +26,7 @@
   <p id="sr-status" class="status" role="status">Ready. Your browser will ask which screen or window to share when you start.</p>
   <p class="status" id="sr-timer"></p>
 
-  <div id="sr-result" hidden>
+  <div id="sr-result" hidden data-result>
     <h3>Your screen recording</h3>
     <video id="sr-player" controls style="width:100%" playsinline></video>
     <div class="btn-row">
@@ -139,5 +138,7 @@ function srOnStop() {
   srStatusEl.textContent = "Recording finished. Watch it above, then download it.";
 }
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
