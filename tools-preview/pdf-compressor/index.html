@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>PDF Compressor - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -17,7 +16,7 @@
 <h1 class="tool-title">PDF Compressor</h1>
 <p class="tool-sub">Make a PDF smaller by re-rendering its pages as compressed images.</p>
 <div class="tool-card">
-  <p>Make a PDF smaller by re-building it as page images. Good for scanned documents and PDFs that a form refuses because of size.</p>
+  <p>Good for scanned documents and PDFs that a form refuses because of size.</p>
 
   <label for="pdfc-file">Choose a PDF file</label>
   <input id="pdfc-file" type="file" accept="application/pdf,.pdf">
@@ -33,7 +32,7 @@
     <button id="pdfc-run" class="btn" type="button" disabled>Compress PDF</button>
   </div>
   <p id="pdfc-status" class="status" aria-live="polite"></p>
-  <div id="pdfc-preview"></div>
+  <div id="pdfc-preview" data-result></div>
 </div>
 <div class="note"><strong>Honest note:</strong> this method turns every page into an image, so the text in the compressed PDF is a picture — it can no longer be selected, copied or searched, and at the smallest setting text can look soft. If your PDF is already mostly text, it may not shrink much (it can even grow). Everything runs in your browser (PDF.js by Mozilla + jsPDF); nothing is uploaded.</div>
 </main>
@@ -129,7 +128,7 @@
           var blob = out.output("blob");
           var url = URL.createObjectURL(blob);
           var link = document.createElement("a");
-          link.className = "download";
+          link.className = "btn download";
           link.href = url;
           var base = pdfcFile.name.replace(/\.pdf$/i, "");
           link.download = base + "-compressed.pdf";
@@ -156,5 +155,7 @@
   });
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
