@@ -627,3 +627,31 @@ document.addEventListener("DOMContentLoaded", function () {
   var y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 });
+
+// ==== Cheakstar Rewards load for tool pages (2026-11-07, leaderboard
+// upgrade). Rewards (active-time points + the floating points card)
+// live at the site root, one level above the tools root; load it with
+// the same dynamic pattern and the same script-URL prefix derivation
+// as the auth.js load above. Failure-isolated: if the load fails,
+// the tool page works exactly as before. ====
+(function () {
+  "use strict";
+  try {
+    if (window.CSRewards) return; // already loaded
+
+    var rootPrefix = "../";
+    try {
+      var scriptEl = document.currentScript;
+      if (scriptEl && scriptEl.src) {
+        var marker = "assets/tools.js";
+        var idx = scriptEl.src.indexOf(marker);
+        if (idx > -1) { rootPrefix = scriptEl.src.slice(0, idx); }
+      }
+    } catch (e) { /* keep fallback */ }
+
+    var s = document.createElement("script");
+    s.src = rootPrefix + "../rewards.js";
+    s.async = true;
+    (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
