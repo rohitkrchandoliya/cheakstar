@@ -43,6 +43,12 @@ ul.clean li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);color:va
 ul.clean li strong{color:var(--ink)}
 footer.site{background:var(--navy2);border-top:2px solid var(--gold);padding:34px 0;margin-top:20px}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:.92rem}
+/* Sticky footer: the page is a full-height column and the footer's
+   auto top margin absorbs any empty space, so on pages with little
+   content the footer rests at the bottom of the screen instead of
+   riding up directly under the content. */
+body{display:flex;flex-direction:column;min-height:100vh}
+footer.site{margin-top:auto}
 @media (max-width:640px){
 .hero h1{font-size:2rem}
 .hero{padding:44px 0 36px}
