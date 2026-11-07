@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Percentage Calculator - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -28,9 +27,9 @@
     </div>
   </div>
   <div class="btn-row">
-    <button id="pc1-run" class="btn" type="button">Calculate</button>
+    <button id="pc1-run" class="btn" type="button" data-autorun>Calculate</button>
   </div>
-  <p class="status" id="pc1-out"></p>
+  <p class="status" id="pc1-out" data-result></p>
 </div>
 <div class="tool-card">
   <h2 style="margin-top:0">X is what percent of Y?</h2>
@@ -47,7 +46,7 @@
   <div class="btn-row">
     <button id="pc2-run" class="btn" type="button">Calculate</button>
   </div>
-  <p class="status" id="pc2-out"></p>
+  <p class="status" id="pc2-out" data-result></p>
 </div>
 <div class="tool-card">
   <h2 style="margin-top:0">Percentage increase or decrease</h2>
@@ -64,7 +63,7 @@
   <div class="btn-row">
     <button id="pc3-run" class="btn" type="button">Calculate change</button>
   </div>
-  <p class="status" id="pc3-out"></p>
+  <p class="status" id="pc3-out" data-result></p>
 </div>
 <div class="note"><strong>Tip:</strong> for marks, use the second calculator — your marks as the part, total marks as the whole. Everything is calculated on this device only.</div>
 </main>
@@ -108,5 +107,7 @@ document.getElementById("pc3-run").addEventListener("click", function () {
     " (a difference of " + fmt(to - from) + ").", false);
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
