@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>PDF Split — Extract &amp; Delete Pages - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,7 +15,7 @@
 <h1 class="tool-title">PDF Split — Extract &amp; Delete Pages</h1>
 <p class="tool-sub">Extract chosen pages from a PDF, or delete pages from it.</p>
 <div class="tool-card">
-  <p>Split a PDF by taking pages out of it. Add a PDF, type the pages you want (for example 1,3-5), then extract just those pages as a new PDF — or delete those pages and keep the rest.</p>
+  <p>Add a PDF, type the pages you want (for example 1,3-5), then extract just those pages as a new PDF — or delete those pages and keep the rest.</p>
 
   <label for="split-files">Choose PDF files</label>
   <input id="split-files" type="file" accept="application/pdf,.pdf" multiple>
@@ -103,11 +102,13 @@
       var extractBtn = document.createElement("button");
       extractBtn.type = "button";
       extractBtn.className = "btn small";
+      extractBtn.setAttribute("data-gate-run", "");
       extractBtn.textContent = "Extract these pages";
       extractBtn.addEventListener("click", function () { extractPages(entry); });
       var deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
       deleteBtn.className = "btn small ghost";
+      deleteBtn.setAttribute("data-gate-run", "");
       deleteBtn.textContent = "Delete these pages";
       deleteBtn.addEventListener("click", function () { deletePages(entry); });
       var removeBtn = document.createElement("button");
@@ -197,5 +198,7 @@
   }
 })();
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
