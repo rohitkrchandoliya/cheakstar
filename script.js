@@ -666,3 +666,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   } catch (e) {}
 })();
+
+// ==== Cheakstar Rewards site-wide load (2026-11-07, leaderboard
+// upgrade). The rewards tracker (active-time points + the floating
+// points card) used to be included only by the account and
+// leaderboard pages, so time spent anywhere else on the site never
+// counted. It is now loaded on every page that loads script.js, with
+// the same lazy dynamic pattern as auth.js above. The standalone
+// auth pages (login, signup, reset password) do not load script.js
+// at all, so they stay exactly as they are. Failure-isolated: if the
+// load fails, the page works exactly as before. ====
+(function () {
+  "use strict";
+  try {
+    if (window.CSRewards) return; // already present (e.g. direct include)
+    var s = document.createElement("script");
+    s.src = "rewards.js";
+    s.async = true;
+    (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
