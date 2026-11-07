@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Subdomain Finder - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -16,15 +15,15 @@
 <h1 class="tool-title">Subdomain Finder</h1>
 <p class="tool-sub">List a domain's subdomains from public Certificate Transparency logs.</p>
 <div class="tool-card">
-  <p>Find a domain's publicly known subdomains from Certificate Transparency logs — the public record of SSL certificates. Website owners use this to audit their own domains; it only shows what is already public.</p>
+  <p>Certificate Transparency logs are the public record of SSL certificates. Website owners use this to audit their own domains; it only shows what is already public.</p>
 
   <label for="sub-domain">Domain name</label>
   <input id="sub-domain" type="text" placeholder="example.com" autocomplete="off" spellcheck="false">
   <div class="btn-row">
-    <button id="sub-run" class="btn" type="button">Find subdomains</button>
+    <button id="sub-run" class="btn" type="button" data-autorun>Find subdomains</button>
   </div>
   <p id="sub-status" class="status" role="status"></p>
-  <div id="sub-result"></div>
+  <div id="sub-result" data-result></div>
 </div>
 <div class="note"><strong>Notes:</strong> data comes from crt.sh, the public Certificate Transparency search service. A busy domain can take a while (this tool waits up to 2 minutes), and at most 300 subdomains are shown. A subdomain with no certificate will not appear. Nothing is sent to Cheakstar.</div>
 </main>
@@ -106,5 +105,7 @@ document.getElementById("sub-run").addEventListener("click", function () {
     });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
