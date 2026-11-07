@@ -420,3 +420,48 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .danger-zone h3{color:#ff9c9c}
 [data-theme="light"] .danger-zone h3{color:#b3261e}
 @media (max-width:640px){.set-row{flex-direction:column}.set-ctl{min-width:0;width:100%}}
+
+/* --- leaderboard upgrade (2026-11-07): floating points card (rewards.js) --- */
+.cs-pc-card{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;width:272px;max-width:calc(100vw - 32px);background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.35);padding:14px 16px;color:var(--ink);font-size:.92rem;line-height:1.45}
+.cs-pc-card[hidden],.cs-pc-pill[hidden]{display:none!important}
+.cs-pc-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cs-pc-avawrap{flex:none;line-height:0}
+.cs-pc-avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;display:block;background:var(--navy3)}
+.cs-pc-initials{width:42px;height:42px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:1.05rem;display:flex;align-items:center;justify-content:center}
+.cs-pc-initials svg{width:22px;height:22px}
+.cs-pc-guestico{background:var(--navy3);color:var(--gold)}
+.cs-pc-name{font-weight:700;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-pc-close{margin-left:auto;flex:none;background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px 7px;border-radius:8px;font-family:inherit}
+.cs-pc-close:hover{color:var(--ink);background:rgba(127,127,127,.14)}
+.cs-pc-badgerow{margin-bottom:8px;min-height:24px}
+.cs-pc-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid;border-radius:999px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.cs-pc-badge svg{flex:none}
+.cs-pc-points{font-size:1.7rem;font-weight:700;line-height:1.15;color:var(--ink)}
+.cs-pc-points-label{font-size:.9rem;font-weight:400;color:var(--muted)}
+.cs-pc-line{color:var(--muted);font-size:.88rem;margin-top:3px}
+.cs-pc-line strong{color:var(--ink)}
+.cs-pc-bar{height:8px;border-radius:99px;background:var(--navy3);overflow:hidden;margin:9px 0 2px}
+.cs-pc-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:99px;transition:width .5s ease}
+.cs-pc-note{color:var(--muted);font-size:.84rem;margin-top:9px}
+.cs-pc-actions{display:flex;align-items:center;gap:12px;margin-top:11px}
+.cs-pc-link{font-weight:600;font-size:.9rem}
+.cs-pc-signin{margin-left:auto;padding:7px 16px;font-size:.9rem}
+.cs-pc-pill{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--card);border:1px solid var(--gold);color:var(--gold);font-weight:700;font-size:.92rem;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.cs-pc-pill svg{width:18px;height:18px;flex:none}
+.cs-pc-pill:hover{background:var(--navy3)}
+@media (max-width:480px){
+.cs-pc-card{left:16px;width:auto}
+}
+/* Back-to-top stacks above the points pill; while the card is open the
+   card covers it (the card has its own close button). */
+.cs-top-btn{bottom:70px}
+
+/* --- leaderboard upgrade (2026-11-07): account page crowns + level badge --- */
+.acct-avatar-wrap{position:relative;flex:none}
+.cs-acct-crown{position:absolute;top:-15px;left:50%;transform:translateX(-50%) rotate(-8deg);z-index:2;line-height:0;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.cs-acct-crown[hidden]{display:none!important}
+.acct-avatar.ring-gold{box-shadow:0 0 0 3px #d4af37,0 0 16px rgba(212,175,55,.45)}
+.acct-avatar.ring-silver{box-shadow:0 0 0 3px #c0c0c8,0 0 16px rgba(192,192,200,.45)}
+.acct-avatar.ring-bronze{box-shadow:0 0 0 3px #cd7f32,0 0 16px rgba(205,127,50,.45)}
+.cs-lvl-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid;border-radius:999px;font-size:.8rem;font-weight:700;white-space:nowrap;vertical-align:middle}
+.cs-lvl-badge svg{flex:none}
