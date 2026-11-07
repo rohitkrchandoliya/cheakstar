@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,">
 <title>Photo Privacy Checker (EXIF) - Free Online Tool - Cheakstar Tools</title>
 <link rel="stylesheet" href="../assets/site.css">
@@ -22,7 +21,7 @@
   <input id="exif-file" type="file" accept="image/*">
   <div class="preview" id="exif-preview"></div>
 
-  <div class="result" id="exif-result" hidden>
+  <div class="result" id="exif-result" hidden data-result>
     <p class="big" id="exif-verdict"></p>
     <div id="exif-rows"></div>
   </div>
@@ -132,5 +131,7 @@ document.getElementById("exif-file").addEventListener("change", function (event)
   });
 });
 </script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
 </body>
 </html>
