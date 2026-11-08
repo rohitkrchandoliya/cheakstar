@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Compound Interest Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Compound Interest Calculator</h1>
+<p class="tool-sub">See how a lump sum grows with periodic compounding, year by year.</p>
+<div class="tool-card">
+  <p>Compound interest means you earn interest on your interest as well. Enter an amount, a rate and a time period to see the growth, with an optional monthly deposit on top.</p>
+
+  <label for="ci-principal">Starting amount (₹)</label>
+  <input id="ci-principal" type="number" min="0" step="any" value="100000">
+  <div class="row2">
+    <div>
+      <label for="ci-rate">Interest rate (% per year)</label>
+      <input id="ci-rate" type="number" min="0" step="any" value="8">
+    </div>
+    <div>
+      <label for="ci-years">Time period (years)</label>
+      <input id="ci-years" type="number" min="0" step="any" value="10">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="ci-freq">Compounding frequency</label>
+      <select id="ci-freq">
+        <option value="1">Yearly</option>
+        <option value="2">Half-yearly</option>
+        <option value="4" selected>Quarterly</option>
+        <option value="12">Monthly</option>
+        <option value="365">Daily</option>
+      </select>
+    </div>
+    <div>
+      <label for="ci-deposit">Monthly deposit (₹, optional)</label>
+      <input id="ci-deposit" type="number" min="0" step="any" value="0">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="ci-run" class="btn" type="button" data-autorun>Calculate growth</button>
+  </div>
+  <p id="ci-status" class="status" role="status"></p>
+  <div class="result" id="ci-result" hidden data-result>
+    <p class="big" id="ci-future"></p>
+    <div id="ci-rows"></div>
+    <div id="ci-table"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> this assumes one steady rate for the whole period and a deposit at the start of each month. Real products change rates over time, and fees or tax can reduce what you actually receive. Treat the figures as a planning estimate, not a promise.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ciStatus = document.getElementById("ci-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function valueAt(P, annual, years, freq, deposit) {
+  // Lump sum part with the chosen compounding frequency.
+  var lump = P * Math.pow(1 + annual / (100 * freq), freq * years);
+  // Monthly deposit part, compounded monthly, deposits at month start.
+  var months = Math.round(years * 12);
+  var i = annual / 1200;
+  var dep = 0;
+  if (deposit > 0 && months > 0) {
+    dep = i === 0 ? deposit * months : deposit * ((Math.pow(1 + i, months) - 1) / i) * (1 + i);
+  }
+  return { total: lump + dep, deposited: P + deposit * months };
+}
+
+document.getElementById("ci-run").addEventListener("click", function () {
+  var P = parseFloat(document.getElementById("ci-principal").value);
+  var annual = parseFloat(document.getElementById("ci-rate").value);
+  var years = parseFloat(document.getElementById("ci-years").value);
+  var freq = parseInt(document.getElementById("ci-freq").value, 10);
+  var deposit = parseFloat(document.getElementById("ci-deposit").value) || 0;
+  var rows = document.getElementById("ci-rows");
+  var tableBox = document.getElementById("ci-table");
+  rows.innerHTML = "";
+  tableBox.innerHTML = "";
+  document.getElementById("ci-result").hidden = true;
+  if (!(P >= 0) || !(years > 0) || isNaN(annual) || annual < 0 || deposit < 0 || (P === 0 && deposit === 0)) {
+    ciStatus.className = "status error";
+    ciStatus.textContent = "Enter a starting amount and/or a monthly deposit, a rate of 0 or more, and a time period above zero.";
+    return;
+  }
+  var end = valueAt(P, annual, years, freq, deposit);
+  var interest = end.total - end.deposited;
+  document.getElementById("ci-future").textContent = "Value after " + years + " years: " + inr(end.total);
+  addRow(rows, "You put in", inr(end.deposited));
+  addRow(rows, "Interest earned", inr(interest));
+  addRow(rows, "Total value", inr(end.total));
+  var wholeYears = Math.floor(years);
+  if (wholeYears >= 2) {
+    var table = document.createElement("table");
+    table.className = "tbl";
+    var head = document.createElement("tr");
+    ["Year", "You put in", "Interest so far", "Balance"].forEach(function (h) {
+      var th = document.createElement("th");
+      th.textContent = h;
+      head.appendChild(th);
+    });
+    table.appendChild(head);
+    for (var y = 1; y <= wholeYears; y++) {
+      var v = valueAt(P, annual, y, freq, deposit);
+      var tr = document.createElement("tr");
+      [String(y), inr(v.deposited), inr(v.total - v.deposited), inr(v.total)].forEach(function (cell) {
+        var td = document.createElement("td");
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    }
+    tableBox.appendChild(table);
+  }
+  document.getElementById("ci-result").hidden = false;
+  ciStatus.className = "status ok";
+  ciStatus.textContent = "Calculation complete. The table shows the position at each year end.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="compound-interest-calculator"></script>
+</body>
+</html>
