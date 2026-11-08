@@ -10,7 +10,7 @@
 <meta property="og:description" content="Reward points for genuine active time on Cheakstar. See the top members, your own rank, and how the ranks work.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/leaderboard.html">
-<link rel="stylesheet" href="styles.css?v=20261107b">
+<link rel="stylesheet" href="styles.css?v=20261108b">
 <style>
   .lb-table{width:100%;border-collapse:collapse;margin-top:10px}
   .lb-table th,.lb-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
@@ -25,18 +25,51 @@
   .tier svg{vertical-align:-2px;margin-right:5px}
   .lb-ava{width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:10px;background:var(--navy3)}
   .lb-ini{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;vertical-align:middle;margin-right:10px}
-  .lb-podium{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap;margin:16px 0 4px}
-  .lb-pod{flex:1 1 160px;text-align:center;background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:16px 12px 14px}
-  .lb-pod.first{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,.3)}
-  .lb-pod.me{background:var(--navy3);outline:2px solid var(--gold)}
-  .lb-pod-crown{height:36px;display:flex;align-items:flex-end;justify-content:center}
-  .lb-pod-ava{width:72px;height:72px;border-radius:50%;object-fit:cover;display:block;margin:6px auto 8px;background:var(--navy3)}
-  .lb-pod-ini{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:1.7rem;margin:6px auto 8px}
-  .lb-pod-pos{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700}
-  .lb-pod-name{font-weight:700;color:var(--ink);font-size:1.06rem;margin-top:2px;overflow-wrap:anywhere}
-  .lb-pod-points{font-size:1.35rem;font-weight:700;color:var(--ink)}
-  .lb-pod-points span{font-size:.85rem;font-weight:400;color:var(--muted)}
-  .lb-pod-time{color:var(--muted);font-size:.88rem}
+  .lb-ava.big{width:64px;height:64px;margin-right:0}
+  .lb-ini.big{width:64px;height:64px;margin-right:0;font-size:1.35rem}
+  .lb-pod-frame{line-height:0}
+  .lb-hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,var(--navy3),var(--navy2));padding:20px 22px;display:flex;align-items:center;gap:20px;margin:14px 0 12px}
+  .lb-hero[hidden],.lb-cards[hidden]{display:none}
+  .lb-hero.me{outline:2px solid var(--gold);outline-offset:2px}
+  .lb-hero-num{font-size:2.2rem;font-weight:800;color:#d4af37;min-width:1.1em;text-align:center}
+  .lb-hero-main{min-width:0;flex:1}
+  .lb-hero-name{font-size:1.45rem;font-weight:800;color:#fff;overflow-wrap:anywhere}
+  .lb-hero-level{margin:5px 0 10px}
+  .lb-hero-stats{display:flex;gap:28px;flex-wrap:wrap;color:var(--muted);font-size:.95rem}
+  .lb-hero-stats b{color:var(--ink)}
+  .lb-wedge{position:absolute;right:0;bottom:0;width:118px;height:118px;background:linear-gradient(135deg,#f7e08a,#d4af37);clip-path:polygon(100% 0,100% 100%,0 100%);display:flex;align-items:flex-end;justify-content:flex-end;padding:0 13px 11px 0;box-sizing:border-box}
+  .lb-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 6px}
+  .lb-card{border:1px solid var(--line);border-radius:14px;background:var(--navy2);padding:16px;position:relative}
+  .lb-card.me{outline:2px solid var(--gold);outline-offset:2px}
+  .lb-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;min-height:88px}
+  .lb-card-num{font-size:1.55rem;font-weight:800;color:var(--muted)}
+  .lb-card-name{font-weight:700;color:var(--ink);margin:10px 0 6px;overflow-wrap:anywhere}
+  .lb-card-stats{display:flex;gap:20px;margin-top:12px;color:var(--muted);font-size:.82rem}
+  .lb-card-stats b{display:block;color:var(--ink);font-size:1rem;margin-top:2px}
+  .lb-card.open{border:1px dashed var(--line);border-radius:14px;padding:16px;color:var(--muted);background:transparent}
+  @media (max-width:900px){.lb-cards{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){
+    .lb-cards{grid-template-columns:1fr}
+    .lb-hero{flex-direction:column;text-align:center;padding-bottom:70px}
+    .lb-hero-stats{justify-content:center}
+    .lb-wedge{width:84px;height:84px}
+  }
+  .lb-neigh{display:flex;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin:6px 0;flex-wrap:wrap}
+  .lb-neigh.me{border-color:var(--gold);background:var(--navy3)}
+  .lb-neigh .who{flex:1;min-width:120px;overflow-wrap:anywhere}
+  .lb-neigh .pts{font-variant-numeric:tabular-nums;color:var(--muted)}
+  .lb-masked{color:var(--muted);letter-spacing:.18em}
+  .lb-actions{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 6px}
+  .lb-modal{position:fixed;inset:0;background:rgba(3,9,18,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:1200}
+  .lb-modal.open{display:flex}
+  .lb-modal-box{background:var(--navy2);border:1px solid var(--line);border-radius:14px;max-width:580px;width:100%;max-height:84vh;overflow:auto;padding:22px 22px 18px;position:relative}
+  .lb-modal-box h3{color:var(--gold);margin:0 36px 10px 0}
+  .lb-modal-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--ink);font-size:1.6rem;line-height:1;cursor:pointer;padding:6px}
+  .lb-modal-box ul{margin:8px 0 8px 18px;padding:0}
+  .lb-modal-box li{margin:7px 0;color:var(--ink)}
+  .lb-more-btn{margin-top:12px}
+  tr.lb-extra{display:none}
+  tr.lb-extra.show{display:table-row}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
@@ -53,63 +86,90 @@
 
 <section><div class="wrap">
 
-  <!-- Your position -->
+  <!-- Top 50: the champion gets a full-width hero card, the next
+       four members get their own cards, and the rest follow in the
+       table, ten at a time behind View more. -->
   <div class="card" style="margin-bottom:22px">
-    <h3 style="margin-bottom:10px">Your Rank</h3>
-    <div id="lbMine">
-      <p class="lb-note" id="lbMineLoading">Loading your position…</p>
-      <div id="lbMineGuest" hidden>
-        <p class="lb-note">You are browsing as a guest. The active time from this visit is kept in this browser, and it joins your account as points when you sign in — nothing is lost.</p>
-        <p style="margin-top:12px"><a class="btn" href="login.html">Sign in</a> <a class="btn ghost" href="signup.html">Create a free account</a></p>
-        <p class="lb-note" id="lbGuestPoints" style="margin-top:12px"></p>
-      </div>
-      <div id="lbMineUser" hidden>
-        <p class="lb-big"><span id="lbMyPoints">0</span> points · <span class="lb-rank-name" id="lbMyRank">Newcomer</span></p>
-        <p class="lb-note" id="lbMyLine"></p>
-      </div>
+    <h3 style="margin-bottom:6px">Top 50 Members</h3>
+    <div class="lb-actions">
+      <button type="button" class="btn ghost" id="lbOpenRules">How points work</button>
+      <button type="button" class="btn ghost" id="lbOpenLevels">All 50 levels</button>
     </div>
-  </div>
-
-  <!-- Top 103: the first three are honoured as winner cards above
-       the table; the board never shows more than 103 members. -->
-  <div class="card" style="margin-bottom:22px">
-    <h3 style="margin-bottom:6px">Top 103 Members</h3>
-    <p class="lb-note">Only display names, points, ranks and profile photos are ever shown here — a photo appears only while its owner keeps &quot;show on the leaderboard&quot; switched on — and email addresses or other private details are never shown. Any member can hide themselves from this board in Settings or My Account, at any time.</p>
+    <p class="lb-note">Only names, points, levels and photos (with permission) are shown here — never email addresses.</p>
     <p class="lb-note" id="lbBoardMsg" style="margin-top:10px">Loading the leaderboard…</p>
-    <div class="lb-podium" id="lbPodium" hidden></div>
+    <div class="lb-hero" id="lbHero" hidden></div>
+    <div class="lb-cards" id="lbCards" hidden></div>
     <table class="lb-table" id="lbTable" hidden>
-      <thead><tr><th>#</th><th>Member</th><th>Rank</th><th class="num">Points</th></tr></thead>
+      <thead><tr><th>#</th><th>Member</th><th>Level</th><th class="num">Points</th><th class="num">Active time</th></tr></thead>
       <tbody id="lbBody"></tbody>
     </table>
+    <p style="margin-top:12px" id="lbMoreWrap" hidden><button type="button" class="btn ghost" id="lbMoreBtn">View more</button></p>
   </div>
 
-  <!-- Your position: shown when the signed-in member sits outside the
-       top 103, or earns points while hidden from the public board. -->
-  <div class="card" id="lbYourStrip" style="margin-bottom:22px" hidden>
-    <h3 style="margin-bottom:6px">Your Position</h3>
-    <p class="lb-note" id="lbYourLine"></p>
+  <!-- Your position: the viewer's own standing in one box at the
+       end — the member one rank above, the viewer, and the member
+       one rank below. -->
+  <div class="card" id="lbYourBox" style="margin-bottom:22px">
+    <h3 style="margin-bottom:10px">Your Position</h3>
+    <p class="lb-note" id="lbYourLoading">Loading your position&#8230;</p>
+    <div id="lbYourGuest" hidden>
+      <p class="lb-note">You are browsing as a guest. The active time from this visit is kept in this browser, and it joins your account as points when you sign in &#8212; nothing is lost.</p>
+      <p style="margin-top:12px"><a class="btn" href="login.html">Sign in</a> <a class="btn ghost" href="signup.html">Create a free account</a></p>
+      <p class="lb-note" id="lbGuestPoints2" style="margin-top:12px"></p>
+    </div>
+    <div id="lbYourUser" hidden>
+      <div class="lb-neigh" id="lbAbove"></div>
+      <div class="lb-neigh me" id="lbMeRow"></div>
+      <div class="lb-neigh" id="lbBelow"></div>
+      <p class="lb-note" id="lbYourNote" style="margin-top:10px"></p>
+    </div>
   </div>
-
-  <!-- Rank ladder -->
-  <div class="card" style="margin-bottom:22px">
-    <h3 style="margin-bottom:6px">The Ranks</h3>
-    <p class="lb-note">Everyone starts as a Newcomer. Points never expire and ranks never go down.</p>
-    <table class="lb-table">
-      <thead><tr><th>Rank</th><th class="num">Points needed</th><th class="num">Active time, about</th></tr></thead>
-      <tbody id="lbLadder"></tbody>
-    </table>
-  </div>
-
-  <div class="note"><strong>Honest rules, in plain words:</strong> points are counted only while you are genuinely active — the tab open in front of you and real activity on the page. Time with the site left open and untouched does not earn points, only one tab earns at a time, and at most 240 points (four active hours) can be earned in a day. Points have <strong>no cash value</strong>: they cannot be bought, sold, exchanged or withdrawn. They are recognition of your learning time, and nothing more.</div>
 
 </div></section>
 <footer class="site"><div class="wrap foot">
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
-<script src="script.js?v=20261107b"></script>
+<!-- Rules popup: short points first, the rest behind View more. -->
+<div class="lb-modal" id="lbRulesModal" role="dialog" aria-modal="true" aria-labelledby="lbRulesTitle">
+  <div class="lb-modal-box">
+    <button type="button" class="lb-modal-close" data-close aria-label="Close">&times;</button>
+    <h3 id="lbRulesTitle">How points work</h3>
+    <ul>
+      <li><strong>1 active minute = 1 point.</strong> Reading, learning, using tools and playing games all count.</li>
+      <li>Only genuine activity counts — the tab in front of you, with real activity on the page.</li>
+      <li>Idle time never counts, and only one tab earns at a time.</li>
+      <li>At most <strong>240 points a day</strong> (four active hours).</li>
+      <li>Points never expire, and your level never goes down.</li>
+    </ul>
+    <div id="lbRulesMore" hidden>
+      <ul>
+        <li>Points have <strong>no cash value</strong> — they cannot be bought, sold, exchanged or withdrawn. They are recognition of your learning time, and nothing more.</li>
+        <li>The public board shows only your display name, points, level and photo — and a photo appears only while you keep &quot;show on the leaderboard&quot; switched on. You can hide yourself at any time in My Account or Settings.</li>
+        <li>Time you spend here as a guest is kept in your browser and joins your account as points when you sign in.</li>
+      </ul>
+    </div>
+    <button type="button" class="btn ghost lb-more-btn" id="lbRulesMoreBtn">View more</button>
+  </div>
+</div>
+
+<!-- Levels popup: the first ten levels, the full ladder behind View all. -->
+<div class="lb-modal" id="lbLevelsModal" role="dialog" aria-modal="true" aria-labelledby="lbLevelsTitle">
+  <div class="lb-modal-box">
+    <button type="button" class="lb-modal-close" data-close aria-label="Close">&times;</button>
+    <h3 id="lbLevelsTitle">All 50 levels</h3>
+    <p class="lb-note">Everyone starts as a Newcomer. Points never expire and levels never go down.</p>
+    <table class="lb-table">
+      <thead><tr><th>Level</th><th class="num">Points needed</th><th class="num">Active time, about</th></tr></thead>
+      <tbody id="lbLadder"></tbody>
+    </table>
+    <button type="button" class="btn ghost lb-more-btn" id="lbLevelsMoreBtn">View all 50 levels</button>
+  </div>
+</div>
+
+<script src="script.js?v=20261108b"></script>
 <script src="auth.js?v=20261106c"></script>
-<script src="rewards.js?v=20261107b"></script>
+<script src="rewards.js?v=20261108b"></script>
 <script>
 (function () {
   "use strict";
@@ -128,75 +188,197 @@
 
   /* Rank ladder */
   var ladder = $("lbLadder");
-  window.CSRewards.RANKS.forEach(function (r) {
+  window.CSRewards.RANKS.forEach(function (r, i) {
     var lv = window.CSRewards.levelByName(r[1]);
     var tr = document.createElement("tr");
+    if (i >= 10) tr.className = "lb-extra";
     tr.innerHTML = "<td><span class=\"tier\" style=\"color:" + lv.color + ";border-color:" + lv.color + "\">" + window.CSRewards.iconSvg(r[1], 14) + esc(r[1]) + "</span></td>" +
       "<td class=\"num\">" + r[0].toLocaleString("en-IN") + "</td>" +
       "<td class=\"num\">" + esc(fmtTime(r[0])) + "</td>";
     ladder.appendChild(tr);
   });
 
-  /* Your position — live from the rewards module.
-     Sign-in state settles asynchronously: the stored session token is
-     refreshed as the page loads, and until then the rewards module can
-     only report a guest snapshot. Rendering that early report settled
-     this card on the guest message even for signed-in members (found
-     in the 7 Nov live check). So, like the account page, the card
-     keeps its loading state until CSAuth.ready has settled, and then
-     renders from a fresh status pull. */
+  /* Your position and the board. The viewer's own standing comes
+     from the rewards module; the neighbours come from the board
+     rows. The top five slots are always shown: an empty slot stays
+     visible, masked with a question mark, until a member takes it.
+     The list below the cards starts at #6 and grows ten rows at a
+     time behind View more, up to #50. */
   var myName = null;
   var authSettled = !window.CSAuth; // no auth module: nothing to wait for
+  var lastSnap = null;
+  var boardRows = [];
+  var boardLoaded = false;
+  var listLimit = 10; // the list shows positions up to this number
 
-  /* "Your position" strip under the board: for members who earn
-     points but do not appear in the public top 103 — either because
-     their true position is lower, or because they hide their name
-     from the board. Their own position is always visible to them. */
-  function renderStrip(snap) {
-    var strip = $("lbYourStrip");
-    if (!snap.signedIn || snap.points == null || snap.points <= 0) { strip.hidden = true; return; }
-    var outside = !!(snap.position && snap.position > 103);
-    var hiddenFromBoard = snap.showOnLeaderboard === false;
-    if (!outside && !hiddenFromBoard) { strip.hidden = true; return; }
-    var txt = "You are #" + (snap.position || "—") + " overall, with " +
-      Number(snap.points).toLocaleString("en-IN") + " points (" + (snap.rank || "Newcomer") + ").";
-    if (outside) txt += " The public board shows the top 103 members — keep earning active-time points to climb onto it.";
-    if (hiddenFromBoard) txt += " Your name is currently hidden from the public board; this position is visible only to you.";
-    $("lbYourLine").textContent = txt;
-    strip.hidden = false;
+  function avatarHtml(r, imgCls, iniCls) {
+    if (r.avatar) return "<img class=\"" + imgCls + "\" src=\"" + r.avatar + "\" alt=\"\">";
+    var initial = (r.name || "M").charAt(0).toUpperCase() || "M";
+    return "<span class=\"" + iniCls + "\" aria-hidden=\"true\">" + esc(initial) + "</span>";
+  }
+  function badgeHtml(rankName) {
+    var lv = window.CSRewards.levelByName(rankName);
+    return "<span class=\"tier\" style=\"color:" + lv.color + ";border-color:" + lv.color + "\">" +
+      window.CSRewards.iconSvg(rankName, 13) + esc(rankName) + "</span>";
+  }
+  function crownIcon(size) {
+    return "<svg width=\"" + size + "\" height=\"" + Math.round(size * 0.75) + "\" viewBox=\"0 0 24 18\" aria-hidden=\"true\"><path d=\"M2 16.5 L1 4.5 L7.5 9 L12 1.5 L16.5 9 L23 4.5 L22 16.5 Z\" fill=\"#0a1628\"/></svg>";
+  }
+  function statsHtml(r) {
+    return "<div class=\"lb-card-stats\"><div>Points<b>" + Number(r.points).toLocaleString("en-IN") + "</b></div>" +
+      "<div>Active time<b>" + esc(fmtTime(r.points)) + "</b></div></div>";
+  }
+  function maskedStatsHtml() {
+    return "<div class=\"lb-card-stats\"><div>Points<b>&#8226;&#8226;&#8226;</b></div><div>Active time<b>&#8226;&#8226;&#8226;</b></div></div>";
+  }
+  function maskedBadge() {
+    return "<span class=\"tier\" style=\"color:var(--muted);border-color:var(--line)\">?</span>";
   }
 
-  function renderMine(snap) {
-    renderStrip(snap);
-    $("lbMineLoading").hidden = true;
+  function renderHero(r) {
+    var h = $("lbHero");
+    h.hidden = false;
+    if (!r) {
+      h.removeAttribute("data-name");
+      h.innerHTML =
+        "<div class=\"lb-hero-num\">1</div>" +
+        "<div class=\"lb-pod-frame\">" + window.CSRewards.rankFrame(null, "?", 1, 118) + "</div>" +
+        "<div class=\"lb-hero-main\">" +
+        "<div class=\"lb-hero-name lb-masked\">??????</div>" +
+        "<div class=\"lb-hero-level\">" + maskedBadge() + "</div>" +
+        "<div class=\"lb-hero-stats\"><span>Points: <b>&#8226;&#8226;&#8226;</b></span><span>Active time: <b>&#8226;&#8226;&#8226;</b></span></div>" +
+        "</div>" +
+        "<div class=\"lb-wedge\">" + crownIcon(36) + "</div>";
+      return;
+    }
+    h.setAttribute("data-name", r.name);
+    h.innerHTML =
+      "<div class=\"lb-hero-num\">1</div>" +
+      "<div class=\"lb-pod-frame\">" + window.CSRewards.rankFrame(r.avatar, (r.name || "M").charAt(0).toUpperCase(), 1, 118) + "</div>" +
+      "<div class=\"lb-hero-main\">" +
+      "<div class=\"lb-hero-name\">" + esc(r.name) + "</div>" +
+      "<div class=\"lb-hero-level\">" + badgeHtml(r.rank) + "</div>" +
+      "<div class=\"lb-hero-stats\"><span>Points: <b>" + Number(r.points).toLocaleString("en-IN") + "</b></span>" +
+      "<span>Active time: <b>" + esc(fmtTime(r.points)) + "</b></span></div>" +
+      "</div>" +
+      "<div class=\"lb-wedge\">" + crownIcon(36) + "</div>";
+  }
+
+  function renderCards(rows) {
+    var wrap = $("lbCards");
+    wrap.innerHTML = "";
+    for (var pos = 2; pos <= 5; pos++) {
+      var r = rows[pos - 2];
+      var d = document.createElement("div");
+      d.className = "lb-card";
+      if (!r) {
+        var avm = window.CSRewards.rankFrame(null, "?", pos, 76);
+        d.innerHTML =
+          "<div class=\"lb-card-top\"><div class=\"lb-pod-frame\">" + avm + "</div><div class=\"lb-card-num\">" + pos + "</div></div>" +
+          "<div class=\"lb-card-name lb-masked\">??????</div>" +
+          maskedBadge() +
+          maskedStatsHtml();
+        wrap.appendChild(d);
+        continue;
+      }
+      d.setAttribute("data-name", r.name);
+      var av = window.CSRewards.rankFrame(r.avatar, (r.name || "M").charAt(0).toUpperCase(), pos, 76);
+      d.innerHTML =
+        "<div class=\"lb-card-top\"><div class=\"lb-pod-frame\">" + av + "</div><div class=\"lb-card-num\">" + pos + "</div></div>" +
+        "<div class=\"lb-card-name\">" + esc(r.name) + "</div>" +
+        badgeHtml(r.rank) +
+        statsHtml(r);
+      wrap.appendChild(d);
+    }
+    wrap.hidden = false;
+  }
+
+  function renderList() {
+    var body = $("lbBody");
+    body.innerHTML = "";
+    var rest = boardRows.slice(5, Math.min(listLimit, 50));
+    rest.forEach(function (r) {
+      var tr = document.createElement("tr");
+      tr.setAttribute("data-name", r.name);
+      tr.innerHTML = "<td><span class=\"lb-pos\">" + r.position + "</span></td>" +
+        "<td>" + avatarHtml(r, "lb-ava", "lb-ini") + esc(r.name) + "</td>" +
+        "<td>" + badgeHtml(r.rank) + "</td>" +
+        "<td class=\"num\">" + Number(r.points).toLocaleString("en-IN") + "</td>" +
+        "<td class=\"num\">" + esc(fmtTime(r.points)) + "</td>";
+      body.appendChild(tr);
+    });
+    $("lbTable").hidden = rest.length === 0;
+    $("lbMoreWrap").hidden = !(boardRows.length > listLimit && listLimit < 50);
+    markMyRow();
+  }
+
+  function neighHtml(r, fallbackText) {
+    if (!r) return "<span class=\"lb-note\">" + fallbackText + "</span>";
+    return "<span class=\"lb-pos\">#" + r.position + "</span><span class=\"who\">" + esc(r.name) + "</span>" +
+      badgeHtml(r.rank) + "<span class=\"pts\">" + Number(r.points).toLocaleString("en-IN") + " points</span>";
+  }
+
+  function renderYourBox() {
+    var snap = lastSnap;
+    if (!snap) return;
+    // Before the sign-in state settles, a guest report is not yet
+    // trustworthy — hold the loading state instead of flashing it.
+    if (!authSettled && !snap.signedIn) return;
+    $("lbYourLoading").hidden = true;
     if (!snap.signedIn) {
-      $("lbMineGuest").hidden = false;
-      $("lbMineUser").hidden = true;
-      $("lbGuestPoints").textContent = snap.points > 0
+      $("lbYourGuest").hidden = false;
+      $("lbYourUser").hidden = true;
+      $("lbGuestPoints2").textContent = snap.points > 0
         ? "So far in this browser: " + snap.points + " points (" + snap.rank + "). Sign in to add them to your account."
         : "";
       return;
     }
-    $("lbMineGuest").hidden = true;
-    $("lbMineUser").hidden = false;
-    if (snap.points == null) { $("lbMyLine").textContent = "Loading…"; return; }
-    $("lbMyPoints").textContent = snap.points.toLocaleString("en-IN");
-    $("lbMyRank").textContent = snap.rank || "Newcomer";
+    $("lbYourGuest").hidden = true;
+    $("lbYourUser").hidden = false;
+    if (snap.points == null) {
+      $("lbMeRow").innerHTML = "<span class=\"lb-note\">Loading&#8230;</span>";
+      $("lbAbove").innerHTML = "";
+      $("lbBelow").innerHTML = "";
+      $("lbYourNote").textContent = "";
+      return;
+    }
+    var pos = snap.position;
+    $("lbMeRow").innerHTML = "<span class=\"lb-pos\">#" + (pos || "&#8212;") + "</span><span class=\"who\">You</span>" +
+      badgeHtml(snap.rank || "Newcomer") + "<span class=\"pts\">" + Number(snap.points).toLocaleString("en-IN") + " points</span>";
+    var above = null, below = null;
+    if (pos && boardLoaded) {
+      if (pos > 1) { var a = boardRows[pos - 2]; if (a && a.position === pos - 1) above = a; }
+      var b = boardRows[pos]; if (b && b.position === pos + 1) below = b;
+    }
+    $("lbAbove").innerHTML = pos === 1
+      ? "<span class=\"lb-note\">No one above you &#8212; you hold the top spot.</span>"
+      : neighHtml(above, "The member above you is not on the public board.");
+    $("lbBelow").innerHTML = neighHtml(below, "No member below you yet.");
     var parts = [];
-    if (snap.position) parts.push("You are #" + snap.position + " on the leaderboard.");
     var nx = window.CSRewards.nextRank(snap.points);
-    if (nx) parts.push("Next rank: " + nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go).");
-    else parts.push("You hold the highest rank.");
+    if (nx) parts.push("Next level: " + nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go).");
+    else parts.push("You hold the highest level.");
     if (snap.pointsToday != null) parts.push("Earned today: " + snap.pointsToday + " of 240 points.");
-    if (snap.showOnLeaderboard === false) parts.push("Your name is currently hidden from the public board; your own position above is always visible to you.");
-    $("lbMyLine").textContent = parts.join(" ");
-    markMyRow();
+    if (pos && pos > 50) parts.push("The public board shows the top 50 members — keep earning active-time points to climb onto it.");
+    if (snap.showOnLeaderboard === false) parts.push("Your name is currently hidden from the public board; this position is visible only to you.");
+    $("lbYourNote").textContent = parts.join(" ");
   }
+
+  function markMyRow() {
+    if (!myName) return;
+    Array.prototype.forEach.call($("lbBody").children, function (tr) {
+      if (tr.getAttribute("data-name") === myName) tr.className = "me";
+    });
+    if ($("lbHero").getAttribute("data-name") === myName) $("lbHero").classList.add("me");
+    Array.prototype.forEach.call($("lbCards").children, function (d) {
+      if (d.getAttribute("data-name") === myName) d.classList.add("me");
+    });
+  }
+
   window.CSRewards.onUpdate(function (snap) {
-    // Before the sign-in state settles, a guest report is not yet
-    // trustworthy — hold the loading state instead of flashing it.
-    if (!authSettled && !snap.signedIn) return;
-    renderMine(snap);
+    lastSnap = snap;
+    renderYourBox();
+    markMyRow();
   });
   if (window.CSAuth) {
     window.CSAuth.onChange(function (user) {
@@ -208,83 +390,53 @@
     window.CSAuth.ready.then(function () {
       authSettled = true;
       window.CSRewards.refreshStatus();
-      renderMine(window.CSRewards.snapshot());
+      lastSnap = window.CSRewards.snapshot();
+      renderYourBox();
     });
   }
 
-  /* Top 103 — the first three members are honoured as winner cards
-     (podium), the rest follow in the table. The board never shows
-     more than 103 members. */
-  var boardRows = [];
-  var CROWN_COLORS = { 1: "#d4af37", 2: "#c0c0c8", 3: "#cd7f32" };
-  function avatarHtml(r, imgCls, iniCls) {
-    if (r.avatar) return "<img class=\"" + imgCls + "\" src=\"" + r.avatar + "\" alt=\"\">";
-    var initial = (r.name || "M").charAt(0).toUpperCase() || "M";
-    return "<span class=\"" + iniCls + "\" aria-hidden=\"true\">" + esc(initial) + "</span>";
-  }
-  function badgeHtml(rankName) {
-    var lv = window.CSRewards.levelByName(rankName);
-    return "<span class=\"tier\" style=\"color:" + lv.color + ";border-color:" + lv.color + "\">" +
-      window.CSRewards.iconSvg(rankName, 13) + esc(rankName) + "</span>";
-  }
-  function renderPodium(top) {
-    var pod = $("lbPodium");
-    pod.innerHTML = "";
-    if (!top.length) { pod.hidden = true; return; }
-    // Winners' order: 2nd, 1st, 3rd, so the champion stands in the middle.
-    var order = [];
-    if (top[1]) order.push(top[1]);
-    if (top[0]) order.push(top[0]);
-    if (top[2]) order.push(top[2]);
-    order.forEach(function (r) {
-      var d = document.createElement("div");
-      d.className = "lb-pod" + (r.position === 1 ? " first" : "");
-      d.setAttribute("data-name", r.name);
-      d.innerHTML =
-        "<div class=\"lb-pod-crown\">" + window.CSRewards.crownSvg(CROWN_COLORS[r.position] || "#d4af37", r.position === 1 ? 34 : 28) + "</div>" +
-        avatarHtml(r, "lb-pod-ava", "lb-pod-ini") +
-        "<div class=\"lb-pod-pos\">Rank #" + r.position + "</div>" +
-        "<div class=\"lb-pod-name\">" + esc(r.name) + "</div>" +
-        "<div style=\"margin:7px 0\">" + badgeHtml(r.rank) + "</div>" +
-        "<div class=\"lb-pod-points\">" + Number(r.points).toLocaleString("en-IN") + " <span>points</span></div>" +
-        "<div class=\"lb-pod-time\">" + esc(fmtTime(r.points)) + " of active time</div>";
-      pod.appendChild(d);
-    });
-    pod.hidden = false;
-  }
-  function markMyRow() {
-    if (!myName) return;
-    Array.prototype.forEach.call($("lbBody").children, function (tr) {
-      if (tr.getAttribute("data-name") === myName) tr.className = "me";
-    });
-    Array.prototype.forEach.call($("lbPodium").children, function (d) {
-      if (d.getAttribute("data-name") === myName) d.classList.add("me");
-    });
-  }
-  window.CSRewards.getLeaderboard(103).then(function (rows) {
+  window.CSRewards.getLeaderboard(200).then(function (rows) {
     boardRows = rows || [];
+    boardLoaded = true;
     if (!boardRows.length) {
-      $("lbBoardMsg").textContent = "No members on the board yet. Be the first: sign in, spend some active learning time on the site, and your name will appear here.";
-      return;
+      $("lbBoardMsg").textContent = "No members on the board yet — the top spots below are waiting to be claimed. Sign in, spend some active learning time here, and the first spot is yours.";
+    } else {
+      $("lbBoardMsg").hidden = true;
     }
-    $("lbBoardMsg").hidden = true;
-    renderPodium(boardRows.slice(0, 3));
-    var rest = boardRows.slice(3);
-    var body = $("lbBody");
-    body.innerHTML = "";
-    rest.forEach(function (r) {
-      var tr = document.createElement("tr");
-      tr.setAttribute("data-name", r.name);
-      tr.innerHTML = "<td><span class=\"lb-pos\">" + r.position + "</span></td>" +
-        "<td>" + avatarHtml(r, "lb-ava", "lb-ini") + esc(r.name) + "</td>" +
-        "<td>" + badgeHtml(r.rank) + "</td>" +
-        "<td class=\"num\">" + Number(r.points).toLocaleString("en-IN") + "</td>";
-      body.appendChild(tr);
-    });
-    $("lbTable").hidden = rest.length === 0;
-    markMyRow();
+    renderHero(boardRows[0] || null);
+    renderCards(boardRows.slice(1, 5));
+    renderList();
+    renderYourBox();
   }, function () {
     $("lbBoardMsg").textContent = "The leaderboard could not be loaded just now. Please check your connection and refresh the page.";
+  });
+  $("lbMoreBtn").addEventListener("click", function () { listLimit += 10; renderList(); });
+
+  /* Rules and Levels popups */
+  function openModal(id) { $(id).classList.add("open"); }
+  function closeModal(m) { m.classList.remove("open"); }
+  $("lbOpenRules").addEventListener("click", function () { openModal("lbRulesModal"); });
+  $("lbOpenLevels").addEventListener("click", function () { openModal("lbLevelsModal"); });
+  Array.prototype.forEach.call(document.querySelectorAll(".lb-modal"), function (m) {
+    m.addEventListener("click", function (e) { if (e.target === m) closeModal(m); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-close]"), function (b) {
+    b.addEventListener("click", function () { closeModal(b.closest(".lb-modal")); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") Array.prototype.forEach.call(document.querySelectorAll(".lb-modal.open"), closeModal);
+  });
+  $("lbRulesMoreBtn").addEventListener("click", function () {
+    var more = $("lbRulesMore");
+    var show = more.hidden;
+    more.hidden = !show;
+    this.textContent = show ? "View less" : "View more";
+  });
+  $("lbLevelsMoreBtn").addEventListener("click", function () {
+    var rows = document.querySelectorAll("#lbLadder tr.lb-extra");
+    var show = !rows.length || !rows[0].classList.contains("show");
+    Array.prototype.forEach.call(rows, function (tr) { tr.classList.toggle("show", show); });
+    this.textContent = show ? "Show less" : "View all 50 levels";
   });
 })();
 </script>
