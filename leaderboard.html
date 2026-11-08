@@ -361,7 +361,10 @@
     $("lbAbove").innerHTML = pos === 1
       ? "<span class=\"lb-note\">No one above you &#8212; you hold the top spot.</span>"
       : neighHtml(above, "The member above you is not on the public board.");
-    $("lbBelow").innerHTML = neighHtml(below, "No member below you yet.");
+    // No fallback sentence here (cleaned 2026-11-08): when nobody is
+    // below — or the board has not loaded yet — the row simply stays
+    // empty instead of showing a stray line.
+    $("lbBelow").innerHTML = below ? neighHtml(below, "") : "";
     var parts = [];
     var nx = window.CSRewards.nextRank(snap.points);
     if (nx) parts.push("Next level: " + nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go).");
