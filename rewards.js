@@ -17,7 +17,6 @@
   var LEAD_KEY = "csRewardLead";
   var IDLE_MS = 60000;        // 60 s without activity = paused
   var SEND_AFTER = 30;        // flush every 30 earned seconds
-  var DAY_CAP_MIN = 240;      // max 240 points/day (mirrors server)
   var RANKS = [               // MUST match rank_for_points() in SQL
     [0, "Newcomer"], [60, "Explorer"], [150, "Learner"], [270, "Discoverer"],
     [420, "Apprentice"], [600, "Initiate"], [810, "Seeker"], [1050, "Pathfinder"],
@@ -216,17 +215,14 @@
     } catch (e) { return { sec: 0, day: dayKey(), daySec: 0 }; }
   }
   function guestSave(g) { lsSet(GUEST_KEY, JSON.stringify(g)); }
-  // Credit seconds to the guest store under the same daily cap the
-  // server uses: seconds past the cap are discarded, not carried over.
+  // Credit seconds to the guest store. There is no daily limit
+  // (owner order, 2026-11-08): every genuinely active second counts,
+  // however long the visit lasts. daySec is kept purely so the card
+  // can show what was earned today.
   function guestCredit(sec) {
     var g = guestLoad();
-    var capSec = DAY_CAP_MIN * 60;
-    var room = capSec - g.daySec;
-    if (room > 0) {
-      var add = Math.min(sec, room);
-      g.sec += add; g.daySec += add;
-      guestSave(g);
-    }
+    g.sec += sec; g.daySec += sec;
+    guestSave(g);
     return g;
   }
 
@@ -573,10 +569,10 @@
       }
       if (snap.signedIn) {
         pcCard.querySelector("#csPcTodayLine").textContent =
-          "Today: " + (snap.pointsToday != null ? snap.pointsToday : 0) + " / " + DAY_CAP_MIN + " points";
+          "Today: " + (snap.pointsToday != null ? snap.pointsToday : 0) + " points";
       } else {
         pcCard.querySelector("#csPcTodayLine").textContent =
-          "Today: " + Math.floor(guestLoad().daySec / 60) + " / " + DAY_CAP_MIN + " points";
+          "Today: " + Math.floor(guestLoad().daySec / 60) + " points";
       }
       pcCard.querySelector("#csPcSignIn").hidden = snap.signedIn;
       pcCard.querySelector("#csPcGuestNote").hidden = snap.signedIn;
