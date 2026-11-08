@@ -568,3 +568,34 @@ body{top:0!important}
   .cs-sess-row{flex-wrap:wrap}
   .cs-modal-foot .btn{flex:1 1 auto;text-align:center}
 }
+
+/* --- Guide Bot (2026-11-08, master list item 17): a tap-only guide
+   in the bottom-left corner — the bottom-right belongs to the points
+   card. On shell pages it clears the sidebar (260px, or 64px in rail
+   mode); below 769px the sidebar is an off-canvas drawer, so the
+   button sits at the plain left edge. Theme variables only, so both
+   themes stay readable. --- */
+.ck-guide-btn{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:93;display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--card);border:1px solid var(--gold);color:var(--gold);font-weight:700;font-size:.92rem;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.ck-guide-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ck-guide-btn:hover{background:var(--navy3)}
+.ck-guide-panel{position:fixed;left:16px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:94;width:344px;max-width:calc(100vw - 32px);height:min(500px,calc(100dvh - 120px));display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.38);color:var(--ink);font-size:.93rem;line-height:1.5;overflow:hidden}
+.ck-guide-panel[hidden]{display:none!important}
+@media (min-width:769px){
+body.cs-shell .ck-guide-btn{left:276px}
+body.cs-shell.cs-rail .ck-guide-btn{left:80px}
+body.cs-shell .ck-guide-panel{left:276px}
+body.cs-shell.cs-rail .ck-guide-panel{left:80px}
+}
+.ck-guide-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--navy2);border-bottom:1px solid var(--line)}
+.ck-guide-title{font-weight:700;color:var(--ink)}
+.ck-guide-close{margin-left:auto;background:none;border:0;color:var(--muted);font-size:1.35rem;line-height:1;cursor:pointer;padding:2px 7px;border-radius:8px;font-family:inherit}
+.ck-guide-close:hover{color:var(--ink);background:rgba(127,127,127,.14)}
+.ck-guide-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px}
+.ck-guide-msg{align-self:flex-start;max-width:92%;background:var(--navy2);border:1px solid var(--line);border-radius:12px;border-bottom-left-radius:4px;padding:9px 12px;color:var(--ink)}
+.ck-guide-msg strong{color:var(--gold)}
+.ck-guide-msg.me{align-self:flex-end;background:var(--gold);color:#0a1628;border-color:var(--gold);border-radius:12px;border-bottom-right-radius:4px;font-weight:600}
+.ck-guide-opts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-top:1px solid var(--line);max-height:38%;overflow-y:auto}
+.ck-guide-opt{display:inline-block;padding:7px 13px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-weight:600;font-size:.88rem;font-family:inherit;cursor:pointer;text-decoration:none}
+.ck-guide-opt:hover{background:rgba(212,175,55,.14);text-decoration:none}
+.ck-guide-note{padding:0 14px 10px;color:var(--muted);font-size:.78rem}
+[data-motion="reduced"] .ck-guide-btn,[data-motion="reduced"] .ck-guide-panel{transition:none}
