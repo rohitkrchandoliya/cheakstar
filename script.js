@@ -902,3 +902,20 @@ document.addEventListener("DOMContentLoaded", function () {
     else document.addEventListener("DOMContentLoaded", applyLanguage);
   } catch (e) {}
 })();
+
+// ==== Cheakstar Guide Bot loader (2026-11-08, master list item 17).
+// The guide itself lives in guide.js at the site root; this loader
+// follows the same lazy pattern as the rewards loader above. The
+// tools pages load it through assets/tools.js and the standalone
+// auth pages (login, signup) include guide.js directly. guide.js
+// carries its own boot guard, so it can never start twice. ====
+(function () {
+  "use strict";
+  try {
+    if (window.__csGuideBoot) return;
+    var s = document.createElement("script");
+    s.src = "guide.js";
+    s.async = true;
+    (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
