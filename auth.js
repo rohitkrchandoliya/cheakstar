@@ -275,6 +275,22 @@
         }, function (err) { throw new Error(friendly(err)); });
     },
 
+    signInWithGoogle: function () {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      // Full-page redirect to Google; Supabase returns the visitor to
+      // the account page with a session, and the normal session watch
+      // takes it from there (the account page applies the two-factor
+      // gate when the member has a factor enrolled).
+      return client.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: pageUrl("account.html") }
+      }).then(function (res) {
+        if (res.error) throw new Error(friendly(res.error));
+        return true;
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
     signOut: function () {
       var done = function () { currentUser = null; notify("SIGNED_OUT"); };
       if (!client) { done(); return Promise.resolve(); }
