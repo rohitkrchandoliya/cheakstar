@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Random Number Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Random Number Generator</h1>
+<p class="tool-sub">Generate random numbers in any range, with or without repeats.</p>
+<div class="tool-card">
+  <p>For draws, classroom picks, raffles, testing data or breaking a tie. Set the smallest and largest numbers allowed, how many you want, and whether the same number may appear twice.</p>
+
+  <div class="row2">
+    <div>
+      <label for="rng-min">Smallest number</label>
+      <input id="rng-min" type="number" step="1" value="1">
+    </div>
+    <div>
+      <label for="rng-max">Largest number</label>
+      <input id="rng-max" type="number" step="1" value="100">
+    </div>
+    <div>
+      <label for="rng-count">How many numbers</label>
+      <input id="rng-count" type="number" min="1" max="10000" step="1" value="10">
+    </div>
+    <div>
+      <label class="check-line" for="rng-unique" style="margin-top:26px"><input id="rng-unique" type="checkbox"> No repeats (each number at most once)</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="rng-run" class="btn" type="button" data-autorun>Generate</button>
+    <button id="rng-copy" class="btn ghost" type="button" disabled data-result>Copy numbers</button>
+  </div>
+  <p id="rng-status" class="status" role="status"></p>
+  <div class="result" id="rng-result" hidden data-result>
+    <p class="mono" id="rng-out" style="font-size:1.15rem; word-break:break-word"></p>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> the numbers come from your device's cryptographic random generator — the same source browsers use for security work — and a technique called rejection sampling keeps every number in the range equally likely, with no hidden favour toward small numbers. Ordinary generators used in games and scripts are predictable by comparison.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var rngStatus = document.getElementById("rng-status");
+var rngOut = document.getElementById("rng-out");
+var rngResult = document.getElementById("rng-result");
+var rngCopy = document.getElementById("rng-copy");
+
+// One unbiased random integer in [0, n) using crypto.getRandomValues and
+// rejection sampling: draw 32-bit values, discard any in the incomplete
+// final block so every outcome is equally likely.
+var rngBuffer = new Uint32Array(256);
+var rngIndex = rngBuffer.length;
+function nextUint32() {
+  if (rngIndex >= rngBuffer.length) {
+    window.crypto.getRandomValues(rngBuffer);
+    rngIndex = 0;
+  }
+  return rngBuffer[rngIndex++];
+}
+function randBelow(n) {
+  var limit = Math.floor(4294967296 / n) * n;
+  var x;
+  do { x = nextUint32(); } while (x >= limit);
+  return x % n;
+}
+
+document.getElementById("rng-run").addEventListener("click", function () {
+  var min = Math.floor(Number(document.getElementById("rng-min").value));
+  var max = Math.floor(Number(document.getElementById("rng-max").value));
+  var count = Math.floor(Number(document.getElementById("rng-count").value));
+  var unique = document.getElementById("rng-unique").checked;
+  rngResult.hidden = true;
+  rngCopy.disabled = true;
+  rngStatus.className = "status error";
+  if (isNaN(min) || isNaN(max) || isNaN(count)) {
+    rngStatus.textContent = "Fill in the smallest number, the largest number and how many you want.";
+    return;
+  }
+  if (max < min) {
+    rngStatus.textContent = "The largest number must be the same as or bigger than the smallest number.";
+    return;
+  }
+  var range = max - min + 1;
+  if (range > 4294967296) {
+    rngStatus.textContent = "That range is too large — keep it within about 4.29 billion numbers.";
+    return;
+  }
+  if (count < 1 || count > 10000) {
+    rngStatus.textContent = "You can generate between 1 and 10,000 numbers at a time.";
+    return;
+  }
+  if (unique && count > range) {
+    rngStatus.textContent = "With no repeats on, you cannot ask for more numbers than the range holds (" + range.toLocaleString("en-IN") + ").";
+    return;
+  }
+  var numbers = [];
+  if (unique) {
+    var seen = new Set();
+    while (numbers.length < count) {
+      var v = min + randBelow(range);
+      if (!seen.has(v)) {
+        seen.add(v);
+        numbers.push(v);
+      }
+    }
+  } else {
+    for (var i = 0; i < count; i++) {
+      numbers.push(min + randBelow(range));
+    }
+  }
+  rngOut.textContent = numbers.join(", ");
+  rngResult.hidden = false;
+  rngCopy.disabled = false;
+  rngStatus.className = "status ok";
+  rngStatus.textContent = count === 1 ? "1 number generated." : count.toLocaleString("en-IN") + " numbers generated.";
+});
+
+rngCopy.addEventListener("click", function () {
+  var text = rngOut.textContent;
+  function done() {
+    rngStatus.className = "status ok";
+    rngStatus.textContent = "Numbers copied — paste them anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () {
+      rngStatus.className = "status error";
+      rngStatus.textContent = "Copy was blocked by the browser. The numbers are shown above.";
+    });
+  } else {
+    rngStatus.className = "status error";
+    rngStatus.textContent = "Copy is not available in this browser. The numbers are shown above.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="random-number-generator"></script>
+</body>
+</html>
