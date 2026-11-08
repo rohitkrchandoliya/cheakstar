@@ -447,7 +447,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
  "password-breach-check": {
   "faq": [
    {
-    "a": "The password itself is never sent. Only the first 5 characters of its SHA-1 hash go to Have I Been Pwned, and the match is completed on this device.",
+    "a": "The password itself is never sent. Only the first 5 characters of its SHA-1 hash go to Have I Been Pwned, and the match is completed on this device."
     "q": "Is my password sent anywhere?"
    },
    {
@@ -597,7 +597,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Download sizes are 256, 512 or 1024 pixels — a larger size is the safer choice if the code will be printed big."
   ],
   "privacyKind": "local",
-  "privacyNote": "Runs entirely in your browser — the details you enter to build a code are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "privacyNote": "Runs entirely in your browser — the details you enter to build a code are processed on this device and are never uploaded to any server, including Cheakstar."
   "steps": [
    "Choose what you are making from the Type list: Link or text, Wi-Fi network, UPI ID or Contact card (vCard).",
    "Fill in the fields for that type, such as Link or text, Network name (SSID) and Password, UPI ID, or Full name for a contact card.",
@@ -889,6 +889,442 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Choose the HD or SD version shown and save the thumbnail image."
   ],
   "privacyTitle": "This tool sends your query to a public lookup service"
+ },
+ "bmi-calculator": {
+  "faq": [
+   {
+    "a": "For most adults the WHO healthy range is 18.5 to 24.9. Below 18.5 is underweight, 25 to 29.9 is overweight, and 30 or above is obese.",
+    "q": "What is a healthy BMI?"
+   },
+   {
+    "a": "Not always. Muscle is denser than fat, so a muscular person can show a high BMI without excess body fat. BMI is a population screening tool, not a personal body-fat measurement."
+    "q": "Is BMI accurate for people who lift weights?"
+   },
+   {
+    "a": "Children and teenagers are assessed with BMI-for-age percentiles, not the adult bands used here. Use a paediatric chart or ask a doctor for anyone under 18.",
+    "q": "Does this work for children?"
+   },
+   {
+    "a": "No. The calculation runs entirely in your browser and the values you enter never leave your device.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "BMI is a screening guide, not a diagnosis; it can mislead for athletes, older adults and during pregnancy.",
+   "The healthy weight range shown uses the WHO band of BMI 18.5 to 24.9 for your height."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your height and weight are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose metric (kg and cm) or imperial (lb, feet and inches) units.",
+   "Enter your weight and your height.",
+   "Click Calculate BMI to see your score and WHO category.",
+   "Check the healthy weight range shown for your height."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "compound-interest-calculator": {
+  "faq": [
+   {
+    "a": "It is how often the interest is added to your balance. Quarterly is the Indian bank standard for fixed deposits; monthly and daily compounding grow slightly faster at the same yearly rate.",
+    "q": "What is compounding frequency?"
+   },
+   {
+    "a": "Simple interest is paid only on the original amount. Compound interest is also paid on interest already earned, so growth speeds up over time.",
+    "q": "How is this different from simple interest?"
+   },
+   {
+    "a": "The table shows the position at each completed year end. If you enter part years (for example 2.5), the final value still uses the full period; only the table rounds down to whole years.",
+    "q": "Why does the year-by-year table stop at whole years?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The monthly deposit is added at the start of each month and compounded monthly, the same convention as this site's SIP Calculator.",
+   "One steady rate is assumed for the whole period; real rates change, and tax or fees can reduce the actual result."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter a starting amount.",
+   "Enter the yearly interest rate and the number of years.",
+   "Choose how often interest compounds, and optionally add a monthly deposit.",
+   "Click Calculate growth to see the final value and a year-by-year table."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "fd-calculator": {
+  "faq": [
+   {
+    "a": "Enter the rate your bank quotes for your exact tenure — FD rates differ by tenure, and the rate for 5 years is often different from the rate for 1 year.",
+    "q": "What rate should I enter?"
+   },
+   {
+    "a": "No. The maturity value is before tax. TDS depends on your total interest and your PAN and bank details, so it cannot be worked out from the deposit alone.",
+    "q": "Does the calculator include TDS?"
+   },
+   {
+    "a": "Banks usually pay a lower rate for the period actually completed and may charge a penalty, so an early exit gives less than this estimate.",
+    "q": "What if I break the FD early?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "Indian banks compound FD interest quarterly; that is the method used here.",
+   "The senior citizen extra is applied as +0.50%, which most banks offer — check your own bank's rate card, as a few differ.",
+   "FD interest is taxable and banks deduct TDS above the yearly interest limit; the figure shown is before tax."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter the amount you plan to deposit.",
+   "Enter the bank's yearly interest rate and the tenure.",
+   "Tick the senior citizen box if the depositor is 60 or above.",
+   "Click Calculate maturity value to see the maturity amount and interest earned."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "rd-calculator": {
+  "faq": [
+   {
+    "a": "Interest is compounded quarterly. Each monthly deposit earns interest from when it is paid, so early deposits earn more than later ones. The formula used here is the standard one banks publish.",
+    "q": "How is RD interest calculated?"
+   },
+   {
+    "a": "They suit different habits. An FD invests a lump sum at once; an RD builds the amount month by month from income. Rates are often similar for the same tenure.",
+    "q": "Is an RD better than an FD?"
+   },
+   {
+    "a": "Yes. RD interest is taxed at your income slab rate, and TDS can apply above the yearly limit. The maturity figure here is before tax.",
+    "q": "Is RD interest taxable?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The standard bank RD formula with quarterly compounding is used, assuming every instalment is paid on time.",
+   "Late or missed instalments usually attract a small penalty, which this estimate does not deduct."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter the amount you will deposit every month.",
+   "Enter the yearly interest rate offered by the bank or post office.",
+   "Enter the tenure in years and any extra months.",
+   "Click Calculate maturity value to see what you will receive."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "ppf-calculator": {
+  "faq": [
+   {
+    "a": "₹1,50,000 per financial year across all your PPF deposits. The minimum is ₹500 a year to keep the account active.",
+    "q": "What is the maximum I can deposit in PPF?"
+   },
+   {
+    "a": "PPF interest for a month is calculated on the lowest balance between the 5th and the end of that month. Depositing on or before the 5th makes that month's deposit earn interest for the full month.",
+    "q": "Why does deposit timing matter?"
+   },
+   {
+    "a": "PPF currently enjoys EEE status: deposits qualify for the 80C deduction (old regime), and the interest and maturity amount are tax-free. Tax rules can change with future budgets.",
+    "q": "Is PPF interest taxable?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The projection follows the real PPF rule: interest is worked out on each month's balance and credited once a year, assuming deposits arrive by the 5th of the month.",
+   "The government can revise the PPF rate every quarter, so a 15-year projection at today's rate is an estimate, not a guarantee.",
+   "A PPF account matures at 15 years and can be extended in 5-year blocks; projections beyond 15 years assume such an extension."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter how much you deposit in a year (the PPF limit is ₹1,50,000).",
+   "Set the interest rate — 7.1% is the long-running recent rate, and you can change it.",
+   "Choose yearly or monthly deposits and the number of years.",
+   "Click Project PPF balance for the year-by-year growth table."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "discount-calculator": {
+  "faq": [
+   {
+    "a": "Because the 20% is taken from the price after the first discount. On ₹2,000: 50% off leaves ₹1,000, then 20% off leaves ₹800 — a saving of ₹1,200, which is 60%.",
+    "q": "Why is 50% + 20% off not 70% off?"
+   },
+   {
+    "a": "Yes. Leave the second discount at 0 (or empty) and only the first discount is applied.",
+    "q": "Can I calculate a single discount?"
+   },
+   {
+    "a": "Indian prices are usually quoted with GST included. The breakup works backwards from the final price to show how much of it is the pre-tax value and how much is GST.",
+    "q": "What does the GST breakup show?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "A second discount applies to the already-reduced price: 50% + 20% off is a 60% total saving, not 70%.",
+   "The GST breakup assumes the final price includes GST at the rate you select."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the prices you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter the original (marked) price.",
+   "Enter the first discount percentage, and a second one if the offer stacks two discounts.",
+   "Optionally choose a GST rate to split the final price into pre-tax value and tax.",
+   "Click Calculate final price to see what you pay and what you save."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "income-tax-calculator": {
+  "faq": [
+   {
+    "a": "After the ₹75,000 standard deduction, taxable income is ₹12,00,000. The slab tax on that is ₹60,000, and the Section 87A rebate for FY 2025-26 covers up to ₹60,000 at that level, bringing the tax to zero.",
+    "q": "Why is my new-regime tax zero at ₹12,75,000 salary?"
+   },
+   {
+    "a": "Just above ₹12,00,000 of taxable income, the tax would jump steeply. Marginal relief caps the tax at the amount by which your income exceeds ₹12,00,000, so earning slightly more never leaves you worse off. It also applies at the surcharge thresholds.",
+    "q": "What is marginal relief?"
+   },
+   {
+    "a": "Add up deductions such as 80C (up to ₹1,50,000), 80D health premiums, HRA exemption and home-loan interest, and enter the total. The standard deduction is added by the calculator itself.",
+    "q": "Which deductions can I enter for the old regime?"
+   },
+   {
+    "a": "No. This estimates your total tax for the year. TDS and advance tax you have already paid would be adjusted against it when you file.",
+    "q": "Does this include TDS already deducted?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser; your income figure never leaves your device.",
+    "q": "Is my income data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "Figures are for FY 2025-26: new-regime standard deduction ₹75,000, old-regime ₹50,000, plus the Section 87A rebate, marginal relief, surcharge and 4% cess.",
+   "Only salary income is covered. Business income, capital gains and other special-rate income are not included.",
+   "This is an estimate to help planning — it is not tax advice and does not replace filing on the Income Tax portal."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the income you enter is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter your gross annual salary income.",
+   "Select your age group (it changes the old-regime basic exemption).",
+   "Enter any old-regime deductions (80C, 80D and similar) apart from the standard deduction.",
+   "Click Compare both regimes to see slab-by-slab tax under each and which is lower."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "bmr-calculator": {
+  "faq": [
+   {
+    "a": "BMR is the energy your body burns at complete rest — breathing, circulation, body temperature. TDEE adds your daily movement and exercise on top, and is the number that matters for eating targets.",
+    "q": "What is the difference between BMR and TDEE?"
+   },
+   {
+    "a": "Be honest — most people overestimate. A desk job with three gym sessions a week is usually 'Light' or 'Moderate', not 'Active'.",
+    "q": "Which activity level should I pick?"
+   },
+   {
+    "a": "That is not recommended without medical supervision. A moderate deficit below TDEE (not below BMR) is the safer, standard approach.",
+    "q": "Can I eat below my BMR to lose weight faster?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The Mifflin-St Jeor formula is used — the standard starting point in dietetics. Individual results can still vary by 10% or more.",
+   "Lose and gain targets use the common 500 kcal per day rule of thumb, roughly 0.5 kg a week."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your age, weight and height are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Select your sex and enter your age.",
+   "Enter your weight in kilograms and height in centimetres.",
+   "Choose the activity level that honestly matches your week.",
+   "Click Calculate calories to see your BMR, TDEE and goal targets."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "cgpa-calculator": {
+  "faq": [
+   {
+    "a": "Percentage = CGPA x 9.5. So a CGPA of 9.0 converts to 85.5%.",
+    "q": "What is the CBSE formula for CGPA to percentage?"
+   },
+   {
+    "a": "If your formula is a simple multiplier, choose 'Custom multiplier' and enter it. If it includes an adjustment (for example x 10 minus 7.5), this converter cannot apply it — use your university's published method.",
+    "q": "My university uses a different formula. Can I use it here?"
+   },
+   {
+    "a": "No. With the x 9.5 formula, 10 CGPA equals 95%. CGPA and percentage are different scales, so a direct 10-times reading overstates the percentage.",
+    "q": "Is 10 CGPA equal to 100 percent?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "There is no single national formula. CBSE uses x 9.5; some universities use x 10 or a formula of their own.",
+   "For official forms, the conversion printed on your marksheet or in your university's rules is the one that counts."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the marks you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose the direction: CGPA to percentage, or percentage to CGPA.",
+   "Choose the multiplier your board or university uses (9.5 is the CBSE standard).",
+   "Enter your CGPA or percentage.",
+   "Click Convert to see the result and the formula used."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "pregnancy-due-date-calculator": {
+  "faq": [
+   {
+    "a": "By Naegele's rule: 280 days (40 weeks) are added to the first day of your last period. It is the same starting estimate most doctors use before a scan."
+    "q": "How is the due date calculated?"
+   },
+   {
+    "a": "A longer cycle usually means ovulation happened later, so the real due date may be a few days after the estimate. An early ultrasound gives a more accurate date.",
+    "q": "My cycle is longer than 28 days. Is the date still right?"
+   },
+   {
+    "a": "This calculator needs that date. Your doctor can estimate the due date from an ultrasound scan instead.",
+    "q": "What if I do not remember my last period date?"
+   },
+   {
+    "a": "No. The calculation runs in your browser and the date is never stored or sent anywhere.",
+    "q": "Is the date I enter stored or shared?"
+   }
+  ],
+  "goodToKnow": [
+   "Naegele's rule (last period + 280 days) assumes a regular 28-day cycle; irregular cycles shift the estimate.",
+   "Only about 1 in 20 babies arrive on the exact due date — two weeks either side is common."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the date you enter is processed on this device and is never uploaded, stored or shared.",
+  "steps": [
+   "Enter the first day of your last menstrual period.",
+   "Click Calculate due date.",
+   "See your estimated due date, how far along you are today, and your trimester.",
+   "Confirm the date with your doctor or first ultrasound."
+  ],
+  "privacyTitle": "Your date stays on your device"
+ },
+ "water-intake-calculator": {
+  "faq": [
+   {
+    "a": "It is a rough average that happens to suit a mid-size adult in mild weather. Your real need scales with your weight, activity and climate, which is what this calculator adjusts for.",
+    "q": "Is the '8 glasses a day' rule correct?"
+   },
+   {
+    "a": "Yes, in extreme amounts over a short time. Spread your intake through the day and drink to thirst around the target rather than forcing large volumes at once.",
+    "q": "Can I drink too much water?"
+   },
+   {
+    "a": "No — fluid intake for such conditions is a medical decision. Follow your doctor's advice instead of a general calculator.",
+    "q": "I have a kidney or heart condition. Should I use this target?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The estimate uses about 35 ml per kilogram of body weight, a widely used general guide, plus fixed extras for activity and heat.",
+   "Food, tea, coffee and other drinks also contribute water, so the target is for total daily water, most of it usually from drinks."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the details you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Enter your body weight in kilograms.",
+   "Choose your daily activity level.",
+   "Choose the climate — hot weather adds extra water.",
+   "Click Calculate water intake for your daily target in litres and glasses."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "scientific-calculator": {
+  "faq": [
+   {
+    "a": "Tap 2, then the x^y key, then 10, then =. The x² key is a shortcut for squaring the number before it.",
+    "q": "How do I calculate a power, like 2 to the power of 10?"
+   },
+   {
+    "a": "Check the angle mode on the keypad. In RAD mode the calculator expects radians; switch to DEG for degree-based trigonometry.",
+    "q": "Why did sin(30) not give 0.5?"
+   },
+   {
+    "a": "Only while the page stays open. After pressing =, typing a number starts a fresh expression and typing an operator continues from the result. The memory keys (M+, MR) hold one value until you clear it with MC or reload the page.",
+    "q": "Does the calculator remember my last calculation?"
+   },
+   {
+    "a": "No. Everything is calculated in your browser.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "The expression is evaluated by a built-in parser written for this page — it never uses the browser's eval(), and nothing is sent to a server.",
+   "The % key converts the number before it into a percentage (50% = 0.5). Factorial works for whole numbers up to 170."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — expressions are evaluated on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Tap the number and function keys, or type with your keyboard.",
+   "Use the DEG key to switch trigonometry between degrees and radians.",
+   "Press = to evaluate the whole expression at once.",
+   "Use MC, MR, M+ and M- to store and reuse a value in memory."
+  ],
+  "privacyTitle": "Calculated on your device only"
+ },
+ "stopwatch": {
+  "faq": [
+   {
+    "a": "It reads the device's high-resolution timer and displays hundredths of a second. Your tap reaction time matters far more than the clock's accuracy.",
+    "q": "How accurate is the stopwatch?"
+   },
+   {
+    "a": "Once you have recorded two or more laps, the table marks your quickest lap 'Fastest' and your slowest lap 'Slowest' so you can see your consistency at a glance.",
+    "q": "What do Fastest and Slowest mean?"
+   },
+   {
+    "a": "Yes. The elapsed time is computed from clock readings, not from counting screen updates, so switching tabs does not lose time. The display simply refreshes again when you return.",
+    "q": "Does it keep running if I switch tabs?"
+   },
+   {
+    "a": "No. Timing happens entirely in your browser and laps are kept only in this page.",
+    "q": "Is my data sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "Timing uses your device's high-resolution clock, so it stays accurate even if the display updates less often while the tab is in the background.",
+   "Reloading or closing the page clears the time and all laps — copy the results first if you need them."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — timing happens on this device and nothing is uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Press Start to begin timing.",
+   "Press Lap at each split to record it in the table.",
+   "Press Pause to hold the time, and Resume to continue.",
+   "Use Copy results to take the lap table with you, then Reset to clear."
+  ],
+  "privacyTitle": "Timing stays on your device"
  }
 });
 window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
@@ -1486,6 +1922,262 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
    "slug": "video-link-info",
    "name": "Video Link Info",
    "description": "See a YouTube or Vimeo video's title, channel and thumbnail from its link."
+  }
+ ],
+ "bmi-calculator": [
+  {
+   "slug": "bmr-calculator",
+   "name": "BMR & Calorie Calculator",
+   "description": "Work out your daily calorie needs from your body and activity level."
+  },
+  {
+   "slug": "water-intake-calculator",
+   "name": "Water Intake Calculator",
+   "description": "Estimate how much water you should drink in a day."
+  },
+  {
+   "slug": "age-calculator",
+   "name": "Age Calculator",
+   "description": "Your exact age in years, months and days from your date of birth."
+  }
+ ],
+ "compound-interest-calculator": [
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  },
+  {
+   "slug": "fd-calculator",
+   "name": "FD Calculator",
+   "description": "Estimate the maturity value and interest of a fixed deposit."
+  },
+  {
+   "slug": "rd-calculator",
+   "name": "RD Calculator",
+   "description": "Estimate the maturity value of a monthly recurring deposit."
+  },
+  {
+   "slug": "ppf-calculator",
+   "name": "PPF Calculator",
+   "description": "Project your Public Provident Fund balance over 15 years and beyond."
+  }
+ ],
+ "fd-calculator": [
+  {
+   "slug": "rd-calculator",
+   "name": "RD Calculator",
+   "description": "Estimate the maturity value of a monthly recurring deposit."
+  },
+  {
+   "slug": "ppf-calculator",
+   "name": "PPF Calculator",
+   "description": "Project your Public Provident Fund balance over 15 years and beyond."
+  },
+  {
+   "slug": "compound-interest-calculator",
+   "name": "Compound Interest Calculator",
+   "description": "See how a lump sum grows with periodic compounding, year by year."
+  },
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  }
+ ],
+ "rd-calculator": [
+  {
+   "slug": "fd-calculator",
+   "name": "FD Calculator",
+   "description": "Estimate the maturity value and interest of a fixed deposit."
+  },
+  {
+   "slug": "ppf-calculator",
+   "name": "PPF Calculator",
+   "description": "Project your Public Provident Fund balance over 15 years and beyond."
+  },
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  },
+  {
+   "slug": "compound-interest-calculator",
+   "name": "Compound Interest Calculator",
+   "description": "See how a lump sum grows with periodic compounding, year by year."
+  }
+ ],
+ "ppf-calculator": [
+  {
+   "slug": "fd-calculator",
+   "name": "FD Calculator",
+   "description": "Estimate the maturity value and interest of a fixed deposit."
+  },
+  {
+   "slug": "rd-calculator",
+   "name": "RD Calculator",
+   "description": "Estimate the maturity value of a monthly recurring deposit."
+  },
+  {
+   "slug": "income-tax-calculator",
+   "name": "Income Tax Calculator India",
+   "description": "Estimate income tax for FY 2025-26 under the new and old regimes, side by side."
+  },
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  }
+ ],
+ "discount-calculator": [
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Work out percentages, percentage increases and decreases."
+  },
+  {
+   "slug": "gst-calculator",
+   "name": "GST Calculator",
+   "description": "Add GST to a price, or take GST out of an inclusive price."
+  },
+  {
+   "slug": "emi-calculator",
+   "name": "EMI Calculator",
+   "description": "Monthly instalment, total interest and total payment for any loan."
+  },
+  {
+   "slug": "compound-interest-calculator",
+   "name": "Compound Interest Calculator",
+   "description": "See how a lump sum grows with periodic compounding, year by year."
+  }
+ ],
+ "income-tax-calculator": [
+  {
+   "slug": "ppf-calculator",
+   "name": "PPF Calculator",
+   "description": "Project your Public Provident Fund balance over 15 years and beyond."
+  },
+  {
+   "slug": "gst-calculator",
+   "name": "GST Calculator",
+   "description": "Add GST to a price, or take GST out of an inclusive price."
+  },
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  },
+  {
+   "slug": "fd-calculator",
+   "name": "FD Calculator",
+   "description": "Estimate the maturity value and interest of a fixed deposit."
+  }
+ ],
+ "bmr-calculator": [
+  {
+   "slug": "bmi-calculator",
+   "name": "BMI Calculator",
+   "description": "Check your Body Mass Index from your height and weight, with the WHO category."
+  },
+  {
+   "slug": "water-intake-calculator",
+   "name": "Water Intake Calculator",
+   "description": "Estimate how much water you should drink in a day."
+  },
+  {
+   "slug": "age-calculator",
+   "name": "Age Calculator",
+   "description": "Your exact age in years, months and days from your date of birth."
+  }
+ ],
+ "cgpa-calculator": [
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Work out percentages, percentage increases and decreases."
+  },
+  {
+   "slug": "age-calculator",
+   "name": "Age Calculator",
+   "description": "Your exact age in years, months and days from your date of birth."
+  },
+  {
+   "slug": "scientific-calculator",
+   "name": "Scientific Calculator",
+   "description": "A full scientific calculator with trig, logs, powers and memory."
+  }
+ ],
+ "pregnancy-due-date-calculator": [
+  {
+   "slug": "date-difference-calculator",
+   "name": "Date Difference Calculator",
+   "description": "Count the days between any two dates."
+  },
+  {
+   "slug": "age-calculator",
+   "name": "Age Calculator",
+   "description": "Your exact age in years, months and days from your date of birth."
+  },
+  {
+   "slug": "bmi-calculator",
+   "name": "BMI Calculator",
+   "description": "Check your Body Mass Index from your height and weight, with the WHO category."
+  }
+ ],
+ "water-intake-calculator": [
+  {
+   "slug": "bmi-calculator",
+   "name": "BMI Calculator",
+   "description": "Check your Body Mass Index from your height and weight, with the WHO category."
+  },
+  {
+   "slug": "bmr-calculator",
+   "name": "BMR & Calorie Calculator",
+   "description": "Work out your daily calorie needs from your body and activity level."
+  },
+  {
+   "slug": "unit-converter",
+   "name": "Unit Converter",
+   "description": "Convert length, weight, temperature and data size units."
+  }
+ ],
+ "scientific-calculator": [
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Work out percentages, percentage increases and decreases."
+  },
+  {
+   "slug": "unit-converter",
+   "name": "Unit Converter",
+   "description": "Convert length, weight, temperature and data size units."
+  },
+  {
+   "slug": "cgpa-calculator",
+   "name": "CGPA Calculator",
+   "description": "Convert CGPA to percentage and percentage to CGPA."
+  },
+  {
+   "slug": "emi-calculator",
+   "name": "EMI Calculator",
+   "description": "Monthly instalment, total interest and total payment for any loan."
+  }
+ ],
+ "stopwatch": [
+  {
+   "slug": "unit-converter",
+   "name": "Unit Converter",
+   "description": "Convert length, weight, temperature and data size units."
+  },
+  {
+   "slug": "voice-recorder",
+   "name": "Voice Recorder",
+   "description": "Record from your microphone and download the recording."
+  },
+  {
+   "slug": "date-difference-calculator",
+   "name": "Date Difference Calculator",
+   "description": "Count the days between any two dates."
   }
  ]
 });
