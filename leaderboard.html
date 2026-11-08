@@ -140,7 +140,7 @@
       <li><strong>1 active minute = 1 point.</strong> Reading, learning, using tools and playing games all count.</li>
       <li>Only genuine activity counts — the tab in front of you, with real activity on the page.</li>
       <li>Idle time never counts, and only one tab earns at a time.</li>
-      <li>At most <strong>240 points a day</strong> (four active hours).</li>
+      <li>There is <strong>no daily limit</strong> — every active minute earns its point, even if you stay all day.</li>
       <li>Points never expire, and your level never goes down.</li>
     </ul>
     <div id="lbRulesMore" hidden>
@@ -170,7 +170,7 @@
 
 <script src="script.js?v=20261108c"></script>
 <script src="auth.js?v=20261106c"></script>
-<script src="rewards.js?v=20261108c"></script>
+<script src="rewards.js?v=20261108d"></script>
 <script>
 (function () {
   "use strict";
@@ -366,7 +366,7 @@
     var nx = window.CSRewards.nextRank(snap.points);
     if (nx) parts.push("Next level: " + nx.name + " at " + nx.at.toLocaleString("en-IN") + " points (" + (nx.at - snap.points) + " to go).");
     else parts.push("You hold the highest level.");
-    if (snap.pointsToday != null) parts.push("Earned today: " + snap.pointsToday + " of 240 points.");
+    if (snap.pointsToday != null) parts.push("Earned today: " + snap.pointsToday + " points.");
     if (pos && pos > 50) parts.push("The public board shows the top 50 members — keep earning active-time points to climb onto it.");
     if (snap.showOnLeaderboard === false) parts.push("Your name is currently hidden from the public board; this position is visible only to you.");
     $("lbYourNote").textContent = parts.join(" ");
