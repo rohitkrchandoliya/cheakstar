@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>FD Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">FD Calculator</h1>
+<p class="tool-sub">Estimate the maturity value and interest of a fixed deposit.</p>
+<div class="tool-card">
+  <p>Indian banks compound fixed deposit interest every quarter. Enter your deposit, the bank's rate and the tenure to estimate what you will receive at maturity.</p>
+
+  <label for="fd-amount">Deposit amount (₹)</label>
+  <input id="fd-amount" type="number" min="0" step="any" value="100000">
+  <div class="row2">
+    <div>
+      <label for="fd-rate">Interest rate (% per year)</label>
+      <input id="fd-rate" type="number" min="0" step="any" value="7">
+    </div>
+    <div>
+      <label for="fd-years">Tenure (years)</label>
+      <input id="fd-years" type="number" min="0" step="1" value="5">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="fd-months">Tenure (extra months)</label>
+      <input id="fd-months" type="number" min="0" max="11" step="1" value="0">
+    </div>
+    <div>
+      <label class="check-line"><input id="fd-senior" type="checkbox"> Senior citizen rate (+0.50%)</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="fd-run" class="btn" type="button" data-autorun>Calculate maturity value</button>
+  </div>
+  <p id="fd-status" class="status" role="status"></p>
+  <div class="result" id="fd-result" hidden data-result>
+    <p class="big" id="fd-maturity"></p>
+    <div id="fd-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> most Indian banks add about 0.50% for senior citizens, which is the extra this page applies when you tick the box — check your bank's actual senior rate. Interest on an FD is taxable, and banks deduct TDS when the interest crosses the yearly limit. The maturity figure is an estimate before tax.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var fdStatus = document.getElementById("fd-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("fd-run").addEventListener("click", function () {
+  var P = parseFloat(document.getElementById("fd-amount").value);
+  var rate = parseFloat(document.getElementById("fd-rate").value);
+  var years = parseFloat(document.getElementById("fd-years").value) || 0;
+  var months = parseFloat(document.getElementById("fd-months").value) || 0;
+  var senior = document.getElementById("fd-senior").checked;
+  var rows = document.getElementById("fd-rows");
+  rows.innerHTML = "";
+  document.getElementById("fd-result").hidden = true;
+  var totalMonths = years * 12 + months;
+  if (!(P > 0) || isNaN(rate) || rate < 0 || !(totalMonths > 0)) {
+    fdStatus.className = "status error";
+    fdStatus.textContent = "Enter a deposit above zero, a rate of 0 or more, and a tenure of at least one month.";
+    return;
+  }
+  var appliedRate = rate + (senior ? 0.5 : 0);
+  var quarters = totalMonths / 3;
+  var maturity = P * Math.pow(1 + appliedRate / 400, quarters);
+  var interest = maturity - P;
+  var yearsFloat = totalMonths / 12;
+  var effYield = (Math.pow(maturity / P, 1 / yearsFloat) - 1) * 100;
+  document.getElementById("fd-maturity").textContent = "Maturity value: " + inr(maturity);
+  addRow(rows, "You deposit", inr(P));
+  addRow(rows, "Rate applied", appliedRate.toFixed(2) + "% per year" + (senior ? " (including the +0.50% senior citizen extra)" : ""));
+  addRow(rows, "Interest earned", inr(interest));
+  addRow(rows, "Effective annual yield", effYield.toFixed(2) + "%");
+  document.getElementById("fd-result").hidden = false;
+  fdStatus.className = "status ok";
+  fdStatus.textContent = "Calculation complete, using quarterly compounding. Interest is taxable; TDS may apply.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="fd-calculator"></script>
+</body>
+</html>
