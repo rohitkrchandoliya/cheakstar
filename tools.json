@@ -2,7 +2,7 @@
   "name": "Cheakstar Tools Catalogue",
   "description": "Machine-readable catalogue of the free tools on the Cheakstar website. Generated from the tools.js NAV catalogue and the tools hub page; do not edit by hand — rerun build-tools-json.py.",
   "generated": "2026-11-08",
-  "toolCount": 58,
+  "toolCount": 71,
   "categories": [
     {
       "id": "qr-video",
@@ -42,7 +42,12 @@
     {
       "id": "calculators",
       "name": "Calculators",
-      "toolCount": 7
+      "toolCount": 19
+    },
+    {
+      "id": "daily",
+      "name": "Daily Utilities",
+      "toolCount": 1
     }
   ],
   "tools": [
@@ -1381,6 +1386,316 @@
         "data",
         "size",
         "units"
+      ]
+    },
+    {
+      "name": "BMI Calculator",
+      "slug": "bmi-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/bmi-calculator/",
+      "description": "Check your Body Mass Index from your height and weight, with the WHO category.",
+      "keywords": [
+        "bmi",
+        "calculator",
+        "check",
+        "your",
+        "body",
+        "mass",
+        "index",
+        "from",
+        "height",
+        "and",
+        "weight",
+        "with",
+        "the",
+        "who",
+        "category"
+      ]
+    },
+    {
+      "name": "Compound Interest Calculator",
+      "slug": "compound-interest-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/compound-interest-calculator/",
+      "description": "See how a lump sum grows with periodic compounding, year by year.",
+      "keywords": [
+        "compound",
+        "interest",
+        "calculator",
+        "see",
+        "how",
+        "a",
+        "lump",
+        "sum",
+        "grows",
+        "with",
+        "periodic",
+        "compounding",
+        "year",
+        "by",
+        "savings",
+        "growth"
+      ]
+    },
+    {
+      "name": "FD Calculator",
+      "slug": "fd-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/fd-calculator/",
+      "description": "Estimate the maturity value and interest of a fixed deposit.",
+      "keywords": [
+        "fd",
+        "calculator",
+        "estimate",
+        "the",
+        "maturity",
+        "value",
+        "and",
+        "interest",
+        "of",
+        "a",
+        "fixed",
+        "deposit"
+      ]
+    },
+    {
+      "name": "RD Calculator",
+      "slug": "rd-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/rd-calculator/",
+      "description": "Estimate the maturity value of a monthly recurring deposit.",
+      "keywords": [
+        "rd",
+        "calculator",
+        "estimate",
+        "the",
+        "maturity",
+        "value",
+        "of",
+        "a",
+        "monthly",
+        "recurring",
+        "deposit"
+      ]
+    },
+    {
+      "name": "PPF Calculator",
+      "slug": "ppf-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/ppf-calculator/",
+      "description": "Project your Public Provident Fund balance over 15 years and beyond.",
+      "keywords": [
+        "ppf",
+        "calculator",
+        "project",
+        "your",
+        "public",
+        "provident",
+        "fund",
+        "balance",
+        "over",
+        "15",
+        "years",
+        "and",
+        "beyond",
+        "maturity"
+      ]
+    },
+    {
+      "name": "Discount Calculator",
+      "slug": "discount-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/discount-calculator/",
+      "description": "Find the final price and your saving after one or two discounts.",
+      "keywords": [
+        "discount",
+        "calculator",
+        "find",
+        "the",
+        "final",
+        "price",
+        "and",
+        "your",
+        "saving",
+        "after",
+        "one",
+        "or",
+        "two",
+        "discounts",
+        "sale",
+        "off"
+      ]
+    },
+    {
+      "name": "Income Tax Calculator India",
+      "slug": "income-tax-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/income-tax-calculator/",
+      "description": "Estimate income tax for FY 2025-26 under the new and old regimes, side by side.",
+      "keywords": [
+        "income",
+        "tax",
+        "calculator",
+        "india",
+        "estimate",
+        "for",
+        "fy",
+        "2025-26",
+        "under",
+        "the",
+        "new",
+        "and",
+        "old",
+        "regimes",
+        "side",
+        "by",
+        "salary"
+      ]
+    },
+    {
+      "name": "BMR & Calorie Calculator",
+      "slug": "bmr-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/bmr-calculator/",
+      "description": "Work out your daily calorie needs from your body and activity level.",
+      "keywords": [
+        "bmr",
+        "calorie",
+        "calculator",
+        "work",
+        "out",
+        "your",
+        "daily",
+        "needs",
+        "from",
+        "body",
+        "and",
+        "activity",
+        "level",
+        "basal",
+        "metabolic",
+        "rate",
+        "tdee",
+        "calories"
+      ]
+    },
+    {
+      "name": "CGPA Calculator",
+      "slug": "cgpa-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/cgpa-calculator/",
+      "description": "Convert CGPA to percentage and percentage to CGPA.",
+      "keywords": [
+        "cgpa",
+        "calculator",
+        "convert",
+        "to",
+        "percentage",
+        "and",
+        "marks"
+      ]
+    },
+    {
+      "name": "Pregnancy Due Date Calculator",
+      "slug": "pregnancy-due-date-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/pregnancy-due-date-calculator/",
+      "description": "Estimate your due date and current week from your last period date.",
+      "keywords": [
+        "pregnancy",
+        "due",
+        "date",
+        "calculator",
+        "estimate",
+        "your",
+        "and",
+        "current",
+        "week",
+        "from",
+        "last",
+        "period",
+        "expected",
+        "delivery",
+        "lmp"
+      ]
+    },
+    {
+      "name": "Water Intake Calculator",
+      "slug": "water-intake-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/water-intake-calculator/",
+      "description": "Estimate how much water you should drink in a day.",
+      "keywords": [
+        "water",
+        "intake",
+        "calculator",
+        "estimate",
+        "how",
+        "much",
+        "you",
+        "should",
+        "drink",
+        "in",
+        "a",
+        "day",
+        "daily",
+        "requirement",
+        "litres"
+      ]
+    },
+    {
+      "name": "Scientific Calculator",
+      "slug": "scientific-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/scientific-calculator/",
+      "description": "A full scientific calculator with trig, logs, powers and memory.",
+      "keywords": [
+        "scientific",
+        "calculator",
+        "a",
+        "full",
+        "with",
+        "trig",
+        "logs",
+        "powers",
+        "and",
+        "memory",
+        "trigonometry",
+        "logarithm"
+      ]
+    },
+    {
+      "name": "Stopwatch",
+      "slug": "stopwatch",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/stopwatch/",
+      "description": "A precision stopwatch with laps, best and worst lap highlights.",
+      "keywords": [
+        "stopwatch",
+        "a",
+        "precision",
+        "with",
+        "laps",
+        "best",
+        "and",
+        "worst",
+        "lap",
+        "highlights",
+        "timer",
+        "online"
       ]
     }
   ]
