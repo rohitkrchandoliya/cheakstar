@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Remove Duplicate Lines - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Remove Duplicate Lines</h1>
+<p class="tool-sub">Remove repeated lines from a list and keep each line once.</p>
+<div class="tool-card">
+  <p>Paste a list — names, email addresses, keywords, product codes — and get it back with every repeated line removed. Blank lines are dropped too.</p>
+
+  <label for="dup-in">Your list (one item per line)</label>
+  <textarea id="dup-in" class="tall" rows="10" placeholder="Paste your list here, one item per line..."></textarea>
+  <div class="row2">
+    <div>
+      <label class="check-line" for="dup-trim"><input id="dup-trim" type="checkbox" checked> Ignore spaces at the start and end of a line</label>
+      <label class="check-line" for="dup-case"><input id="dup-case" type="checkbox"> Treat different letter case as different lines</label>
+    </div>
+    <div>
+      <label for="dup-order">Order of the result</label>
+      <select id="dup-order">
+        <option value="first" selected>Keep the order lines first appear in</option>
+        <option value="sorted">Sort the result A to Z</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="dup-run" class="btn" type="button">Remove duplicates</button>
+    <button id="dup-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="dup-status" class="status" role="status"></p>
+  <label for="dup-out">Result</label>
+  <textarea id="dup-out" class="tall" rows="10" readonly data-result placeholder="Your cleaned list will appear here."></textarea>
+</div>
+<div class="note"><strong>Privacy:</strong> your list is cleaned only in this browser tab and is never sent to any server — safe for email lists and other private data.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var dupStatus = document.getElementById("dup-status");
+var dupOut = document.getElementById("dup-out");
+var dupCopy = document.getElementById("dup-copy");
+
+document.getElementById("dup-run").addEventListener("click", function () {
+  var raw = document.getElementById("dup-in").value;
+  var trim = document.getElementById("dup-trim").checked;
+  var caseSensitive = document.getElementById("dup-case").checked;
+  var order = document.getElementById("dup-order").value;
+  dupCopy.disabled = true;
+  var lines = raw.split(/\r\n|\r|\n/);
+  var totalLines = lines.length;
+  var seen = new Set();
+  var kept = [];
+  lines.forEach(function (line) {
+    var shown = trim ? line.trim() : line;
+    if (shown === "") { return; }
+    var key = caseSensitive ? shown : shown.toLowerCase();
+    if (seen.has(key)) { return; }
+    seen.add(key);
+    kept.push(shown);
+  });
+  if (order === "sorted") {
+    kept.sort(function (a, b) {
+      return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+  }
+  dupOut.value = kept.join("\n");
+  if (kept.length) { dupCopy.disabled = false; }
+  var removed = totalLines - kept.length;
+  dupStatus.className = "status ok";
+  dupStatus.textContent = totalLines.toLocaleString("en-IN") + " lines in, " +
+    kept.length.toLocaleString("en-IN") + " unique lines kept, " +
+    removed.toLocaleString("en-IN") + " removed (duplicates and blank lines).";
+});
+
+dupCopy.addEventListener("click", function () {
+  function done() {
+    dupStatus.className = "status ok";
+    dupStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(dupOut.value).then(done, function () {
+      dupStatus.className = "status error";
+      dupStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    dupOut.select();
+    dupStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="remove-duplicate-lines"></script>
+</body>
+</html>
