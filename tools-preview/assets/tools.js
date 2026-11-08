@@ -740,6 +740,12 @@ document.addEventListener("DOMContentLoaded", function () {
 (function () {
   "use strict";
   try {
+    // Shared boot guard: this same runtime also ships in theme.js
+    // and script.js. The first copy to run claims the slot; the
+    // others step aside, so the translate element is never
+    // injected twice on a page that loads two of the files.
+    if (window.__csLangBoot) return;
+    window.__csLangBoot = true;
     var LANGS = ["en", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "pa", "es", "fr", "de", "ar", "zh-CN", "ja"];
     function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
     function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
