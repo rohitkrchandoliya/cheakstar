@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Online Timer - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Online Timer</h1>
+<p class="tool-sub">A countdown timer with presets and an audible alarm.</p>
+<div class="tool-card">
+  <p>Set a countdown for cooking, exercise, study sessions or classroom activities. Pick a preset or type your own time — when the countdown finishes, an alarm sounds on this device.</p>
+
+  <div style="text-align:center; padding:18px 0 6px">
+    <span id="ot-display" class="mono" style="font-size:2.6rem; font-weight:700">00:10:00</span>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="ot-hours">Hours</label>
+      <input id="ot-hours" type="number" min="0" max="99" step="1" value="0">
+    </div>
+    <div>
+      <label for="ot-minutes">Minutes</label>
+      <input id="ot-minutes" type="number" min="0" max="59" step="1" value="10">
+    </div>
+    <div>
+      <label for="ot-seconds">Seconds</label>
+      <input id="ot-seconds" type="number" min="0" max="59" step="1" value="0">
+    </div>
+  </div>
+  <p style="text-align:center; margin:10px 0 2px">Presets:
+    <button class="btn ghost ot-preset" type="button" data-min="1">1 min</button>
+    <button class="btn ghost ot-preset" type="button" data-min="5">5 min</button>
+    <button class="btn ghost ot-preset" type="button" data-min="10">10 min</button>
+    <button class="btn ghost ot-preset" type="button" data-min="15">15 min</button>
+    <button class="btn ghost ot-preset" type="button" data-min="30">30 min</button>
+    <button class="btn ghost ot-preset" type="button" data-min="60">60 min</button>
+  </p>
+  <div class="btn-row" style="justify-content:center">
+    <button id="ot-toggle" class="btn" type="button">Start</button>
+    <button id="ot-reset" class="btn ghost" type="button" disabled>Reset</button>
+  </div>
+  <p id="ot-status" class="status" role="status" style="text-align:center"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> the countdown is worked out from the clock, not by counting screen updates, so it stays accurate even if you switch to another tab. Keep this tab open and your sound on — the alarm plays in this page, and on some phones the screen must stay awake for the sound to be heard the moment the time is up. Where the browser supports it, the timer asks the screen to stay awake while it runs.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var otDisplay = document.getElementById("ot-display");
+var otStatus = document.getElementById("ot-status");
+var otToggle = document.getElementById("ot-toggle");
+var otReset = document.getElementById("ot-reset");
+var otHours = document.getElementById("ot-hours");
+var otMinutes = document.getElementById("ot-minutes");
+var otSeconds = document.getElementById("ot-seconds");
+
+var running = false;
+var endAt = 0;        // Date.now() timestamp when the countdown ends
+var remaining = 0;    // ms remaining, banked while paused
+var timerId = null;
+var audioCtx = null;
+var wakeLock = null;
+
+function clampInput(el, max) {
+  var v = Math.floor(Number(el.value) || 0);
+  if (v < 0) { v = 0; }
+  if (v > max) { v = max; }
+  return v;
+}
+
+function inputMs() {
+  return ((clampInput(otHours, 99) * 60 + clampInput(otMinutes, 59)) * 60 + clampInput(otSeconds, 59)) * 1000;
+}
+
+function fmt(ms) {
+  var totalSec = Math.max(0, Math.ceil(ms / 1000));
+  var sec = totalSec % 60;
+  var totalMin = Math.floor(totalSec / 60);
+  var min = totalMin % 60;
+  var hrs = Math.floor(totalMin / 60);
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  return pad(hrs) + ":" + pad(min) + ":" + pad(sec);
+}
+
+function show(ms) {
+  otDisplay.textContent = fmt(ms);
+}
+
+function syncButtons() {
+  otToggle.textContent = running ? "Pause" : (remaining > 0 && remaining < inputMs() ? "Resume" : "Start");
+  otReset.disabled = !running && remaining === 0;
+  var locked = running || remaining > 0;
+  otHours.disabled = locked;
+  otMinutes.disabled = locked;
+  otSeconds.disabled = locked;
+}
+
+function beep(freq, startOffset, duration) {
+  var t0 = audioCtx.currentTime + startOffset;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.type = "sine";
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.4, t0 + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.05);
+}
+
+function playAlarm() {
+  try {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { return; }
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === "suspended") { audioCtx.resume(); }
+    beep(880, 0, 0.35);
+    beep(880, 0.45, 0.35);
+    beep(1174, 0.9, 0.6);
+  } catch (e) { /* sound is best-effort; the visual finish state still shows */ }
+}
+
+function requestWake() {
+  if (!("wakeLock" in navigator)) { return; }
+  try {
+    navigator.wakeLock.request("screen").then(function (lock) {
+      wakeLock = lock;
+    }).catch(function () { /* optional feature */ });
+  } catch (e) { /* optional feature */ }
+}
+
+function releaseWake() {
+  if (wakeLock) {
+    try { wakeLock.release(); } catch (e) { /* already released */ }
+    wakeLock = null;
+  }
+}
+
+function stopTicking() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+}
+
+function finish() {
+  running = false;
+  remaining = 0;
+  stopTicking();
+  releaseWake();
+  show(0);
+  document.title = "Time is up! - Online Timer - Cheakstar Tools";
+  otStatus.className = "status ok";
+  otStatus.textContent = "Time is up.";
+  playAlarm();
+  syncButtons();
+}
+
+function tick() {
+  remaining = endAt - Date.now();
+  if (remaining <= 0) { finish(); return; }
+  show(remaining);
+}
+
+otToggle.addEventListener("click", function () {
+  if (running) {
+    remaining = Math.max(0, endAt - Date.now());
+    running = false;
+    stopTicking();
+    releaseWake();
+    otStatus.textContent = "Paused.";
+  } else {
+    if (remaining <= 0) {
+      remaining = inputMs();
+      if (remaining <= 0) {
+        otStatus.className = "status error";
+        otStatus.textContent = "Set a time first — hours, minutes or seconds above zero.";
+        return;
+      }
+      document.title = "Online Timer - Free Online Tool - Cheakstar Tools";
+    }
+    endAt = Date.now() + remaining;
+    running = true;
+    otStatus.className = "status";
+    otStatus.textContent = "Counting down…";
+    show(remaining);
+    timerId = setInterval(tick, 200);
+    requestWake();
+  }
+  syncButtons();
+});
+
+otReset.addEventListener("click", function () {
+  running = false;
+  remaining = 0;
+  stopTicking();
+  releaseWake();
+  document.title = "Online Timer - Free Online Tool - Cheakstar Tools";
+  show(inputMs());
+  otStatus.textContent = "";
+  syncButtons();
+});
+
+document.querySelectorAll(".ot-preset").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    if (running || remaining > 0) { return; }
+    var mins = Number(btn.getAttribute("data-min"));
+    otHours.value = Math.floor(mins / 60);
+    otMinutes.value = mins % 60;
+    otSeconds.value = 0;
+    show(inputMs());
+    otStatus.textContent = "Preset set: " + mins + (mins === 1 ? " minute." : " minutes.");
+    syncButtons();
+  });
+});
+
+[otHours, otMinutes, otSeconds].forEach(function (el) {
+  el.addEventListener("input", function () {
+    if (!running && remaining === 0) { show(inputMs()); }
+  });
+});
+
+show(inputMs());
+syncButtons();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="online-timer"></script>
+</body>
+</html>
