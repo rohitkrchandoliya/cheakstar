@@ -1,0 +1,46 @@
+/* Cheakstar Tools — per-tool information sections (How to use, Good to know,
+   FAQ, Related tools, privacy badge). Layered on the site theme variables
+   from assets/site.css so both dark and light themes stay readable.
+   Loaded only by tool pages, together with tool-info-data.js + tool-info.js. */
+
+.ckti { margin-top: 4px; }
+
+.ckti-badge {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 20px; margin-bottom: 22px;
+}
+.ckti-badge .ckti-ico { flex: 0 0 auto; margin-top: 2px; color: var(--gold); }
+.ckti-badge .ckti-ico svg { display: block; }
+.ckti-badge strong { display: block; color: var(--ink); font-size: 1.02rem; margin-bottom: 2px; }
+.ckti-badge span { color: var(--muted); font-size: .95rem; }
+.ckti-badge--lookup { border-left: 4px solid var(--gold); }
+
+.ckti-block {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 24px; margin-bottom: 22px;
+}
+.ckti-block h2 { font-size: 1.35rem; color: var(--ink); margin-bottom: 12px; }
+.ckti-block ol, .ckti-block ul { margin: 8px 0 4px 22px; color: var(--muted); }
+.ckti-block li { margin-bottom: 6px; }
+.ckti-block li strong, .ckti-block p strong { color: var(--ink); }
+
+.ckti-faq { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.ckti-faq:first-of-type { padding-top: 2px; }
+.ckti-faq:last-of-type { border-bottom: none; padding-bottom: 0; }
+.ckti-faq h3 { color: var(--ink); font-size: 1.05rem; margin-bottom: 4px; }
+.ckti-faq p { color: var(--muted); margin: 0; }
+
+.ckti-rel { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 6px; }
+.ckti-rel-card {
+  display: block; background: var(--navy2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 16px 18px; text-decoration: none;
+}
+.ckti-rel-card:hover { border-color: var(--gold); text-decoration: none; }
+.ckti-rel-card strong { display: block; color: var(--gold); font-size: 1rem; margin-bottom: 4px; }
+.ckti-rel-card span { color: var(--muted); font-size: .92rem; line-height: 1.45; display: block; }
+
+@media (max-width: 560px) {
+  .ckti-block { padding: 18px; }
+  .ckti-badge { padding: 14px 16px; }
+}
