@@ -47,6 +47,9 @@
     </div>
   </div>
 
+  <button class="btn btn-google" type="button" id="googleSignIn"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.73v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.63z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.73a5.4 5.4 0 0 1 0-3.46V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.33z"/><path fill="#EA4335" d="M9 3.57c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.94l3.01 2.33C4.68 5.15 6.66 3.57 9 3.57z"/></svg>Continue with Google</button>
+  <div class="auth-or" id="authOr"><span>or sign in with email</span></div>
+
   <form id="loginForm" novalidate>
     <div class="auth-field">
       <label for="loginEmail">Email</label>
@@ -117,6 +120,7 @@
     try { window.localStorage.removeItem("ck_return_to"); } catch (e) {}
     return target ? (window.CSAuth.siteBase() + target) : "account.html";
   }
+
   var notice = document.getElementById("loginNotice");
   var form = document.getElementById("loginForm");
   var signedInBox = document.getElementById("loginSignedIn");
@@ -264,6 +268,32 @@
 
   window.CSAuth.ready.then(function () { render(window.CSAuth.getUser()); });
   window.CSAuth.onChange(function (user) { render(user); });
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  // Google sign-in (added 2026-11-08): starts the OAuth redirect via
+  // CSAuth; hidden whenever a session already exists on this page.
+  var btn = document.getElementById("googleSignIn");
+  var divider = document.getElementById("authOr");
+  if (!btn || !window.CSAuth) return;
+  function sync(user) {
+    var signedIn = !!user;
+    btn.hidden = signedIn;
+    if (divider) divider.hidden = signedIn;
+  }
+  btn.addEventListener("click", function () {
+    btn.disabled = true;
+    window.CSAuth.signInWithGoogle().then(function () {}, function (err) {
+      btn.disabled = false;
+      var box = document.getElementById("loginError");
+      if (box) { box.textContent = (err && err.message) || "Google sign-in could not be started. Please try again."; box.hidden = false; }
+    });
+  });
+  window.CSAuth.onChange(sync);
+  if (window.CSAuth.ready) window.CSAuth.ready.then(function () { sync(window.CSAuth.getUser()); });
+  sync(window.CSAuth.getUser ? window.CSAuth.getUser() : null);
 })();
 </script>
 </body></html>
