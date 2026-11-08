@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Income Tax Calculator India - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Income Tax Calculator India</h1>
+<p class="tool-sub">Estimate income tax for FY 2025-26 under the new and old regimes, side by side.</p>
+<div class="tool-card">
+  <p>Enter your yearly salary income and see the tax under both regimes for FY 2025-26 (AY 2026-27), with a slab-by-slab breakup, so you can see which regime charges less.</p>
+
+  <label for="tax-income">Gross annual salary income (₹)</label>
+  <input id="tax-income" type="number" min="0" step="any" value="1200000">
+  <div class="row2">
+    <div>
+      <label for="tax-age">Age group</label>
+      <select id="tax-age">
+        <option value="0">Below 60 years</option>
+        <option value="1">60 to 79 years (senior citizen)</option>
+        <option value="2">80 years and above (super senior citizen)</option>
+      </select>
+    </div>
+    <div>
+      <label for="tax-deductions">Old-regime deductions (₹, apart from standard deduction)</label>
+      <input id="tax-deductions" type="number" min="0" step="any" value="150000">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="tax-run" class="btn" type="button" data-autorun>Compare both regimes</button>
+  </div>
+  <p id="tax-status" class="status" role="status"></p>
+  <div class="result" id="tax-result" hidden data-result>
+    <p class="big" id="tax-verdict"></p>
+    <p class="kv"><b>New regime (FY 2025-26)</b></p>
+    <div id="tax-new-rows"></div>
+    <p class="kv" style="margin-top:14px"><b>Old regime (FY 2025-26)</b></p>
+    <div id="tax-old-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Estimate only — not tax advice:</strong> this covers salary income with the standard deduction (₹75,000 new regime, ₹50,000 old regime) plus any old-regime deductions you enter. It includes the Section 87A rebate, marginal relief, surcharge and 4% health and education cess. It does not cover business income, capital gains or other special-rate income, and TDS already deducted is not counted. For filing, use the Income Tax Department portal or a tax professional.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var taxStatus = document.getElementById("tax-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+function round10(n) {
+  return Math.round(n / 10) * 10;
+}
+
+// slabs: array of [upperLimit, ratePercent]; last upperLimit is Infinity.
+function slabTax(taxable, slabs) {
+  var tax = 0;
+  var parts = [];
+  var lower = 0;
+  for (var s = 0; s < slabs.length; s++) {
+    var upper = slabs[s][0];
+    var rate = slabs[s][1];
+    if (taxable > lower && rate > 0) {
+      var amount = Math.min(taxable, upper) - lower;
+      var slabCharge = amount * rate / 100;
+      tax += slabCharge;
+      parts.push({
+        label: "₹" + (lower + 1).toLocaleString("en-IN") + " to " + (upper === Infinity ? "above" : "₹" + upper.toLocaleString("en-IN")) + " @ " + rate + "%",
+        amount: slabCharge
+      });
+    }
+    lower = upper;
+    if (taxable <= upper) { break; }
+  }
+  return { tax: tax, parts: parts };
+}
+
+function surchargeRate(taxable, tiers) {
+  var rate = 0;
+  tiers.forEach(function (t) {
+    if (taxable > t[0]) { rate = t[1]; }
+  });
+  return rate;
+}
+
+// Applies surcharge with marginal relief at every crossed threshold.
+function applySurcharge(taxable, baseTax, tiers, baseTaxFn) {
+  var rate = surchargeRate(taxable, tiers);
+  var tax = baseTax * (1 + rate);
+  tiers.forEach(function (t) {
+    var limit = t[0];
+    if (taxable > limit) {
+      var taxAtLimit = baseTaxFn(limit) * (1 + surchargeRate(limit, tiers));
+      var cap = taxAtLimit + (taxable - limit);
+      if (cap < tax) { tax = cap; }
+    }
+  });
+  return { tax: tax, rate: rate };
+}
+
+var NEW_SLABS = [
+  [400000, 0], [800000, 5], [1200000, 10], [1600000, 15],
+  [2000000, 20], [2400000, 25], [Infinity, 30]
+];
+var NEW_SURCHARGE = [[5000000, 0.10], [10000000, 0.15], [20000000, 0.25]];
+var OLD_SURCHARGE = [[5000000, 0.10], [10000000, 0.15], [20000000, 0.25], [50000000, 0.37]];
+
+function oldSlabs(ageGroup) {
+  var exemption = [250000, 300000, 500000][ageGroup];
+  return [[exemption, 0], [500000, 5], [1000000, 20], [Infinity, 30]];
+}
+
+function newSlabTaxOnly(taxable) {
+  return slabTax(taxable, NEW_SLABS).tax;
+}
+
+function computeNew(gross) {
+  var stdDed = 75000;
+  var taxable = Math.max(0, gross - stdDed);
+  var slab = slabTax(taxable, NEW_SLABS);
+  var tax = slab.tax;
+  var rebate = 0;
+  var relief = 0;
+  if (taxable <= 1200000) {
+    rebate = Math.min(tax, 60000);
+    tax -= rebate;
+  } else {
+    var cap = taxable - 1200000;
+    if (tax > cap) { relief = tax - cap; tax = cap; }
+  }
+  var sc = applySurcharge(taxable, tax, NEW_SURCHARGE, newSlabTaxOnly);
+  var surchargeAmt = sc.tax - tax;
+  tax = sc.tax;
+  var cess = tax * 0.04;
+  var total = round10(tax + cess);
+  return {
+    stdDed: stdDed, taxable: taxable, parts: slab.parts, taxBeforeRelief: slab.tax,
+    rebate: rebate, relief: relief, surcharge: surchargeAmt, surchargeRate: sc.rate,
+    cess: cess, total: total
+  };
+}
+
+function computeOld(gross, ageGroup, deductions) {
+  var stdDed = 50000;
+  var taxable = Math.max(0, gross - stdDed - deductions);
+  var slabs = oldSlabs(ageGroup);
+  var slab = slabTax(taxable, slabs);
+  var tax = slab.tax;
+  var rebate = 0;
+  if (taxable <= 500000) {
+    rebate = Math.min(tax, 12500);
+    tax -= rebate;
+  }
+  var baseFn = function (t) {
+    var x = slabTax(t, slabs).tax;
+    if (t <= 500000) { x -= Math.min(x, 12500); }
+    return x;
+  };
+  var sc = applySurcharge(taxable, tax, OLD_SURCHARGE, baseFn);
+  var surchargeAmt = sc.tax - tax;
+  tax = sc.tax;
+  var cess = tax * 0.04;
+  var total = round10(tax + cess);
+  return {
+    stdDed: stdDed, deductions: deductions, taxable: taxable, parts: slab.parts,
+    taxBeforeRelief: slab.tax, rebate: rebate, relief: 0, surcharge: surchargeAmt,
+    surchargeRate: sc.rate, cess: cess, total: total
+  };
+}
+
+function renderRegime(container, title, gross, r, isNew) {
+  container.innerHTML = "";
+  addRow(container, "Gross income", inr(gross));
+  addRow(container, "Standard deduction", "− " + inr(r.stdDed));
+  if (!isNew) { addRow(container, "Other deductions you entered", "− " + inr(r.deductions)); }
+  addRow(container, "Taxable income", inr(r.taxable));
+  r.parts.forEach(function (p) { addRow(container, "Slab " + p.label, inr(p.amount)); });
+  addRow(container, "Tax before relief", inr(r.taxBeforeRelief));
+  if (r.rebate > 0) { addRow(container, "Rebate under Section 87A", "− " + inr(r.rebate)); }
+  if (r.relief > 0) { addRow(container, "Marginal relief (income just above ₹12,00,000)", "− " + inr(r.relief)); }
+  if (r.surcharge > 0) { addRow(container, "Surcharge (" + Math.round(r.surchargeRate * 100) + "%, after marginal relief)", inr(r.surcharge)); }
+  addRow(container, "Health and education cess (4%)", inr(r.cess));
+  addRow(container, "Total tax (rounded to nearest ₹10)", inr(r.total));
+}
+
+document.getElementById("tax-run").addEventListener("click", function () {
+  var gross = parseFloat(document.getElementById("tax-income").value);
+  var ageGroup = parseInt(document.getElementById("tax-age").value, 10);
+  var deductions = parseFloat(document.getElementById("tax-deductions").value) || 0;
+  document.getElementById("tax-result").hidden = true;
+  if (!(gross >= 0) || deductions < 0) {
+    taxStatus.className = "status error";
+    taxStatus.textContent = "Enter an income of 0 or more and deductions of 0 or more.";
+    return;
+  }
+  var rn = computeNew(gross);
+  var ro = computeOld(gross, ageGroup, deductions);
+  renderRegime(document.getElementById("tax-new-rows"), "New regime", gross, rn, true);
+  renderRegime(document.getElementById("tax-old-rows"), "Old regime", gross, ro, false);
+  var verdict;
+  if (rn.total === ro.total) {
+    verdict = "Both regimes charge the same: " + inr(rn.total);
+  } else if (rn.total < ro.total) {
+    verdict = "New regime is lower: " + inr(rn.total) + " vs " + inr(ro.total) + " (you save " + inr(ro.total - rn.total) + ")";
+  } else {
+    verdict = "Old regime is lower: " + inr(ro.total) + " vs " + inr(rn.total) + " (you save " + inr(rn.total - ro.total) + ")";
+  }
+  document.getElementById("tax-verdict").textContent = verdict;
+  document.getElementById("tax-result").hidden = false;
+  taxStatus.className = "status ok";
+  taxStatus.textContent = "Estimate complete for FY 2025-26. This is not tax advice.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="income-tax-calculator"></script>
+</body>
+</html>
