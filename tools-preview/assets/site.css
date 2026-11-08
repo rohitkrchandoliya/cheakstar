@@ -344,6 +344,7 @@ body:not(.cs-rail) .cs-group-head{padding:15px 8px 12px}
 /* Sidebar search field matches the auth fields: 46px tall, 16px font
    (was 39px / 14.4px, which also made iOS Safari zoom on focus). */
 .cs-filter input{padding:10px 12px;font-size:1rem}
+
 /* Prose rhythm for article, policy and snapshot content (their bare
    paragraphs and headings previously had 0px gaps — a wall of text). */
 .prose>p{margin-bottom:18px}
@@ -456,6 +457,18 @@ select option{color:var(--ink);background-color:var(--navy2)}
    card covers it (the card has its own close button). */
 .cs-top-btn{bottom:70px}
 
+/* --- leaderboard upgrade (2026-11-07): account page crowns + level badge --- */
+.acct-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none}
+.acct-avatar.framed{background:transparent;width:84px;height:76px;border-radius:0}
+.acct-level{display:flex;align-items:center;gap:5px;font-weight:700;font-size:.88rem;min-height:1.2em}
+.cs-acct-crown{position:absolute;top:-15px;left:50%;transform:translateX(-50%) rotate(-8deg);z-index:2;line-height:0;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.cs-acct-crown[hidden]{display:none!important}
+.acct-avatar.ring-gold{box-shadow:0 0 0 3px #d4af37,0 0 16px rgba(212,175,55,.45)}
+.acct-avatar.ring-silver{box-shadow:0 0 0 3px #c0c0c8,0 0 16px rgba(192,192,200,.45)}
+.acct-avatar.ring-bronze{box-shadow:0 0 0 3px #cd7f32,0 0 16px rgba(205,127,50,.45)}
+.cs-lvl-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid;border-radius:999px;font-size:.8rem;font-weight:700;white-space:nowrap;vertical-align:middle}
+.cs-lvl-badge svg{flex:none}
+
 /* --- theme visibility pass (2026-11-08): content stays clearly
    readable in BOTH themes — the matching block lives in the root
    styles.css; this copy covers the surfaces the tools pages share
@@ -465,3 +478,12 @@ select option{color:var(--ink);background-color:var(--navy2)}
 [data-theme="light"] .verified-badge.warn{color:#8a6410;border-color:rgba(138,100,16,.55);background:rgba(216,164,64,.16)}
 [data-theme="light"] .acct-warn{color:#7a5b12}
 [data-theme="light"] .cs-pc-badge{filter:brightness(.5) saturate(1.4)}
+
+/* --- Google sign-in button (2026-11-08): white in both themes, per
+   Google branding; the multicolour G is an inline SVG in the markup. --- */
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff;color:#1f2a3d;border:1.5px solid rgba(21,37,64,.28);font-weight:600;cursor:pointer;font-family:inherit}
+.btn-google:hover{background:#eef2f8;text-decoration:none}
+.btn-google:disabled{opacity:.6;cursor:wait}
+.btn-google svg{flex:none}
+.auth-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:16px 0 2px}
+.auth-or::before,.auth-or::after{content:"";flex:1;border-top:1px solid var(--line)}
