@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Pomodoro Timer - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Pomodoro Timer</h1>
+<p class="tool-sub">Focus in 25-minute work sessions with short breaks between them.</p>
+<div class="tool-card">
+  <p>Work in focused sessions, then rest. The classic pattern is 25 minutes of focus followed by a 5-minute break — adjust both lengths to suit your study or work, and the timer moves from one phase to the next on its own.</p>
+
+  <div style="text-align:center; padding:18px 0 6px">
+    <div id="pm-phase" style="font-weight:700; letter-spacing:.04em">FOCUS</div>
+    <span id="pm-display" class="mono" style="font-size:2.6rem; font-weight:700">25:00</span>
+    <div id="pm-sessions" class="status">Focus sessions completed: 0</div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="pm-focus">Focus length (minutes)</label>
+      <input id="pm-focus" type="number" min="1" max="180" step="1" value="25">
+    </div>
+    <div>
+      <label for="pm-break">Break length (minutes)</label>
+      <input id="pm-break" type="number" min="1" max="60" step="1" value="5">
+    </div>
+  </div>
+  <div class="btn-row" style="justify-content:center">
+    <button id="pm-toggle" class="btn" type="button">Start focus</button>
+    <button id="pm-reset" class="btn ghost" type="button" disabled>Reset</button>
+    <button id="pm-notify" class="btn ghost" type="button">Enable notifications</button>
+  </div>
+  <p id="pm-status" class="status" role="status" style="text-align:center"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> the timer is worked out from the clock, so it keeps the right time even in a background tab. Notifications are optional and are only requested when you press the button above — if you allow them, a message pops up when a phase ends even when this tab is not in front. Nothing about your sessions is recorded or sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pmDisplay = document.getElementById("pm-display");
+var pmPhase = document.getElementById("pm-phase");
+var pmSessions = document.getElementById("pm-sessions");
+var pmStatus = document.getElementById("pm-status");
+var pmToggle = document.getElementById("pm-toggle");
+var pmReset = document.getElementById("pm-reset");
+var pmNotify = document.getElementById("pm-notify");
+var pmFocus = document.getElementById("pm-focus");
+var pmBreak = document.getElementById("pm-break");
+
+var phase = "focus";       // "focus" or "break"
+var running = false;
+var started = false;       // a cycle is in progress (running or paused)
+var endAt = 0;
+var remaining = 0;         // ms left in the current phase, banked while paused
+var sessionsDone = 0;
+var timerId = null;
+var audioCtx = null;
+
+function phaseMs() {
+  var mins = Math.floor(Number(phase === "focus" ? pmFocus.value : pmBreak.value) || 0);
+  if (mins < 1) { mins = 1; }
+  if (mins > 180) { mins = 180; }
+  return mins * 60000;
+}
+
+function fmt(ms) {
+  var totalSec = Math.max(0, Math.ceil(ms / 1000));
+  var sec = totalSec % 60;
+  var min = Math.floor(totalSec / 60);
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  return pad(min) + ":" + pad(sec);
+}
+
+function showPhase() {
+  pmPhase.textContent = phase === "focus" ? "FOCUS" : "BREAK";
+  pmSessions.textContent = "Focus sessions completed: " + sessionsDone;
+}
+
+function syncButtons() {
+  pmToggle.textContent = running ? "Pause" : (started ? "Resume" : "Start focus");
+  pmReset.disabled = !started;
+  pmFocus.disabled = started;
+  pmBreak.disabled = started;
+}
+
+function beep(freq, startOffset, duration) {
+  var t0 = audioCtx.currentTime + startOffset;
+  var osc = audioCtx.createOscillator();
+  var gain = audioCtx.createGain();
+  osc.type = "sine";
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(0.4, t0 + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.05);
+}
+
+function playAlarm() {
+  try {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { return; }
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === "suspended") { audioCtx.resume(); }
+    beep(880, 0, 0.3);
+    beep(880, 0.4, 0.3);
+    beep(1174, 0.8, 0.5);
+  } catch (e) { /* sound is best-effort */ }
+}
+
+function notify(title, body) {
+  try {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(title, { body: body });
+    }
+  } catch (e) { /* notifications are optional */ }
+}
+
+function stopTicking() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+}
+
+function startPhase() {
+  remaining = phaseMs();
+  endAt = Date.now() + remaining;
+  pmDisplay.textContent = fmt(remaining);
+  showPhase();
+}
+
+function phaseDone() {
+  playAlarm();
+  if (phase === "focus") {
+    sessionsDone++;
+    phase = "break";
+    pmStatus.className = "status ok";
+    pmStatus.textContent = "Focus session complete. Break time — step away from the screen.";
+    notify("Pomodoro: focus complete", "Time for a break.");
+  } else {
+    phase = "focus";
+    pmStatus.className = "status ok";
+    pmStatus.textContent = "Break over. The next focus session has started.";
+    notify("Pomodoro: break over", "Back to focus.");
+  }
+  startPhase();
+  syncButtons();
+}
+
+function tick() {
+  remaining = endAt - Date.now();
+  if (remaining <= 0) { phaseDone(); return; }
+  pmDisplay.textContent = fmt(remaining);
+}
+
+pmToggle.addEventListener("click", function () {
+  if (running) {
+    remaining = Math.max(0, endAt - Date.now());
+    running = false;
+    stopTicking();
+    pmStatus.className = "status";
+    pmStatus.textContent = "Paused.";
+  } else {
+    if (!started) {
+      started = true;
+      phase = "focus";
+      startPhase();
+      pmStatus.className = "status";
+      pmStatus.textContent = "Focus session running.";
+    } else {
+      endAt = Date.now() + remaining;
+      pmStatus.className = "status";
+      pmStatus.textContent = phase === "focus" ? "Focus session running." : "Break running.";
+    }
+    running = true;
+    timerId = setInterval(tick, 200);
+  }
+  syncButtons();
+});
+
+pmReset.addEventListener("click", function () {
+  running = false;
+  started = false;
+  phase = "focus";
+  sessionsDone = 0;
+  stopTicking();
+  remaining = phaseMs();
+  pmDisplay.textContent = fmt(remaining);
+  showPhase();
+  pmStatus.textContent = "";
+  document.title = "Pomodoro Timer - Free Online Tool - Cheakstar Tools";
+  syncButtons();
+});
+
+pmNotify.addEventListener("click", function () {
+  if (!("Notification" in window)) {
+    pmStatus.className = "status error";
+    pmStatus.textContent = "This browser does not support notifications. The alarm sound will still play.";
+    return;
+  }
+  Notification.requestPermission().then(function (result) {
+    if (result === "granted") {
+      pmStatus.className = "status ok";
+      pmStatus.textContent = "Notifications are on — you will get a message when a phase ends.";
+      pmNotify.disabled = true;
+    } else {
+      pmStatus.className = "status error";
+      pmStatus.textContent = "Notifications were not allowed. The alarm sound will still play.";
+    }
+  });
+});
+
+if ("Notification" in window && Notification.permission === "granted") {
+  pmNotify.disabled = true;
+}
+
+remaining = phaseMs();
+pmDisplay.textContent = fmt(remaining);
+showPhase();
+syncButtons();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="pomodoro-timer"></script>
+</body>
+</html>
