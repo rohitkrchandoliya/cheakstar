@@ -183,6 +183,7 @@ a.download:hover { background: var(--gold2); text-decoration: none; }
 .tool-card-item .go { margin-top: auto; padding-top: 12px; }
 .cat-title { margin-top: 34px; }
 .cat-title:first-of-type { margin-top: 6px; }
+.cat-more { margin: 2px 0 14px; font-size: .95rem; }
 .tool-count { color: var(--muted); margin-top: 4px; }
 
 /* Long unbroken values must always wrap (IPv6 addresses, hashes, URLs) */
