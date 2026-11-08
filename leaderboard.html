@@ -22,6 +22,7 @@
   .lb-big{font-size:2rem;font-weight:700;color:#fff;line-height:1.2}
   .lb-rank-name{color:var(--gold);font-weight:700}
   .lb-note{color:var(--muted);font-size:.92rem}
+  .lb-empty{color:var(--muted);text-align:center;padding:18px 10px}
   .tier svg{vertical-align:-2px;margin-right:5px}
   .lb-ava{width:34px;height:34px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:10px;background:var(--navy3)}
   .lb-ini{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;vertical-align:middle;margin-right:10px}
@@ -167,9 +168,9 @@
   </div>
 </div>
 
-<script src="script.js?v=20261108b"></script>
+<script src="script.js?v=20261108c"></script>
 <script src="auth.js?v=20261106c"></script>
-<script src="rewards.js?v=20261108b"></script>
+<script src="rewards.js?v=20261108c"></script>
 <script>
 (function () {
   "use strict";
@@ -307,7 +308,14 @@
         "<td class=\"num\">" + esc(fmtTime(r.points)) + "</td>";
       body.appendChild(tr);
     });
-    $("lbTable").hidden = rest.length === 0;
+    if (rest.length === 0) {
+      // Ranks 6-50 keep their table even before anyone holds them: an
+      // honest empty state instead of the section vanishing.
+      var etr = document.createElement("tr");
+      etr.innerHTML = "<td colspan=\"5\" class=\"lb-empty\">No members yet in ranks 6\u201350 \u2014 these places are waiting to be claimed.</td>";
+      body.appendChild(etr);
+    }
+    $("lbTable").hidden = false;
     $("lbMoreWrap").hidden = !(boardRows.length > listLimit && listLimit < 50);
     markMyRow();
   }
