@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Coin Flip - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Coin Flip</h1>
+<p class="tool-sub">Flip a coin online and keep a tally of heads and tails.</p>
+<div class="tool-card">
+  <p>Settle a small question the fair way. Press the button, watch the coin spin, and keep score — the tally, streaks and history of your flips stay on this page.</p>
+
+  <div style="text-align:center; padding:16px 0 4px">
+    <div style="perspective:600px; width:120px; height:120px; margin:0 auto">
+      <div id="cf-coin" style="position:relative; width:120px; height:120px; transform-style:preserve-3d; transition:transform 1.2s cubic-bezier(.2,.7,.3,1)">
+        <div style="position:absolute; top:0; left:0; width:120px; height:120px; border-radius:50%; background:#c9920e; border:4px solid #8f6608; color:#fff8e1; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:700; backface-visibility:hidden; -webkit-backface-visibility:hidden">H</div>
+        <div style="position:absolute; top:0; left:0; width:120px; height:120px; border-radius:50%; background:#7a7f87; border:4px solid #55585e; color:#f4f4f5; display:flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:700; backface-visibility:hidden; -webkit-backface-visibility:hidden; transform:rotateY(180deg)">T</div>
+      </div>
+    </div>
+    <p id="cf-result" class="big" style="min-height:1.6em">Press Flip to toss the coin.</p>
+  </div>
+  <div class="btn-row" style="justify-content:center">
+    <button id="cf-flip" class="btn" type="button">Flip the coin</button>
+    <button id="cf-reset" class="btn ghost" type="button" disabled>Reset tally</button>
+  </div>
+  <div class="stats" data-result>
+    <div class="stat"><span class="value" id="cf-heads">0</span><span class="label">Heads</span></div>
+    <div class="stat"><span class="value" id="cf-tails">0</span><span class="label">Tails</span></div>
+    <div class="stat"><span class="value" id="cf-total">0</span><span class="label">Total flips</span></div>
+    <div class="stat"><span class="value" id="cf-streak">—</span><span class="label">Current streak</span></div>
+  </div>
+  <p id="cf-history" class="status" data-result></p>
+  <p id="cf-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> each flip is decided by your device's cryptographic random generator, so past flips cannot influence the next one — a run of heads does not make tails "due". The tally and history live only in this page and clear when you reload.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cfCoin = document.getElementById("cf-coin");
+var cfResult = document.getElementById("cf-result");
+var cfFlip = document.getElementById("cf-flip");
+var cfReset = document.getElementById("cf-reset");
+var cfStatus = document.getElementById("cf-status");
+
+var rotation = 0;      // current rotateY of the coin, in degrees
+var flipping = false;
+var history = [];      // "H" or "T", oldest first
+
+function flipOutcome() {
+  var b = new Uint8Array(1);
+  window.crypto.getRandomValues(b);
+  return (b[0] & 1) === 0 ? "H" : "T";
+}
+
+function renderScore() {
+  var heads = history.filter(function (h) { return h === "H"; }).length;
+  var tails = history.length - heads;
+  document.getElementById("cf-heads").textContent = heads;
+  document.getElementById("cf-tails").textContent = tails;
+  document.getElementById("cf-total").textContent = history.length;
+  var streakEl = document.getElementById("cf-streak");
+  if (!history.length) {
+    streakEl.textContent = "—";
+  } else {
+    var last = history[history.length - 1];
+    var run = 0;
+    for (var i = history.length - 1; i >= 0 && history[i] === last; i--) { run++; }
+    streakEl.textContent = (last === "H" ? "Heads" : "Tails") + " × " + run;
+  }
+  var recent = history.slice(-24);
+  document.getElementById("cf-history").textContent = recent.length
+    ? "Recent flips (oldest to newest): " + recent.join(" ")
+    : "";
+  cfReset.disabled = history.length === 0;
+}
+
+cfFlip.addEventListener("click", function () {
+  if (flipping) { return; }
+  flipping = true;
+  cfFlip.disabled = true;
+  cfStatus.textContent = "";
+  var outcome = flipOutcome();
+  // Spin at least five full turns and land on the face that matches.
+  var base = Math.ceil((rotation + 1) / 360) * 360 + 1800;
+  var target = base + (outcome === "T" ? 180 : 0);
+  rotation = target;
+  cfCoin.style.transform = "rotateY(" + target + "deg)";
+  window.setTimeout(function () {
+    history.push(outcome);
+    cfResult.textContent = outcome === "H" ? "Heads!" : "Tails!";
+    renderScore();
+    flipping = false;
+    cfFlip.disabled = false;
+  }, 1250);
+});
+
+cfReset.addEventListener("click", function () {
+  history = [];
+  cfResult.textContent = "Press Flip to toss the coin.";
+  cfStatus.textContent = "Tally cleared.";
+  renderScore();
+});
+
+renderScore();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="coin-flip"></script>
+</body>
+</html>
