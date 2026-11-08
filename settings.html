@@ -239,16 +239,49 @@
       </form>
     </div>
 
+    <!-- Backup prompt: shown after a successful enrolment (item 36).
+         Honest by design: there are no recovery codes to offer, so
+         the prompt recommends a second authenticator or the app's
+         own backup instead — it never invents a code. -->
+    <div id="mfaBackup" hidden style="margin-top:18px">
+      <div class="note">
+        <strong>One more step worth taking: a backup way in.</strong>
+        <p style="margin-top:8px">Two-factor authentication on this website has <strong>no recovery codes</strong>. If you lose the phone or app that shows your codes, the codes cannot be recreated — you would need to contact us and verify your identity to get back into your account.</p>
+        <p style="margin-top:8px">Two ways to protect yourself:</p>
+        <ul class="clean" style="margin-top:6px">
+          <li><strong>Add a second authenticator</strong> to your account now — the same account, enrolled in a second app or on a second device.</li>
+          <li><strong>Keep your authenticator backed up</strong> — if your app offers backup or sync, turn it on, so your codes survive a lost or replaced phone.</li>
+        </ul>
+        <p style="margin-top:12px"><button class="btn ghost" type="button" id="mfaBackupAdd">Add a second authenticator</button></p>
+      </div>
+    </div>
+
     <div class="auth-msg error" id="mfaError" role="alert" hidden style="margin-top:16px"></div>
     <div class="auth-msg success" id="mfaMsg" hidden style="margin-top:16px"></div>
     <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:16px">If you lose access to your authenticator app, contact us through the <a href="contact.html">contact page</a> and we will help you regain access after verifying your identity.</p>
     <p class="hint" style="color:var(--muted);font-size:.85rem;margin-top:8px;overflow-wrap:break-word">Tip: after turning this on, add the same account to a second authenticator app as a backup, so a lost phone does not lock you out.</p>
   </div>
 
-  <!-- Danger zone -->
+  <!-- Danger zone: self-service account deletion (item 37) -->
   <div class="card danger-zone" style="margin-bottom:22px">
     <h3 style="margin-bottom:6px">Delete my account</h3>
-    <p style="color:var(--muted)">Accounts are deleted on request, by a person, so nothing is removed by accident. To delete your account and its stored details, contact us through the <a href="contact.html">contact page</a> from your account email, and we will delete it for you.</p>
+    <p style="color:var(--muted);margin-bottom:14px">Deleting your account is <strong>permanent and cannot be undone</strong>. Your sign-in, profile, points, activity record, two-factor settings and saved preferences are removed, and every device is signed out. Books and products you bought are kept by our store provider under your email address, so deleting this website account does not affect your purchases.</p>
+    <form id="delForm" novalidate style="max-width:460px">
+      <div class="auth-field">
+        <label for="delPassword">Your password</label>
+        <input type="password" id="delPassword" autocomplete="current-password" placeholder="Your current password">
+        <p class="hint">For your safety, deletion only goes ahead right after your password has been confirmed.</p>
+      </div>
+      <div class="auth-field">
+        <label for="delConfirm" style="display:flex;gap:10px;align-items:center;font-weight:400">
+          <input type="checkbox" id="delConfirm" style="width:auto">
+          I understand this is permanent and my account cannot be recovered.
+        </label>
+      </div>
+      <div class="auth-msg error" id="delError" role="alert" hidden></div>
+      <button class="btn danger auth-submit acct-btn" type="submit" id="delSubmit">Delete my account permanently</button>
+    </form>
+    <p class="hint" style="margin-top:14px">If anything goes wrong, or you would rather a person handled it, contact us through the <a href="contact.html">contact page</a> from your account email and we will delete it for you.</p>
   </div>
 
 </div>
@@ -543,6 +576,15 @@
 
   $("mfaStart").addEventListener("click", startMfaEnroll);
 
+  /* Backup prompt's action: enrol one more authenticator on the
+     same account, reusing the standard setup flow above. */
+  $("mfaBackupAdd").addEventListener("click", function () {
+    mfaShowError(""); mfaShowMsg("");
+    $("mfaBackup").hidden = true;
+    $("mfaOff").hidden = false;
+    startMfaEnroll();
+  });
+
   $("mfaVerifyForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     mfaShowError(""); mfaShowMsg("");
@@ -558,6 +600,7 @@
       $("mfaSetup").hidden = true;
       mfaPendingFactorId = null;
       mfaShowMsg("Two-factor authentication is on. From now on, signing in will also ask for a code from your authenticator app.");
+      $("mfaBackup").hidden = false;
       loadMfa();
     }, function (err) {
       btn.disabled = false;
@@ -621,6 +664,36 @@
       if (window.CSAuth && window.CSAuth.openSessionsModal) {
         window.CSAuth.openSessionsModal();
       }
+    });
+  }
+
+  /* ---------------- delete my account (item 37) ----------------
+     CSAuth.deleteAccount re-checks the password (a fresh sign-in)
+     and calls the delete-account Edge Function; on success this
+     browser is signed out and lands on the home page, which shows
+     the deletion confirmation. */
+  var delForm = $("delForm");
+  if (delForm) {
+    delForm.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      show($("delError"), "");
+      var pw = $("delPassword").value;
+      if (!pw) { show($("delError"), "Please enter your password."); return; }
+      if (!$("delConfirm").checked) {
+        show($("delError"), "Please tick the confirmation box, so we know the deletion is deliberate.");
+        return;
+      }
+      var btn = $("delSubmit");
+      btn.disabled = true;
+      btn.textContent = "Deleting…";
+      window.CSAuth.deleteAccount(pw).then(function () {
+        window.location.href = "index.html?deleted=1";
+      }, function (err) {
+        btn.disabled = false;
+        btn.textContent = "Delete my account permanently";
+        $("delPassword").value = "";
+        show($("delError"), (err && err.message) || "Your account could not be deleted. Please try again.");
+      });
     });
   }
 
