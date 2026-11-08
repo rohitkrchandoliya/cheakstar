@@ -118,6 +118,12 @@
    Settings, never in a Google dropdown. Failure-isolated: if the
    widget cannot be reached, the page simply stays in English. */
 (function () {
+  // Shared boot guard: this same runtime also ships in script.js
+  // and in the tools pages' tools.js, and some pages load two of
+  // those files. The first copy to run claims the slot; the others
+  // step aside, so the translate element is never injected twice.
+  if (window.__csLangBoot) return;
+  window.__csLangBoot = true;
   var LANGS = ["en", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "pa", "es", "fr", "de", "ar", "zh-CN", "ja"];
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
