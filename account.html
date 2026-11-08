@@ -30,7 +30,7 @@
   } catch (e) {}
 })();
 </script>
-<link rel="stylesheet" href="styles.css?v=20261107b">
+<link rel="stylesheet" href="styles.css?v=20261108b">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 </head><body>
 <header class="site"><div class="wrap nav">
@@ -62,7 +62,7 @@
   <div class="card" style="margin-bottom:22px">
     <h3 style="margin-bottom:14px">Profile</h3>
     <div class="acct-head">
-      <div class="acct-avatar-wrap"><div class="acct-avatar" id="acctAvatar">C</div><span class="cs-acct-crown" id="acctCrown" hidden></span></div>
+      <div class="acct-avatar-wrap"><div class="acct-avatar" id="acctAvatar">C</div><div class="acct-level" id="acctLevel"></div></div>
       <div class="acct-who">
         <h3 id="acctName" style="margin-bottom:2px">Your account</h3>
         <p id="acctSince" style="color:var(--muted);font-size:.9rem"></p>
@@ -197,9 +197,9 @@
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
-<script src="script.js?v=20261107b"></script>
+<script src="script.js?v=20261108b"></script>
 <script src="auth.js?v=20261106e"></script>
-<script src="rewards.js?v=20261107b"></script>
+<script src="rewards.js?v=20261108b"></script>
 <script>
 (function () {
   "use strict";
@@ -224,19 +224,22 @@
     var rankEl = $("ptsRank");
     rankEl.textContent = "";
     rankEl.appendChild(badge);
-    // A top-3 leaderboard position earns a crown over the profile
-    // photo (gold, silver, bronze) with a matching ring.
-    var CROWNS = { 1: ["#d4af37", "ring-gold"], 2: ["#c0c0c8", "ring-silver"], 3: ["#cd7f32", "ring-bronze"] };
-    var crownEl = $("acctCrown"), avatarEl = $("acctAvatar");
-    avatarEl.classList.remove("ring-gold", "ring-silver", "ring-bronze");
-    if (snap.position && CROWNS[snap.position]) {
-      crownEl.innerHTML = window.CSRewards.crownSvg(CROWNS[snap.position][0], 30);
-      crownEl.hidden = false;
-      avatarEl.classList.add(CROWNS[snap.position][1]);
-    } else {
-      crownEl.hidden = true;
-      crownEl.innerHTML = "";
+    // The level name always sits just under the profile photo. A
+    // top-3 leaderboard position also swaps the round photo for the
+    // crown-shaped frame (gold, silver, bronze) — paintAvatar applies
+    // it whenever the photo is (re)painted.
+    var lvlEl = $("acctLevel");
+    if (lvlEl) {
+      lvlEl.textContent = "";
+      if (snap.rank) {
+        lvlEl.style.color = window.CSRewards.levelByName(snap.rank).color;
+        lvlEl.innerHTML = window.CSRewards.iconSvg(snap.rank, 14);
+        lvlEl.appendChild(document.createTextNode(snap.rank));
+      }
     }
+    crownPos = (snap.position && snap.position <= 5) ? snap.position : 0;
+    var u1 = window.CSAuth && window.CSAuth.getUser ? window.CSAuth.getUser() : null;
+    if (u1) paintAvatar($("acctAvatar"), u1);
     $("ptsPos").textContent = snap.position ? ("#" + snap.position) : "—";
     $("ptsToday").textContent = (snap.pointsToday != null ? snap.pointsToday : 0) + " of 240 points";
     var nx = window.CSRewards.nextRank(snap.points);
@@ -311,10 +314,17 @@
   }
 
   /* ---------------- profile ---------------- */
+  var crownPos = 0; // top-5 leaderboard position, set by the rewards handler
   function validAvatar(v) { return typeof v === "string" && v.indexOf("data:image/") === 0; }
   function paintAvatar(el, user) {
     var meta = (user && user.user_metadata) || {};
     var name = meta.display_name || (user && user.email) || "Your account";
+    if (el.id === "acctAvatar" && crownPos >= 1 && crownPos <= 5 && window.CSRewards && window.CSRewards.rankFrame) {
+      el.classList.add("framed");
+      el.innerHTML = window.CSRewards.rankFrame(validAvatar(meta.avatar) ? meta.avatar : null, name.charAt(0).toUpperCase() || "A", crownPos, 78);
+      return;
+    }
+    el.classList.remove("framed");
     if (validAvatar(meta.avatar)) {
       el.innerHTML = "";
       var img = document.createElement("img");
