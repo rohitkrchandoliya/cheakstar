@@ -1,0 +1,19 @@
+/* TEAM */
+Founder & Managing Director: Rohit Kumar Chandoliya
+Location: Jaipur, Rajasthan, India
+
+/* COMPANY */
+Company: Cheakstar Private Limited
+CIN: U85500RJ2023PTC090736
+GSTIN: 08AALCC3997L1ZU
+Incorporated: 2023
+
+/* SITE */
+Standards: HTML5, CSS, JavaScript (no frameworks)
+Hosting: GitHub Pages
+Accounts & sign-in: Supabase
+Last update: 2026/11/08
+
+/* THANKS */
+To every reader, learner and customer who visits — thank you.
+Learn and practise only where you have permission.
