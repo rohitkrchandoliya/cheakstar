@@ -147,9 +147,10 @@ body.cs-rail .cs-group-head{justify-content:center;padding:12px 0 4px}
 body.cs-rail .cs-group-head .cs-group-name,body.cs-rail .cs-chev{display:none}
 body.cs-rail .cs-group-head::after{content:"";display:block;width:22px;border-top:1px solid var(--line)}
 body.cs-rail .cs-nav{padding:2px 8px 12px}
-body.cs-rail .cs-nav a{justify-content:center;padding:10px 0;background-image:none}
+body.cs-rail .cs-nav a{justify-content:center;padding:10px 0;background-image:none;min-height:44px;box-sizing:border-box}
 body.cs-rail .cs-nav a .cs-label{display:none}
-body.cs-rail .cs-subgroup-head{justify-content:center;padding:10px 0}
+body.cs-rail .cs-subgroup-head{justify-content:center;padding:10px 0;min-height:44px;box-sizing:border-box}
+body.cs-rail .cs-rail-toggle{min-height:44px}
 body.cs-rail .cs-subgroup-head .cs-label,body.cs-rail .cs-subgroup-head .cs-chev{display:none}
 body.cs-rail .cs-subgroup-head>svg:first-child{stroke:var(--gold)}
 body.cs-rail .cs-subgroup-body{display:none}
@@ -261,9 +262,11 @@ button.btn.ghost{cursor:pointer;font-family:inherit;font-size:1rem}
 @media (min-width:769px){
 body.cs-rail .cs-account{padding:6px 8px 10px}
 body.cs-rail .cs-acc-head{display:none}
-body.cs-rail .cs-acc-who{justify-content:center;padding:4px 0 8px}
+body.cs-rail .cs-acc-who{justify-content:center;padding:6px 0 10px}
 body.cs-rail .cs-acc-meta{display:none}
-body.cs-rail .cs-acc-body a,body.cs-rail .cs-acc-out{justify-content:center;padding:10px 0}
+/* Collapsed rail hit areas (fixed 2026-11-08): see styles.css — every
+   rail control gets a full-size, clearly separated target. */
+body.cs-rail .cs-acc-body a,body.cs-rail .cs-acc-out{justify-content:center;align-items:center;min-height:44px;min-width:44px;padding:10px 6px;margin:3px 0;box-sizing:border-box}
 body.cs-rail .cs-acc-body a .cs-label,body.cs-rail .cs-acc-out .cs-label{display:none}
 }
 @media (max-width:480px){
@@ -344,7 +347,6 @@ body:not(.cs-rail) .cs-group-head{padding:15px 8px 12px}
 /* Sidebar search field matches the auth fields: 46px tall, 16px font
    (was 39px / 14.4px, which also made iOS Safari zoom on focus). */
 .cs-filter input{padding:10px 12px;font-size:1rem}
-
 /* Prose rhythm for article, policy and snapshot content (their bare
    paragraphs and headings previously had 0px gaps — a wall of text). */
 .prose>p{margin-bottom:18px}
@@ -431,7 +433,7 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .cs-pc-initials{width:42px;height:42px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:1.05rem;display:flex;align-items:center;justify-content:center}
 .cs-pc-initials svg{width:22px;height:22px}
 .cs-pc-guestico{background:var(--navy3);color:var(--gold)}
-.cs-pc-name{font-weight:700;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-pc-name{font-weight:700;color:var(--ink);min-width:0;line-height:1.3;overflow-wrap:anywhere}
 .cs-pc-close{margin-left:auto;flex:none;background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px 7px;border-radius:8px;font-family:inherit}
 .cs-pc-close:hover{color:var(--ink);background:rgba(127,127,127,.14)}
 .cs-pc-badgerow{margin-bottom:8px;min-height:24px}
@@ -450,8 +452,24 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .cs-pc-pill{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:90;display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--card);border:1px solid var(--gold);color:var(--gold);font-weight:700;font-size:.92rem;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.3)}
 .cs-pc-pill svg{width:18px;height:18px;flex:none}
 .cs-pc-pill:hover{background:var(--navy3)}
+/* Points card sizing (fixed 2026-11-08): see styles.css — the card
+   steps down as the viewport narrows, is height-capped on small
+   screens, starts collapsed there, and the wide-screen footer keeps
+   a card-width of clear space at its right end. */
+@media (min-width:1025px){
+.foot{padding-right:300px}
+}
+@media (max-width:1100px){
+.cs-pc-card{width:248px;padding:12px 14px}
+}
+@media (max-width:900px){
+.cs-pc-card{width:236px}
+.cs-pc-points{font-size:1.45rem}
+.cs-pc-note{display:none}
+}
 @media (max-width:480px){
-.cs-pc-card{left:16px;width:auto}
+.cs-pc-card{left:12px;right:12px;width:auto;max-height:52vh;overflow-y:auto}
+.cs-pc-pill{right:12px}
 }
 /* Back-to-top stacks above the points pill; while the card is open the
    card covers it (the card has its own close button). */
@@ -475,3 +493,11 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .btn-google svg{flex:none}
 .auth-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:16px 0 2px}
 .auth-or::before,.auth-or::after{content:"";flex:1;border-top:1px solid var(--line)}
+
+/* --- Google Translate (display language wiring, 2026-11-08): see
+   styles.css — the widget banner and gadget stay hidden; the saved
+   Settings language is applied by tools.js on tool pages. --- */
+.goog-te-banner-frame.skiptranslate{display:none!important}
+body{top:0!important}
+#google_translate_element{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.goog-te-gadget{font-size:0!important;color:transparent!important}
