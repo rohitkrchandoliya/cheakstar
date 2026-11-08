@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>RD Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">RD Calculator</h1>
+<p class="tool-sub">Estimate the maturity value of a monthly recurring deposit.</p>
+<div class="tool-card">
+  <p>A recurring deposit builds a lump sum from a fixed monthly payment. Banks and post offices compound the interest every quarter — enter your monthly amount, the rate and the tenure to estimate the maturity value.</p>
+
+  <label for="rd-monthly">Monthly deposit (₹)</label>
+  <input id="rd-monthly" type="number" min="0" step="any" value="5000">
+  <div class="row2">
+    <div>
+      <label for="rd-rate">Interest rate (% per year)</label>
+      <input id="rd-rate" type="number" min="0" step="any" value="7">
+    </div>
+    <div>
+      <label for="rd-years">Tenure (years)</label>
+      <input id="rd-years" type="number" min="0" step="1" value="5">
+    </div>
+  </div>
+  <label for="rd-months">Tenure (extra months)</label>
+  <input id="rd-months" type="number" min="0" max="11" step="1" value="0">
+  <div class="btn-row">
+    <button id="rd-run" class="btn" type="button" data-autorun>Calculate maturity value</button>
+  </div>
+  <p id="rd-status" class="status" role="status"></p>
+  <div class="result" id="rd-result" hidden data-result>
+    <p class="big" id="rd-maturity"></p>
+    <div id="rd-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> this uses the standard bank formula, which assumes every monthly deposit is paid on time and the rate stays the same for the whole tenure. A missed or late instalment usually attracts a small penalty, and interest is taxable. The figure is an estimate, not a promise from any bank.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var rdStatus = document.getElementById("rd-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function rdMaturity(monthly, annualRate, totalMonths) {
+  if (annualRate === 0) { return monthly * totalMonths; }
+  var i = annualRate / 400;           // quarterly rate as a fraction
+  var n = totalMonths / 3;            // number of quarters
+  return monthly * (Math.pow(1 + i, n) - 1) / (1 - Math.pow(1 + i, -1 / 3));
+}
+
+document.getElementById("rd-run").addEventListener("click", function () {
+  var P = parseFloat(document.getElementById("rd-monthly").value);
+  var rate = parseFloat(document.getElementById("rd-rate").value);
+  var years = parseFloat(document.getElementById("rd-years").value) || 0;
+  var months = parseFloat(document.getElementById("rd-months").value) || 0;
+  var rows = document.getElementById("rd-rows");
+  rows.innerHTML = "";
+  document.getElementById("rd-result").hidden = true;
+  var totalMonths = years * 12 + months;
+  if (!(P > 0) || isNaN(rate) || rate < 0 || !(totalMonths > 0)) {
+    rdStatus.className = "status error";
+    rdStatus.textContent = "Enter a monthly deposit above zero, a rate of 0 or more, and a tenure of at least one month.";
+    return;
+  }
+  var maturity = rdMaturity(P, rate, totalMonths);
+  var deposited = P * totalMonths;
+  document.getElementById("rd-maturity").textContent = "Maturity value: " + inr(maturity);
+  addRow(rows, "You deposit", inr(deposited) + " (" + inr(P) + " x " + totalMonths + " months)");
+  addRow(rows, "Interest earned", inr(maturity - deposited));
+  addRow(rows, "Total value", inr(maturity));
+  document.getElementById("rd-result").hidden = false;
+  rdStatus.className = "status ok";
+  rdStatus.textContent = "Calculation complete, using the standard quarterly-compounding RD formula.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="rd-calculator"></script>
+</body>
+</html>
