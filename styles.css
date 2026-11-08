@@ -488,3 +488,12 @@ select option{color:var(--ink);background-color:var(--navy2)}
 [data-theme="light"] .verified-badge.warn{color:#8a6410;border-color:rgba(138,100,16,.55);background:rgba(216,164,64,.16)}
 [data-theme="light"] .acct-warn{color:#7a5b12}
 [data-theme="light"] .tier,[data-theme="light"] .cs-pc-badge,[data-theme="light"] .cs-lvl-badge,[data-theme="light"] .acct-level{filter:brightness(.5) saturate(1.4)}
+
+/* --- Google sign-in button (2026-11-08): white in both themes, per
+   Google branding; the multicolour G is an inline SVG in the markup. --- */
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff;color:#1f2a3d;border:1.5px solid rgba(21,37,64,.28);font-weight:600;cursor:pointer;font-family:inherit}
+.btn-google:hover{background:#eef2f8;text-decoration:none}
+.btn-google:disabled{opacity:.6;cursor:wait}
+.btn-google svg{flex:none}
+.auth-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:16px 0 2px}
+.auth-or::before,.auth-or::after{content:"";flex:1;border-top:1px solid var(--line)}
