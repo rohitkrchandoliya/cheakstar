@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Tip Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Tip Calculator</h1>
+<p class="tool-sub">Work out the tip and split the bill fairly between friends.</p>
+<div class="tool-card">
+  <p>Enter the bill, choose a tip percentage, and say how many people are sharing. You get the tip, the total, and exactly what each person pays — handy after a group dinner or a team lunch.</p>
+
+  <div class="row2">
+    <div>
+      <label for="tip-currency">Currency</label>
+      <select id="tip-currency">
+        <option value="₹" selected>₹ Rupee</option>
+        <option value="$">$ Dollar</option>
+        <option value="€">€ Euro</option>
+        <option value="£">£ Pound</option>
+      </select>
+    </div>
+    <div>
+      <label for="tip-bill">Bill amount</label>
+      <input id="tip-bill" type="number" min="0" step="any" value="1000">
+    </div>
+    <div>
+      <label for="tip-pct">Tip percentage (%)</label>
+      <input id="tip-pct" type="number" min="0" max="100" step="any" value="10">
+    </div>
+    <div>
+      <label for="tip-people">Number of people</label>
+      <input id="tip-people" type="number" min="1" max="100" step="1" value="4">
+    </div>
+  </div>
+  <p style="margin:10px 0 2px">Quick tip:
+    <button class="btn ghost tip-preset" type="button" data-pct="5">5%</button>
+    <button class="btn ghost tip-preset" type="button" data-pct="10">10%</button>
+    <button class="btn ghost tip-preset" type="button" data-pct="15">15%</button>
+    <button class="btn ghost tip-preset" type="button" data-pct="20">20%</button>
+  </p>
+  <div class="btn-row">
+    <button id="tip-run" class="btn" type="button" data-autorun>Calculate</button>
+  </div>
+  <p id="tip-status" class="status" role="status"></p>
+  <div class="result" id="tip-result" hidden data-result>
+    <p class="big" id="tip-headline"></p>
+    <div id="tip-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> tipping customs differ by place and by type of service, and in some restaurants a service charge is already added to the bill — if it is, an extra tip is optional. This calculator simply does the arithmetic on the numbers you give it; the amounts are worked out on this device only.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var tipStatus = document.getElementById("tip-status");
+
+function money(symbol, value) {
+  return symbol + value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function calculate() {
+  var symbol = document.getElementById("tip-currency").value;
+  var bill = Number(document.getElementById("tip-bill").value);
+  var pct = Number(document.getElementById("tip-pct").value);
+  var people = Math.floor(Number(document.getElementById("tip-people").value));
+  var rows = document.getElementById("tip-rows");
+  rows.innerHTML = "";
+  document.getElementById("tip-result").hidden = true;
+  tipStatus.className = "status error";
+  if (isNaN(bill) || bill < 0) {
+    tipStatus.textContent = "Enter the bill amount (zero or more).";
+    return;
+  }
+  if (isNaN(pct) || pct < 0 || pct > 100) {
+    tipStatus.textContent = "Tip percentage must be between 0 and 100.";
+    return;
+  }
+  if (isNaN(people) || people < 1 || people > 100) {
+    tipStatus.textContent = "Number of people must be between 1 and 100.";
+    return;
+  }
+  var tip = bill * pct / 100;
+  var total = bill + tip;
+  document.getElementById("tip-headline").textContent = "Each person pays " + money(symbol, total / people);
+  addRow(rows, "Bill", money(symbol, bill));
+  addRow(rows, "Tip (" + pct + "%)", money(symbol, tip));
+  addRow(rows, "Total to pay", money(symbol, total));
+  addRow(rows, "Bill per person", money(symbol, bill / people));
+  addRow(rows, "Tip per person", money(symbol, tip / people));
+  addRow(rows, "Total per person", money(symbol, total / people));
+  document.getElementById("tip-result").hidden = false;
+  tipStatus.className = "status";
+  tipStatus.textContent = people === 1 ? "No split — one person is paying." : "Split between " + people + " people.";
+}
+
+document.getElementById("tip-run").addEventListener("click", calculate);
+document.querySelectorAll(".tip-preset").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.getElementById("tip-pct").value = btn.getAttribute("data-pct");
+    calculate();
+  });
+});
+["tip-currency", "tip-bill", "tip-pct", "tip-people"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", calculate);
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="tip-calculator"></script>
+</body>
+</html>
