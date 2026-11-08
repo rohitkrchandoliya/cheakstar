@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>BMR &amp; Calorie Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">BMR &amp; Calorie Calculator</h1>
+<p class="tool-sub">Work out your daily calorie needs from your body and activity level.</p>
+<div class="tool-card">
+  <p>Your BMR (Basal Metabolic Rate) is the energy your body burns at complete rest. Multiply it by your activity level and you get your TDEE — the calories you burn in a normal day. This calculator uses the Mifflin-St Jeor formula, the one most dietitians start from.</p>
+
+  <div class="row2">
+    <div>
+      <label for="bmr-sex">Sex</label>
+      <select id="bmr-sex">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+    <div>
+      <label for="bmr-age">Age (years)</label>
+      <input id="bmr-age" type="number" min="0" step="1" value="30">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="bmr-weight">Weight (kg)</label>
+      <input id="bmr-weight" type="number" min="0" step="any" value="70">
+    </div>
+    <div>
+      <label for="bmr-height">Height (cm)</label>
+      <input id="bmr-height" type="number" min="0" step="any" value="170">
+    </div>
+  </div>
+  <label for="bmr-activity">Activity level</label>
+  <select id="bmr-activity">
+    <option value="1.2">Sedentary — desk job, little or no exercise</option>
+    <option value="1.375">Light — exercise 1 to 3 days a week</option>
+    <option value="1.55" selected>Moderate — exercise 3 to 5 days a week</option>
+    <option value="1.725">Active — hard exercise 6 to 7 days a week</option>
+    <option value="1.9">Very active — physical job or training twice a day</option>
+  </select>
+  <div class="btn-row">
+    <button id="bmr-run" class="btn" type="button" data-autorun>Calculate calories</button>
+  </div>
+  <p id="bmr-status" class="status" role="status"></p>
+  <div class="result" id="bmr-result" hidden data-result>
+    <p class="big" id="bmr-value"></p>
+    <div id="bmr-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> BMR formulas are population estimates — two people with the same age, weight and height can differ by 10% or more. The "lose" and "gain" targets use the common 500 kcal rule of thumb; steady, moderate changes are safer than extreme diets, and very low calorie intakes should only be followed with medical supervision.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var bmrStatus = document.getElementById("bmr-status");
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+function kcal(n) {
+  return Math.round(n).toLocaleString("en-IN") + " kcal/day";
+}
+
+document.getElementById("bmr-run").addEventListener("click", function () {
+  var sex = document.getElementById("bmr-sex").value;
+  var age = parseFloat(document.getElementById("bmr-age").value);
+  var weight = parseFloat(document.getElementById("bmr-weight").value);
+  var height = parseFloat(document.getElementById("bmr-height").value);
+  var activity = parseFloat(document.getElementById("bmr-activity").value);
+  var rows = document.getElementById("bmr-rows");
+  rows.innerHTML = "";
+  document.getElementById("bmr-result").hidden = true;
+  if (!(age >= 10 && age <= 100) || !(weight >= 25 && weight <= 400) || !(height >= 100 && height <= 250)) {
+    bmrStatus.className = "status error";
+    bmrStatus.textContent = "Enter an age between 10 and 100, a weight between 25 and 400 kg, and a height between 100 and 250 cm.";
+    return;
+  }
+  var bmr = 10 * weight + 6.25 * height - 5 * age + (sex === "male" ? 5 : -161);
+  var tdee = bmr * activity;
+  document.getElementById("bmr-value").textContent = "Your BMR: " + kcal(bmr);
+  addRow(rows, "TDEE (calories you burn in a normal day)", kcal(tdee));
+  addRow(rows, "To maintain your weight", kcal(tdee));
+  addRow(rows, "To lose weight (about 0.5 kg a week)", kcal(tdee - 500));
+  addRow(rows, "To gain weight (about 0.5 kg a week)", kcal(tdee + 500));
+  document.getElementById("bmr-result").hidden = false;
+  bmrStatus.className = "status ok";
+  bmrStatus.textContent = "Calculation complete, using the Mifflin-St Jeor formula.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="bmr-calculator"></script>
+</body>
+</html>
