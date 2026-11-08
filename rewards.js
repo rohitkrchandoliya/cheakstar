@@ -116,6 +116,66 @@
       '<rect x="3.4" y="19.6" width="17.2" height="1.8" rx="0.9"/></svg>';
   }
 
+  /* Winner badge frame for the top five: the profile photo sits in
+     a ringed circle, a crown rests on top of the circle carrying the
+     position (1st, 2nd, 3rd, 4th, 5th), and short rays shine around
+     the circle. Colours: gold for #1, silver for #2, bronze for #3,
+     violet for #4 and teal for #5. With no photo the circle carries
+     the member's initial; an empty (masked) slot passes "?" and gets
+     a plain silhouette. Used by the leaderboard, the floating points
+     card, the sidebar account block and the account page, so a top-5
+     member looks the same everywhere. */
+  var FRAME_STYLES = {
+    1: { hi: "#f7e08a", mid: "#d4af37", lo: "#9a7b1e", ink: "#0a1628" },
+    2: { hi: "#f4f5f7", mid: "#c0c0c8", lo: "#83838e", ink: "#0a1628" },
+    3: { hi: "#f0b27a", mid: "#cd7f32", lo: "#8a521f", ink: "#0a1628" },
+    4: { hi: "#ddd0ff", mid: "#8b5cf6", lo: "#5b21b6", ink: "#ffffff" },
+    5: { hi: "#a7f3ea", mid: "#14b8a6", lo: "#0f766e", ink: "#04241d" }
+  };
+  var FRAME_ORDINALS = { 1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th" };
+  var FRAME_CROWN = "M28 40 L23 12 L43 25 L60 8 L77 25 L97 12 L92 40 Q60 47 28 40 Z";
+  var frameUid = 0;
+  function rankFrame(avatar, initial, position, size) {
+    var m = FRAME_STYLES[position];
+    if (!m) return "";
+    size = size || 96;
+    frameUid += 1;
+    var gid = "csFg" + frameUid, cid = "csFc" + frameUid, sid = "csFs" + frameUid;
+    var ini = String(initial == null ? "M" : initial).replace(/[<>&"']/g, "").charAt(0).toUpperCase() || "M";
+    var rays = "";
+    [0, 30, 60, 90, 120, 150, 180, 210, 240, 300, 330].forEach(function (deg) {
+      var a = deg * Math.PI / 180;
+      rays += '<line x1="' + (60 + 53 * Math.cos(a)).toFixed(1) + '" y1="' + (76 + 53 * Math.sin(a)).toFixed(1) +
+        '" x2="' + (60 + 61.5 * Math.cos(a)).toFixed(1) + '" y2="' + (76 + 61.5 * Math.sin(a)).toFixed(1) + '"/>';
+    });
+    var s = '<svg class="cs-rank-frame" viewBox="0 0 120 134" width="' + size + '" height="' + Math.round(size * 134 / 120) +
+      '" style="max-width:100%;height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))" role="img" aria-label="Rank ' + position + ' frame">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="' + m.hi + '"/><stop offset=".55" stop-color="' + m.mid + '"/><stop offset="1" stop-color="' + m.lo + '"/>' +
+      '</linearGradient><linearGradient id="' + sid + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="#cdd9ff"/><stop offset="1" stop-color="#7e97dd"/></linearGradient>' +
+      '<clipPath id="' + cid + '"><circle cx="60" cy="76" r="42.5"/></clipPath></defs>' +
+      '<g stroke="' + m.mid + '" stroke-width="5" stroke-linecap="round" opacity=".5">' + rays + "</g>";
+    if (avatar) {
+      s += '<circle cx="60" cy="76" r="46" fill="#0e2140" stroke="url(#' + gid + ')" stroke-width="6"/>' +
+        '<image href="' + avatar + '" x="17.5" y="33.5" width="85" height="85" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + cid + ')"/>';
+    } else if (ini === "?") {
+      s += '<circle cx="60" cy="76" r="46" fill="url(#' + sid + ')" stroke="url(#' + gid + ')" stroke-width="6"/>' +
+        '<g clip-path="url(#' + cid + ')"><circle cx="60" cy="67" r="13" fill="#2b3a6b"/>' +
+        '<path d="M34 118 Q34 89 60 89 Q86 89 86 118 Z" fill="#2b3a6b"/></g>';
+    } else {
+      s += '<circle cx="60" cy="76" r="46" fill="url(#' + gid + ')" stroke="' + m.lo + '" stroke-width="2"/>' +
+        '<text x="60" y="89" text-anchor="middle" font-size="34" font-weight="700" fill="#0a1628" font-family="inherit">' + ini + "</text>";
+    }
+    s += '<path d="' + FRAME_CROWN + '" fill="url(#' + gid + ')" stroke="' + m.lo + '" stroke-width="1.6" stroke-linejoin="round"/>' +
+      '<circle cx="23" cy="9" r="3" fill="' + m.hi + '" stroke="' + m.lo + '"/>' +
+      '<circle cx="60" cy="5" r="3.4" fill="' + m.hi + '" stroke="' + m.lo + '"/>' +
+      '<circle cx="97" cy="9" r="3" fill="' + m.hi + '" stroke="' + m.lo + '"/>' +
+      '<text x="60" y="37" text-anchor="middle" font-size="14" font-weight="800" fill="' + m.ink + '" font-family="inherit">' +
+      FRAME_ORDINALS[position] + "</text></svg>";
+    return s;
+  }
+
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
   function lsDel(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
@@ -452,7 +512,9 @@
     try {
       var name = snap.signedIn ? (snap.name || "Member") : "Guest";
       var ava = pcCard.querySelector("#csPcAvatar");
-      if (snap.signedIn && snap.avatar) {
+      if (snap.signedIn && snap.position && FRAME_STYLES[snap.position]) {
+        ava.innerHTML = rankFrame(snap.avatar, (name.charAt(0) || "M").toUpperCase(), snap.position, 48);
+      } else if (snap.signedIn && snap.avatar) {
         ava.innerHTML = '<img class="cs-pc-avatar" src="' + snap.avatar + '" alt="">';
       } else if (snap.signedIn) {
         ava.innerHTML = '<span class="cs-pc-initials" aria-hidden="true">' + pcEsc((name.charAt(0) || "M").toUpperCase()) + "</span>";
@@ -531,6 +593,7 @@
     levelByName: levelByName,
     iconSvg: iconSvg,
     crownSvg: crownSvg,
+    rankFrame: rankFrame,
     snapshot: snapshot,
     onUpdate: function (cb) {
       if (typeof cb === "function") { listeners.push(cb); cb(snapshot()); }
