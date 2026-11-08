@@ -294,7 +294,11 @@
     signOut: function () {
       var done = function () { currentUser = null; notify("SIGNED_OUT"); };
       if (!client) { done(); return Promise.resolve(); }
-      return client.auth.signOut().then(done, done);
+      // scope "local" ends the session on THIS device only. The
+      // supabase-js default is "global", which used to sign the member
+      // out on every device at once (fixed 2026-11-08). Signing out
+      // everywhere stays available on purpose via signOutAll().
+      return client.auth.signOut({ scope: "local" }).then(done, done);
     },
 
     sendPasswordReset: function (email) {
