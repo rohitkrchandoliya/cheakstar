@@ -642,8 +642,41 @@ document.addEventListener("DOMContentLoaded", function () {
       if (out) out.addEventListener("click", function () {
         if (window.CSAuth) window.CSAuth.signOut().then(function () { window.location.reload(); });
       });
+      decorateFrame();
     }
     render(null); // instant signed-out state; updated when CSAuth resolves
+
+    // Top-5 winner frame in the sidebar: once the rewards module has
+    // loaded (it is lazy-loaded site-wide below), watch the member's
+    // snapshot; a top-5 position swaps the round avatar for the
+    // badge frame in that position's colour.
+    var lastSnap = null, rewardsHooked = false;
+    function decorateFrame() {
+      try {
+        if (!lastSnap || !lastSnap.signedIn || !lastSnap.position || lastSnap.position > 5) return;
+        if (!window.CSRewards || !window.CSRewards.rankFrame) return;
+        var who = bodyEl.querySelector(".cs-acc-who");
+        if (!who || who.querySelector(".cs-rank-frame")) return;
+        var old = who.querySelector(".cs-avatar");
+        if (!old) return;
+        var initial = (lastSnap.name || "A").charAt(0).toUpperCase() || "A";
+        var holder = document.createElement("span");
+        holder.innerHTML = window.CSRewards.rankFrame(lastSnap.avatar, initial, lastSnap.position, 40);
+        if (holder.firstChild) old.replaceWith(holder.firstChild);
+      } catch (e) {}
+    }
+    function hookRewards() {
+      if (rewardsHooked || !window.CSRewards || !window.CSRewards.onUpdate) return rewardsHooked;
+      rewardsHooked = true;
+      try {
+        window.CSRewards.onUpdate(function (snap) { lastSnap = snap; decorateFrame(); });
+      } catch (e) {}
+      return true;
+    }
+    if (!hookRewards()) {
+      var rTries = 0;
+      var rIv = setInterval(function () { if (hookRewards() || ++rTries > 60) clearInterval(rIv); }, 250);
+    }
 
     var hooked = false;
     function hook() {
