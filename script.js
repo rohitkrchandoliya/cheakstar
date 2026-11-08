@@ -755,3 +755,114 @@ document.addEventListener("DOMContentLoaded", function () {
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}
 })();
+
+// ==== Cheakstar display language for the main pages (2026-11-08).
+// The Settings page saves a display language (device copy in
+// localStorage "ck_lang", account copy in the display_language
+// metadata). The runtime that applies it originally shipped only
+// in theme.js — but most root pages (home, blog, books,
+// leaderboard, about and the other content pages) load this file
+// and never load theme.js, so on all of them the saved language
+// silently did nothing. This block is that same runtime, with
+// exactly the same rules: the device copy applies on every page
+// at once; at sign-in the account copy wins (adopted once, then
+// the page reloads so the new language applies cleanly).
+// Translation itself is Google Translate's page widget, driven
+// by its "googtrans" cookie: English is the site's own text, so
+// English clears the cookie and loads nothing. The widget's
+// banner and gadget are hidden by the stylesheets — the language
+// is chosen in Settings, never in a Google dropdown.
+// Failure-isolated: if the widget cannot be reached, the page
+// simply stays in English. Shared boot guard: the same runtime
+// also ships in theme.js and in the tools pages' tools.js, and
+// some pages load two of those files (this one included). The
+// first copy to run claims window.__csLangBoot; the others step
+// aside, so the translate element is never injected twice. ====
+(function () {
+  "use strict";
+  try {
+    if (window.__csLangBoot) return;
+    window.__csLangBoot = true;
+    var LANGS = ["en", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "pa", "es", "fr", "de", "ar", "zh-CN", "ja"];
+    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+    function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
+    function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) {} }
+    function savedLang() {
+      var v = lsGet("ck_lang") || "en";
+      return LANGS.indexOf(v) >= 0 ? v : "en";
+    }
+    function cookieVariants(write) {
+      // The translate widget reads a host cookie; some setups also
+      // see a domain cookie, so both are written/cleared the same.
+      write("");
+      try {
+        var host = window.location.hostname || "";
+        if (host && host.indexOf(".") > 0) write("; domain=" + host);
+      } catch (e) {}
+    }
+    function setTransCookie(lang) {
+      cookieVariants(function (suffix) {
+        try { document.cookie = "googtrans=/en/" + lang + suffix + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
+      });
+    }
+    function clearTransCookie() {
+      cookieVariants(function (suffix) {
+        try { document.cookie = "googtrans=" + suffix + "; path=/; max-age=0; SameSite=Lax"; } catch (e) {}
+      });
+    }
+    var started = false;
+    function applyLanguage() {
+      if (started) return;
+      started = true;
+      var lang = savedLang();
+      if (lang === "en") { clearTransCookie(); return; }
+      setTransCookie(lang);
+      var holder = document.createElement("div");
+      holder.id = "google_translate_element";
+      holder.setAttribute("aria-hidden", "true");
+      (document.body || document.documentElement).appendChild(holder);
+      window.csGoogleTranslateInit = function () {
+        try {
+          new window.google.translate.TranslateElement({
+            pageLanguage: "en",
+            includedLanguages: LANGS.join(","),
+            autoDisplay: false
+          }, "google_translate_element");
+        } catch (e) { /* widget failed: the page stays in English */ }
+      };
+      var s = document.createElement("script");
+      s.src = "https://translate.google.com/translate_a/element.js?cb=csGoogleTranslateInit";
+      s.async = true;
+      (document.head || document.documentElement).appendChild(s);
+    }
+    // Account layer: at sign-in, a different saved language on
+    // the account is adopted to this device and applied through
+    // one reload (the session flag stops any reload loop).
+    function adoptFromAccount(user) {
+      try {
+        var meta = (user && user.user_metadata) || {};
+        var want = meta.display_language;
+        if (typeof want !== "string" || LANGS.indexOf(want) < 0) return;
+        if (want === savedLang()) return;
+        lsSet("ck_lang", want);
+        if (ssGet("csLangAdopt") === want) return;
+        ssSet("csLangAdopt", want);
+        window.location.reload();
+      } catch (e) {}
+    }
+    function hookAuth() {
+      if (!window.CSAuth || !window.CSAuth.onChange) return false;
+      window.CSAuth.onChange(function (user, event) {
+        if (user && (event === "SIGNED_IN" || event === "INITIAL")) adoptFromAccount(user);
+      });
+      return true;
+    }
+    if (!hookAuth()) {
+      var tries = 0;
+      var iv = setInterval(function () { if (hookAuth() || ++tries > 40) clearInterval(iv); }, 250);
+    }
+    if (document.body) applyLanguage();
+    else document.addEventListener("DOMContentLoaded", applyLanguage);
+  } catch (e) {}
+})();
