@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Stopwatch - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Stopwatch</h1>
+<p class="tool-sub">A precision stopwatch with laps, best and worst lap highlights.</p>
+<div class="tool-card">
+  <p>Time anything — a run, a recipe step, a classroom activity. The stopwatch keeps running while this page stays open, and laps are recorded to a hundredth of a second.</p>
+
+  <div style="text-align:center; padding:18px 0 6px">
+    <span id="sw-display" class="mono" style="font-size:2.6rem; font-weight:700">00:00.00</span>
+  </div>
+  <div class="btn-row" style="justify-content:center">
+    <button id="sw-toggle" class="btn" type="button">Start</button>
+    <button id="sw-lap" class="btn ghost" type="button" disabled>Lap</button>
+    <button id="sw-reset" class="btn ghost" type="button" disabled>Reset</button>
+    <button id="sw-copy" class="btn ghost" type="button" disabled data-result>Copy results</button>
+  </div>
+  <p id="sw-status" class="status" role="status" style="text-align:center"></p>
+  <div id="sw-laps" data-result></div>
+</div>
+<div class="note"><strong>Good to know:</strong> timing is measured with your device's high-resolution clock, accurate to about a hundredth of a second as shown. If you switch to another tab the stopwatch keeps counting correctly, although the display updates less often while the tab is in the background. Closing or reloading the page clears the time and the laps — copy the results first if you need them.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var swDisplay = document.getElementById("sw-display");
+var swStatus = document.getElementById("sw-status");
+var swToggle = document.getElementById("sw-toggle");
+var swLapBtn = document.getElementById("sw-lap");
+var swResetBtn = document.getElementById("sw-reset");
+var swCopyBtn = document.getElementById("sw-copy");
+var swLapsBox = document.getElementById("sw-laps");
+
+var running = false;
+var startStamp = 0;      // performance.now() at the start of the current run segment
+var banked = 0;          // milliseconds accumulated across pauses
+var rafId = null;
+var laps = [];           // total elapsed (ms) at each lap press
+
+function elapsed() {
+  return banked + (running ? performance.now() - startStamp : 0);
+}
+
+function fmt(ms) {
+  var totalCs = Math.floor(ms / 10);
+  var cs = totalCs % 100;
+  var totalSec = Math.floor(totalCs / 100);
+  var sec = totalSec % 60;
+  var totalMin = Math.floor(totalSec / 60);
+  var min = totalMin % 60;
+  var hrs = Math.floor(totalMin / 60);
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  if (hrs > 0) {
+    return hrs + ":" + pad(min) + ":" + pad(sec) + "." + pad(cs);
+  }
+  return pad(min) + ":" + pad(sec) + "." + pad(cs);
+}
+
+function tick() {
+  swDisplay.textContent = fmt(elapsed());
+  if (running) { rafId = requestAnimationFrame(tick); }
+}
+
+function renderLaps() {
+  swLapsBox.innerHTML = "";
+  if (!laps.length) { return; }
+  var lapTimes = laps.map(function (total, i) {
+    return total - (i > 0 ? laps[i - 1] : 0);
+  });
+  var best = Math.min.apply(null, lapTimes);
+  var worst = Math.max.apply(null, lapTimes);
+  var table = document.createElement("table");
+  table.className = "tbl";
+  var head = document.createElement("tr");
+  ["Lap", "Lap time", "Total time", ""].forEach(function (h) {
+    var th = document.createElement("th");
+    th.textContent = h;
+    head.appendChild(th);
+  });
+  table.appendChild(head);
+  laps.forEach(function (total, i) {
+    var tr = document.createElement("tr");
+    var tag = "";
+    if (laps.length > 1 && lapTimes[i] === best) { tag = "Fastest"; }
+    if (laps.length > 1 && lapTimes[i] === worst && worst !== best) { tag = "Slowest"; }
+    [String(i + 1), fmt(lapTimes[i]), fmt(total), tag].forEach(function (cell, c) {
+      var td = document.createElement("td");
+      td.textContent = cell;
+      if (c === 3 && tag === "Fastest") { td.className = "pass"; }
+      if (c === 3 && tag === "Slowest") { td.className = "fail"; }
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  swLapsBox.appendChild(table);
+}
+
+function syncButtons() {
+  swToggle.textContent = running ? "Pause" : (banked > 0 || laps.length ? "Resume" : "Start");
+  swLapBtn.disabled = !running;
+  swResetBtn.disabled = !running && banked === 0 && !laps.length;
+  swCopyBtn.disabled = !laps.length;
+}
+
+swToggle.addEventListener("click", function () {
+  if (running) {
+    banked += performance.now() - startStamp;
+    running = false;
+    if (rafId) { cancelAnimationFrame(rafId); }
+    swDisplay.textContent = fmt(elapsed());
+  } else {
+    startStamp = performance.now();
+    running = true;
+    tick();
+  }
+  syncButtons();
+});
+
+swLapBtn.addEventListener("click", function () {
+  if (!running) { return; }
+  laps.push(elapsed());
+  renderLaps();
+  syncButtons();
+});
+
+swResetBtn.addEventListener("click", function () {
+  running = false;
+  if (rafId) { cancelAnimationFrame(rafId); }
+  banked = 0;
+  laps = [];
+  swDisplay.textContent = fmt(0);
+  renderLaps();
+  swStatus.textContent = "";
+  syncButtons();
+});
+
+swCopyBtn.addEventListener("click", function () {
+  if (!laps.length) { return; }
+  var lines = ["Stopwatch results"];
+  laps.forEach(function (total, i) {
+    var lapTime = total - (i > 0 ? laps[i - 1] : 0);
+    lines.push("Lap " + (i + 1) + ": " + fmt(lapTime) + " (total " + fmt(total) + ")");
+  });
+  var text = lines.join("\n");
+  function done() {
+    swStatus.className = "status ok";
+    swStatus.textContent = "Results copied — paste them anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () {
+      swStatus.className = "status error";
+      swStatus.textContent = "Copy was blocked by the browser. The results are in the table above.";
+    });
+  } else {
+    swStatus.className = "status error";
+    swStatus.textContent = "Copy is not available in this browser. The results are in the table above.";
+  }
+});
+
+syncButtons();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="stopwatch"></script>
+</body>
+</html>
