@@ -34,7 +34,7 @@
 <header class="auth-strip"><a class="cs-logo" href="index.html">CHEAK<span>STAR</span></a></header>
 <section><div class="wrap">
 <h1>Welcome <span class="gold">Back</span></h1>
-<p class="sub">Sign in to your Cheakstar account to reach your saved favourite tools and your recently used tools. Every tool on this website stays free, signed in or not.</p>
+<p class="sub">Sign in to your Cheakstar account to reach your saved favourite tools and your recently used tools. Every tool on this website is free to open and use; a few tools ask for a free sign-in before they show their results.</p>
 
 <div class="auth-card">
   <div class="auth-msg info" id="loginNotice">Checking your sign-in state…</div>
@@ -120,7 +120,6 @@
     try { window.localStorage.removeItem("ck_return_to"); } catch (e) {}
     return target ? (window.CSAuth.siteBase() + target) : "account.html";
   }
-
   var notice = document.getElementById("loginNotice");
   var form = document.getElementById("loginForm");
   var signedInBox = document.getElementById("loginSignedIn");
