@@ -197,9 +197,9 @@
 <div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
-<script src="script.js?v=20261108b"></script>
+<script src="script.js?v=20261108c"></script>
 <script src="auth.js?v=20261106e"></script>
-<script src="rewards.js?v=20261108b"></script>
+<script src="rewards.js?v=20261108c"></script>
 <script>
 (function () {
   "use strict";
@@ -225,9 +225,9 @@
     rankEl.textContent = "";
     rankEl.appendChild(badge);
     // The level name always sits just under the profile photo. A
-    // top-3 leaderboard position also swaps the round photo for the
-    // crown-shaped frame (gold, silver, bronze) — paintAvatar applies
-    // it whenever the photo is (re)painted.
+    // top-5 leaderboard position also swaps the round photo for the
+    // winner badge frame in that position's colour — the profile
+    // script's painter applies it whenever the photo is (re)painted.
     var lvlEl = $("acctLevel");
     if (lvlEl) {
       lvlEl.textContent = "";
@@ -237,9 +237,11 @@
         lvlEl.appendChild(document.createTextNode(snap.rank));
       }
     }
-    crownPos = (snap.position && snap.position <= 5) ? snap.position : 0;
+    // The profile script below is a separate scope: share the position
+    // on window and ask it to repaint the photo with its winner frame.
+    window.__csCrownPos = (snap.position && snap.position <= 5) ? snap.position : 0;
     var u1 = window.CSAuth && window.CSAuth.getUser ? window.CSAuth.getUser() : null;
-    if (u1) paintAvatar($("acctAvatar"), u1);
+    if (u1 && window.__csPaintAvatar) window.__csPaintAvatar($("acctAvatar"), u1);
     $("ptsPos").textContent = snap.position ? ("#" + snap.position) : "—";
     $("ptsToday").textContent = (snap.pointsToday != null ? snap.pointsToday : 0) + " of 240 points";
     var nx = window.CSRewards.nextRank(snap.points);
@@ -291,7 +293,6 @@
       : { day: "numeric", month: "long", year: "numeric" };
     return d.toLocaleDateString("en-GB", opts);
   }
-
   /* ---------------- favourites + recent (as before) ---------------- */
   function toolTitle(slug) {
     return slug.split("-").map(function (w) {
@@ -314,9 +315,11 @@
   }
 
   /* ---------------- profile ---------------- */
-  var crownPos = 0; // top-5 leaderboard position, set by the rewards handler
   function validAvatar(v) { return typeof v === "string" && v.indexOf("data:image/") === 0; }
   function paintAvatar(el, user) {
+    // The rewards handler (a separate script scope) publishes the
+    // member's top-5 position on window.__csCrownPos.
+    var crownPos = window.__csCrownPos || 0;
     var meta = (user && user.user_metadata) || {};
     var name = meta.display_name || (user && user.email) || "Your account";
     if (el.id === "acctAvatar" && crownPos >= 1 && crownPos <= 5 && window.CSRewards && window.CSRewards.rankFrame) {
@@ -335,6 +338,7 @@
       el.textContent = name.charAt(0).toUpperCase() || "A";
     }
   }
+  window.__csPaintAvatar = paintAvatar;
   
   var profileDirty = false;
   var pendingAvatar = null;   // data URL chosen but not saved yet
