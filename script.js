@@ -93,25 +93,30 @@ document.addEventListener("DOMContentLoaded", function () {
   try {
     var seen = !!ssGet("csPreSeen");
     ssSet("csPreSeen", "1");
-    pre = document.createElement("div");
-    pre.className = "cs-preloader";
-    pre.id = "csPreloader";
-    pre.setAttribute("aria-hidden", "true");
-    pre.innerHTML =
-      '<svg class="cs-pre-shield" viewBox="0 0 24 24" aria-hidden="true">' +
-      '<path pathLength="100" d="M12 2.8l7.2 2.9v5.5c0 4.6-3 7.7-7.2 9.2C7.8 18.9 4.8 15.8 4.8 11.2V5.7z"/>' +
-      '<path class="cs-pre-check" pathLength="100" d="M8.9 11.9l2.1 2.1 4-4.1"/></svg>' +
-      '<div class="cs-pre-brand">CHEAK<span>STAR</span></div>' +
-      '<div class="cs-pre-bar"><i></i></div>' +
-      '<div class="cs-pre-status" id="csPreStatus">Initialising secure session</div>';
-    document.body.insertBefore(pre, document.body.firstChild);
-    if (!reduced) {
-      var phases = ["Initialising secure session", "Scanning modules", "Verifying integrity", "Loading interface"];
-      var phase = 0, statusEl = document.getElementById("csPreStatus");
-      statusTimer = setInterval(function () {
-        phase = Math.min(phase + 1, phases.length - 1);
-        if (statusEl) statusEl.textContent = phases[phase];
-      }, 420);
+    // The branded preloader belongs to the first page of a session.
+    // On later navigations it only slows the site down, so once this
+    // session has seen it, it is not created at all.
+    if (!seen) {
+      pre = document.createElement("div");
+      pre.className = "cs-preloader";
+      pre.id = "csPreloader";
+      pre.setAttribute("aria-hidden", "true");
+      pre.innerHTML =
+        '<svg class="cs-pre-shield" viewBox="0 0 24 24" aria-hidden="true">' +
+        '<path pathLength="100" d="M12 2.8l7.2 2.9v5.5c0 4.6-3 7.7-7.2 9.2C7.8 18.9 4.8 15.8 4.8 11.2V5.7z"/>' +
+        '<path class="cs-pre-check" pathLength="100" d="M8.9 11.9l2.1 2.1 4-4.1"/></svg>' +
+        '<div class="cs-pre-brand">CHEAK<span>STAR</span></div>' +
+        '<div class="cs-pre-bar"><i></i></div>' +
+        '<div class="cs-pre-status" id="csPreStatus">Initialising secure session</div>';
+      document.body.insertBefore(pre, document.body.firstChild);
+      if (!reduced) {
+        var phases = ["Initialising secure session", "Scanning modules", "Verifying integrity", "Loading interface"];
+        var phase = 0, statusEl = document.getElementById("csPreStatus");
+        statusTimer = setInterval(function () {
+          phase = Math.min(phase + 1, phases.length - 1);
+          if (statusEl) statusEl.textContent = phases[phase];
+        }, 420);
+      }
     }
     window.__csPreSeen = seen;
   } catch (e) { pre = null; }
@@ -238,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/subdomain-finder/", "Subdomain Finder"],
           ["tools-preview/photo-privacy-checker/", "Photo Privacy Checker (EXIF)"],
           ["tools-preview/phone-number-checker/", "Phone Number Checker"],
-          ["tools-preview/security-headers-check/", "Security Headers Check"],
+          ["tools-preview/security-headers-check/", "Website Security Headers Check"],
           ["tools-preview/email-breach-check/", "Email Breach Check"],
           ["tools-preview/password-breach-check/", "Leaked Password Check"]
         ]},
@@ -335,6 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
       g.links.forEach(function (l) {
         html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '">' + icon(l[2]) + '<span class="cs-label">' + esc(l[1]) + "</span></a>";
       });
+
       if (g.cats) {
         g.cats.forEach(function (ct) {
           html += '<div class="cs-subgroup' + (catOpen[ct.id] ? " open" : "") + '" data-cat="' + ct.id + '">';
@@ -455,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (hit) subCount++;
           });
           sub.style.display = subCount ? "" : "none";
-          if (subCount) sub.classList.add("open");
+          if (subCount) { sub.classList.add("open"); var sh = sub.querySelector(".cs-subgroup-head"); if (sh) sh.setAttribute("aria-expanded", "true"); }
           count += subCount;
         });
         Array.prototype.forEach.call(group.querySelectorAll(".cs-group-inner > a"), function (a) {
@@ -464,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (hit) count++;
         });
         group.style.display = count ? "" : "none";
-        if (count) group.classList.add("open");
+        if (count) { group.classList.add("open"); var gh = group.querySelector(".cs-group-head"); if (gh) gh.setAttribute("aria-expanded", "true"); }
         total += count;
       });
       document.getElementById("csNoResults").hidden = total !== 0;
@@ -631,8 +637,8 @@ document.addEventListener("DOMContentLoaded", function () {
         : '<div class="cs-avatar" aria-hidden="true">' + esc(initial) + "</div>";
       bodyEl.innerHTML =
         '<div class="cs-acc-who">' + avatarHtml +
-        '<div class="cs-acc-meta"><span class="cs-acc-name">' + esc(name) + "</span>" +
-        '<span class="cs-acc-email">' + esc(user.email || "") + "</span></div></div>" +
+        '<div class="cs-acc-meta"><span class="cs-acc-name" title="' + esc(name) + '">' + esc(name) + "</span>" +
+        '<span class="cs-acc-email" title="' + esc(user.email || "") + '">' + esc(user.email || "") + "</span></div></div>" +
         '<a href="account.html">' + USER_ICON + '<span class="cs-label">My Account</span></a>' +
         // Settings is login-only, so its link exists only in this
         // signed-in render (added 2026-11-06, settings/gating build).
@@ -643,6 +649,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.CSAuth) window.CSAuth.signOut().then(function () { window.location.reload(); });
       });
       decorateFrame();
+      syncRailFromAccount(user);
     }
     render(null); // instant signed-out state; updated when CSAuth resolves
 
@@ -663,6 +670,23 @@ document.addEventListener("DOMContentLoaded", function () {
         var holder = document.createElement("span");
         holder.innerHTML = window.CSRewards.rankFrame(lastSnap.avatar, initial, lastSnap.position, 40);
         if (holder.firstChild) old.replaceWith(holder.firstChild);
+      } catch (e) {}
+    }
+    // The Settings page's "Sidebar on desktop" choice is saved on the
+    // account; apply it here so it follows the member to every browser.
+    // (The menu's own button still collapses the sidebar for the
+    // moment; this saved default re-applies on the next page, exactly
+    // as the Settings page describes.)
+    function syncRailFromAccount(user) {
+      try {
+        var meta = (user && user.user_metadata) || {};
+        if (typeof meta.sidebar_default !== "string") return;
+        var want = meta.sidebar_default === "collapsed";
+        try { window.localStorage.setItem("csRail", want ? "1" : "0"); } catch (e) {}
+        if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) return;
+        document.body.classList.toggle("cs-rail", want);
+        var btn = document.getElementById("csRailToggle");
+        if (btn) { btn.textContent = want ? "\u00bb" : "\u00ab Collapse"; btn.setAttribute("aria-expanded", want ? "false" : "true"); }
       } catch (e) {}
     }
     function hookRewards() {
