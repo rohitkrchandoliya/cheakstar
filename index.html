@@ -19,6 +19,7 @@
 <nav class="navlinks">
 <a href="index.html" class="active">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
 </nav></div></header>
+<div class="wrap" id="deletedNotice" hidden><div class="note" style="margin-top:22px"><strong>Your account has been deleted.</strong> Your sign-in, profile, points and activity record have been removed. You are welcome to create a new account at any time if you would like to come back.</div></div>
 <div class="hero"><div class="wrap">
 <h1>Learn Cybersecurity the <span class="gold">Honest Way.</span></h1>
 <p>Cheakstar is a cybersecurity education and products company from Jaipur, India. We publish practical books, build hands-on training, and help small businesses check the security of their websites — always with permission, always in simple language.</p>
@@ -67,7 +68,19 @@
 </div>
 </div></section>
 <section><div class="wrap">
-<div class="note" style="margin-bottom:26px"><strong>Books Readers — a free chapter &amp; new-book news:</strong> join our readers list and we will email you Chapter 1 of <em>Bug Bounty from Scratch</em> free, plus the Bug Bounty Checklist and occasional news about new books and giveaways. No cost, no card details.<p style="margin-top:10px"><a class="go" href="https://forms.gle/QQgMB7MBCoScuHVh7" target="_blank" rel="noopener">Join the Books Readers list →</a></p><p class="fineprint">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
+<div class="note" style="margin-bottom:26px"><strong>Books Readers — a free chapter &amp; new-book news:</strong> join our readers list and we will email you Chapter 1 of <em>Bug Bounty from Scratch</em> free, plus the Bug Bounty Checklist and occasional news about new books and giveaways. No cost, no card details.<form id="newsForm" novalidate style="margin-top:14px;max-width:460px">
+<div class="auth-field">
+<label for="newsName">Your name</label>
+<input type="text" id="newsName" autocomplete="name" placeholder="Your name">
+</div>
+<div class="auth-field">
+<label for="newsEmail">Email address</label>
+<input type="email" id="newsEmail" autocomplete="email" placeholder="you@example.com">
+</div>
+<div class="auth-msg error" id="newsError" role="alert" hidden></div>
+<div class="auth-msg success" id="newsMsg" hidden></div>
+<button class="btn auth-submit" type="submit" id="newsSubmit">Join the Books Readers list</button>
+</form><p class="fineprint">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
 <div class="note"><strong>Our promise:</strong> simple and correct English, honest descriptions, and no income promises — ever. Security is a skill you build with practice, and our job is to make the path clear. Learn and practise only where you have permission.</div>
 </div></section>
 <footer class="site"><div class="wrap foot">
@@ -75,4 +88,78 @@
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
 <script src="script.js?v=20261106c"></script>
+<script>
+(function () {
+  "use strict";
+  /* Account-deleted landing: Settings sends a member here with
+     ?deleted=1 after a successful self-service deletion. */
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("deleted") === "1") {
+      var notice = document.getElementById("deletedNotice");
+      if (notice) notice.hidden = false;
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    }
+  } catch (e) {}
+
+  /* Books Readers newsletter form (item 34): subscribes by writing
+     to the newsletter_subscribers table through Supabase REST, using
+     only the public publishable key. The table is insert-only for
+     visitors — the list itself can never be read from the website. */
+  var SUPABASE_URL = "https://otubxsildmovyopebxvg.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_MWBG3vuN6lN196eihsPlAQ_7nhldag_";
+  var form = document.getElementById("newsForm");
+  if (!form) return;
+  var nameEl = document.getElementById("newsName");
+  var emailEl = document.getElementById("newsEmail");
+  var errEl = document.getElementById("newsError");
+  var msgEl = document.getElementById("newsMsg");
+  var btn = document.getElementById("newsSubmit");
+  var FALLBACK_HTML = "Your subscription could not be saved just now. Please try again in a little while, or use the <a href=\"contact.html\">contact page</a> and we will add you by hand.";
+  function show(el, msg) { if (msg != null) el.textContent = msg; el.hidden = !msg; }
+  function showFallback() { errEl.innerHTML = FALLBACK_HTML; errEl.hidden = false; }
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    show(errEl, ""); show(msgEl, "");
+    var name = (nameEl.value || "").trim();
+    var email = (emailEl.value || "").trim().toLowerCase();
+    if (!name) { show(errEl, "Please enter your name."); return; }
+    if (!email || email.indexOf("@") < 1 || email.indexOf(".") < 0) {
+      show(errEl, "Please enter a valid email address.");
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = "Joining…";
+    function done() { btn.disabled = false; btn.textContent = "Join the Books Readers list"; }
+    window.fetch(SUPABASE_URL + "/rest/v1/newsletter_subscribers", {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ email: email, name: name })
+    }).then(function (res) {
+      done();
+      if (res.status === 201) {
+        form.reset();
+        show(msgEl, "You have joined the Books Readers list. Watch your inbox for your free Chapter 1 of Bug Bounty from Scratch and the Bug Bounty Checklist.");
+        return;
+      }
+      res.json().then(function (data) {
+        if (data && data.code === "23505") {
+          show(errEl, "This email address is already on the Books Readers list.");
+        } else {
+          showFallback();
+        }
+      }, function () { showFallback(); });
+    }, function () {
+      done();
+      showFallback();
+    });
+  });
+})();
+</script>
 </body></html>
