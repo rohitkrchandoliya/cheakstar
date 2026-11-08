@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Accessibility Statement — Cheakstar</title>
+<meta name="description" content="Accessibility at Cheakstar — what this website does today to be usable by everyone: semantic structure, keyboard-reachable controls and appearance choices, stated honestly.">
+<meta property="og:title" content="Accessibility Statement — Cheakstar">
+  <meta property="og:description" content="Accessibility at Cheakstar — what this website does today to be usable by everyone: semantic structure, keyboard-reachable controls and appearance choices, stated honestly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/accessibility.html">
+<script>
+/* Theme snippet (same block as theme-head-snippet.html): first paint
+   already carries the visitor's saved appearance choices. */
+(function () {
+  try {
+    var mode = "system";
+    try { mode = window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) {}
+    var dark = mode === "dark" || (mode !== "light" &&
+      !(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches));
+    var root = document.documentElement;
+    root.setAttribute("data-theme", dark ? "dark" : "light");
+    root.style.background = dark ? "#0a1628" : "#f2f5fa";
+    try {
+      if (window.localStorage.getItem("ck_reduce_motion") === "1") root.setAttribute("data-motion", "reduced");
+      if (window.localStorage.getItem("ck_text_size") === "large") root.setAttribute("data-textsize", "large");
+    } catch (e) {}
+  } catch (e) {}
+})();
+</script>
+<link rel="stylesheet" href="styles.css?v=20261107a">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<section><div class="wrap prose">
+<h1>Accessibility Statement</h1>
+<p class="sub">We want this website to be usable by everyone. This page states, honestly and only, what the site does today — and how to tell us when something falls short.</p>
+<h2>What the site does today</h2>
+<p><strong>Semantic structure.</strong> Pages are built with proper landmarks — header, navigation, main sections and footer — and a single, ordered heading structure, so screen readers and other assistive tools can move through a page the way it was meant to be read.</p>
+<p><strong>Keyboard-reachable controls.</strong> Links, buttons and form fields are standard HTML controls: they can be reached with the Tab key and operated from the keyboard, and the focused control is shown with a visible gold outline. In the site sidebar, Escape closes the menu and Ctrl/Cmd+B toggles it.</p>
+<p><strong>Appearance choices.</strong> In <a href="settings.html">Settings</a> you can choose a light, dark or system theme, a larger text size, and reduced motion. Your choices are remembered on your device, survive sign-out, and apply across the whole site, tools included — content is written to stay readable in both the light and the dark theme.</p>
+<p><strong>Plain language.</strong> We write in simple, correct English on purpose: if a beginner cannot understand a page, we rewrite it. Clear language is an accessibility feature too.</p>
+<p><strong>Labelled controls.</strong> Form fields on this site carry text labels, and the tools use labelled inputs, so controls can be identified by name rather than by position or colour alone.</p>
+<h2>What we do not claim</h2>
+<p>We are a small team, and this site has not been audited or certified against any accessibility standard — so we make no such claim here. Some parts of the site, especially the tools, are still improving, and some may be harder to use with assistive technology than they should be.</p>
+<h2>Tell us what is hard to use</h2>
+<p>If any part of this website is difficult for you to use, please tell us through the <a href="contact.html">Contact</a> page or by emailing our Grievance Officer, Rohit Kumar Chandoliya, at <a href="mailto:rohitkrchandoliya@gmail.com">rohitkrchandoliya@gmail.com</a>. Tell us the page and what went wrong, and we will try to fix it — and, where we can, find another way to get you the same content in the meantime.</p>
+<p><a class="go" href="index.html">← Back to Home</a></p>
+</div></section>
+<footer class="site"><div class="wrap foot">
+<div>© <span id="year">2026</span> Cheakstar Private Limited · Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
+</div></footer>
+<script src="script.js?v=20261106e"></script>
+<script src="theme.js?v=20261106a"></script>
+</body></html>
