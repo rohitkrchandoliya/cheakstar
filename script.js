@@ -340,7 +340,6 @@ document.addEventListener("DOMContentLoaded", function () {
       g.links.forEach(function (l) {
         html += '<a href="' + l[0] + '"' + (l[0] === currentHref ? ' class="active" aria-current="page"' : "") + ' data-label="' + esc(l[1]) + '">' + icon(l[2]) + '<span class="cs-label">' + esc(l[1]) + "</span></a>";
       });
-
       if (g.cats) {
         g.cats.forEach(function (ct) {
           html += '<div class="cs-subgroup' + (catOpen[ct.id] ? " open" : "") + '" data-cat="' + ct.id + '">';
@@ -570,13 +569,26 @@ document.addEventListener("DOMContentLoaded", function () {
       var tops = elSet.filter(function (el) {
         return !elSet.some(function (other) { return other !== el && other.contains(el); });
       });
-      tops.forEach(function (el) { el.classList.add("cs-reveal"); seenEls.push(el); });
+      // Elements already inside the first viewport are never put in
+      // the hidden state at all (fixed 2026-11-08): page headings —
+      // the home hero, the blog and article H1s, the leaderboard H1 —
+      // used to sit near-invisible for seconds on every load because
+      // they started at opacity 0 and waited on the observer. Only
+      // below-the-fold elements get the hidden start, and any visible
+      // pixel now counts as intersecting (threshold 0), so a tall
+      // element can no longer wait for 10% of itself to show.
+      var vh = window.innerHeight || 800;
+      tops.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0) return; // already visible: leave it readable
+        el.classList.add("cs-reveal"); seenEls.push(el);
+      });
       document.body.classList.add("cs-anim");
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); }
         });
-      }, { threshold: 0.1, rootMargin: "0px 0px -4% 0px" });
+      }, { threshold: 0, rootMargin: "0px 0px -4% 0px" });
       seenEls.forEach(function (el) { io.observe(el); });
       setTimeout(function () { // failsafe: nothing stays hidden
         seenEls.forEach(function (el) { el.classList.add("revealed"); });
