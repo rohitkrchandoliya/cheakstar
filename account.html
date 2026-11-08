@@ -162,7 +162,7 @@
   <!-- D. Devices and sessions -->
   <div class="card" style="margin-bottom:22px">
     <h3 style="margin-bottom:6px">Devices &amp; sessions</h3>
-    <p style="color:var(--muted);margin-bottom:16px">This shows the device you are using now. To end your account session everywhere at once, use Sign out of all devices.</p>
+    <p style="color:var(--muted);margin-bottom:16px">This shows the device you are using now. Open the full list to see every device signed in to your account and to sign out any of them. To end your account session everywhere at once, use Sign out of all devices.</p>
     <div class="sess-row"><span class="sess-label">Device</span><span class="sess-value" id="sessDevice">—</span></div>
     <div class="sess-row"><span class="sess-label">Browser</span><span class="sess-value" id="sessBrowser">—</span></div>
     <div class="sess-row"><span class="sess-label">Signed in</span><span class="sess-value" id="sessWhen">—</span></div>
@@ -171,6 +171,7 @@
     <div class="sess-row"><span class="sess-label">Network</span><span class="sess-value" id="sessNet">Loading…</span></div>
     <div class="btns" style="justify-content:flex-start;margin-top:22px">
       <button class="btn" type="button" id="acctSignOut">Sign out</button>
+      <button class="btn ghost" type="button" id="acctViewSessions">View all devices &amp; sessions</button>
       <button class="btn ghost" type="button" id="acctSignOutAll">Sign out of all devices</button>
     </div>
   </div>
@@ -293,8 +294,80 @@
       : { day: "numeric", month: "long", year: "numeric" };
     return d.toLocaleDateString("en-GB", opts);
   }
+
   /* ---------------- favourites + recent (as before) ---------------- */
+  /* Display names for the favourite tools. Favourites are stored
+     as bare slugs, so the name has to be resolved here — from the
+     tools catalogue itself: these are the sidebar labels the
+     tools shell (tools.js) gives every tool, and the same titles
+     the Recent Tools list records when a tool is opened, so both
+     lists now name a tool identically. Title-casing the slug was
+     the old shortcut and got names wrong ("Qr Code Generator");
+     it survives only as a fallback for a slug the catalogue does
+     not know yet. Keep this list in step with the tools
+     catalogue. */
+  var TOOL_TITLES = {
+    "qr-code-generator": "QR Code Generator",
+    "qr-code-scanner": "QR Code Scanner",
+    "youtube-thumbnail-downloader": "YouTube Thumbnail Downloader",
+    "video-link-info": "Video Link Info",
+    "image-information": "Image Information",
+    "image-compressor": "Image Compressor",
+    "image-converter": "Image Converter",
+    "image-resizer-cropper": "Image Resizer & Cropper",
+    "passport-photo-maker": "Passport Photo Maker",
+    "resize-image-to-kb": "Resize Image to KB",
+    "color-picker-from-image": "Color Picker from Image",
+    "favicon-generator": "Favicon Generator",
+    "pdf-merge": "PDF Merge",
+    "pdf-split": "PDF Split",
+    "images-to-pdf": "Images to PDF",
+    "pdf-to-images": "PDF to Images",
+    "pdf-compressor": "PDF Compressor",
+    "rotate-pdf": "Rotate PDF",
+    "pdf-to-text": "PDF to Text",
+    "text-to-pdf": "Text to PDF",
+    "media-info": "Media Info",
+    "audio-converter": "Audio Converter",
+    "extract-audio": "Extract Audio from Video",
+    "video-trimmer": "Video Trimmer",
+    "gif-maker": "GIF Maker",
+    "video-converter": "Video Converter",
+    "video-compressor": "Video Compressor",
+    "video-speed-changer": "Video Speed Changer",
+    "audio-merger": "Audio Merger",
+    "video-merger": "Video Merger",
+    "voice-recorder": "Voice Recorder",
+    "screen-recorder": "Screen Recorder",
+    "word-counter": "Word & Character Counter",
+    "case-converter": "Case Converter & Line Tools",
+    "csv-json-converter": "CSV / JSON Converter",
+    "base64-encoder-decoder": "Base64 Encoder & Decoder",
+    "json-formatter": "JSON Formatter & Validator",
+    "text-diff-checker": "Text Diff Checker",
+    "url-encoder-decoder": "URL Encoder & Decoder",
+    "dns-lookup": "DNS Lookup",
+    "rdap-whois-lookup": "Domain Info (WHOIS / RDAP)",
+    "ip-lookup": "IP Address Lookup",
+    "whats-my-ip": "What's My IP",
+    "subdomain-finder": "Subdomain Finder",
+    "photo-privacy-checker": "Photo Privacy Checker (EXIF)",
+    "phone-number-checker": "Phone Number Checker",
+    "security-headers-check": "Website Security Headers Check",
+    "email-breach-check": "Email Breach Check",
+    "password-breach-check": "Leaked Password Check",
+    "zip-extractor": "ZIP Extractor",
+    "file-hash-checker": "File Hash Checker",
+    "age-calculator": "Age Calculator",
+    "emi-calculator": "EMI Calculator",
+    "sip-calculator": "SIP Calculator",
+    "gst-calculator": "GST Calculator",
+    "date-difference-calculator": "Date Difference Calculator",
+    "percentage-calculator": "Percentage Calculator",
+    "unit-converter": "Unit Converter"
+  };
   function toolTitle(slug) {
+    if (TOOL_TITLES[slug]) return TOOL_TITLES[slug];
     return slug.split("-").map(function (w) {
       return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
     }).join(" ");
@@ -546,6 +619,16 @@
     });
   }
   
+  /* ---------------- devices & sessions popup ----------------
+     The popup itself is built by the shared auth module; this page
+     only opens it. It lists every session on the account, marks this
+     device, and can sign out any other session. */
+  $("acctViewSessions").addEventListener("click", function () {
+    if (window.CSAuth && window.CSAuth.openSessionsModal) {
+      window.CSAuth.openSessionsModal();
+    }
+  });
+
   /* ---------------- sign out ---------------- */
   $("acctSignOut").addEventListener("click", function () {
     window.CSAuth.signOut().then(function () { window.location.href = "index.html"; });
