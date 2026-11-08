@@ -447,7 +447,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
  "password-breach-check": {
   "faq": [
    {
-    "a": "The password itself is never sent. Only the first 5 characters of its SHA-1 hash go to Have I Been Pwned, and the match is completed on this device."
+    "a": "The password itself is never sent. Only the first 5 characters of its SHA-1 hash go to Have I Been Pwned, and the match is completed on this device.",
     "q": "Is my password sent anywhere?"
    },
    {
@@ -597,7 +597,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Download sizes are 256, 512 or 1024 pixels — a larger size is the safer choice if the code will be printed big."
   ],
   "privacyKind": "local",
-  "privacyNote": "Runs entirely in your browser — the details you enter to build a code are processed on this device and are never uploaded to any server, including Cheakstar."
+  "privacyNote": "Runs entirely in your browser — the details you enter to build a code are processed on this device and are never uploaded to any server, including Cheakstar.",
   "steps": [
    "Choose what you are making from the Type list: Link or text, Wi-Fi network, UPI ID or Contact card (vCard).",
    "Fill in the fields for that type, such as Link or text, Network name (SSID) and Password, UPI ID, or Full name for a contact card.",
@@ -897,7 +897,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
     "q": "What is a healthy BMI?"
    },
    {
-    "a": "Not always. Muscle is denser than fat, so a muscular person can show a high BMI without excess body fat. BMI is a population screening tool, not a personal body-fat measurement."
+    "a": "Not always. Muscle is denser than fat, so a muscular person can show a high BMI without excess body fat. BMI is a population screening tool, not a personal body-fat measurement.",
     "q": "Is BMI accurate for people who lift weights?"
    },
    {
@@ -1197,7 +1197,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
  "pregnancy-due-date-calculator": {
   "faq": [
    {
-    "a": "By Naegele's rule: 280 days (40 weeks) are added to the first day of your last period. It is the same starting estimate most doctors use before a scan."
+    "a": "By Naegele's rule: 280 days (40 weeks) are added to the first day of your last period. It is the same starting estimate most doctors use before a scan.",
     "q": "How is the due date calculated?"
    },
    {
