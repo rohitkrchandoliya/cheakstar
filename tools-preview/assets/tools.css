@@ -240,3 +240,4 @@ img, canvas, video { max-width: 100%; }
 .gate-standalone { display: flex; justify-content: center; margin: 20px 0; }
 .gate-hint { background: rgba(212,175,55,.12); border: 1px solid var(--line); border-radius: 8px; padding: 10px 16px; color: var(--ink); font-size: .94rem; margin-bottom: 20px; max-width: 760px; }
 .gate-note { background: var(--navy2); border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; padding: 14px 18px; color: var(--ink); margin-bottom: 20px; }
+[data-theme="light"] .thumb-card .missing { color: #b3261e; }
