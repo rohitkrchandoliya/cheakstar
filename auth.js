@@ -719,6 +719,39 @@
         .then(function () { return true; });
     },
 
+    /* ---- activity days (master list items 57–58) ----
+       The per-day activity record behind the My Account activity
+       chart and streaks. Read with the member's own token; row-level
+       security limits the answer to their own rows. Any failure —
+       including the table not existing yet, before its migration is
+       applied — rejects, and the account page treats that as "no
+       activity recorded yet" rather than an error. */
+    fetchActivityDays: function () {
+      return currentAccessToken().then(function (token) {
+        return window.fetch(SUPABASE_URL +
+          "/rest/v1/user_activity_days?select=day,active_seconds,points&order=day.asc", {
+          method: "GET",
+          headers: {
+            "Authorization": "Bearer " + token,
+            "apikey": SUPABASE_KEY
+          }
+        });
+      }).then(function (res) {
+        if (!res.ok) throw new Error("Your activity could not be loaded.");
+        return res.json();
+      }).then(function (rows) {
+        if (!Array.isArray(rows)) return [];
+        return rows.filter(function (r) { return r && typeof r.day === "string" && r.day; })
+          .map(function (r) {
+            return {
+              day: r.day,
+              activeSeconds: typeof r.active_seconds === "number" ? r.active_seconds : 0,
+              points: typeof r.points === "number" ? r.points : 0
+            };
+          });
+      }, function (err) { throw new Error(friendly(err)); });
+    },
+
     openSessionsModal: openSessionsModal,
 
     /* ---- profile: name, mobile number, photo (user_metadata) ---- */
@@ -779,6 +812,78 @@
       if (!client) { done(); return Promise.resolve(); }
       // scope "global" ends the session on every device, not just this one.
       return client.auth.signOut({ scope: "global" }).then(done, done);
+    },
+
+    /* ---- delete my account (master list item 37) ----
+       Permanent self-service deletion from Settings. The password is
+       checked by signing in with it again, which also starts a fresh
+       session: the delete-account Edge Function only acts when the
+       sign-in is less than 10 minutes old, and it deletes the user
+       the token belongs to (never an id from the request). */
+    deleteAccount: function (password) {
+      var bad = needClient();
+      if (bad) return Promise.reject(bad);
+      if (!currentUser || !currentUser.email) {
+        return Promise.reject(new Error("You are not signed in."));
+      }
+      if (!password) {
+        return Promise.reject(new Error("Please enter your password."));
+      }
+      var email = currentUser.email;
+      return client.auth.signInWithPassword({ email: email, password: password })
+        .then(function (res) {
+          if (res.error) {
+            var m = String(res.error.message || "").toLowerCase();
+            if (m.indexOf("invalid login credentials") >= 0) {
+              throw new Error("Your password is not correct.");
+            }
+            throw new Error(friendly(res.error));
+          }
+          if (res.data && res.data.user) currentUser = res.data.user;
+          var session = res.data ? res.data.session : null;
+          if (!session || !session.access_token) {
+            throw new Error("Your sign-in could not be confirmed. Please try again.");
+          }
+          return window.fetch(SUPABASE_URL + "/functions/v1/delete-account", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + session.access_token,
+              "apikey": SUPABASE_KEY,
+              "Content-Type": "application/json"
+            },
+            body: "{}"
+          });
+        })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) {
+              throw new Error((data && data.error) ||
+                "Your account could not be deleted. Please try again.");
+            }
+            return data || {};
+          }, function () {
+            throw new Error("Your account could not be deleted. Please try again.");
+          });
+        })
+        .then(function () {
+          // The account no longer exists: drop every local trace of
+          // the session so no page keeps treating this browser as
+          // signed in. (The server-side sign-out call can only fail
+          // here — the user is already gone — so it is best-effort.)
+          try {
+            var ref = SUPABASE_URL.split("//")[1].split(".")[0];
+            window.localStorage.removeItem("sb-" + ref + "-auth-token");
+          } catch (e) {}
+          currentUser = null;
+          notify("SIGNED_OUT");
+          if (client) {
+            try {
+              client.auth.signOut({ scope: "local" })
+                .then(function () {}, function () {});
+            } catch (e) {}
+          }
+          return true;
+        }, function (err) { throw new Error(friendly(err)); });
     },
 
     /* ---- two-factor authentication (TOTP, Supabase MFA) ---- */
