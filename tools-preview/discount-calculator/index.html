@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Discount Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Discount Calculator</h1>
+<p class="tool-sub">Find the final price and your saving after one or two discounts.</p>
+<div class="tool-card">
+  <p>Sale offers often stack two discounts ("50% + extra 20% off"), which is not the same as 70% off. Enter the price and the discounts to see what you will actually pay.</p>
+
+  <label for="dc-price">Original price (₹)</label>
+  <input id="dc-price" type="number" min="0" step="any" value="2000">
+  <div class="row2">
+    <div>
+      <label for="dc-d1">First discount (%)</label>
+      <input id="dc-d1" type="number" min="0" max="100" step="any" value="50">
+    </div>
+    <div>
+      <label for="dc-d2">Second discount (%, optional)</label>
+      <input id="dc-d2" type="number" min="0" max="100" step="any" value="20">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="dc-gst">GST breakup of the final price</label>
+      <select id="dc-gst">
+        <option value="0">Do not show GST breakup</option>
+        <option value="5">GST 5% included in price</option>
+        <option value="12">GST 12% included in price</option>
+        <option value="18">GST 18% included in price</option>
+        <option value="28">GST 28% included in price</option>
+      </select>
+    </div>
+    <div></div>
+  </div>
+  <div class="btn-row">
+    <button id="dc-run" class="btn" type="button" data-autorun>Calculate final price</button>
+  </div>
+  <p id="dc-status" class="status" role="status"></p>
+  <div class="result" id="dc-result" hidden data-result>
+    <p class="big" id="dc-final"></p>
+    <div id="dc-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>How stacked discounts work:</strong> the second discount applies to the already-reduced price, not the original. So 50% + 20% off means you pay 50% of the price, then 80% of that — a total saving of 60%, not 70%. The GST breakup, when selected, simply splits the final price into its pre-tax value and the tax part.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var dcStatus = document.getElementById("dc-status");
+
+function inr(n) {
+  return "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("dc-run").addEventListener("click", function () {
+  var price = parseFloat(document.getElementById("dc-price").value);
+  var d1 = parseFloat(document.getElementById("dc-d1").value);
+  var d2 = parseFloat(document.getElementById("dc-d2").value) || 0;
+  var gst = parseFloat(document.getElementById("dc-gst").value);
+  var rows = document.getElementById("dc-rows");
+  rows.innerHTML = "";
+  document.getElementById("dc-result").hidden = true;
+  if (!(price > 0) || isNaN(d1) || d1 < 0 || d1 > 100 || d2 < 0 || d2 > 100) {
+    dcStatus.className = "status error";
+    dcStatus.textContent = "Enter a price above zero and discounts between 0% and 100%.";
+    return;
+  }
+  var afterFirst = price * (1 - d1 / 100);
+  var finalPrice = afterFirst * (1 - d2 / 100);
+  var saved = price - finalPrice;
+  var effective = (saved / price) * 100;
+  document.getElementById("dc-final").textContent = "You pay: " + inr(finalPrice);
+  addRow(rows, "Original price", inr(price));
+  if (d2 > 0) {
+    addRow(rows, "After first discount (" + d1 + "% off)", inr(afterFirst));
+    addRow(rows, "After second discount (" + d2 + "% off)", inr(finalPrice));
+  }
+  addRow(rows, "You save", inr(saved));
+  addRow(rows, "Effective total discount", effective.toFixed(2) + "%");
+  if (gst > 0) {
+    var net = finalPrice / (1 + gst / 100);
+    addRow(rows, "Of which pre-tax value", inr(net));
+    addRow(rows, "Of which GST (" + gst + "%)", inr(finalPrice - net));
+  }
+  document.getElementById("dc-result").hidden = false;
+  dcStatus.className = "status ok";
+  dcStatus.textContent = "Calculation complete.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="discount-calculator"></script>
+</body>
+</html>
