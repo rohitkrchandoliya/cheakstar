@@ -126,6 +126,7 @@
       play: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5z"/>',
       archive: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9"/><path d="M10 13h4"/>',
       calc: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/>',
+      clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/>',
       trophy: '<path d="M7.5 4h9v4.2a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 5.8H4.8a2.7 2.7 0 0 0 2.9 3.4M16.5 5.8h2.7a2.7 2.7 0 0 1-2.9 3.4"/><path d="M12 12.7v3.3"/><path d="M8.8 20h6.4"/><path d="M10.2 16h3.6l.7 4H9.5z"/>'
     };
     function icon(name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || ICONS.grid) + "</svg>"; }
@@ -224,7 +225,22 @@
           toolLink("gst-calculator", "GST Calculator"),
           toolLink("date-difference-calculator", "Date Difference Calculator"),
           toolLink("percentage-calculator", "Percentage Calculator"),
-          toolLink("unit-converter", "Unit Converter")
+          toolLink("unit-converter", "Unit Converter"),
+          toolLink("bmi-calculator", "BMI Calculator"),
+          toolLink("compound-interest-calculator", "Compound Interest Calculator"),
+          toolLink("fd-calculator", "FD Calculator"),
+          toolLink("rd-calculator", "RD Calculator"),
+          toolLink("ppf-calculator", "PPF Calculator"),
+          toolLink("discount-calculator", "Discount Calculator"),
+          toolLink("income-tax-calculator", "Income Tax Calculator India"),
+          toolLink("bmr-calculator", "BMR & Calorie Calculator"),
+          toolLink("cgpa-calculator", "CGPA Calculator"),
+          toolLink("pregnancy-due-date-calculator", "Pregnancy Due Date Calculator"),
+          toolLink("water-intake-calculator", "Water Intake Calculator"),
+          toolLink("scientific-calculator", "Scientific Calculator")
+        ]},
+        { id: "daily", name: "Daily Utilities", icon: "clock", links: [
+          toolLink("stopwatch", "Stopwatch")
         ]}
       ]}
     ];
