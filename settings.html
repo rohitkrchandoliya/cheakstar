@@ -201,7 +201,7 @@
       <button class="btn auth-submit acct-btn" type="submit" id="pwSubmit">Change password</button>
       <p class="auth-alt" style="text-align:left">Forgot your current password? <a href="reset-password.html">Reset it by email</a></p>
     </form>
-    <p style="margin-top:20px"><a href="account.html">Manage devices &amp; sessions →</a> <span style="color:var(--muted)">(on My Account: this device, sign out, sign out of all devices)</span></p>
+    <p style="margin-top:20px"><button type="button" id="setViewSessions" style="background:none;border:0;padding:0;font:inherit;color:var(--gold);cursor:pointer">Manage devices &amp; sessions →</button> <span style="color:var(--muted)">(opens the full list: every signed-in device, sign out any of them, or sign out everywhere)</span></p>
   </div>
 
   <!-- Two-factor authentication -->
@@ -609,6 +609,18 @@
       loadMfa();
     }, function (err) {
       mfaShowError(err.message || "Two-factor authentication could not be turned off. Please try again.");
+    });
+  }
+
+  /* Devices & sessions popup: built by the shared auth module; this
+     page only opens it (every session, this-device mark, per-session
+     sign-out, sign out from all devices). */
+  var setViewSessionsBtn = document.getElementById("setViewSessions");
+  if (setViewSessionsBtn) {
+    setViewSessionsBtn.addEventListener("click", function () {
+      if (window.CSAuth && window.CSAuth.openSessionsModal) {
+        window.CSAuth.openSessionsModal();
+      }
     });
   }
 
