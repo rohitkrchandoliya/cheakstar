@@ -241,3 +241,17 @@ img, canvas, video { max-width: 100%; }
 .gate-hint { background: rgba(212,175,55,.12); border: 1px solid var(--line); border-radius: 8px; padding: 10px 16px; color: var(--ink); font-size: .94rem; margin-bottom: 20px; max-width: 760px; }
 .gate-note { background: var(--navy2); border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; padding: 14px 18px; color: var(--ink); margin-bottom: 20px; }
 [data-theme="light"] .thumb-card .missing { color: #b3261e; }
+
+/* Favourite star (2026-11-08): injected by tools.js on every tool
+   page (labelled button under the title) and on every hub card
+   (icon button in the card's top-right corner). The filled gold
+   state means the tool is in the visitor's Favourites list. */
+.cs-fav-row { margin: 2px 0 14px; }
+.cs-fav-btn { display: inline-flex; align-items: center; gap: 8px; background: none; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-family: inherit; font-size: .9rem; font-weight: 600; padding: 8px 14px; cursor: pointer; transition: color .2s ease, border-color .2s ease, background-color .2s ease; }
+.cs-fav-btn svg { width: 17px; height: 17px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.cs-fav-btn:hover { color: var(--gold); border-color: var(--gold); }
+.cs-fav-btn.on { color: var(--gold); border-color: var(--gold); background: rgba(212, 175, 55, .1); }
+.cs-fav-btn.on svg { fill: var(--gold); stroke: var(--gold); }
+.cs-fav-btn-icon { padding: 8px; }
+.tool-card-item { position: relative; }
+.tool-card-item .cs-fav-btn { position: absolute; top: 10px; right: 10px; background: var(--card); }
