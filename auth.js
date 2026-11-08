@@ -187,6 +187,102 @@
     return new Error("Could not reach the sign-in service. Please check your connection and try again.");
   }
 
+  /* ---------------- devices & sessions (Edge Function) ----------------
+     Supabase Auth has no client-side API for listing or revoking a
+     member's sessions, so both go through the "list-sessions" Edge
+     Function, which checks the caller's token and answers for that
+     member only. Only the public publishable key is sent from here;
+     the service role key exists solely inside the function. */
+  function currentAccessToken() {
+    var bad = needClient();
+    if (bad) return Promise.reject(bad);
+    return client.auth.getSession().then(function (res) {
+      var session = res && res.data ? res.data.session : null;
+      if (!session || !session.access_token) {
+        throw new Error("You are not signed in.");
+      }
+      return session.access_token;
+    }, function (err) { throw new Error(friendly(err)); });
+  }
+
+  /* Read one claim from an access token's payload. Used only for the
+     session_id claim, which tells the popup which row is this device;
+     the Edge Function re-reads the same claim from the token itself. */
+  function decodeJwtClaim(token, claim) {
+    try {
+      var parts = String(token || "").split(".");
+      if (parts.length !== 3) return null;
+      var b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      while (b64.length % 4 !== 0) b64 += "=";
+      var payload = JSON.parse(window.atob(b64));
+      var value = payload ? payload[claim] : null;
+      return typeof value === "string" && value ? value : null;
+    } catch (e) { return null; }
+  }
+
+  function callSessionsFunction(payload) {
+    return currentAccessToken().then(function (token) {
+      var body = {};
+      Object.keys(payload || {}).forEach(function (k) { body[k] = payload[k]; });
+      var mine = decodeJwtClaim(token, "session_id");
+      if (mine && !body.currentSessionId) body.currentSessionId = mine;
+      return window.fetch(SUPABASE_URL + "/functions/v1/list-sessions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "apikey": SUPABASE_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) {
+          throw new Error((data && data.error) ||
+            "Your sessions could not be loaded. Please try again.");
+        }
+        return data || {};
+      }, function () {
+        throw new Error("Your sessions could not be loaded. Please try again.");
+      });
+    }, function (err) {
+      if (err && err.message && err.message !== "You are not signed in.") {
+        throw new Error(friendly(err));
+      }
+      throw err;
+    });
+  }
+
+  /* Device description for one session row, from its user agent. The
+     same parsing the account page uses for "this device". */
+  function describeUA(ua) {
+    ua = String(ua || "");
+    var os = "Unknown system";
+    if (/Windows NT/.test(ua)) os = "Windows";
+    else if (/Android/.test(ua)) os = "Android";
+    else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+    else if (/Mac OS X/.test(ua)) os = "macOS";
+    else if (/Linux/.test(ua)) os = "Linux";
+    var browser = "Unknown browser";
+    if (/Edg\//.test(ua)) browser = "Microsoft Edge";
+    else if (/OPR\/|Opera/.test(ua)) browser = "Opera";
+    else if (/Firefox\//.test(ua)) browser = "Firefox";
+    else if (/Chrome\//.test(ua)) browser = "Google Chrome";
+    else if (/Safari\//.test(ua)) browser = "Safari";
+    var kind = /Mobi|Android|iPhone|iPad|iPod/.test(ua) ? "Mobile" : "Desktop";
+    return { os: os, browser: browser, kind: kind };
+  }
+
+  function fmtSessionDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleDateString("en-GB", {
+      day: "numeric", month: "long", year: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    });
+  }
+
   /* Merge-safe metadata save: the keys already stored on the account
      (favourites, recent, avatar, ...) are read back and spread first, so
      saving one profile field can never wipe another. A patch value of
@@ -219,6 +315,228 @@
       if (res.error) throw new Error(friendly(res.error));
       return true;
     }, function (err) { throw new Error(friendly(err)); });
+  }
+
+  /* ---------------- devices & sessions popup ----------------
+     One shared popup for both the account page and Settings: it lists
+     every session on the member's account (from the Edge Function),
+     marks this device, signs out any other session on request, and
+     offers the existing global sign-out for "everywhere at once".
+     All session details are written with textContent — nothing from
+     the server is ever injected as markup. */
+  var sessionsModalOpen = false;
+
+  function openSessionsModal() {
+    if (sessionsModalOpen) return;
+    if (!document.body) return;
+    sessionsModalOpen = true;
+    var lastFocus = document.activeElement;
+    var prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    var backdrop = document.createElement("div");
+    backdrop.className = "cs-modal-backdrop";
+
+    var modal = document.createElement("div");
+    modal.className = "cs-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-labelledby", "csSessionsTitle");
+
+    var head = document.createElement("div");
+    head.className = "cs-modal-head";
+    var title = document.createElement("h3");
+    title.id = "csSessionsTitle";
+    title.textContent = "Devices & sessions";
+    var closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "cs-modal-close";
+    closeBtn.setAttribute("aria-label", "Close");
+    closeBtn.textContent = "×";
+    head.appendChild(title);
+    head.appendChild(closeBtn);
+    modal.appendChild(head);
+
+    var sub = document.createElement("p");
+    sub.className = "cs-modal-sub";
+    sub.textContent = "Every device currently signed in to your account. " +
+      "If you see a device you do not recognise, sign it out here.";
+    modal.appendChild(sub);
+
+    var msg = document.createElement("div");
+    msg.className = "auth-msg error";
+    msg.setAttribute("role", "alert");
+    msg.hidden = true;
+    modal.appendChild(msg);
+
+    var status = document.createElement("p");
+    status.className = "cs-modal-status";
+    status.textContent = "Loading your sessions…";
+    modal.appendChild(status);
+
+    var list = document.createElement("div");
+    list.className = "cs-modal-list";
+    modal.appendChild(list);
+
+    var foot = document.createElement("div");
+    foot.className = "cs-modal-foot";
+    var allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "btn ghost";
+    allBtn.textContent = "Sign out from all devices";
+    var doneBtn = document.createElement("button");
+    doneBtn.type = "button";
+    doneBtn.className = "btn";
+    doneBtn.textContent = "Close";
+    foot.appendChild(allBtn);
+    foot.appendChild(doneBtn);
+    modal.appendChild(foot);
+
+    backdrop.appendChild(modal);
+    document.body.appendChild(backdrop);
+
+    function close() {
+      document.removeEventListener("keydown", onKey, true);
+      if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+      document.body.style.overflow = prevOverflow;
+      sessionsModalOpen = false;
+      if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    }
+    function onKey(ev) {
+      if (ev.key === "Escape" || ev.keyCode === 27) close();
+    }
+    document.addEventListener("keydown", onKey, true);
+    backdrop.addEventListener("mousedown", function (ev) {
+      if (ev.target === backdrop) close();
+    });
+    closeBtn.addEventListener("click", close);
+    doneBtn.addEventListener("click", close);
+
+    function showError(text) {
+      msg.textContent = text || "";
+      msg.hidden = !text;
+    }
+
+    /* Two-tap confirm, the same pattern the account page uses for its
+       "Sign out of all devices" button: first tap arms, second acts. */
+    function armConfirm(btn, label, action) {
+      if (btn.getAttribute("data-armed") === "1") {
+        btn.removeAttribute("data-armed");
+        btn.textContent = label;
+        action();
+        return;
+      }
+      btn.setAttribute("data-armed", "1");
+      btn.textContent = "Tap again to confirm";
+      setTimeout(function () {
+        if (btn.getAttribute("data-armed") === "1") {
+          btn.removeAttribute("data-armed");
+          btn.textContent = label;
+        }
+      }, 5000);
+    }
+
+    function renderSessions(sessions) {
+      list.textContent = "";
+      if (!sessions.length) {
+        status.textContent = "No active sessions were found for your account.";
+        return;
+      }
+      status.textContent = sessions.length === 1
+        ? "1 active session"
+        : sessions.length + " active sessions";
+      sessions.forEach(function (s) {
+        var d = describeUA(s.user_agent);
+        var row = document.createElement("div");
+        row.className = "cs-sess-row";
+
+        var main = document.createElement("div");
+        main.className = "cs-sess-main";
+        var deviceLine = document.createElement("div");
+        deviceLine.className = "cs-sess-device";
+        deviceLine.textContent = d.os + " · " + d.kind;
+        if (s.is_current) {
+          var badge = document.createElement("span");
+          badge.className = "cs-badge-current";
+          badge.textContent = "This device";
+          deviceLine.appendChild(badge);
+        }
+        main.appendChild(deviceLine);
+        var meta = document.createElement("div");
+        meta.className = "cs-sess-meta";
+        var bits = [d.browser];
+        var when = fmtSessionDate(s.created_at);
+        if (when) bits.push("Signed in " + when);
+        var active = fmtSessionDate(s.refreshed_at);
+        if (active && s.refreshed_at !== s.created_at) {
+          bits.push("Last active " + active);
+        }
+        meta.textContent = bits.join(" · ");
+        main.appendChild(meta);
+        row.appendChild(main);
+
+        if (!s.is_current) {
+          var out = document.createElement("button");
+          out.type = "button";
+          out.className = "btn ghost acct-mini cs-sess-out";
+          out.textContent = "Sign out";
+          out.addEventListener("click", function () {
+            armConfirm(out, "Sign out", function () {
+              out.disabled = true;
+              out.textContent = "Signing out…";
+              window.CSAuth.revokeSession(s.id).then(function () {
+                showError("");
+                if (row.parentNode) row.parentNode.removeChild(row);
+                var left = list.querySelectorAll(".cs-sess-row").length;
+                status.textContent = left === 1
+                  ? "1 active session"
+                  : left + " active sessions";
+              }, function (err) {
+                out.disabled = false;
+                out.textContent = "Sign out";
+                showError((err && err.message) ||
+                  "That session could not be signed out. Please try again.");
+              });
+            });
+          });
+          row.appendChild(out);
+        }
+        list.appendChild(row);
+      });
+    }
+
+    function load() {
+      status.textContent = "Loading your sessions…";
+      list.textContent = "";
+      showError("");
+      window.CSAuth.listSessions().then(function (sessions) {
+        renderSessions(sessions);
+      }, function (err) {
+        status.textContent = "";
+        showError((err && err.message) ||
+          "Your sessions could not be loaded. Please try again.");
+        var retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "btn ghost acct-mini";
+        retry.textContent = "Try again";
+        retry.addEventListener("click", load);
+        list.appendChild(retry);
+      });
+    }
+
+    var allArmedLabel = "Sign out from all devices";
+    allBtn.addEventListener("click", function () {
+      armConfirm(allBtn, allArmedLabel, function () {
+        allBtn.disabled = true;
+        allBtn.textContent = "Signing out…";
+        window.CSAuth.signOutAll().then(function () {
+          window.location.href = "index.html";
+        });
+      });
+    });
+
+    load();
+    if (closeBtn.focus) { try { closeBtn.focus(); } catch (e) {} }
   }
 
   /* ---------------- public API ---------------- */
@@ -369,6 +687,39 @@
       info.sessionCreatedAt = currentUser.last_sign_in_at || null;
       return Promise.resolve(info);
     },
+
+    /* ---- devices & sessions (via the list-sessions Edge Function) ---- */
+    getCurrentSessionId: function () {
+      return currentAccessToken().then(function (token) {
+        return decodeJwtClaim(token, "session_id");
+      }, function () { return null; });
+    },
+
+    listSessions: function () {
+      return callSessionsFunction({ action: "list" }).then(function (data) {
+        var rows = Array.isArray(data.sessions) ? data.sessions : [];
+        return rows.filter(function (s) { return s && typeof s.id === "string" && s.id; })
+          .map(function (s) {
+            return {
+              id: s.id,
+              created_at: s.created_at || null,
+              refreshed_at: s.refreshed_at || null,
+              user_agent: s.user_agent || null,
+              is_current: !!s.is_current
+            };
+          });
+      });
+    },
+
+    revokeSession: function (sessionId) {
+      if (!sessionId) {
+        return Promise.reject(new Error("No session was specified."));
+      }
+      return callSessionsFunction({ action: "revoke", sessionId: sessionId })
+        .then(function () { return true; });
+    },
+
+    openSessionsModal: openSessionsModal,
 
     /* ---- profile: name, mobile number, photo (user_metadata) ---- */
     updateProfile: function (fields) {
