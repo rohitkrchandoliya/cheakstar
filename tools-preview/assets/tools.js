@@ -515,13 +515,24 @@
       var tops = elSet.filter(function (el) {
         return !elSet.some(function (other) { return other !== el && other.contains(el); });
       });
-      tops.forEach(function (el) { el.classList.add("cs-reveal"); seenEls.push(el); });
+      // Elements already inside the first viewport are never put in
+      // the hidden state at all (fixed 2026-11-08, same as the main
+      // site): headings used to sit near-invisible for seconds on
+      // every load because they started at opacity 0 and waited on
+      // the observer. Only below-the-fold elements get the hidden
+      // start, and any visible pixel now counts as intersecting.
+      var vh = window.innerHeight || 800;
+      tops.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < vh && r.bottom > 0) return; // already visible: leave it readable
+        el.classList.add("cs-reveal"); seenEls.push(el);
+      });
       document.body.classList.add("cs-anim");
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
           if (en.isIntersecting) { en.target.classList.add("revealed"); io.unobserve(en.target); }
         });
-      }, { threshold: 0.1, rootMargin: "0px 0px -4% 0px" });
+      }, { threshold: 0, rootMargin: "0px 0px -4% 0px" });
       seenEls.forEach(function (el) { io.observe(el); });
       setTimeout(function () { // failsafe: nothing stays hidden
         seenEls.forEach(function (el) { el.classList.add("revealed"); });
@@ -714,5 +725,243 @@ document.addEventListener("DOMContentLoaded", function () {
     s.src = rootPrefix + "../rewards.js";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
+
+// ==== Cheakstar display language for tool pages (2026-11-08).
+// Tool pages do not load the main site's theme.js, so the saved
+// Settings language is applied here with exactly the same rules:
+// device copy (localStorage "ck_lang") at once, account copy
+// (display_language) adopted at sign-in through one guarded reload,
+// translation by Google Translate's page widget via its "googtrans"
+// cookie, English = the site's own text (cookie cleared, nothing
+// loaded). Failure-isolated: if the widget cannot be reached, the
+// page simply stays in English. ====
+(function () {
+  "use strict";
+  try {
+    var LANGS = ["en", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "pa", "es", "fr", "de", "ar", "zh-CN", "ja"];
+    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+    function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
+    function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) {} }
+    function savedLang() {
+      var v = lsGet("ck_lang") || "en";
+      return LANGS.indexOf(v) >= 0 ? v : "en";
+    }
+    function cookieVariants(write) {
+      write("");
+      try {
+        var host = window.location.hostname || "";
+        if (host && host.indexOf(".") > 0) write("; domain=" + host);
+      } catch (e) {}
+    }
+    function setTransCookie(lang) {
+      cookieVariants(function (suffix) {
+        try { document.cookie = "googtrans=/en/" + lang + suffix + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
+      });
+    }
+    function clearTransCookie() {
+      cookieVariants(function (suffix) {
+        try { document.cookie = "googtrans=" + suffix + "; path=/; max-age=0; SameSite=Lax"; } catch (e) {}
+      });
+    }
+    var started = false;
+    function applyLanguage() {
+      if (started) return;
+      started = true;
+      var lang = savedLang();
+      if (lang === "en") { clearTransCookie(); return; }
+      setTransCookie(lang);
+      var holder = document.createElement("div");
+      holder.id = "google_translate_element";
+      holder.setAttribute("aria-hidden", "true");
+      (document.body || document.documentElement).appendChild(holder);
+      window.csGoogleTranslateInit = function () {
+        try {
+          new window.google.translate.TranslateElement({
+            pageLanguage: "en",
+            includedLanguages: LANGS.join(","),
+            autoDisplay: false
+          }, "google_translate_element");
+        } catch (e) { /* widget failed: the page stays in English */ }
+      };
+      var s = document.createElement("script");
+      s.src = "https://translate.google.com/translate_a/element.js?cb=csGoogleTranslateInit";
+      s.async = true;
+      (document.head || document.documentElement).appendChild(s);
+    }
+    function adoptFromAccount(user) {
+      try {
+        var meta = (user && user.user_metadata) || {};
+        var want = meta.display_language;
+        if (typeof want !== "string" || LANGS.indexOf(want) < 0) return;
+        if (want === savedLang()) return;
+        lsSet("ck_lang", want);
+        if (ssGet("csLangAdopt") === want) return;
+        ssSet("csLangAdopt", want);
+        window.location.reload();
+      } catch (e) {}
+    }
+    function hookAuth() {
+      if (!window.CSAuth || !window.CSAuth.onChange) return false;
+      window.CSAuth.onChange(function (user, event) {
+        if (user && (event === "SIGNED_IN" || event === "INITIAL")) adoptFromAccount(user);
+      });
+      return true;
+    }
+    if (!hookAuth()) {
+      var tries = 0;
+      var iv = setInterval(function () { if (hookAuth() || ++tries > 40) clearInterval(iv); }, 250);
+    }
+    if (document.body) applyLanguage();
+    else document.addEventListener("DOMContentLoaded", applyLanguage);
+  } catch (e) {}
+})();
+
+// ==== Cheakstar favourites + recent tools (2026-11-08).
+// The account module (auth.js) has always kept the favourites and
+// recent-tools lists — localStorage "csFavs" / "csRecent", mirrored
+// to the account when signed in — but no page ever called it, so
+// the My Account lists could never fill. This block is the missing
+// caller: opening a tool page records the tool under Recent Tools,
+// and a star button on every tool page and every tools-hub card
+// toggles the tool in Favourites. Failure-isolated: until the
+// lazily loaded account module arrives (or if it cannot load), the
+// same localStorage store is used directly, so the star and the
+// recent list work for guests and signed-in members alike. ====
+(function () {
+  "use strict";
+  try {
+    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+    var FAV_KEY = "csFavs", RECENT_KEY = "csRecent", RECENT_MAX = 8;
+
+    // The current tool, resolved against the sidebar the shell built
+    // above: its links carry every tool's slug (in the href) and
+    // display title (in data-label). The hub itself matches nothing.
+    function currentTool() {
+      var parts = window.location.pathname.split("/").filter(function (s) { return s.length > 0; });
+      var last = parts[parts.length - 1] || "";
+      var parent = parts[parts.length - 2] || "";
+      var candidate = (last === "index.html") ? parent : last;
+      if (!candidate) return null;
+      var links = document.querySelectorAll("#csNav a[href]");
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute("href") || "";
+        if (href.slice(-(candidate.length + 1)) === candidate + "/") {
+          return { slug: candidate, title: links[i].getAttribute("data-label") || candidate };
+        }
+      }
+      return null;
+    }
+
+    function readFavs() {
+      try {
+        var v = JSON.parse(lsGet(FAV_KEY) || "[]");
+        return Array.isArray(v) ? v.filter(function (s) { return typeof s === "string" && s; }) : [];
+      } catch (e) { return []; }
+    }
+    function isFav(slug) {
+      if (window.CSAuth && window.CSAuth.isFavorite) return window.CSAuth.isFavorite(slug);
+      return readFavs().indexOf(slug) >= 0;
+    }
+    function toggleFav(slug) {
+      if (window.CSAuth && window.CSAuth.toggleFavorite) return window.CSAuth.toggleFavorite(slug);
+      var favs = readFavs();
+      var i = favs.indexOf(slug);
+      if (i >= 0) { favs.splice(i, 1); lsSet(FAV_KEY, JSON.stringify(favs)); return false; }
+      favs.push(slug); lsSet(FAV_KEY, JSON.stringify(favs)); return true;
+    }
+    function pushRecentNow(slug, title) {
+      if (window.CSAuth && window.CSAuth.pushRecent) { window.CSAuth.pushRecent(slug, title); return; }
+      var items = [];
+      try {
+        var v = JSON.parse(lsGet(RECENT_KEY) || "[]");
+        if (Array.isArray(v)) items = v.filter(function (it) { return it && it.slug && it.slug !== slug; });
+      } catch (e) {}
+      items.unshift({ slug: slug, title: title || slug });
+      lsSet(RECENT_KEY, JSON.stringify(items.slice(0, RECENT_MAX)));
+    }
+    // Record exactly once: through the account module when it is
+    // there (so a signed-in member's copy is mirrored), waiting
+    // briefly for its lazy load before falling back to the store.
+    var recentDone = false;
+    function recordRecent(tool) {
+      if (window.CSAuth && window.CSAuth.pushRecent) { recentDone = true; pushRecentNow(tool.slug, tool.title); return; }
+      var tries = 0;
+      var iv = setInterval(function () {
+        if (recentDone) { clearInterval(iv); return; }
+        if ((window.CSAuth && window.CSAuth.pushRecent) || ++tries > 32) {
+          recentDone = true;
+          pushRecentNow(tool.slug, tool.title);
+          clearInterval(iv);
+        }
+      }, 250);
+    }
+
+    var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.75.8-4.15 4.05 1 5.7L12 16.7l-5.15 2.65 1-5.7L3.7 9.6l5.75-.8z"/></svg>';
+    var starBtns = [];
+    function paintStar(btn) {
+      var on = isFav(btn._csFavSlug);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.classList.toggle("on", on);
+      btn.title = on ? "Remove from favourites" : "Save to favourites";
+      var lab = btn.querySelector(".cs-fav-label");
+      if (lab) lab.textContent = on ? "Saved to favourites" : "Save to favourites";
+    }
+    function makeStar(slug, withLabel) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "cs-fav-btn" + (withLabel ? "" : " cs-fav-btn-icon");
+      b.setAttribute("aria-label", "Save this tool to your favourites");
+      b.innerHTML = STAR + (withLabel ? '<span class="cs-fav-label">Save to favourites</span>' : "");
+      b._csFavSlug = slug;
+      b.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        toggleFav(slug);
+        starBtns.forEach(function (x) { if (x._csFavSlug === slug) paintStar(x); });
+      });
+      paintStar(b);
+      starBtns.push(b);
+      return b;
+    }
+    // If signing in merges a different favourites list from the
+    // account, repaint every star from the merged state.
+    function hookAuthPaint() {
+      if (!window.CSAuth || !window.CSAuth.onChange) return false;
+      window.CSAuth.onChange(function () {
+        starBtns.forEach(function (b) { paintStar(b); });
+      });
+      return true;
+    }
+    if (!hookAuthPaint()) {
+      var pTries = 0;
+      var pIv = setInterval(function () { if (hookAuthPaint() || ++pTries > 40) clearInterval(pIv); }, 250);
+    }
+
+    // Tool page: record the visit and put the star under the title.
+    var tool = currentTool();
+    if (tool) {
+      recordRecent(tool);
+      var h1 = document.querySelector("h1.tool-title");
+      if (h1 && h1.parentNode) {
+        var row = document.createElement("div");
+        row.className = "cs-fav-row";
+        row.appendChild(makeStar(tool.slug, true));
+        h1.parentNode.insertBefore(row, h1.nextSibling);
+      }
+    }
+
+    // Tools hub: a star on every tool card (the card's "Open tool"
+    // link carries the slug).
+    Array.prototype.forEach.call(document.querySelectorAll(".tool-card-item"), function (card) {
+      var go = card.querySelector("a.go");
+      if (!go) return;
+      var slug = (go.getAttribute("href") || "").replace(/\/$/, "");
+      if (!slug || slug.indexOf("/") >= 0) return;
+      card.appendChild(makeStar(slug, false));
+    });
   } catch (e) {}
 })();
