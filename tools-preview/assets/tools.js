@@ -1033,3 +1033,56 @@ document.addEventListener("DOMContentLoaded", function () {
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}
 })();
+
+/* ==== Hub search polish (2026-11-08, master list item 27).
+   Hub page only — it activates solely when the hub's #tool-search
+   input exists, so every other page is untouched. Adds:
+   - Ctrl+K / Cmd+K focuses the search box from anywhere on the page;
+   - the shortcut is hinted at the end of the search placeholder;
+   - a ?q=<term> address pre-fills the box and applies the hub's own
+     filter at once (by dispatching the same "input" event a keypress
+     would, so the existing filter code stays the only filter);
+   - Escape inside the box clears the search (restoring the full
+     grid), or blurs when the box is already empty.
+   Runs on DOMContentLoaded because this script is parsed before the
+   hub's inline filter script; the whole block is failure-isolated. */
+(function () {
+  "use strict";
+  function initHubSearch() {
+    try {
+      var input = document.getElementById("tool-search");
+      if (!input) return;
+      var ph = input.getAttribute("placeholder") || "";
+      if (ph && ph.indexOf("Ctrl+K") === -1) {
+        input.setAttribute("placeholder", ph + "  (Ctrl+K)");
+      }
+      document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+          e.preventDefault();
+          input.focus();
+          if (input.select) input.select();
+        }
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        if (input.value) {
+          input.value = "";
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        } else {
+          input.blur();
+        }
+      });
+      var q = null;
+      try { q = new URLSearchParams(window.location.search).get("q"); } catch (e) { q = null; }
+      if (q) {
+        input.value = q;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    } catch (e) { /* search polish is an enhancement; never break the hub */ }
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initHubSearch);
+  } else {
+    initHubSearch();
+  }
+})();
