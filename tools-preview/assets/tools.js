@@ -1007,3 +1007,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   } catch (e) {}
 })();
+
+/* ==== Cheakstar Guide Bot loader (2026-11-08, master list item 17).
+   The guide itself lives in guide.js at the MAIN site root; the main
+   pages load it through script.js and the standalone auth pages
+   include it directly. This loader derives the site root from this
+   script's own URL, exactly like the shell above. guide.js carries
+   its own boot guard, so it can never start twice. ==== */
+(function () {
+  "use strict";
+  try {
+    if (window.__csGuideBoot) return;
+    var prefix = "../../";
+    try {
+      var el = document.currentScript;
+      if (el && el.src) {
+        var marker = "assets/tools.js";
+        var idx = el.src.indexOf(marker);
+        if (idx > -1) prefix = el.src.slice(0, idx) + "../";
+      }
+    } catch (e) { /* keep fallback */ }
+    var s = document.createElement("script");
+    s.src = prefix + "guide.js";
+    s.async = true;
+    (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
