@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>PPF Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PPF Calculator</h1>
+<p class="tool-sub">Project your Public Provident Fund balance over 15 years and beyond.</p>
+<div class="tool-card">
+  <p>The Public Provident Fund (PPF) is a government-backed savings scheme. Enter a yearly deposit and see the balance grow year by year at the interest rate you set.</p>
+
+  <div class="row2">
+    <div>
+      <label for="ppf-yearly">Yearly deposit (₹)</label>
+      <input id="ppf-yearly" type="number" min="0" step="any" value="150000">
+    </div>
+    <div>
+      <label for="ppf-rate">Interest rate (% per year)</label>
+      <input id="ppf-rate" type="number" min="0" step="any" value="7.1">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="ppf-mode">How you deposit</label>
+      <select id="ppf-mode">
+        <option value="yearly">One deposit each April</option>
+        <option value="monthly">Monthly deposits (before the 5th)</option>
+      </select>
+    </div>
+    <div>
+      <label for="ppf-years">Years to project</label>
+      <input id="ppf-years" type="number" min="1" max="30" step="1" value="15">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="ppf-run" class="btn" type="button" data-autorun>Project PPF balance</button>
+  </div>
+  <p id="ppf-status" class="status" role="status"></p>
+  <div class="result" id="ppf-result" hidden data-result>
+    <p class="big" id="ppf-maturity"></p>
+    <div id="ppf-rows"></div>
+    <div id="ppf-table"></div>
+  </div>
+</div>
+<div class="note"><strong>Honest note:</strong> the PPF rate is set by the government and can change every quarter — 7.1% is the long-running recent rate, and the field is editable so you can test others. The projection follows the real PPF rule: interest is worked out month by month on the balance and credited once a year, and it assumes deposits reach the account by the 5th of the month. Deposits are limited to ₹1,50,000 per financial year. A PPF account matures in 15 years and can then be extended in 5-year blocks.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ppfStatus = document.getElementById("ppf-status");
+
+function inr(n) {
+  return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function ppfProject(yearly, annualRate, years, monthlyMode) {
+  // Follows the PPF rule: interest is calculated on each month's balance
+  // (deposit assumed in the account by the 5th) and credited at year end.
+  var balance = 0;
+  var totalDeposited = 0;
+  var totalInterest = 0;
+  var rowsOut = [];
+  var monthlyDeposit = yearly / 12;
+  for (var y = 1; y <= years; y++) {
+    var yearInterest = 0;
+    for (var m = 0; m < 12; m++) {
+      if (monthlyMode) {
+        balance += monthlyDeposit;
+        totalDeposited += monthlyDeposit;
+      } else if (m === 0) {
+        balance += yearly;
+        totalDeposited += yearly;
+      }
+      yearInterest += balance * (annualRate / 1200);
+    }
+    balance += yearInterest;
+    totalInterest += yearInterest;
+    rowsOut.push({ year: y, deposited: yearly, interest: yearInterest, balance: balance });
+  }
+  return { rows: rowsOut, deposited: totalDeposited, interest: totalInterest, balance: balance };
+}
+
+document.getElementById("ppf-run").addEventListener("click", function () {
+  var yearly = parseFloat(document.getElementById("ppf-yearly").value);
+  var rate = parseFloat(document.getElementById("ppf-rate").value);
+  var years = parseInt(document.getElementById("ppf-years").value, 10);
+  var monthlyMode = document.getElementById("ppf-mode").value === "monthly";
+  var rows = document.getElementById("ppf-rows");
+  var tableBox = document.getElementById("ppf-table");
+  rows.innerHTML = "";
+  tableBox.innerHTML = "";
+  document.getElementById("ppf-result").hidden = true;
+  if (!(yearly > 0) || yearly > 150000 || isNaN(rate) || rate < 0 || !(years >= 1 && years <= 30)) {
+    ppfStatus.className = "status error";
+    ppfStatus.textContent = "Enter a yearly deposit between ₹1 and ₹1,50,000 (the PPF yearly limit), a rate of 0 or more, and 1 to 30 years.";
+    return;
+  }
+  var out = ppfProject(yearly, rate, years, monthlyMode);
+  document.getElementById("ppf-maturity").textContent = "Balance after " + years + " years: " + inr(out.balance);
+  addRow(rows, "You deposit", inr(out.deposited));
+  addRow(rows, "Interest earned", inr(out.interest));
+  addRow(rows, "Total balance", inr(out.balance));
+  var table = document.createElement("table");
+  table.className = "tbl";
+  var head = document.createElement("tr");
+  ["Year", "Deposit", "Interest", "Year-end balance"].forEach(function (h) {
+    var th = document.createElement("th");
+    th.textContent = h;
+    head.appendChild(th);
+  });
+  table.appendChild(head);
+  out.rows.forEach(function (r) {
+    var tr = document.createElement("tr");
+    [String(r.year), inr(r.deposited), inr(r.interest), inr(r.balance)].forEach(function (cell) {
+      var td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  tableBox.appendChild(table);
+  document.getElementById("ppf-result").hidden = false;
+  ppfStatus.className = "status ok";
+  ppfStatus.textContent = "Projection complete. Remember: the government can revise the PPF rate every quarter.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="ppf-calculator"></script>
+</body>
+</html>
