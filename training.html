@@ -27,7 +27,44 @@
 <div class="card"><span class="tag">Later</span><h2>Guided Online Batches</h2><p>Small online groups with a fixed schedule and personal feedback — planned after the workshop and course are running.</p></div>
 </div>
 <h2 class="h2-sub">Register Your <span class="gold">Interest</span></h2>
-<p class="sub">Tell us you want a seat in the first free workshop. We will announce the date on our LinkedIn page and on this website — follow either one so you do not miss it.</p>
+<p class="sub">Tell us you want a seat in the first free workshop, and what you want to learn. We will email you when enrolment opens, and announce the date on our LinkedIn page and on this website.</p>
+<!-- Interest form: delivered by Web3Forms straight to the Cheakstar
+     inbox, exactly like the contact form (same service, same key
+     handling). This page is public on purpose — prospective students
+     are signed out almost by definition. -->
+<div class="card" id="training-interest">
+  <form id="trainingForm" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="d75a0e10-c3e7-46d8-8194-1fc8cc8e864c">
+    <input type="hidden" name="subject" value="New training interest from the Cheakstar website">
+    <input type="hidden" name="from_name" value="Cheakstar Website Training Form">
+    <div class="auth-field">
+      <label for="tfName">Your name</label>
+      <input id="tfName" name="name" type="text" required autocomplete="name" placeholder="Your full name">
+    </div>
+    <div class="auth-field">
+      <label for="tfEmail">Your email</label>
+      <input id="tfEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+      <p class="hint">We write to this address when enrolment opens, so please check it carefully.</p>
+    </div>
+    <div class="auth-field">
+      <label for="tfTopic">What do you want to learn?</label>
+      <select id="tfTopic" name="topic" required>
+        <option value="Cybersecurity from zero (complete beginner)">Cybersecurity from zero (complete beginner)</option>
+        <option value="Bug bounty">Bug bounty</option>
+        <option value="Web security">Web security</option>
+        <option value="Networking basics">Networking basics</option>
+        <option value="The Secure The Future books, explained live">The Secure The Future books, explained live</option>
+        <option value="Not sure yet — guide me">Not sure yet — guide me</option>
+      </select>
+    </div>
+    <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="auth-msg success" id="tfSuccess" role="status" hidden>Thank you — your interest is registered. We will email you when enrolment for the first free workshop opens.</div>
+    <div class="auth-msg error" id="tfError" role="alert" hidden>Sorry — your registration could not be sent just now. Please try again in a moment, or follow us on LinkedIn below so you do not miss the announcement.</div>
+    <button class="btn auth-submit" type="submit" id="tfSubmit">Register My Interest</button>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:10px">This form is delivered by Web3Forms, a form-delivery service: what you write here is sent to our inbox and is not stored on this website. We use your name and email only to write to you about Cheakstar training, and you can ask us to stop and delete your details at any time by replying to any email. See our <a href="privacy-policy.html">Privacy Policy</a>.</p>
+  </form>
+</div>
+<p class="sub" style="margin-top:26px">You can also follow the announcements directly:</p>
 <div class="btns" style="justify-content:flex-start;margin-top:4px">
 <a class="btn" href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Follow on LinkedIn</a>
 <a class="btn ghost" href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Start with the Books</a>
@@ -39,4 +76,31 @@
 <div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="contact.html">Contact</a></div>
 </div></footer>
 <script src="script.js?v=20261106c"></script>
+<script>
+/* Training interest form: submit to Web3Forms without leaving the
+   page and report the outcome in place — the same pattern as the
+   contact form. Without JavaScript the form still posts normally
+   to the same service. */
+(function () {
+  var form = document.getElementById("trainingForm");
+  if (!form) return;
+  var btn = document.getElementById("tfSubmit");
+  var ok = document.getElementById("tfSuccess");
+  var err = document.getElementById("tfError");
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (form.botcheck && form.botcheck.checked) return;
+    ok.hidden = true; err.hidden = true;
+    btn.disabled = true; btn.textContent = "Sending...";
+    fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(form) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.success) { form.reset(); ok.hidden = false; }
+        else { err.hidden = false; }
+      })
+      .catch(function () { err.hidden = false; })
+      .then(function () { btn.disabled = false; btn.textContent = "Register My Interest"; });
+  });
+})();
+</script>
 </body></html>
