@@ -455,3 +455,13 @@ select option{color:var(--ink);background-color:var(--navy2)}
 /* Back-to-top stacks above the points pill; while the card is open the
    card covers it (the card has its own close button). */
 .cs-top-btn{bottom:70px}
+
+/* --- theme visibility pass (2026-11-08): content stays clearly
+   readable in BOTH themes — the matching block lives in the root
+   styles.css; this copy covers the surfaces the tools pages share
+   (floating points card, badges, dividers). --- */
+[data-theme="light"] ul.clean li,[data-theme="light"] .sess-row{border-bottom-color:rgba(21,37,64,.12)}
+[data-theme="light"] .verified-badge{color:#146c2e;border-color:rgba(20,108,46,.55);background:rgba(52,168,83,.12)}
+[data-theme="light"] .verified-badge.warn{color:#8a6410;border-color:rgba(138,100,16,.55);background:rgba(216,164,64,.16)}
+[data-theme="light"] .acct-warn{color:#7a5b12}
+[data-theme="light"] .cs-pc-badge{filter:brightness(.5) saturate(1.4)}
