@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>CGPA Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">CGPA Calculator</h1>
+<p class="tool-sub">Convert CGPA to percentage and percentage to CGPA.</p>
+<div class="tool-card">
+  <p>Many forms ask for your marks as a percentage when your marksheet shows a CGPA — or the other way round. Pick the direction, choose the multiplier your board or university uses, and convert.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cgpa-direction">Direction</label>
+      <select id="cgpa-direction">
+        <option value="to-pct">CGPA to percentage</option>
+        <option value="to-cgpa">Percentage to CGPA</option>
+      </select>
+    </div>
+    <div>
+      <label for="cgpa-mult">Multiplier</label>
+      <select id="cgpa-mult">
+        <option value="9.5" selected>9.5 (CBSE standard)</option>
+        <option value="10">10 (some universities)</option>
+        <option value="custom">Custom multiplier</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="cgpa-value" id="cgpa-value-label">Your CGPA (out of 10)</label>
+      <input id="cgpa-value" type="number" min="0" step="any" value="8.5">
+    </div>
+    <div id="cgpa-custom-wrap" hidden>
+      <label for="cgpa-custom">Custom multiplier</label>
+      <input id="cgpa-custom" type="number" min="0" step="any" value="9.5">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="cgpa-run" class="btn" type="button" data-autorun>Convert</button>
+  </div>
+  <p id="cgpa-status" class="status" role="status"></p>
+  <div class="result" id="cgpa-result" hidden data-result>
+    <p class="big" id="cgpa-answer"></p>
+    <div id="cgpa-rows"></div>
+  </div>
+  <table class="tbl">
+    <tr><th>CGPA</th><th>Percentage (x 9.5)</th></tr>
+    <tr><td>10.0</td><td>95.0%</td></tr>
+    <tr><td>9.0</td><td>85.5%</td></tr>
+    <tr><td>8.0</td><td>76.0%</td></tr>
+    <tr><td>7.0</td><td>66.5%</td></tr>
+    <tr><td>6.0</td><td>57.0%</td></tr>
+    <tr><td>5.0</td><td>47.5%</td></tr>
+  </table>
+</div>
+<div class="note"><strong>Honest note:</strong> there is no single national conversion formula. CBSE uses x 9.5; some universities use x 10, others use their own formula (for example, percentage = CGPA x 10 - 7.5 in a few cases). Always check the conversion printed on your marksheet or your university's rules before using the result on an official form.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cgpaStatus = document.getElementById("cgpa-status");
+var cgpaDirection = document.getElementById("cgpa-direction");
+var cgpaMult = document.getElementById("cgpa-mult");
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function syncLabels() {
+  var toPct = cgpaDirection.value === "to-pct";
+  document.getElementById("cgpa-value-label").textContent = toPct ? "Your CGPA (out of 10)" : "Your percentage (%)";
+  document.getElementById("cgpa-custom-wrap").hidden = cgpaMult.value !== "custom";
+}
+
+cgpaDirection.addEventListener("change", syncLabels);
+cgpaMult.addEventListener("change", syncLabels);
+syncLabels();
+
+document.getElementById("cgpa-run").addEventListener("click", function () {
+  var value = parseFloat(document.getElementById("cgpa-value").value);
+  var mult = cgpaMult.value === "custom"
+    ? parseFloat(document.getElementById("cgpa-custom").value)
+    : parseFloat(cgpaMult.value);
+  var rows = document.getElementById("cgpa-rows");
+  rows.innerHTML = "";
+  document.getElementById("cgpa-result").hidden = true;
+  if (!(mult > 0)) {
+    cgpaStatus.className = "status error";
+    cgpaStatus.textContent = "Enter a multiplier above zero.";
+    return;
+  }
+  var answer;
+  if (cgpaDirection.value === "to-pct") {
+    if (!(value >= 0 && value <= 10)) {
+      cgpaStatus.className = "status error";
+      cgpaStatus.textContent = "Enter a CGPA between 0 and 10.";
+      return;
+    }
+    var pct = value * mult;
+    answer = value.toFixed(2) + " CGPA = " + pct.toFixed(2) + "%";
+    addRow(rows, "Formula used", "Percentage = CGPA x " + mult);
+    addRow(rows, "In words", "A CGPA of " + value.toFixed(2) + " converts to about " + pct.toFixed(1) + " percent with the x " + mult + " formula.");
+  } else {
+    if (!(value >= 0 && value <= 100)) {
+      cgpaStatus.className = "status error";
+      cgpaStatus.textContent = "Enter a percentage between 0 and 100.";
+      return;
+    }
+    var cgpa = value / mult;
+    answer = value.toFixed(2) + "% = " + cgpa.toFixed(2) + " CGPA";
+    addRow(rows, "Formula used", "CGPA = Percentage / " + mult);
+    addRow(rows, "In words", value.toFixed(1) + " percent converts to about " + cgpa.toFixed(2) + " CGPA with the x " + mult + " formula.");
+  }
+  document.getElementById("cgpa-answer").textContent = answer;
+  document.getElementById("cgpa-result").hidden = false;
+  cgpaStatus.className = "status ok";
+  cgpaStatus.textContent = "Conversion complete. Check your board or university formula before official use.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="cgpa-calculator"></script>
+</body>
+</html>
