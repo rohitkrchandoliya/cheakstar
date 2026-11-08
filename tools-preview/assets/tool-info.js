@@ -9,6 +9,11 @@
   var script = document.currentScript;
   var slug = script ? script.getAttribute("data-tool") : null;
   if (!slug) { return; }
+
+  var rendered = false;
+  function render() {
+  if (rendered) { return; }
+  rendered = true;
   var info = (window.CK_TOOL_INFO || {})[slug];
   if (!info) { return; }
   var related = (window.CK_TOOL_RELATED || {})[slug] || [];
@@ -98,5 +103,18 @@
     var footer = document.querySelector("footer");
     if (footer && footer.parentNode) { footer.parentNode.insertBefore(section, footer); }
     else { document.body.appendChild(section); }
+  }
+  }
+
+  var src = script && script.src ? script.src : "";
+  if (/tool-info\.js($|\?)/.test(src)) {
+    var s2 = document.createElement("script");
+    s2.src = src.replace(/tool-info\.js/, "tool-info-data-2.js");
+    s2.onload = render;
+    s2.onerror = render;
+    document.head.appendChild(s2);
+    setTimeout(render, 3000);
+  } else {
+    render();
   }
 })();
