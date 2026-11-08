@@ -263,7 +263,47 @@
     var s = readSession();
     return (s && s.user && s.user.user_metadata) || {};
   }
+  /* Last-known server status, kept in this browser so the points
+     card can open with the member's real figures immediately instead
+     of flashing a loading state on every page (added 2026-11-08).
+     Refreshed on every successful status load and cleared at
+     sign-out, so it can never show another member's numbers. */
+  var STATUS_CACHE_KEY = "csRewardCache";
+  function cacheSaveStatus() {
+    try {
+      if (!myStatus) return;
+      lsSet(STATUS_CACHE_KEY, JSON.stringify({
+        displayName: myStatus.displayName, totalPoints: myStatus.totalPoints,
+        rankTier: myStatus.rankTier, position: myStatus.position,
+        pointsToday: myStatus.pointsToday, totalActiveSeconds: myStatus.totalActiveSeconds,
+        showOnLeaderboard: myStatus.showOnLeaderboard
+      }));
+    } catch (e) {}
+  }
+  function cacheLoadStatus() {
+    try {
+      var c = JSON.parse(lsGet(STATUS_CACHE_KEY) || "null");
+      if (!c || typeof c.totalPoints !== "number") return null;
+      return c;
+    } catch (e) { return null; }
+  }
+
   function snapshot() {
+    if (readSession() && !myStatus) {
+      // Signed in, fresh status still on its way: serve the cached
+      // last-known figures so nothing on the page has to show a
+      // loading placeholder.
+      var cached = cacheLoadStatus();
+      if (cached) {
+        var cmeta = sessionMeta();
+        return { signedIn: true, points: cached.totalPoints, rank: cached.rankTier,
+                 position: cached.position, pointsToday: cached.pointsToday,
+                 showOnLeaderboard: cached.showOnLeaderboard,
+                 name: cached.displayName || cmeta.display_name || null,
+                 totalSeconds: (cached.totalActiveSeconds != null ? cached.totalActiveSeconds : null),
+                 avatar: (typeof cmeta.avatar === "string" && cmeta.avatar.indexOf("data:image/") === 0) ? cmeta.avatar : null };
+      }
+    }
     if (readSession() && myStatus) {
       var meta = sessionMeta();
       return { signedIn: true, points: myStatus.totalPoints, rank: myStatus.rankTier,
@@ -295,7 +335,7 @@
   function refreshStatus() {
     if (!readSession()) { myStatus = null; emit(); return; }
     rpc("my_reward_status", {}).then(function (st) {
-      if (st && st.signedIn) { myStatus = st; emit(); }
+      if (st && st.signedIn) { myStatus = st; cacheSaveStatus(); emit(); }
     }, function () {});
   }
 
@@ -410,7 +450,7 @@
     var signed = !!readSession();
     if (signed !== wasSignedIn) {
       wasSignedIn = signed;
-      if (signed) onSignedIn(); else { myStatus = null; emit(); }
+      if (signed) onSignedIn(); else { myStatus = null; lsDel(STATUS_CACHE_KEY); emit(); }
     }
     if (!leader || document.hidden) return;
     if (Date.now() - lastActivity > IDLE_MS) return; // idle: no earning
@@ -421,7 +461,7 @@
   if (window.CSAuth && window.CSAuth.onChange) {
     window.CSAuth.onChange(function (user, event) {
       if (event === "SIGNED_IN" && user) { wasSignedIn = true; onSignedIn(); }
-      if (event === "SIGNED_OUT") { wasSignedIn = false; myStatus = null; emit(); }
+      if (event === "SIGNED_OUT") { wasSignedIn = false; myStatus = null; lsDel(STATUS_CACHE_KEY); emit(); }
     });
   }
   if (wasSignedIn) onSignedIn();
@@ -498,7 +538,12 @@
       document.body.appendChild(pcPill);
       pcCard.querySelector("#csPcClose").addEventListener("click", function () { pcSetOpen(false); });
       pcPill.addEventListener("click", function () { pcSetOpen(true); });
-      pcSetOpen(lsGet(PC_OPEN_KEY) !== "0"); // default: open
+      // Default: open on wide screens. On narrower screens the open
+      // card used to cover hero text, buttons and footer links, so
+      // there it starts as the small pill unless the visitor has
+      // already made their own choice (which is always respected).
+      var pcSaved = lsGet(PC_OPEN_KEY);
+      pcSetOpen(pcSaved !== null ? pcSaved !== "0" : window.innerWidth > 1024);
       pcRender(snapshot());
       listeners.push(pcRender);
     } catch (e) { pcCard = null; pcPill = null; }
