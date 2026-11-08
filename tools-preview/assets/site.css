@@ -257,7 +257,12 @@ button.btn.ghost{cursor:pointer;font-family:inherit;font-size:1rem}
 .cs-acc-who{display:flex;align-items:center;gap:10px;padding:4px 8px 8px}
 .cs-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#0a1628;font-weight:700;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex:none}
 .cs-acc-meta{display:flex;flex-direction:column;min-width:0;line-height:1.3}
-.cs-acc-name{color:#fff;font-weight:600;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The signed-in name wraps in full (fixed 2026-11-08): it used to
+   be cut off with an ellipsis ("Rohit Kumar Chandoli…") while the
+   floating points card already showed the whole name. The meta
+   column may shrink (min-width:0 above) and the collapsed rail
+   hides this block entirely, so wrapping cannot break the layout. */
+.cs-acc-name{color:#fff;font-weight:600;font-size:.92rem;white-space:normal;overflow-wrap:anywhere}
 .cs-acc-email{color:var(--muted);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (min-width:769px){
 body.cs-rail .cs-account{padding:6px 8px 10px}
