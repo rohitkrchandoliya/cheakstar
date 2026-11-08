@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>World Clock - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">World Clock</h1>
+<p class="tool-sub">Live local time for major cities around the world.</p>
+<div class="tool-card">
+  <p>The current time in major cities, updated every second and worked out from the official time zone rules for each place — daylight saving changes are handled automatically.</p>
+
+  <div class="stats" id="wck-grid" data-result></div>
+  <p id="wck-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> offsets shown are each city's current difference from UTC (GMT). Many places move their clocks forward in summer and back in winter, so the offset — and the gap between two cities — can change during the year. The clocks use your device clock as their source; if your device time is wrong, every clock here will be off by the same amount.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var CITIES = [
+  { name: "New Delhi", zone: "Asia/Kolkata" },
+  { name: "Dubai", zone: "Asia/Dubai" },
+  { name: "Singapore", zone: "Asia/Singapore" },
+  { name: "Tokyo", zone: "Asia/Tokyo" },
+  { name: "Sydney", zone: "Australia/Sydney" },
+  { name: "Auckland", zone: "Pacific/Auckland" },
+  { name: "Moscow", zone: "Europe/Moscow" },
+  { name: "Berlin", zone: "Europe/Berlin" },
+  { name: "London", zone: "Europe/London" },
+  { name: "Sao Paulo", zone: "America/Sao_Paulo" },
+  { name: "Toronto", zone: "America/Toronto" },
+  { name: "New York", zone: "America/New_York" },
+  { name: "Chicago", zone: "America/Chicago" },
+  { name: "Los Angeles", zone: "America/Los_Angeles" }
+];
+
+var grid = document.getElementById("wck-grid");
+var status = document.getElementById("wck-status");
+
+function offsetLabel(zone, date) {
+  try {
+    var parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: zone, timeZoneName: "longOffset"
+    }).formatToParts(date);
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === "timeZoneName") {
+        return parts[i].value.replace("GMT", "UTC");
+      }
+    }
+  } catch (e) { /* fall through to the numeric fallback */ }
+  // Fallback: difference between the zoned wall clock and UTC, in minutes.
+  try {
+    var zoned = new Date(date.toLocaleString("en-US", { timeZone: zone }));
+    var diffMin = Math.round((zoned.getTime() - date.getTime()) / 60000);
+    var sign = diffMin < 0 ? "-" : "+";
+    var abs = Math.abs(diffMin);
+    var hh = Math.floor(abs / 60);
+    var mm = abs % 60;
+    return "UTC" + sign + hh + (mm ? ":" + (mm < 10 ? "0" : "") + mm : ":00");
+  } catch (e2) {
+    return "";
+  }
+}
+
+function buildCard(title) {
+  var stat = document.createElement("div");
+  stat.className = "stat";
+  var value = document.createElement("span");
+  value.className = "value mono";
+  value.textContent = "--:--:--";
+  var label = document.createElement("span");
+  label.className = "label";
+  label.textContent = title;
+  var sub = document.createElement("span");
+  sub.className = "label";
+  stat.appendChild(value);
+  stat.appendChild(label);
+  stat.appendChild(sub);
+  grid.appendChild(stat);
+  return { value: value, sub: sub };
+}
+
+var localCard = buildCard("Your time");
+var cards = CITIES.map(function (city) {
+  var card = buildCard(city.name);
+  card.city = city;
+  card.fmtTime = new Intl.DateTimeFormat("en-GB", {
+    timeZone: city.zone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+  });
+  card.fmtDate = new Intl.DateTimeFormat("en-GB", {
+    timeZone: city.zone, weekday: "short", day: "numeric", month: "short"
+  });
+  return card;
+});
+var localFmtTime = new Intl.DateTimeFormat("en-GB", {
+  hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+});
+var localFmtDate = new Intl.DateTimeFormat("en-GB", {
+  weekday: "short", day: "numeric", month: "short"
+});
+
+function tick() {
+  var now = new Date();
+  localCard.value.textContent = localFmtTime.format(now);
+  var localZone = "";
+  try { localZone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) { localZone = ""; }
+  localCard.sub.textContent = localFmtDate.format(now) + (localZone ? " · " + localZone.replace("_", " ") : "");
+  cards.forEach(function (card) {
+    card.value.textContent = card.fmtTime.format(now);
+    card.sub.textContent = card.fmtDate.format(now) + " · " + offsetLabel(card.city.zone, now);
+  });
+}
+
+tick();
+setInterval(tick, 1000);
+status.textContent = "Times update every second.";
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="world-clock"></script>
+</body>
+</html>
