@@ -457,7 +457,9 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .cs-top-btn{bottom:70px}
 
 /* --- leaderboard upgrade (2026-11-07): account page crowns + level badge --- */
-.acct-avatar-wrap{position:relative;flex:none}
+.acct-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none}
+.acct-avatar.framed{background:transparent;width:84px;height:76px;border-radius:0}
+.acct-level{display:flex;align-items:center;gap:5px;font-weight:700;font-size:.88rem;min-height:1.2em}
 .cs-acct-crown{position:absolute;top:-15px;left:50%;transform:translateX(-50%) rotate(-8deg);z-index:2;line-height:0;pointer-events:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
 .cs-acct-crown[hidden]{display:none!important}
 .acct-avatar.ring-gold{box-shadow:0 0 0 3px #d4af37,0 0 16px rgba(212,175,55,.45)}
