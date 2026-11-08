@@ -96,7 +96,7 @@
       </form>
       <p class="hint" id="emailPending" hidden style="margin-top:10px"></p>
     </div>
-    
+
     <h3 style="margin:24px 0 12px">Edit profile</h3>
     <form id="profileForm" novalidate>
       <div class="auth-field">
@@ -154,7 +154,22 @@
       <p style="margin-top:14px"><a class="go" href="leaderboard.html">See the leaderboard →</a></p>
     </div>
   </div>
-  
+
+  <!-- H. Activity chart + streaks (master list items 57–58) -->
+  <div class="card" style="margin-bottom:22px">
+    <h3 style="margin-bottom:6px">Your Activity</h3>
+    <p style="color:var(--muted);margin-bottom:14px">Each block is one day in the last 12 months. A deeper green means more points earned that day. Hover or tap a block to see that day's points and active minutes. A day counts towards a streak when you earn at least 1 point in it.</p>
+    <p id="actLoading" style="color:var(--muted)">Loading your activity…</p>
+    <div id="actBody" hidden>
+      <div class="sess-row"><span class="sess-label">Current streak</span><span class="sess-value" id="actStreakNow">—</span></div>
+      <div class="sess-row"><span class="sess-label">Longest streak</span><span class="sess-value" id="actStreakBest">—</span></div>
+      <div class="cs-act-scroll" style="margin-top:16px"><div class="cs-act-grid" id="actGrid" role="img" aria-label="Your activity over the last 12 months"></div></div>
+      <div class="cs-act-legend" aria-hidden="true"><span>Less</span><span class="cs-act-cell l0"></span><span class="cs-act-cell l1"></span><span class="cs-act-cell l2"></span><span class="cs-act-cell l3"></span><span class="cs-act-cell l4"></span><span>More</span></div>
+      <p class="hint" id="actTotalLine" style="margin-top:10px"></p>
+    </div>
+    <p id="actEmpty" hidden style="color:var(--muted)">Activity tracking starts today — your chart fills in as you use the site.</p>
+  </div>
+
   <!-- Security controls (password, two-factor) and preferences live in
        Settings since 2026-11-06; this page keeps identity + activity. -->
   <div class="note" style="margin-bottom:22px"><strong>Password, two-factor authentication and preferences</strong> — change your password, manage two-factor authentication, appearance and your data from <a href="settings.html">Settings</a>.<p style="margin-top:12px"><a class="btn ghost" href="settings.html">Open Settings</a></p></div>
@@ -257,7 +272,7 @@
       if (meta.display_name) $("ptsName").value = meta.display_name;
     }
   });
-    
+
   $("ptsForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     $("ptsError").hidden = true;
@@ -273,6 +288,132 @@
         $("ptsError").hidden = false;
       });
   });
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  /* Activity chart + streaks (items 57–58). Data: the member's own
+     rows of user_activity_days, read through CSAuth (row-level
+     security limits the answer to their own record). Days are
+     Asia/Kolkata calendar days, matching the server-side record.
+     Any failure — including the table not existing yet — shows the
+     honest empty state, never invented data. */
+  var $ = function (id) { return document.getElementById(id); };
+  var started = false;
+
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function dayString(d) {
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function parseDay(s) {
+    var p = String(s || "").split("-");
+    return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  }
+  function addDays(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+  /* Today's date on the Asia/Kolkata calendar (the record's day
+     boundary), as YYYY-MM-DD. en-CA formats exactly like that. */
+  function istTodayString() {
+    try {
+      var s = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    } catch (e) {}
+    return dayString(new Date());
+  }
+  function levelForPoints(pts) {
+    if (pts >= 60) return 4;
+    if (pts >= 30) return 3;
+    if (pts >= 10) return 2;
+    if (pts >= 1) return 1;
+    return 0;
+  }
+  function dayLabel(s) {
+    return parseDay(s).toLocaleDateString("en-GB", {
+      day: "numeric", month: "long", year: "numeric"
+    });
+  }
+  function streakText(n) { return n + (n === 1 ? " day" : " days"); }
+
+  function render(rows) {
+    $("actLoading").hidden = true;
+    if (!rows.length) { $("actEmpty").hidden = false; return; }
+
+    var byDay = {};
+    rows.forEach(function (r) { byDay[r.day] = r; });
+    function counts(s) { var r = byDay[s]; return !!r && r.points >= 1; }
+
+    /* Longest streak: runs of consecutive recorded days with at
+       least 1 point (rows arrive in ascending day order). */
+    var best = 0, run = 0, prev = null;
+    rows.forEach(function (r) {
+      if (r.points < 1) { run = 0; prev = r.day; return; }
+      run = (prev && dayString(addDays(parseDay(prev), 1)) === r.day) ? run + 1 : 1;
+      if (run > best) best = run;
+      prev = r.day;
+    });
+
+    /* Current streak: back from today; if today has not counted
+       yet, the streak may still run through yesterday. */
+    var todayS = istTodayString();
+    var cur = 0;
+    var cursor = parseDay(todayS);
+    if (!counts(todayS)) cursor = addDays(cursor, -1);
+    while (counts(dayString(cursor))) { cur += 1; cursor = addDays(cursor, -1); }
+
+    $("actStreakNow").textContent = streakText(cur);
+    $("actStreakBest").textContent = streakText(best);
+
+    /* Chart: one column per week (Sunday first), one block per day,
+       covering the last 12 months up to today. */
+    var end = parseDay(todayS);
+    var windowStart = addDays(end, -364);
+    var start = addDays(windowStart, -windowStart.getDay());
+    var grid = $("actGrid");
+    grid.textContent = "";
+    var activeDays = 0, totalPoints = 0;
+    var d = start;
+    while (d <= end) {
+      var s = dayString(d);
+      var r = byDay[s];
+      var pts = r ? r.points : 0;
+      var secs = r ? r.activeSeconds : 0;
+      var cell = document.createElement("div");
+      cell.className = "cs-act-cell l" + levelForPoints(pts);
+      var mins = Math.floor(secs / 60);
+      cell.title = dayLabel(s) + " — " + pts + (pts === 1 ? " point" : " points") +
+        " · " + mins + (mins === 1 ? " active minute" : " active minutes");
+      grid.appendChild(cell);
+      if (d >= windowStart) {
+        totalPoints += pts;
+        if (pts >= 1) activeDays += 1;
+      }
+      d = addDays(d, 1);
+    }
+    $("actTotalLine").textContent = activeDays + (activeDays === 1 ? " active day" : " active days") +
+      " · " + totalPoints.toLocaleString("en-IN") + " points in the last 12 months";
+    $("actBody").hidden = false;
+  }
+
+  function start() {
+    if (started) return;
+    started = true;
+    if (!window.CSAuth || !window.CSAuth.fetchActivityDays) {
+      $("actLoading").hidden = true;
+      $("actEmpty").hidden = false;
+      return;
+    }
+    window.CSAuth.fetchActivityDays().then(render, function () {
+      $("actLoading").hidden = true;
+      $("actEmpty").hidden = false;
+    });
+  }
+
+  if (window.CSAuth && window.CSAuth.ready) {
+    window.CSAuth.ready.then(function () {
+      if (window.CSAuth.getUser()) start();
+    });
+    window.CSAuth.onChange(function (user) { if (user) start(); });
+  }
 })();
 </script>
 <script src="theme.js?v=20261106a"></script>
@@ -412,7 +553,7 @@
     }
   }
   window.__csPaintAvatar = paintAvatar;
-  
+
   var profileDirty = false;
   var pendingAvatar = null;   // data URL chosen but not saved yet
   var avatarRemoved = false;  // photo marked for removal, not saved yet
@@ -476,7 +617,7 @@
       $("photoPreview").textContent = ($("profName").value.trim() || name).charAt(0).toUpperCase() || "A";
     }
   });
-    
+
   $("profileForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     show($("profileError"), "");
@@ -618,7 +759,7 @@
       $("sessNet").textContent = "Network details could not be loaded right now.";
     });
   }
-  
+
   /* ---------------- devices & sessions popup ----------------
      The popup itself is built by the shared auth module; this page
      only opens it. It lists every session on the account, marks this
