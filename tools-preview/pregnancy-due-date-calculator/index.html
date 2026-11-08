@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Pregnancy Due Date Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Pregnancy Due Date Calculator</h1>
+<p class="tool-sub">Estimate your due date and current week from your last period date.</p>
+<div class="tool-card">
+  <p>Enter the first day of your last menstrual period (LMP). The calculator applies Naegele's rule — the standard estimate doctors start from — to give your expected due date and how far along the pregnancy is today.</p>
+
+  <label for="preg-lmp">First day of your last period</label>
+  <input id="preg-lmp" type="date">
+  <div class="btn-row">
+    <button id="preg-run" class="btn" type="button" data-autorun>Calculate due date</button>
+  </div>
+  <p id="preg-status" class="status" role="status"></p>
+  <div class="result" id="preg-result" hidden data-result>
+    <p class="big" id="preg-due"></p>
+    <div id="preg-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Estimate only — confirm with your doctor:</strong> Naegele's rule assumes a regular 28-day cycle and counts 280 days from the last period. Only about 1 in 20 babies arrive on the exact due date; a first ultrasound usually gives a more accurate date. This calculator does not store or send the date you enter.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pregStatus = document.getElementById("preg-status");
+var DAY = 24 * 60 * 60 * 1000;
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+function fmtDate(d) {
+  return d.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+document.getElementById("preg-run").addEventListener("click", function () {
+  var raw = document.getElementById("preg-lmp").value;
+  var rows = document.getElementById("preg-rows");
+  rows.innerHTML = "";
+  document.getElementById("preg-result").hidden = true;
+  if (!raw) {
+    pregStatus.className = "status error";
+    pregStatus.textContent = "Pick the first day of your last period.";
+    return;
+  }
+  var parts = raw.split("-");
+  var lmp = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  var today = startOfDay(new Date());
+  var daysAlong = Math.round((today - lmp) / DAY);
+  if (daysAlong < 0) {
+    pregStatus.className = "status error";
+    pregStatus.textContent = "That date is in the future. Pick the first day of a period that has already happened.";
+    return;
+  }
+  var due = new Date(lmp.getTime() + 280 * DAY);
+  var conception = new Date(lmp.getTime() + 14 * DAY);
+  var weeks = Math.floor(daysAlong / 7);
+  var days = daysAlong % 7;
+  var trimester = weeks < 14 ? "First trimester (up to week 13)" : (weeks < 28 ? "Second trimester (weeks 14 to 27)" : "Third trimester (week 28 onwards)");
+  var daysToGo = Math.round((due - today) / DAY);
+  document.getElementById("preg-due").textContent = "Estimated due date: " + fmtDate(due);
+  if (daysAlong <= 300) {
+    addRow(rows, "How far along today", weeks + " weeks and " + days + " days");
+    addRow(rows, "Trimester", trimester);
+  }
+  if (daysToGo > 0) {
+    addRow(rows, "Days to go", daysToGo + " days");
+  } else if (daysToGo === 0) {
+    addRow(rows, "Days to go", "the due date is today");
+  } else {
+    addRow(rows, "Due date passed", Math.abs(daysToGo) + " days ago — most babies arrive within two weeks either side; follow your doctor's advice");
+  }
+  addRow(rows, "Estimated conception date", fmtDate(conception) + " (a rough guide — assumes ovulation on day 14)");
+  addRow(rows, "How it is calculated", "Last period date + 280 days (Naegele's rule, 40 weeks)");
+  document.getElementById("preg-result").hidden = false;
+  pregStatus.className = "status ok";
+  pregStatus.textContent = "Estimate complete. An ultrasound scan can refine this date.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="pregnancy-due-date-calculator"></script>
+</body>
+</html>
