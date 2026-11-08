@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Loan Amortization Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Loan Amortization Calculator</h1>
+<p class="tool-sub">See your loan balance fall month by month, with interest and principal for every payment.</p>
+<div class="tool-card">
+  <p>An EMI tells you what you pay each month — this schedule shows where that money goes. Early payments are mostly interest; later ones mostly principal. Enter any home, car or personal loan to see the full month-by-month table.</p>
+
+  <label for="la-amount">Loan amount (₹)</label>
+  <input id="la-amount" type="number" min="0" step="any" value="500000">
+  <div class="row2">
+    <div>
+      <label for="la-rate">Interest rate (% per year)</label>
+      <input id="la-rate" type="number" min="0" step="any" value="9">
+    </div>
+    <div>
+      <label for="la-years">Time period (years)</label>
+      <input id="la-years" type="number" min="0" step="any" value="5">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="la-run" class="btn" type="button" data-autorun>Show schedule</button>
+  </div>
+  <p id="la-status" class="status" role="status"></p>
+  <div class="result" id="la-result" hidden data-result>
+    <p class="big" id="la-headline"></p>
+    <div id="la-rows"></div>
+    <div id="la-schedule"></div>
+    <div class="btn-row">
+      <button id="la-prev" class="btn ghost" type="button">&larr; Previous 12 months</button>
+      <button id="la-next" class="btn ghost" type="button">Next 12 months &rarr;</button>
+    </div>
+    <p id="la-page" class="status" style="text-align:center"></p>
+  </div>
+</div>
+<div class="note"><strong>Note:</strong> the schedule uses the standard reducing-balance method with monthly rests, rounding each month to the nearest paisa; the final payment is adjusted so the balance ends at exactly zero. Your bank's statement can differ slightly because of fees, insurance premiums, or the exact date the first EMI falls. Figures are estimates for planning, not a loan offer.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var laStatus = document.getElementById("la-status");
+var PAGE_SIZE = 12;
+var schedule = [];   // {month, payment, principal, interest, balance}
+var page = 0;
+
+function round2(x) { return Math.round(x * 100) / 100; }
+
+function inr(value) {
+  return "₹" + value.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function buildSchedule(principal, annualRate, months) {
+  var r = annualRate / 1200;
+  var emi;
+  if (r === 0) {
+    emi = principal / months;
+  } else {
+    var factor = Math.pow(1 + r, months);
+    emi = principal * r * factor / (factor - 1);
+  }
+  emi = round2(emi);
+  var rows = [];
+  var balance = principal;
+  for (var m = 1; m <= months; m++) {
+    var interest = round2(balance * r);
+    var principalPart = round2(emi - interest);
+    var payment = emi;
+    if (m === months || principalPart > balance) {
+      principalPart = round2(balance);
+      payment = round2(principalPart + interest);
+    }
+    balance = round2(balance - principalPart);
+    rows.push({ month: m, payment: payment, principal: principalPart, interest: interest, balance: balance });
+    if (balance <= 0) { break; }
+  }
+  return { emi: emi, rows: rows };
+}
+
+function renderPage() {
+  var box = document.getElementById("la-schedule");
+  box.innerHTML = "";
+  var start = page * PAGE_SIZE;
+  var slice = schedule.slice(start, start + PAGE_SIZE);
+  var table = document.createElement("table");
+  table.className = "tbl";
+  var head = document.createElement("tr");
+  ["Month", "Payment", "Principal", "Interest", "Balance"].forEach(function (h) {
+    var th = document.createElement("th");
+    th.textContent = h;
+    head.appendChild(th);
+  });
+  table.appendChild(head);
+  slice.forEach(function (row) {
+    var tr = document.createElement("tr");
+    [String(row.month), inr(row.payment), inr(row.principal), inr(row.interest), inr(row.balance)].forEach(function (cell) {
+      var td = document.createElement("td");
+      td.textContent = cell;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  });
+  box.appendChild(table);
+  var pages = Math.max(1, Math.ceil(schedule.length / PAGE_SIZE));
+  document.getElementById("la-page").textContent =
+    "Months " + (start + 1) + "–" + (start + slice.length) + " of " + schedule.length + " (page " + (page + 1) + " of " + pages + ")";
+  document.getElementById("la-prev").disabled = page === 0;
+  document.getElementById("la-next").disabled = page >= pages - 1;
+}
+
+document.getElementById("la-prev").addEventListener("click", function () {
+  if (page > 0) { page--; renderPage(); }
+});
+document.getElementById("la-next").addEventListener("click", function () {
+  if ((page + 1) * PAGE_SIZE < schedule.length) { page++; renderPage(); }
+});
+
+document.getElementById("la-run").addEventListener("click", function () {
+  var amount = Number(document.getElementById("la-amount").value);
+  var rate = Number(document.getElementById("la-rate").value);
+  var years = Number(document.getElementById("la-years").value);
+  var rowsBox = document.getElementById("la-rows");
+  rowsBox.innerHTML = "";
+  document.getElementById("la-result").hidden = true;
+  laStatus.className = "status error";
+  if (isNaN(amount) || amount <= 0) {
+    laStatus.textContent = "Enter a loan amount above zero.";
+    return;
+  }
+  if (isNaN(rate) || rate < 0 || rate > 40) {
+    laStatus.textContent = "Interest rate must be between 0 and 40 percent.";
+    return;
+  }
+  var months = Math.round(years * 12);
+  if (isNaN(months) || months < 1 || months > 480) {
+    laStatus.textContent = "Time period must be between 1 month and 40 years.";
+    return;
+  }
+  var built = buildSchedule(amount, rate, months);
+  schedule = built.rows;
+  page = 0;
+  var totalPayment = 0;
+  var totalInterest = 0;
+  schedule.forEach(function (row) {
+    totalPayment += row.payment;
+    totalInterest += row.interest;
+  });
+  document.getElementById("la-headline").textContent = "Monthly EMI: " + inr(built.emi);
+  addRow(rowsBox, "Loan amount", inr(amount));
+  addRow(rowsBox, "Total interest", inr(round2(totalInterest)));
+  addRow(rowsBox, "Total payment", inr(round2(totalPayment)));
+  addRow(rowsBox, "Payments", schedule.length + " monthly payments");
+  document.getElementById("la-result").hidden = false;
+  laStatus.textContent = "";
+  renderPage();
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="loan-amortization-calculator"></script>
+</body>
+</html>
