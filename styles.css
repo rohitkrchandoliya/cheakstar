@@ -467,3 +467,24 @@ select option{color:var(--ink);background-color:var(--navy2)}
 .acct-avatar.ring-bronze{box-shadow:0 0 0 3px #cd7f32,0 0 16px rgba(205,127,50,.45)}
 .cs-lvl-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid;border-radius:999px;font-size:.8rem;font-weight:700;white-space:nowrap;vertical-align:middle}
 .cs-lvl-badge svg{flex:none}
+
+/* --- theme visibility pass (2026-11-08): every piece of content must
+   stay clearly readable in BOTH themes. A few headings were hard-coded
+   white for the dark theme and vanished on light backgrounds; the
+   verified badges and the two-factor warning used pale tints with no
+   light-theme counterpart; and the level badges, whose colours come
+   from the rewards module (pale tints chosen for the dark theme), are
+   darkened as a group in the light theme so all 50 levels stay
+   legible on white cards. --- */
+[data-theme="light"] .lb-hero-name{color:var(--ink)}
+[data-theme="light"] .lb-big{color:var(--ink)}
+[data-theme="light"] .lb-hero-num{color:var(--gold)}
+[data-theme="light"] .progress-top strong{color:var(--ink)}
+[data-theme="light"] .check-sec h2{color:var(--ink)}
+[data-theme="light"] .bar{background:rgba(21,37,64,.12)}
+[data-theme="light"] ul.tasks li{border-bottom-color:rgba(21,37,64,.1)}
+[data-theme="light"] ul.clean li,[data-theme="light"] .sess-row{border-bottom-color:rgba(21,37,64,.12)}
+[data-theme="light"] .verified-badge{color:#146c2e;border-color:rgba(20,108,46,.55);background:rgba(52,168,83,.12)}
+[data-theme="light"] .verified-badge.warn{color:#8a6410;border-color:rgba(138,100,16,.55);background:rgba(216,164,64,.16)}
+[data-theme="light"] .acct-warn{color:#7a5b12}
+[data-theme="light"] .tier,[data-theme="light"] .cs-pc-badge,[data-theme="light"] .cs-lvl-badge,[data-theme="light"] .acct-level{filter:brightness(.5) saturate(1.4)}
