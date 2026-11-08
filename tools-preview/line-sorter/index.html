@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Line Sorter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Line Sorter</h1>
+<p class="tool-sub">Sort lines alphabetically, by length, numerically, or shuffle them.</p>
+<div class="tool-card">
+  <p>Put any list into order — names for a register, items for a menu, roll numbers, words for a worksheet. Numbers inside lines are read as numbers, so "Item 2" correctly comes before "Item 10".</p>
+
+  <label for="ls-in">Your list (one item per line)</label>
+  <textarea id="ls-in" class="tall" rows="10" placeholder="Paste your list here, one item per line..."></textarea>
+  <div class="row2">
+    <div>
+      <label for="ls-mode">Sort by</label>
+      <select id="ls-mode">
+        <option value="az" selected>A to Z (alphabetical)</option>
+        <option value="za">Z to A (reverse alphabetical)</option>
+        <option value="len-asc">Length, shortest first</option>
+        <option value="len-desc">Length, longest first</option>
+        <option value="num-asc">Numbers, smallest first</option>
+        <option value="num-desc">Numbers, largest first</option>
+        <option value="shuffle">Shuffle (random order)</option>
+      </select>
+    </div>
+    <div>
+      <label class="check-line" for="ls-keep-blank" style="margin-top:26px"><input id="ls-keep-blank" type="checkbox"> Keep blank lines</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="ls-run" class="btn" type="button">Sort the lines</button>
+    <button id="ls-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="ls-status" class="status" role="status"></p>
+  <label for="ls-out">Result</label>
+  <textarea id="ls-out" class="tall" rows="10" readonly data-result placeholder="Your sorted list will appear here."></textarea>
+</div>
+<div class="note"><strong>Privacy:</strong> your list is sorted only in this browser tab and is never sent to any server.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var lsStatus = document.getElementById("ls-status");
+var lsOut = document.getElementById("ls-out");
+var lsCopy = document.getElementById("ls-copy");
+
+function randBelow(n) {
+  var limit = Math.floor(4294967296 / n) * n;
+  var buf = new Uint32Array(1);
+  var x;
+  do {
+    window.crypto.getRandomValues(buf);
+    x = buf[0];
+  } while (x >= limit);
+  return x % n;
+}
+
+// Natural comparison: split into digit and non-digit chunks so numbers
+// compare by value ("Item 2" < "Item 10").
+function naturalCompare(a, b) {
+  var ax = a.toLowerCase().match(/\d+|\D+/g) || [];
+  var bx = b.toLowerCase().match(/\d+|\D+/g) || [];
+  var len = Math.min(ax.length, bx.length);
+  for (var i = 0; i < len; i++) {
+    var x = ax[i];
+    var y = bx[i];
+    if (x === y) { continue; }
+    var xNum = /^\d+$/.test(x);
+    var yNum = /^\d+$/.test(y);
+    if (xNum && yNum) {
+      var diff = Number(x) - Number(y);
+      if (diff !== 0) { return diff;
+      }
+      return x.length - y.length;
+    }
+    return x < y ? -1 : 1;
+  }
+  return ax.length - bx.length;
+}
+
+function firstNumber(line) {
+  var m = line.replace(/,/g, "").match(/-?\d+(\.\d+)?/);
+  return m ? Number(m[0]) : null;
+}
+
+document.getElementById("ls-run").addEventListener("click", function () {
+  var raw = document.getElementById("ls-in").value;
+  var mode = document.getElementById("ls-mode").value;
+  var keepBlank = document.getElementById("ls-keep-blank").checked;
+  lsCopy.disabled = true;
+  var lines = raw.split(/\r\n|\r|\n/);
+  if (!keepBlank) {
+    lines = lines.filter(function (line) { return line.trim() !== ""; });
+  }
+  if (!lines.length) {
+    lsStatus.className = "status error";
+    lsStatus.textContent = "Paste at least one line first.";
+    lsOut.value = "";
+    return;
+  }
+  var out = lines.slice();
+  if (mode === "az") {
+    out.sort(naturalCompare);
+  } else if (mode === "za") {
+    out.sort(function (a, b) { return naturalCompare(b, a); });
+  } else if (mode === "len-asc") {
+    out.sort(function (a, b) { return a.length - b.length || naturalCompare(a, b); });
+  } else if (mode === "len-desc") {
+    out.sort(function (a, b) { return b.length - a.length || naturalCompare(a, b); });
+  } else if (mode === "num-asc" || mode === "num-desc") {
+    var dir = mode === "num-asc" ? 1 : -1;
+    out.sort(function (a, b) {
+      var x = firstNumber(a);
+      var y = firstNumber(b);
+      if (x === null && y === null) { return naturalCompare(a, b); }
+      if (x === null) { return 1; }
+      if (y === null) { return -1; }
+      return (x - y) * dir || naturalCompare(a, b);
+    });
+  } else if (mode === "shuffle") {
+    for (var i = out.length - 1; i > 0; i--) {
+      var j = randBelow(i + 1);
+      var tmp = out[i];
+      out[i] = out[j];
+      out[j] = tmp;
+    }
+  }
+  lsOut.value = out.join("\n");
+  lsCopy.disabled = false;
+  lsStatus.className = "status ok";
+  lsStatus.textContent = out.length.toLocaleString("en-IN") + (out.length === 1 ? " line sorted." : " lines sorted.");
+});
+
+lsCopy.addEventListener("click", function () {
+  function done() {
+    lsStatus.className = "status ok";
+    lsStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lsOut.value).then(done, function () {
+      lsStatus.className = "status error";
+      lsStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    lsOut.select();
+    lsStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="line-sorter"></script>
+</body>
+</html>
