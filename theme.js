@@ -158,6 +158,41 @@
     });
   }
 
+  // The set cookie only asks the widget to restore the saved
+  // language; it does not by itself start a translation pass.
+  // Once the widget has built its language selector, select
+  // the saved language in it and fire its change event — the
+  // same step a visitor's own selection in the gadget takes,
+  // and the step cookie-driven translate integrations perform
+  // after the widget loads. The selector is built
+  // asynchronously, so poll briefly; give up silently if it
+  // never appears (the page then simply stays in English).
+  function driveGadget(lang) {
+    var tries = 0;
+    var iv = setInterval(function () {
+      tries++;
+      var combo = null;
+      try { combo = document.querySelector("select.goog-te-combo"); } catch (e) {}
+      if (combo) {
+        if (combo.value === lang) { clearInterval(iv); return; }
+        var has = false;
+        for (var i = 0; i < combo.options.length; i++) {
+          if (combo.options[i].value === lang) { has = true; break; }
+        }
+        if (has) {
+          combo.value = lang;
+          var ev = null;
+          try { ev = new window.Event("change", { bubbles: true }); }
+          catch (e) {
+            try { ev = document.createEvent("HTMLEvents"); ev.initEvent("change", true, true); } catch (e2) {}
+          }
+          if (ev) combo.dispatchEvent(ev);
+          if (combo.value === lang) { clearInterval(iv); return; }
+        }
+      }
+      if (tries >= 30) clearInterval(iv);
+    }, 200);
+  }
   var started = false;
   function applyLanguage() {
     if (started) return;
@@ -176,6 +211,7 @@
           includedLanguages: LANGS.join(","),
           autoDisplay: false
         }, "google_translate_element");
+        driveGadget(lang);
       } catch (e) { /* widget failed: the page stays in English */ }
     };
     var s = document.createElement("script");
