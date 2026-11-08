@@ -521,7 +521,9 @@
       } else {
         ava.innerHTML = '<span class="cs-pc-initials cs-pc-guestico" aria-hidden="true">' + USER_ICON + "</span>";
       }
-      pcCard.querySelector("#csPcName").textContent = name;
+      var nameEl = pcCard.querySelector("#csPcName");
+      nameEl.textContent = name;
+      nameEl.title = name;
 
       // Signed in, but the server status has not arrived yet.
       if (snap.signedIn && snap.points == null) {
