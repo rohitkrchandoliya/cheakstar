@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Water Intake Calculator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Water Intake Calculator</h1>
+<p class="tool-sub">Estimate how much water you should drink in a day.</p>
+<div class="tool-card">
+  <p>Your water need depends mostly on your body weight, how active you are, and the weather. Enter those three things for a practical daily target in litres and glasses.</p>
+
+  <label for="water-weight">Your weight (kg)</label>
+  <input id="water-weight" type="number" min="0" step="any" value="70">
+  <div class="row2">
+    <div>
+      <label for="water-activity">Daily activity</label>
+      <select id="water-activity">
+        <option value="0">Mostly sitting (desk or home)</option>
+        <option value="350">Light activity (walking, chores)</option>
+        <option value="700">Active (exercise or physical work about 1 hour)</option>
+        <option value="1050">Very active (heavy exercise or physical work 2+ hours)</option>
+      </select>
+    </div>
+    <div>
+      <label for="water-climate">Climate</label>
+      <select id="water-climate">
+        <option value="0">Mild or cool weather</option>
+        <option value="500">Hot weather (summer heat)</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="water-run" class="btn" type="button" data-autorun>Calculate water intake</button>
+  </div>
+  <p id="water-status" class="status" role="status"></p>
+  <div class="result" id="water-result" hidden data-result>
+    <p class="big" id="water-value"></p>
+    <div id="water-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>General guidance only:</strong> this uses the widely used guide of about 35 ml of water per kilogram of body weight, plus extra for activity and heat. Food, tea and other drinks also contribute water. People with kidney, heart or other medical conditions, and those who are pregnant, should follow their doctor's advice on fluid intake instead of a general calculator.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var waterStatus = document.getElementById("water-status");
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+document.getElementById("water-run").addEventListener("click", function () {
+  var weight = parseFloat(document.getElementById("water-weight").value);
+  var activityMl = parseFloat(document.getElementById("water-activity").value);
+  var climateMl = parseFloat(document.getElementById("water-climate").value);
+  var rows = document.getElementById("water-rows");
+  rows.innerHTML = "";
+  document.getElementById("water-result").hidden = true;
+  if (!(weight >= 20 && weight <= 300)) {
+    waterStatus.className = "status error";
+    waterStatus.textContent = "Enter a weight between 20 and 300 kg.";
+    return;
+  }
+  var base = weight * 35;
+  var totalMl = base + activityMl + climateMl;
+  var litres = totalMl / 1000;
+  var glasses = totalMl / 250;
+  document.getElementById("water-value").textContent = "Aim for about " + litres.toFixed(1) + " litres a day";
+  addRow(rows, "Base need (35 ml per kg)", (base / 1000).toFixed(2) + " litres");
+  if (activityMl > 0) { addRow(rows, "Extra for activity", (activityMl / 1000).toFixed(2) + " litres"); }
+  if (climateMl > 0) { addRow(rows, "Extra for hot weather", (climateMl / 1000).toFixed(2) + " litres"); }
+  addRow(rows, "In glasses", "about " + glasses.toFixed(1) + " glasses of 250 ml");
+  addRow(rows, "In millilitres", Math.round(totalMl).toLocaleString("en-IN") + " ml");
+  document.getElementById("water-result").hidden = false;
+  waterStatus.className = "status ok";
+  waterStatus.textContent = "Estimate complete. Spread it through the day; thirst is also a useful guide.";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="water-intake-calculator"></script>
+</body>
+</html>
