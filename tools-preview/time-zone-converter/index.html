@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Time Zone Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Time Zone Converter</h1>
+<p class="tool-sub">Convert a date and time between any two time zones.</p>
+<div class="tool-card">
+  <p>Planning a call, a class or a deadline across countries? Enter the date and time in one city and see the same moment in another, with the exact time difference between them.</p>
+
+  <label for="tzc-when">Date and time</label>
+  <input id="tzc-when" type="datetime-local">
+  <div class="row2">
+    <div>
+      <label for="tzc-from">From</label>
+      <select id="tzc-from"></select>
+    </div>
+    <div>
+      <label for="tzc-to">To</label>
+      <select id="tzc-to"></select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="tzc-run" class="btn" type="button" data-autorun>Convert</button>
+    <button id="tzc-swap" class="btn ghost" type="button">Swap cities</button>
+    <button id="tzc-now" class="btn ghost" type="button">Use current time</button>
+  </div>
+  <p id="tzc-status" class="status" role="status"></p>
+  <div class="result" id="tzc-result" hidden data-result>
+    <p class="big" id="tzc-headline"></p>
+    <div id="tzc-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> conversions use the official time zone rules for each city, including daylight saving on the date you pick — so a meeting time converted for January can differ by an hour from the same clock time converted for July. Times are read from the date and time you enter; nothing is sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ZONES = [
+  { name: "New Delhi", zone: "Asia/Kolkata" },
+  { name: "Mumbai", zone: "Asia/Kolkata" },
+  { name: "Karachi", zone: "Asia/Karachi" },
+  { name: "Dhaka", zone: "Asia/Dhaka" },
+  { name: "Dubai", zone: "Asia/Dubai" },
+  { name: "Singapore", zone: "Asia/Singapore" },
+  { name: "Hong Kong", zone: "Asia/Hong_Kong" },
+  { name: "Tokyo", zone: "Asia/Tokyo" },
+  { name: "Sydney", zone: "Australia/Sydney" },
+  { name: "Auckland", zone: "Pacific/Auckland" },
+  { name: "Moscow", zone: "Europe/Moscow" },
+  { name: "Berlin", zone: "Europe/Berlin" },
+  { name: "Paris", zone: "Europe/Paris" },
+  { name: "London", zone: "Europe/London" },
+  { name: "Sao Paulo", zone: "America/Sao_Paulo" },
+  { name: "Toronto", zone: "America/Toronto" },
+  { name: "New York", zone: "America/New_York" },
+  { name: "Chicago", zone: "America/Chicago" },
+  { name: "Denver", zone: "America/Denver" },
+  { name: "Los Angeles", zone: "America/Los_Angeles" }
+];
+
+var tzcWhen = document.getElementById("tzc-when");
+var tzcFrom = document.getElementById("tzc-from");
+var tzcTo = document.getElementById("tzc-to");
+var tzcStatus = document.getElementById("tzc-status");
+
+function fillSelect(sel, selectedZone) {
+  ZONES.forEach(function (z) {
+    var opt = document.createElement("option");
+    opt.value = z.zone;
+    opt.textContent = z.name;
+    if (z.zone === selectedZone) { opt.selected = true; }
+    sel.appendChild(opt);
+  });
+}
+fillSelect(tzcFrom, "Asia/Kolkata");
+fillSelect(tzcTo, "America/New_York");
+
+function zoneName(zone) {
+  for (var i = 0; i < ZONES.length; i++) {
+    if (ZONES[i].zone === zone) { return ZONES[i].name; }
+  }
+  return zone;
+}
+
+// Milliseconds that `zone` is ahead of UTC at the instant `utcMs`.
+function zoneOffsetMs(zone, utcMs) {
+  var parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+  }).formatToParts(new Date(utcMs));
+  var p = {};
+  parts.forEach(function (part) { p[part.type] = part.value; });
+  var hour = Number(p.hour) % 24;
+  var asUtc = Date.UTC(Number(p.year), Number(p.month) - 1, Number(p.day), hour, Number(p.minute), Number(p.second));
+  return asUtc - Math.floor(utcMs / 1000) * 1000;
+}
+
+// The UTC instant whose wall-clock time in `zone` is the given local time.
+function wallTimeToUtc(zone, y, mo, d, h, mi) {
+  var guess = Date.UTC(y, mo, d, h, mi, 0);
+  var utc = guess - zoneOffsetMs(zone, guess);
+  var second = guess - zoneOffsetMs(zone, utc);
+  if (second !== utc) { utc = second; }
+  return utc;
+}
+
+function niceIn(zone, utcMs) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: zone, weekday: "long", day: "numeric", month: "long", year: "numeric",
+    hour: "2-digit", minute: "2-digit", hour12: true, timeZoneName: "short"
+  }).format(new Date(utcMs));
+}
+
+function diffText(fromZone, toZone, utcMs) {
+  var diffMin = Math.round((zoneOffsetMs(toZone, utcMs) - zoneOffsetMs(fromZone, utcMs)) / 60000);
+  if (diffMin === 0) { return "Both cities are on the same offset at this time — no difference."; }
+  var abs = Math.abs(diffMin);
+  var hh = Math.floor(abs / 60);
+  var mm = abs % 60;
+  var amount = (hh ? hh + (hh === 1 ? " hour" : " hours") : "") + (hh && mm ? " " : "") + (mm ? mm + (mm === 1 ? " minute" : " minutes") : "");
+  return zoneName(toZone) + " is " + amount + (diffMin > 0 ? " ahead of " : " behind ") + zoneName(fromZone) + " at this time.";
+}
+
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function setNow() {
+  var now = new Date();
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  tzcWhen.value = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) +
+    "T" + pad(now.getHours()) + ":" + pad(now.getMinutes());
+}
+
+function convert() {
+  var rows = document.getElementById("tzc-rows");
+  rows.innerHTML = "";
+  document.getElementById("tzc-result").hidden = true;
+  var value = tzcWhen.value;
+  if (!value) {
+    tzcStatus.className = "status error";
+    tzcStatus.textContent = "Pick a date and time first.";
+    return;
+  }
+  var bits = value.split("T");
+  var dBits = bits[0].split("-");
+  var tBits = (bits[1] || "00:00").split(":");
+  var utcMs = wallTimeToUtc(tzcFrom.value, Number(dBits[0]), Number(dBits[1]) - 1, Number(dBits[2]), Number(tBits[0]), Number(tBits[1]));
+  document.getElementById("tzc-headline").textContent = niceIn(tzcTo.value, utcMs);
+  addRow(rows, "In " + zoneName(tzcFrom.value), niceIn(tzcFrom.value, utcMs));
+  addRow(rows, "In " + zoneName(tzcTo.value), niceIn(tzcTo.value, utcMs));
+  addRow(rows, "Difference", diffText(tzcFrom.value, tzcTo.value, utcMs));
+  document.getElementById("tzc-result").hidden = false;
+  tzcStatus.textContent = "";
+}
+
+document.getElementById("tzc-run").addEventListener("click", convert);
+document.getElementById("tzc-swap").addEventListener("click", function () {
+  var tmp = tzcFrom.value;
+  tzcFrom.value = tzcTo.value;
+  tzcTo.value = tmp;
+  convert();
+});
+document.getElementById("tzc-now").addEventListener("click", function () {
+  setNow();
+  convert();
+});
+[tzcFrom, tzcTo].forEach(function (sel) {
+  sel.addEventListener("change", function () {
+    if (tzcWhen.value) { convert(); }
+  });
+});
+
+setNow();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="time-zone-converter"></script>
+</body>
+</html>
