@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Text Repeater - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Text Repeater</h1>
+<p class="tool-sub">Repeat a word, phrase or sentence as many times as you need.</p>
+<div class="tool-card">
+  <p>Type the text once, choose how many copies you want and what goes between them — for message patterns, test data, captions or filler lines.</p>
+
+  <label for="tr-text">Text to repeat</label>
+  <textarea id="tr-text" rows="3" placeholder="Type the word, phrase or sentence here..."></textarea>
+  <div class="row2">
+    <div>
+      <label for="tr-count">Repeat how many times?</label>
+      <input id="tr-count" type="number" min="1" max="10000" step="1" value="10">
+    </div>
+    <div>
+      <label for="tr-sep">Between copies put</label>
+      <select id="tr-sep">
+        <option value="newline" selected>A new line</option>
+        <option value="space">A space</option>
+        <option value="none">Nothing</option>
+        <option value="custom">Custom text (below)</option>
+      </select>
+    </div>
+    <div>
+      <label for="tr-custom">Custom separator (if chosen)</label>
+      <input id="tr-custom" type="text" maxlength="20" placeholder="For example:  | ">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="tr-run" class="btn" type="button">Repeat the text</button>
+    <button id="tr-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="tr-status" class="status" role="status"></p>
+  <label for="tr-out">Result</label>
+  <textarea id="tr-out" class="tall" rows="10" readonly data-result placeholder="The repeated text will appear here."></textarea>
+</div>
+<div class="note"><strong>Privacy:</strong> your text is repeated only in this browser tab and is never sent to any server. To keep the page responsive, a single result is limited to 2,00,000 characters.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var trStatus = document.getElementById("tr-status");
+var trOut = document.getElementById("tr-out");
+var trCopy = document.getElementById("tr-copy");
+var MAX_CHARS = 200000;
+
+document.getElementById("tr-run").addEventListener("click", function () {
+  var text = document.getElementById("tr-text").value;
+  var count = Math.floor(Number(document.getElementById("tr-count").value));
+  var mode = document.getElementById("tr-sep").value;
+  trCopy.disabled = true;
+  trStatus.className = "status error";
+  if (text.length === 0) {
+    trStatus.textContent = "Type the text to repeat first.";
+    return;
+  }
+  if (isNaN(count) || count < 1 || count > 10000) {
+    trStatus.textContent = "Repeat count must be between 1 and 10,000.";
+    return;
+  }
+  var sep = "";
+  if (mode === "newline") { sep = "\n"; }
+  if (mode === "space") { sep = " "; }
+  if (mode === "custom") { sep = document.getElementById("tr-custom").value; }
+  var total = text.length * count + sep.length * (count - 1);
+  if (total > MAX_CHARS) {
+    trStatus.textContent = "That would make " + total.toLocaleString("en-IN") + " characters — over the 2,00,000 character limit for one result. Reduce the count or the text.";
+    return;
+  }
+  var parts = [];
+  for (var i = 0; i < count; i++) { parts.push(text); }
+  trOut.value = parts.join(sep);
+  trCopy.disabled = false;
+  trStatus.className = "status ok";
+  trStatus.textContent = "Done — " + count.toLocaleString("en-IN") + " copies, " + total.toLocaleString("en-IN") + " characters.";
+});
+
+trCopy.addEventListener("click", function () {
+  function done() {
+    trStatus.className = "status ok";
+    trStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(trOut.value).then(done, function () {
+      trStatus.className = "status error";
+      trStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    trOut.select();
+    trStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="text-repeater"></script>
+</body>
+</html>
