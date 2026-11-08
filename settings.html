@@ -102,7 +102,7 @@
     <div class="set-row">
       <div>
         <h4>Display language</h4>
-        <p>Your preferred language for this website. It is saved now and used by the website's translation option when that is switched on; until then, pages are written in English.</p>
+        <p>Your preferred language for this website. It is saved now and applied on every page: pages are translated for you with Google Translate. The original text of the website is written in English.</p>
       </div>
       <div class="set-ctl">
         <select id="setLang" aria-label="Display language">
@@ -367,7 +367,13 @@
     if ($("setLang").value !== lang) $("setLang").value = "en";
     $("setLang").addEventListener("change", function () {
       lsSet("ck_lang", $("setLang").value);
-      window.CSAuth.savePrefs({ display_language: $("setLang").value }).then(function () {}, function () {});
+      // Reload once the account copy is saved, so the new language is
+      // applied to this page as well (the language runtime picks the
+      // saved value up on load; the timer covers a slow save).
+      var reloaded = false;
+      function reloadOnce() { if (!reloaded) { reloaded = true; window.location.reload(); } }
+      window.CSAuth.savePrefs({ display_language: $("setLang").value }).then(reloadOnce, reloadOnce);
+      setTimeout(reloadOnce, 1500);
     });
 
     // Email updates preference.
