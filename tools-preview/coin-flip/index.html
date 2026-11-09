@@ -57,7 +57,7 @@ var cfStatus = document.getElementById("cf-status");
 
 var rotation = 0;      // current rotateY of the coin, in degrees
 var flipping = false;
-var history = [];      // "H" or "T", oldest first
+var flipHistory = [];      // "H" or "T", oldest first
 
 function flipOutcome() {
   var b = new Uint8Array(1);
@@ -66,25 +66,25 @@ function flipOutcome() {
 }
 
 function renderScore() {
-  var heads = history.filter(function (h) { return h === "H"; }).length;
-  var tails = history.length - heads;
+  var heads = flipHistory.filter(function (h) { return h === "H"; }).length;
+  var tails = flipHistory.length - heads;
   document.getElementById("cf-heads").textContent = heads;
   document.getElementById("cf-tails").textContent = tails;
-  document.getElementById("cf-total").textContent = history.length;
+  document.getElementById("cf-total").textContent = flipHistory.length;
   var streakEl = document.getElementById("cf-streak");
-  if (!history.length) {
+  if (!flipHistory.length) {
     streakEl.textContent = "—";
   } else {
-    var last = history[history.length - 1];
+    var last = flipHistory[flipHistory.length - 1];
     var run = 0;
-    for (var i = history.length - 1; i >= 0 && history[i] === last; i--) { run++; }
+    for (var i = flipHistory.length - 1; i >= 0 && flipHistory[i] === last; i--) { run++; }
     streakEl.textContent = (last === "H" ? "Heads" : "Tails") + " × " + run;
   }
-  var recent = history.slice(-24);
+  var recent = flipHistory.slice(-24);
   document.getElementById("cf-history").textContent = recent.length
     ? "Recent flips (oldest to newest): " + recent.join(" ")
     : "";
-  cfReset.disabled = history.length === 0;
+  cfReset.disabled = flipHistory.length === 0;
 }
 
 cfFlip.addEventListener("click", function () {
@@ -99,7 +99,7 @@ cfFlip.addEventListener("click", function () {
   rotation = target;
   cfCoin.style.transform = "rotateY(" + target + "deg)";
   window.setTimeout(function () {
-    history.push(outcome);
+    flipHistory.push(outcome);
     cfResult.textContent = outcome === "H" ? "Heads!" : "Tails!";
     renderScore();
     flipping = false;
@@ -108,7 +108,7 @@ cfFlip.addEventListener("click", function () {
 });
 
 cfReset.addEventListener("click", function () {
-  history = [];
+  flipHistory = [];
   cfResult.textContent = "Press Flip to toss the coin.";
   cfStatus.textContent = "Tally cleared.";
   renderScore();
