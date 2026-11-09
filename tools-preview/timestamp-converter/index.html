@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Unix Timestamp Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Unix Timestamp Converter</h1>
+<p class="tool-sub">Turn Unix timestamps into human dates — and dates back into timestamps.</p>
+<div class="tool-card">
+  <p>A Unix timestamp counts seconds since 1 January 1970 (the "epoch"). For example, <code>1700000000</code> is 14 November 2023, 22:13:20 UTC, and <code>0</code> is the epoch itself. This tool converts both ways, in seconds or milliseconds.</p>
+
+  <p><strong>Right now:</strong> <span id="tc-now" class="mono">…</span> <span id="tc-now-ms" class="mono"></span></p>
+  <h2 style="font-size:1.1rem; margin:18px 0 8px">Timestamp to date</h2>
+  <div class="row2">
+    <div>
+      <label for="tc-ts">Unix timestamp</label>
+      <input id="tc-ts" type="number" step="1" value="1700000000">
+    </div>
+    <div>
+      <label for="tc-unit">Unit</label>
+      <select id="tc-unit">
+        <option value="auto" selected>Auto-detect (seconds or milliseconds)</option>
+        <option value="s">Seconds</option>
+        <option value="ms">Milliseconds</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="tc-run" class="btn" type="button">Convert to date</button>
+  </div>
+  <p id="tc-status" class="status" role="status"></p>
+  <div class="result" id="tc-result" hidden data-result>
+    <p class="big" id="tc-headline"></p>
+    <div id="tc-rows"></div>
+  </div>
+  <h2 style="font-size:1.1rem; margin:18px 0 8px">Date to timestamp</h2>
+  <div class="row2">
+    <div>
+      <label for="tc-date">Date and time (your local time zone)</label>
+      <input id="tc-date" type="datetime-local">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="tc-back" class="btn" type="button">Convert to timestamp</button>
+  </div>
+  <p id="tc-status2" class="status" role="status"></p>
+  <div class="result" id="tc-result2" hidden data-result>
+    <p class="big" id="tc-headline2"></p>
+    <div id="tc-rows2"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> auto-detect treats values of 1,000,000,000,000 or more as milliseconds and smaller values as seconds — the usual split, since current timestamps in seconds are about 1.7 billion and in milliseconds about 1.7 trillion. Dates before 1970 give negative timestamps, which are valid. Everything is calculated in this browser tab; nothing is sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var tcStatus = document.getElementById("tc-status");
+var tcResult = document.getElementById("tc-result");
+var tcHeadline = document.getElementById("tc-headline");
+var tcRows = document.getElementById("tc-rows");
+var tcStatus2 = document.getElementById("tc-status2");
+var tcResult2 = document.getElementById("tc-result2");
+var tcHeadline2 = document.getElementById("tc-headline2");
+var tcRows2 = document.getElementById("tc-rows2");
+function addRow(container, label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  container.appendChild(p);
+}
+
+function relativeTo(d) {
+  var diff = d.getTime() - Date.now();
+  var abs = Math.abs(diff);
+  var units = [
+    ["day", 86400000], ["hour", 3600000], ["minute", 60000], ["second", 1000]
+  ];
+  for (var i = 0; i < units.length; i++) {
+    if (abs >= units[i][1]) {
+      var n = Math.floor(abs / units[i][1]);
+      var label = n + " " + units[i][0] + (n === 1 ? "" : "s");
+      return diff > 0 ? "in " + label : label + " ago";
+    }
+  }
+  return "right now";
+}
+function toDate() {
+  var raw = Number(document.getElementById("tc-ts").value);
+  var unit = document.getElementById("tc-unit").value;
+  tcRows.innerHTML = "";
+  tcResult.hidden = true;
+  if (isNaN(raw)) {
+    tcStatus.className = "status error";
+    tcStatus.textContent = "Enter a timestamp number first.";
+    return;
+  }
+  var ms;
+  if (unit === "ms") { ms = raw; }
+  else if (unit === "s") { ms = raw * 1000; }
+  else { ms = Math.abs(raw) >= 1000000000000 ? raw : raw * 1000; }
+  var d = new Date(ms);
+  if (isNaN(d.getTime())) {
+    tcStatus.className = "status error";
+    tcStatus.textContent = "That timestamp is out of the range this browser can represent as a date.";
+    return;
+  }
+  tcHeadline.textContent = d.toLocaleString("en-IN", { dateStyle: "full", timeStyle: "medium" });
+  addRow(tcRows, "Local time", d.toString());
+  addRow(tcRows, "UTC", d.toUTCString());
+  addRow(tcRows, "ISO 8601", d.toISOString());
+  addRow(tcRows, "Unix seconds", String(Math.floor(d.getTime() / 1000)));
+  addRow(tcRows, "Unix milliseconds", String(d.getTime()));
+  addRow(tcRows, "Relative to now", relativeTo(d));
+  tcResult.hidden = false;
+  tcStatus.className = "status ok";
+  tcStatus.textContent = unit === "auto"
+    ? (Math.abs(raw) >= 1000000000000 ? "Read as milliseconds." : "Read as seconds.")
+    : "Converted.";
+}
+function toTimestamp() {
+  var value = document.getElementById("tc-date").value;
+  tcRows2.innerHTML = "";
+  tcResult2.hidden = true;
+  if (!value) {
+    tcStatus2.className = "status error";
+    tcStatus2.textContent = "Pick a date and time first.";
+    return;
+  }
+  var d = new Date(value);
+  if (isNaN(d.getTime())) {
+    tcStatus2.className = "status error";
+    tcStatus2.textContent = "That date and time could not be read.";
+    return;
+  }
+  tcHeadline2.textContent = "Unix seconds: " + Math.floor(d.getTime() / 1000);
+  addRow(tcRows2, "Unix seconds", String(Math.floor(d.getTime() / 1000)));
+  addRow(tcRows2, "Unix milliseconds", String(d.getTime()));
+  addRow(tcRows2, "ISO 8601 (UTC)", d.toISOString());
+  addRow(tcRows2, "Relative to now", relativeTo(d));
+  tcResult2.hidden = false;
+  tcStatus2.className = "status ok";
+  tcStatus2.textContent = "Converted from your local time zone (" + Intl.DateTimeFormat().resolvedOptions().timeZone + ").";
+}
+function tickNow() {
+  var now = Date.now();
+  document.getElementById("tc-now").textContent = String(Math.floor(now / 1000)) + " seconds";
+  document.getElementById("tc-now-ms").textContent = "(" + now + " milliseconds)";
+}
+tickNow();
+setInterval(tickNow, 1000);
+
+document.getElementById("tc-run").addEventListener("click", toDate);
+document.getElementById("tc-back").addEventListener("click", toTimestamp);
+document.getElementById("tc-ts").addEventListener("input", toDate);
+toDate();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="timestamp-converter"></script>
+</body>
+</html>
