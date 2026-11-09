@@ -63,7 +63,7 @@ var drDice = document.getElementById("dr-dice");
 var drTotal = document.getElementById("dr-total");
 var drStatus = document.getElementById("dr-status");
 var drHistory = document.getElementById("dr-history");
-var history = [];   // strings, newest first
+var rollHistory = [];   // strings, newest first
 
 function randBelow(n) {
   var limit = Math.floor(4294967296 / n) * n;
@@ -110,13 +110,13 @@ function dieFace(value, sides) {
 
 function renderHistory() {
   drHistory.innerHTML = "";
-  if (!history.length) { return; }
+  if (!rollHistory.length) { return; }
   var h = document.createElement("h3");
   h.textContent = "Recent rolls";
   drHistory.appendChild(h);
   var ul = document.createElement("ul");
   ul.className = "plain-list";
-  history.forEach(function (line) {
+  rollHistory.forEach(function (line) {
     var li = document.createElement("li");
     li.textContent = line;
     ul.appendChild(li);
@@ -138,8 +138,8 @@ document.getElementById("dr-roll").addEventListener("click", function () {
   }
   drTotal.textContent = "Total: " + total;
   drStatus.textContent = "";
-  history.unshift(count + "d" + sides + ": " + values.join(" + ") + " = " + total);
-  history = history.slice(0, 10);
+  rollHistory.unshift(count + "d" + sides + ": " + values.join(" + ") + " = " + total);
+  rollHistory = rollHistory.slice(0, 10);
   renderHistory();
 });
 </script>
