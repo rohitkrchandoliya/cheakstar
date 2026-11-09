@@ -1386,7 +1386,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
   ],
   "privacyTitle": "Sessions stay on your device"
  },
-  world-clock": {
+  "world-clock": {
  "faq": [
  {
    "a": "Cities in the same time zone share a clock — for example New Delhi and Mumbai both follow Indian Standard Time.",
@@ -1435,7 +1435,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
   "Use Swap cities to reverse the conversion in one press.",
   "The city list holds 20 major cities. New Delhi and Mumbai are both listed even though they share Indian Standard Time, because people look for both."
   ],
- "privacyKind": "local,
+ "privacyKind": "local",
   "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
   "steps": [
   "Enter the date and time you want to convert.",
