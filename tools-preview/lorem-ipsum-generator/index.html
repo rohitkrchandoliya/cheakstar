@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Lorem Ipsum Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Lorem Ipsum Generator</h1>
+<p class="tool-sub">Generate placeholder text for designs, drafts and mock-ups.</p>
+<div class="tool-card">
+  <p>Make dummy text in seconds — paragraphs for a page layout, sentences for a heading, single words for a logo mock-up, or a list for a menu draft. The text is assembled on this device from a built-in word bank, so it works offline.</p>
+
+  <div class="row2">
+    <div>
+      <label for="li-type">Generate</label>
+      <select id="li-type">
+        <option value="paragraphs" selected>Paragraphs</option>
+        <option value="sentences">Sentences</option>
+        <option value="words">Words</option>
+        <option value="list">List items</option>
+      </select>
+    </div>
+    <div>
+      <label for="li-count">How many</label>
+      <input id="li-count" type="number" min="1" max="50" step="1" value="3">
+    </div>
+    <div>
+      <label class="check-line" for="li-classic" style="margin-top:26px"><input id="li-classic" type="checkbox" checked> Start with the classic “Lorem ipsum…” opening</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="li-run" class="btn" type="button">Generate text</button>
+    <button id="li-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="li-status" class="status" role="status"></p>
+  <label for="li-out">Result</label>
+  <textarea id="li-out" class="tall" rows="12" readonly data-result placeholder="Your placeholder text will appear here."></textarea>
+</div>
+<div class="note"><strong>Good to know:</strong> placeholder text has no meaning on purpose — it shows how a layout looks before the real words are written, and it should be replaced before anything is published. The classic opening sentence is the traditional dummy text used by printers and designers for centuries. Everything is generated in this browser tab and nothing is sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var liStatus = document.getElementById("li-status");
+var liOut = document.getElementById("li-out");
+var liCopy = document.getElementById("li-copy");
+
+/* Built-in word bank for assembling placeholder text. The classic opening
+   sentence is the traditional dummy text; the rest is assembled from
+   these Latin-style words. */
+var WORDS = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum perspiciatis unde omnis iste natus error voluptatem accusantium doloremque laudantium totam rem aperiam eaque ab illo inventore veritatis quasi architecto beatae vitae dicta explicabo nemo enim ipsam voluptatem quia voluptas aspernatur odit aut fugit consequuntur magni dolores eos ratione sequi nesciunt neque porro quisquam numquam eius modi tempora incidunt magnam quaerat").split(" ");
+var CLASSIC = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+function randBelow(n) {
+  var limit = Math.floor(4294967296 / n) * n;
+  var buf = new Uint32Array(1);
+  var x;
+  do {
+    window.crypto.getRandomValues(buf);
+    x = buf[0];
+  } while (x >= limit);
+  return x % n;
+}
+
+function pickWord() { return WORDS[randBelow(WORDS.length)]; }
+
+function makeSentence() {
+  var len = 5 + randBelow(8);
+  var parts = [];
+  for (var i = 0; i < len; i++) { parts.push(pickWord()); }
+  var s = parts.join(" ");
+  return s.charAt(0).toUpperCase() + s.slice(1) + ".";
+}
+
+function makeParagraph() {
+  var n = 3 + randBelow(4);
+  var out = [];
+  for (var i = 0; i < n; i++) { out.push(makeSentence()); }
+  return out.join(" ");
+}
+
+function makeListItem() {
+  var n = 3 + randBelow(5);
+  var out = [];
+  for (var i = 0; i < n; i++) { out.push(pickWord()); }
+  var s = out.join(" ");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+document.getElementById("li-run").addEventListener("click", function () {
+  var type = document.getElementById("li-type").value;
+  var count = Math.floor(Number(document.getElementById("li-count").value));
+  var classic = document.getElementById("li-classic").checked;
+  liCopy.disabled = true;
+  var max = type === "words" ? 5000 : 50;
+  if (isNaN(count) || count < 1 || count > max) {
+    liStatus.className = "status error";
+    liStatus.textContent = "How many must be between 1 and " + max + ".";
+    liOut.value = "";
+    return;
+  }
+  var out;
+  if (type === "paragraphs") {
+    var paras = [];
+    for (var i = 0; i < count; i++) { paras.push(makeParagraph()); }
+    if (classic) { paras[0] = CLASSIC + " " + paras[0]; }
+    out = paras.join("\n\n");
+  } else if (type === "sentences") {
+    var sents = [];
+    for (var j = 0; j < count; j++) { sents.push(makeSentence()); }
+    if (classic) { sents[0] = CLASSIC; }
+    out = sents.join(" ");
+  } else if (type === "words") {
+    var words = [];
+    for (var k = 0; k < count; k++) { words.push(pickWord()); }
+    if (classic) { words = CLASSIC.replace(/[.,]/g, "").split(" ").concat(words); }
+    out = words.join(" ");
+  } else {
+    var items = [];
+    for (var m = 0; m < count; m++) { items.push("- " + makeListItem()); }
+    out = items.join("\n");
+  }
+  liOut.value = out;
+  liCopy.disabled = false;
+  liStatus.className = "status ok";
+  liStatus.textContent = "Generated " + count + " " + type + ".";
+});
+
+liCopy.addEventListener("click", function () {
+  function done() {
+    liStatus.className = "status ok";
+    liStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(liOut.value).then(done, function () {
+      liStatus.className = "status error";
+      liStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    liOut.select();
+    liStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="lorem-ipsum-generator"></script>
+</body>
+</html>
