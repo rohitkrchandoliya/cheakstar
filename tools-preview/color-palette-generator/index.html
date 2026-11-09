@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Color Palette Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Color Palette Generator</h1>
+<p class="tool-sub">Build harmonious colour palettes from one base colour.</p>
+<div class="tool-card">
+  <p>Pick a colour and choose a harmony — complementary, analogous, triadic and more. You get five colours that work together, each with a HEX code you can copy with one click.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cp-base">Base colour</label>
+      <input id="cp-base" type="color" value="#2563eb" style="height:44px; width:100%; padding:2px">
+    </div>
+    <div>
+      <label for="cp-hex">Or type a HEX code</label>
+      <input id="cp-hex" type="text" value="#2563eb" autocomplete="off" spellcheck="false">
+    </div>
+    <div>
+      <label for="cp-mode">Harmony</label>
+      <select id="cp-mode">
+        <option value="complementary" selected>Complementary (opposite colour)</option>
+        <option value="analogous">Analogous (neighbouring colours)</option>
+        <option value="triadic">Triadic (three even colours)</option>
+        <option value="split">Split-complementary</option>
+        <option value="tetradic">Tetradic (four colours)</option>
+        <option value="mono">Monochromatic (one colour, many shades)</option>
+      </select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="cp-run" class="btn" type="button">Generate palette</button>
+    <button id="cp-random" class="btn ghost" type="button">Random base colour</button>
+  </div>
+  <p id="cp-status" class="status" role="status">Click any swatch to copy its HEX code.</p>
+  <div id="cp-out" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:12px" data-result></div>
+  <p id="cp-list" class="mono" style="margin-top:10px; overflow-wrap:break-word"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> harmonies are worked out from the colour wheel — complementary pairs sit opposite each other, analogous colours sit side by side, and triadic colours sit 120 degrees apart. A pretty palette is not a guarantee of readable text: always check that text on a colour has enough contrast before using it for headings or buttons. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cpStatus = document.getElementById("cp-status");
+var cpOut = document.getElementById("cp-out");
+var cpList = document.getElementById("cp-list");
+
+function hexToRgb(hex) {
+  var h = hex.replace("#", "");
+  if (h.length === 3) { h = h.split("").map(function (c) { return c + c; }).join(""); }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) { return null; }
+  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+
+function rgbToHex(r, g, b) {
+  function two(n) { return ("0" + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
+  return ("#" + two(r) + two(g) + two(b)).toUpperCase();
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    var d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) { h = (g - b) / d + (g < b ? 6 : 0); }
+    else if (max === g) { h = (b - r) / d + 2; }
+    else { h = (r - g) / d + 4; }
+    h *= 60;
+  }
+  return { h: h, s: s, l: l };
+}
+
+function hslToRgb(h, s, l) {
+  h = ((h % 360) + 360) % 360;
+  var c = (1 - Math.abs(2 * l - 1)) * s;
+  var x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  var m = l - c / 2;
+  var r = 0, g = 0, b = 0;
+  if (h < 60) { r = c; g = x; }
+  else if (h < 120) { r = x; g = c; }
+  else if (h < 180) { g = c; b = x; }
+  else if (h < 240) { g = x; b = c; }
+  else if (h < 300) { r = x; b = c; }
+  else { r = c; b = x; }
+  return { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
+}
+
+function hslToHex(h, s, l) {
+  var rgb = hslToRgb(h, s, l);
+  return rgbToHex(rgb.r, rgb.g, rgb.b);
+}
+
+function generate() {
+  var hexInput = document.getElementById("cp-hex").value.trim();
+  var rgb = hexToRgb(hexInput);
+  if (!rgb) {
+    cpStatus.className = "status error";
+    cpStatus.textContent = "Enter a valid HEX code, for example #2563EB (three or six hex digits).";
+    return;
+  }
+  var base = rgbToHsl(rgb.r, rgb.g, rgb.b);
+  var mode = document.getElementById("cp-mode").value;
+  var h = base.h, s = base.s, l = base.l;
+  var palette = [];
+  if (mode === "complementary") {
+    palette = [hslToHex(h, s, l), hslToHex(h + 180, s, l), hslToHex(h, s, Math.max(0.08, l - 0.18)), hslToHex(h + 180, s, Math.min(0.92, l + 0.18)), hslToHex(h, s * 0.6, Math.min(0.92, l + 0.28))];
+  } else if (mode === "analogous") {
+    palette = [hslToHex(h - 30, s, l), hslToHex(h - 15, s, l), hslToHex(h, s, l), hslToHex(h + 15, s, l), hslToHex(h + 30, s, l)];
+  } else if (mode === "triadic") {
+    palette = [hslToHex(h, s, l), hslToHex(h + 120, s, l), hslToHex(h + 240, s, l), hslToHex(h + 120, s, Math.min(0.92, l + 0.2)), hslToHex(h + 240, s, Math.max(0.08, l - 0.2))];
+  } else if (mode === "split") {
+    palette = [hslToHex(h, s, l), hslToHex(h + 150, s, l), hslToHex(h + 210, s, l), hslToHex(h + 150, s, Math.min(0.92, l + 0.2)), hslToHex(h + 210, s, Math.max(0.08, l - 0.2))];
+  } else if (mode === "tetradic") {
+    palette = [hslToHex(h, s, l), hslToHex(h + 90, s, l), hslToHex(h + 180, s, l), hslToHex(h + 270, s, l), hslToHex(h + 90, s, Math.min(0.92, l + 0.2))];
+  } else {
+    palette = [hslToHex(h, s, 0.16), hslToHex(h, s, 0.32), hslToHex(h, s, l), hslToHex(h, s, 0.72), hslToHex(h, s, 0.88)];
+  }
+  cpOut.innerHTML = "";
+  palette.forEach(function (hex) {
+    var cell = document.createElement("button");
+    cell.type = "button";
+    cell.style.cssText = "border:1px solid #d8dee8; border-radius:8px; padding:0; overflow:hidden; cursor:pointer; background:#fff; text-align:left";
+    var sw = document.createElement("div");
+    sw.style.cssText = "height:72px; background:" + hex;
+    var label = document.createElement("div");
+    label.className = "mono";
+    label.style.cssText = "padding:6px 8px; font-size:0.85rem";
+    label.textContent = hex;
+    cell.appendChild(sw);
+    cell.appendChild(label);
+    cell.addEventListener("click", function () {
+      function done() {
+        cpStatus.className = "status ok";
+        cpStatus.textContent = hex + " copied — paste it anywhere.";
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(done, function () {
+          cpStatus.className = "status error";
+          cpStatus.textContent = "Copy was blocked by the browser.";
+        });
+      } else {
+        cpStatus.textContent = "Copy is not available in this browser.";
+      }
+    });
+    cpOut.appendChild(cell);
+  });
+  cpList.textContent = palette.join("  ");
+  cpStatus.className = "status ok";
+  cpStatus.textContent = "Palette ready — click any swatch to copy its HEX code.";
+}
+
+document.getElementById("cp-run").addEventListener("click", generate);
+document.getElementById("cp-mode").addEventListener("change", generate);
+document.getElementById("cp-base").addEventListener("input", function () {
+  document.getElementById("cp-hex").value = this.value.toUpperCase();
+  generate();
+});
+document.getElementById("cp-hex").addEventListener("input", function () {
+  var rgb = hexToRgb(this.value.trim());
+  if (rgb) { document.getElementById("cp-base").value = rgbToHex(rgb.r, rgb.g, rgb.b); }
+  generate();
+});
+document.getElementById("cp-random").addEventListener("click", function () {
+  var buf = new Uint8Array(3);
+  window.crypto.getRandomValues(buf);
+  var hex = rgbToHex(buf[0], buf[1], buf[2]);
+  document.getElementById("cp-hex").value = hex;
+  document.getElementById("cp-base").value = hex;
+  generate();
+});
+generate();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="color-palette-generator"></script>
+</body>
+</html>
