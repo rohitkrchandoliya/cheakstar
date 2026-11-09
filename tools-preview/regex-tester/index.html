@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Regex Tester - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Regex Tester</h1>
+<p class="tool-sub">Test a regular expression live — matches highlighted, groups listed.</p>
+<div class="tool-card">
+  <p>Type a pattern and some test text. Every match is highlighted in the text below, and each match's captured groups are listed — handy when building a pattern for emails, phone numbers or log lines.</p>
+  <label for="rx-pat">Regular expression</label>
+  <input id="rx-pat" type="text" value="\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b" autocomplete="off" spellcheck="false">
+  <div style="margin:10px 0">
+    <span>Flags:</span>
+    <label class="check-line" style="display:inline-block; margin:0 10px 0 8px"><input id="rx-g" type="checkbox" checked> g (all matches)</label>
+    <label class="check-line" style="display:inline-block; margin:0 10px 0 0"><input id="rx-i" type="checkbox"> i (ignore case)</label>
+    <label class="check-line" style="display:inline-block; margin:0 10px 0 0"><input id="rx-m" type="checkbox"> m (multi-line)</label>
+    <label class="check-line" style="display:inline-block; margin:0 10px 0 0"><input id="rx-s" type="checkbox"> s (dot matches newlines)</label>
+    <label class="check-line" style="display:inline-block; margin:0 10px 0 0"><input id="rx-u" type="checkbox"> u (unicode)</label>
+  </div>
+  <label for="rx-in">Test text</label>
+  <textarea id="rx-in" class="tall" rows="6">Write to us at hello@cheakstar.example or support@example.org.
+The address not-an-email@ is not valid, and neither is plain text.</textarea>
+  <p id="rx-status" class="status" role="status"></p>
+  <label>Matches highlighted</label>
+  <div id="rx-hl" style="border:1px solid #d8dee8; border-radius:8px; padding:12px 16px; min-height:90px; white-space:pre-wrap; overflow-wrap:break-word" aria-label="Highlighted matches"></div>
+  <div class="result" id="rx-result" hidden data-result style="margin-top:12px">
+    <p class="big" id="rx-headline"></p>
+    <div id="rx-rows"></div>
+  </div>
+
+  <h2 style="font-size:1.1rem; margin:18px 0 8px">Quick reference</h2>
+  <table style="width:100%; border-collapse:collapse; font-size:0.95rem">
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">.</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Any character except a newline</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">\d \w \s</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Digit, word character, whitespace</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">\D \W \S</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Not a digit, not a word character, not whitespace</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">* + ?</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Zero or more, one or more, zero or one</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">[abc] [^abc] [a-z]</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">A character set, a negated set, a range</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">(…) (?:…) (?&lt;name&gt;…)</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Capturing group, non-capturing group, named group</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">{n} {n,} {n,m}</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Exactly n, at least n, between n and m times</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">^ $ \b</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Start, end, word boundary</td></tr>
+    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">|</td><td style="padding:4px 8px">Or — a or b</td></tr>
+  </table>
+</div>
+<div class="note"><strong>Good to know:</strong> this tester runs your pattern in the browser with JavaScript's own regular-expression engine — the same engine a web page would use. A very complex pattern on long text can freeze the page, because the browser runs the test on its main thread; keep test text short while building a pattern, and if a test hangs, reload the page. Patterns with nested repeats such as <code>(a+)+$</code> are the classic slow case. Your pattern and test text never leave this browser tab.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var rxStatus = document.getElementById("rx-status");
+var rxHl = document.getElementById("rx-hl");
+var rxResult = document.getElementById("rx-result");
+var rxHeadline = document.getElementById("rx-headline");
+var rxRows = document.getElementById("rx-rows");
+var MAX_MATCHES = 200;
+var MAX_TEXT = 50000;
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function addRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  rxRows.appendChild(p);
+}
+
+function test() {
+  var pattern = document.getElementById("rx-pat").value;
+  var text = document.getElementById("rx-in").value;
+  var flags = "";
+  if (document.getElementById("rx-g").checked) { flags += "g"; }
+  if (document.getElementById("rx-i").checked) { flags += "i"; }
+  if (document.getElementById("rx-m").checked) { flags += "m"; }
+  if (document.getElementById("rx-s").checked) { flags += "s"; }
+  if (document.getElementById("rx-u").checked) { flags += "u"; }
+  rxRows.innerHTML = "";
+  rxResult.hidden = true;
+  if (text.length > MAX_TEXT) {
+    rxStatus.className = "status error";
+    rxStatus.textContent = "Test text is limited to " + MAX_TEXT.toLocaleString("en-IN") + " characters so a slow pattern cannot freeze the page.";
+    rxHl.textContent = text.slice(0, 200) + "…";
+    return;
+  }
+  var re;
+  try {
+    re = new RegExp(pattern, flags);
+  } catch (e) {
+    rxStatus.className = "status error";
+    rxStatus.textContent = "Invalid regular expression: " + (e && e.message ? e.message : "check the pattern.");
+    rxHl.textContent = text;
+    return;
+  }
+  var matches = [];
+  var m;
+  re.lastIndex = 0;
+  try {
+    while ((m = re.exec(text)) !== null) {
+      matches.push({ match: m[0], index: m.index, groups: Array.prototype.slice.call(m, 1) });
+      if (matches.length >= MAX_MATCHES) { break; }
+      /* Guard against a zero-length match looping forever. */
+      if (m[0].length === 0) { re.lastIndex++; }
+    }
+  } catch (e) {
+    rxStatus.className = "status error";
+    rxStatus.textContent = "The test failed while running: " + (e && e.message ? e.message : "unknown error.");
+    rxHl.textContent = text;
+    return;
+  }
+  /* Highlight: rebuild the text as escaped HTML with <mark> around matches. */
+  var html = "";
+  var pos = 0;
+  matches.forEach(function (mm) {
+    html += escapeHtml(text.slice(pos, mm.index));
+    html += "<mark>" + escapeHtml(mm.match) + "</mark>";
+    pos = mm.index + mm.match.length;
+  });
+  html += escapeHtml(text.slice(pos));
+  rxHl.innerHTML = html || "(no text)";
+  if (!matches.length) {
+    rxStatus.className = "status";
+    rxStatus.textContent = "No matches in the test text.";
+    return;
+  }
+  rxHeadline.textContent = matches.length + (matches.length === 1 ? " match" : " matches") +
+    (matches.length >= MAX_MATCHES ? " (showing the first " + MAX_MATCHES + ")" : "");
+  matches.forEach(function (mm, i) {
+    var groups = mm.groups.filter(function (g) { return g !== undefined; });
+    addRow("Match " + (i + 1) + " at position " + mm.index,
+      JSON.stringify(mm.match) + (groups.length ? " — groups: " + groups.map(function (g) { return JSON.stringify(g); }).join(", ") : " — no captured groups"));
+  });
+  rxResult.hidden = false;
+  rxStatus.className = "status ok";
+  rxStatus.textContent = "Pattern is valid. Matches are highlighted above.";
+}
+["rx-pat", "rx-in", "rx-g", "rx-i", "rx-m", "rx-s", "rx-u"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", test);
+  document.getElementById(id).addEventListener("change", test);
+});
+test();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="regex-tester"></script>
+</body>
+</html>
