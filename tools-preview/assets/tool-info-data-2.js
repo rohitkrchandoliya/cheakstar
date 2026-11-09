@@ -3249,5 +3249,291 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
    "name": "Word & Character Counter",
    "description": "Count words, characters, sentences and reading time as you type."
   }
+ ],
+ "currency-converter": [
+   {
+    "slug": "unit-converter",
+    "name": "Unit Converter",
+    "description": "Convert length, weight, temperature and data size units."
+   },
+   {
+    "slug": "tip-calculator",
+    "name": "Tip Calculator",
+    "description": "Work out the tip and split the bill fairly between friends."
+   },
+   {
+    "slug": "time-zone-converter",
+    "name": "Time Zone Converter",
+    "description": "Convert a date and time between any two time zones."
+   },
+   {
+    "slug": "world-clock",
+    "name": "World Clock",
+    "description": "Live local time for major cities around the world."
+   }
+ ],
+ "internet-speed-test": [
+   {
+    "slug": "whats-my-ip",
+    "name": "What's My IP",
+    "description": "See your own public IP address, location and internet provider."
+   },
+   {
+    "slug": "ip-lookup",
+    "name": "IP Address Lookup",
+    "description": "Find the country, city, ISP and network of any IPv4 or IPv6 address."
+   },
+   {
+    "slug": "dns-lookup",
+    "name": "DNS Lookup",
+    "description": "Find the DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) of any domain."
+   },
+   {
+    "slug": "security-headers-check",
+    "name": "Website Security Headers Check",
+    "description": "Grade a website's security headers with the free MDN Observatory service."
+   }
+ ],
+ "lorem-ipsum-generator": [
+   {
+    "slug": "word-counter",
+    "name": "Word & Character Counter",
+    "description": "Count words, characters, sentences and reading time as you type."
+   },
+   {
+    "slug": "case-converter",
+    "name": "Case Converter & Line Tools",
+    "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+   },
+   {
+    "slug": "text-repeater",
+    "name": "Text Repeater",
+    "description": "Repeat a word, phrase or sentence as many times as you need."
+   },
+   {
+    "slug": "line-sorter",
+    "name": "Line Sorter",
+    "description": "Sort lines alphabetically, by length, numerically, or shuffle them."
+   }
+ ],
+ "reverse-text": [
+   {
+    "slug": "case-converter",
+    "name": "Case Converter & Line Tools",
+    "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+   },
+   {
+    "slug": "text-repeater",
+    "name": "Text Repeater",
+    "description": "Repeat a word, phrase or sentence as many times as you need."
+   },
+   {
+    "slug": "word-counter",
+    "name": "Word & Character Counter",
+    "description": "Count words, characters, sentences and reading time as you type."
+   },
+   {
+    "slug": "line-sorter",
+    "name": "Line Sorter",
+    "description": "Sort lines alphabetically, by length, numerically, or shuffle them."
+   }
+ ],
+ "typing-speed-test": [
+   {
+    "slug": "word-counter",
+    "name": "Word & Character Counter",
+    "description": "Count words, characters, sentences and reading time as you type."
+   },
+   {
+    "slug": "text-repeater",
+    "name": "Text Repeater",
+    "description": "Repeat a word, phrase or sentence as many times as you need."
+   },
+   {
+    "slug": "line-sorter",
+    "name": "Line Sorter",
+    "description": "Sort lines alphabetically, by length, numerically, or shuffle them."
+   },
+   {
+    "slug": "case-converter",
+    "name": "Case Converter & Line Tools",
+    "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+   }
+ ],
+ "slug-generator": [
+   {
+    "slug": "url-encoder-decoder",
+    "name": "URL Encoder & Decoder",
+    "description": "Encode or decode URL (percent-encoded) text safely."
+   },
+   {
+    "slug": "base64-encoder-decoder",
+    "name": "Base64 Encoder & Decoder",
+    "description": "Encode or decode Base64, for text and for files."
+   },
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "word-counter",
+    "name": "Word & Character Counter",
+    "description": "Count words, characters, sentences and reading time as you type."
+   }
+ ],
+ "uuid-generator": [
+   {
+    "slug": "random-number-generator",
+    "name": "Random Number Generator",
+    "description": "Generate random numbers in any range, with or without repeats."
+   },
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "base64-encoder-decoder",
+    "name": "Base64 Encoder & Decoder",
+    "description": "Encode or decode Base64, for text and for files."
+   },
+   {
+    "slug": "slug-generator",
+    "name": "Slug Generator",
+    "description": "Turn a title into a clean, lowercase URL slug."
+   }
+ ],
+ "markdown-preview": [
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "text-to-pdf",
+    "name": "Text to PDF",
+    "description": "Type or paste text and download it as a clean PDF."
+   },
+   {
+    "slug": "word-counter",
+    "name": "Word & Character Counter",
+    "description": "Count words, characters, sentences and reading time as you type."
+   },
+   {
+    "slug": "slug-generator",
+    "name": "Slug Generator",
+    "description": "Turn a title into a clean, lowercase URL slug."
+   }
+ ],
+ "code-formatter": [
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "markdown-preview",
+    "name": "Markdown Preview",
+    "description": "Write Markdown and see the formatted result live."
+   },
+   {
+    "slug": "regex-tester",
+    "name": "Regex Tester",
+    "description": "Test a regular expression live with match highlighting and groups."
+   },
+   {
+    "slug": "url-encoder-decoder",
+    "name": "URL Encoder & Decoder",
+    "description": "Encode or decode URL (percent-encoded) text safely."
+   }
+ ],
+ "regex-tester": [
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "code-formatter",
+    "name": "Code Formatter & Minifier",
+    "description": "Format JavaScript, HTML or CSS, or minify JavaScript."
+   },
+   {
+    "slug": "text-diff-checker",
+    "name": "Text Diff Checker",
+    "description": "Compare two texts line by line: what was added, removed or kept."
+   },
+   {
+    "slug": "url-encoder-decoder",
+    "name": "URL Encoder & Decoder",
+    "description": "Encode or decode URL (percent-encoded) text safely."
+   }
+ ],
+ "timestamp-converter": [
+   {
+    "slug": "date-difference-calculator",
+    "name": "Date Difference Calculator",
+    "description": "Days between two dates, plus add or subtract days from a date."
+   },
+   {
+    "slug": "time-zone-converter",
+    "name": "Time Zone Converter",
+    "description": "Convert a date and time between any two time zones."
+   },
+   {
+    "slug": "world-clock",
+    "name": "World Clock",
+    "description": "Live local time for major cities around the world."
+   },
+   {
+    "slug": "countdown-timer",
+    "name": "Countdown Timer",
+    "description": "Count down the days, hours and minutes to any date or event."
+   }
+ ],
+ "jwt-decoder": [
+   {
+    "slug": "base64-encoder-decoder",
+    "name": "Base64 Encoder & Decoder",
+    "description": "Encode or decode Base64, for text and for files."
+   },
+   {
+    "slug": "json-formatter",
+    "name": "JSON Formatter & Validator",
+    "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+   },
+   {
+    "slug": "password-breach-check",
+    "name": "Leaked Password Check",
+    "description": "Check a password against real breach data — without sending the password anywhere."
+   },
+   {
+    "slug": "uuid-generator",
+    "name": "UUID Generator",
+    "description": "Generate version 4 or version 7 UUIDs, one at a time or in bulk."
+   }
+ ],
+ "color-palette-generator": [
+   {
+    "slug": "color-picker-from-image",
+    "name": "Color Picker from Image",
+    "description": "Click any point of an image to get the exact HEX and RGB colour there."
+   },
+   {
+    "slug": "favicon-generator",
+    "name": "Favicon Generator",
+    "description": "Turn an image into a favicon set: an ICO file plus PNG icons in common sizes."
+   },
+   {
+    "slug": "image-information",
+    "name": "Image Information",
+    "description": "See an image's size, dimensions and the camera details (EXIF) stored inside it."
+   },
+   {
+    "slug": "qr-code-generator",
+    "name": "QR Code Generator",
+    "description": "Create QR codes for links, text, Wi-Fi, UPI and contact cards."
+   }
  ]
 });
