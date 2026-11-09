@@ -1702,8 +1702,450 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Press Sort the lines and copy the result."
   ],
   "privacyTitle": "Your list stays on your device"
+ },
+ "currency-converter": {
+  "faq": [
+   {
+    "a": "The European Central Bank daily reference rate, fetched live from the Frankfurter service when you convert. The rate date is printed with every result.",
+    "q": "Where does the exchange rate come from?"
+   },
+   {
+    "a": "No. It is a daily reference rate, not a live trading rate. Banks and money-transfer services add their own fee or margin, so the amount you actually receive can differ.",
+    "q": "Is this a live trading rate?"
+   },
+   {
+    "a": "The page says so plainly and shows no number. A rate is never guessed, cached as current, or invented.",
+    "q": "What happens if the rate cannot load?"
+   },
+   {
+    "a": "30 currencies, including USD, EUR, GBP, INR, AED-adjacent majors and others listed in the From and To menus.",
+    "q": "Which currencies are supported?"
+   }
+  ],
+  "goodToKnow": [
+   "The rate is the European Central Bank daily reference rate for the date printed with the result — a daily reference rate, not a live trading rate.",
+   "The rate is published on weekdays; at a weekend the latest rate is the previous Friday's.",
+   "Banks and transfer services add fees or a margin, so the amount you receive can differ from the converted figure."
+  ],
+  "privacyKind": "lookup",
+  "privacyNote": "The amount and currencies you choose are sent to the public Frankfurter rates service to fetch the conversion. No account or personal detail is involved.",
+  "privacyTitle": "Rates are fetched from a public service",
+  "steps": [
+   "Enter the amount to convert.",
+   "Choose the From currency and the To currency.",
+   "Press Convert — the converted amount, the rate and the rate date appear below.",
+   "Press Swap currencies to convert the other way round."
+  ]
+ },
+ "internet-speed-test": {
+  "faq": [
+   {
+    "a": "Your download speed only. It downloads fixed-size test files from Cloudflare and times them, then works out megabits per second.",
+    "q": "What does this test measure?"
+   },
+   {
+    "a": "The result depends on your connection, the Cloudflare server you reach, Wi-Fi signal and other devices using the same connection. Running it again a minute later can give a different number.",
+    "q": "Why is the number only an estimate?"
+   },
+   {
+    "a": "No. Upload speed needs a server to receive the upload, and there is none here. The page never claims an upload result.",
+    "q": "Does it test upload speed?"
+   },
+   {
+    "a": "About 36 MB in total — a 1 MB warm-up run, then 10 MB and 25 MB measured runs. Avoid running it repeatedly on a metered mobile connection.",
+    "q": "How much data does a test use?"
+   }
+  ],
+  "goodToKnow": [
+   "The number is a download estimate, not a certified measurement.",
+   "The reported speed is the average of two measured runs after a small warm-up download.",
+   "Wi-Fi signal, other devices on the same connection and the time of day all move the result."
+  ],
+  "privacyKind": "lookup",
+  "privacyNote": "The test downloads public test data from Cloudflare's speed endpoint and times it in your browser. Nothing about you is sent anywhere.",
+  "privacyTitle": "Only test data is downloaded",
+  "steps": [
+   "Press Start speed test.",
+   "Wait while the test downloads a small warm-up file and then two measured files.",
+   "Read the average download speed and the speed of each run.",
+   "Press Start speed test again later for a steadier average."
+  ]
+ },
+ "lorem-ipsum-generator": {
+  "faq": [
+   {
+    "a": "Placeholder text used by designers and printers for centuries. It looks like real writing so a layout can be judged, but it means nothing on purpose.",
+    "q": "What is lorem ipsum?"
+   },
+   {
+    "a": "Paragraphs, sentences, single words or a bulleted list — choose the type and how many, and optionally start with the classic Lorem ipsum opening sentence.",
+    "q": "What can I generate?"
+   },
+   {
+    "a": "No. It is assembled from Latin-style words in a built-in word bank. It is not a real passage and should be replaced with real words before anything is published.",
+    "q": "Is the text real Latin?"
+   },
+   {
+    "a": "Yes. The word bank is built into the page, so generation happens entirely in your browser.",
+    "q": "Does it work offline?"
+   }
+  ],
+  "goodToKnow": [
+   "Placeholder text has no meaning on purpose — it shows how a layout looks before the real words are written.",
+   "The classic opening sentence is the traditional dummy text used by printers and designers.",
+   "Generation is limited to 50 paragraphs, sentences or list items, or 5,000 words, so the page stays fast."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the text is assembled on this device and is never uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Text is generated on your device",
+  "steps": [
+   "Choose what to generate: paragraphs, sentences, words or list items.",
+   "Set how many you need.",
+   "Choose whether to start with the classic Lorem ipsum opening sentence.",
+   "Press Generate text and copy the result."
+  ]
+ },
+ "reverse-text": {
+  "faq": [
+   {
+    "a": "Characters turns the whole text backwards letter by letter. Words reverses the order of the words. Lines reverses the order of the lines.",
+    "q": "What does each mode do?"
+   },
+   {
+    "a": "Each letter is swapped for a flipped look-alike, so the text reads upside down — a becomes ɐ, e becomes ǝ. A few characters have no flipped match and are left as they are.",
+    "q": "What is upside-down mode?"
+   },
+   {
+    "a": "No. Reversal is grapheme-safe: emoji and combined characters stay whole instead of splitting apart.",
+    "q": "Will emoji break when reversed?"
+   },
+   {
+    "a": "No. Your text is reversed only in this browser tab and is never sent to any server, including Cheakstar.",
+    "q": "Is my text uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "Reversal is grapheme-safe, so emoji and combined characters stay whole.",
+   "Upside-down mode only changes letters that have a flipped look-alike; the rest stay unchanged.",
+   "Word mode keeps the spacing between words in place while reversing their order."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your text is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Your text never leaves your browser",
+  "steps": [
+   "Type or paste your text into the box.",
+   "Choose whether to reverse by characters, words or lines.",
+   "Tick upside-down mode if you want the letters flipped as well.",
+   "Press Reverse the text and copy the result."
+  ]
+ },
+ "typing-speed-test": {
+  "faq": [
+   {
+    "a": "60 seconds. The clock starts with your first keystroke and stops at zero.",
+    "q": "How long is the test?"
+   },
+   {
+    "a": "One word means five characters. Your words per minute is the number of correctly typed characters divided by five, divided by the minutes spent.",
+    "q": "How is WPM worked out?"
+   },
+   {
+    "a": "A fresh passage is given and the test continues, so the full minute is used. Characters from finished passages keep counting.",
+    "q": "What happens if I finish the passage early?"
+   },
+   {
+    "a": "No. The test runs entirely in this browser tab and nothing you type is sent to any server or stored.",
+    "q": "Is what I type stored or sent anywhere?"
+   }
+  ],
+  "goodToKnow": [
+   "WPM follows the standard typing-test rule: five characters count as one word.",
+   "Accuracy is the share of typed characters that match the passage.",
+   "Wrong characters are shown in red as you type, and the next character is highlighted."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — nothing you type is sent to any server or stored anywhere, including by Cheakstar.",
+  "privacyTitle": "Your typing stays on your device",
+  "steps": [
+   "Press Start test and type the passage shown.",
+   "The clock starts with your first keystroke and runs for 60 seconds.",
+   "Keep typing — a new passage appears if you finish one early.",
+   "When the clock reaches zero, read your WPM, accuracy and error count."
+  ]
+ },
+ "slug-generator": {
+  "faq": [
+   {
+    "a": "The readable part of a page address — for example, how-to-make-coffee in example.com/how-to-make-coffee. It helps readers and search engines understand what the page is about.",
+    "q": "What is a slug?"
+   },
+   {
+    "a": "They are converted to plain letters: é becomes e, ü becomes u. Anything that is not a letter or a number is replaced with the separator.",
+    "q": "How are accented letters handled?"
+   },
+   {
+    "a": "Turning on Remove common stop words drops small words like a, the, and and of, giving a shorter slug such as make-best-coffee-home.",
+    "q": "What do stop words do?"
+   },
+   {
+    "a": "No. The slug is made only in this browser tab and your title is never sent anywhere.",
+    "q": "Is my title uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "Slugs are always lowercase, with words joined by hyphens (or underscores if you choose).",
+   "A maximum length never ends on a cut word — the slug is trimmed back to the last whole word.",
+   "Hyphens are the usual choice for web addresses; underscores are offered for systems that need them."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your title is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Your title never leaves your browser",
+  "steps": [
+   "Type the title or heading.",
+   "Choose the separator: hyphen or underscore.",
+   "Set a maximum length, or 0 for no limit, and choose whether to remove stop words.",
+   "Press Make slug and copy the result."
+  ]
+ },
+ "uuid-generator": {
+  "faq": [
+   {
+    "a": "A Universally Unique Identifier — a 128-bit label like 3f6a1c2e-9b4d-4a7f-8c1e-5d2a6b9e0f31, used as database keys, file names and request IDs because two of them practically never collide.",
+    "q": "What is a UUID?"
+   },
+   {
+    "a": "Version 4 is fully random. Version 7 starts with the current time, so IDs sort in the order they were made — useful for database keys that should stay in order.",
+    "q": "What is the difference between version 4 and version 7?"
+   },
+   {
+    "a": "Between 1 and 100 in one go.",
+    "q": "How many can I generate at once?"
+   },
+   {
+    "a": "Yes. They are made with the browser's Web Crypto API (crypto.randomUUID for version 4 and crypto.getRandomValues for version 7), not with Math.random.",
+    "q": "Are the UUIDs really random?"
+   }
+  ],
+  "goodToKnow": [
+   "Version 4 UUIDs are fully random; version 7 UUIDs start with the current time and sort in creation order.",
+   "The version digit and the variant bits are set correctly, so the IDs are valid UUIDs in either version.",
+   "Bulk mode generates up to 100 UUIDs at once, one per line."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — UUIDs are generated on this device with the Web Crypto API and are never uploaded to any server, including Cheakstar.",
+  "privacyTitle": "UUIDs are made on your device",
+  "steps": [
+   "Choose the version: 4 (random) or 7 (time-ordered).",
+   "Set how many UUIDs you need, from 1 to 100.",
+   "Press Generate UUIDs.",
+   "Press Copy all to copy the whole list."
+  ]
+ },
+ "markdown-preview": {
+  "faq": [
+   {
+    "a": "A plain-text way of writing formatted documents — # for a heading, **bold** for bold, - for a list item. This tool shows the formatted result as you type.",
+    "q": "What is Markdown?"
+   },
+   {
+    "a": "Yes. The rendered HTML is cleaned with DOMPurify before it is shown, so any script or unsafe tag in the Markdown is stripped out.",
+    "q": "Is the preview safe to look at?"
+   },
+   {
+    "a": "Yes. Press Copy rendered HTML to copy the cleaned HTML for use in a blog post or page.",
+    "q": "Can I copy the rendered HTML?"
+   },
+   {
+    "a": "The page says so plainly and shows no preview, instead of showing a broken result. Check your connection and reload the page.",
+    "q": "What happens if the editor libraries cannot load?"
+   }
+  ],
+  "goodToKnow": [
+   "The preview is rendered with the marked library and then cleaned with DOMPurify before it is shown.",
+   "Sanitisation is mandatory: Markdown can never inject a script into this page.",
+   "Your text is processed in this browser tab and is never sent to any server."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs in your browser — your text is processed on this device and is never uploaded to any server, including Cheakstar. The marked and DOMPurify libraries load from a public CDN.",
+  "privacyTitle": "Your text never leaves your browser",
+  "steps": [
+   "Type or paste Markdown in the left box.",
+   "Watch the formatted preview appear on the right as you type.",
+   "Press Copy rendered HTML to copy the cleaned HTML.",
+   "Press Clear to start over."
+  ]
+ },
+ "code-formatter": {
+  "faq": [
+   {
+    "a": "JavaScript, HTML and CSS. Formatting uses the js-beautify parser.",
+    "q": "Which languages can I format?"
+   },
+   {
+    "a": "With Terser, which removes comments and whitespace. HTML and CSS minifying here is a simple whitespace minifier, not a full parser — check the result before shipping it.",
+    "q": "How does JavaScript minifying work?"
+   },
+   {
+    "a": "No. Formatting only fixes spacing and line breaks; the code itself is unchanged.",
+    "q": "Does formatting change what my code does?"
+   },
+   {
+    "a": "Neither. Your code is processed in this browser tab and never sent to any server, and the page never runs your code — there is no eval anywhere.",
+    "q": "Is my code uploaded or run?"
+   }
+  ],
+  "goodToKnow": [
+   "Formatting never changes what the code does — only spacing and line breaks.",
+   "JavaScript minifying with Terser removes comments and whitespace and shortens local names where safe.",
+   "HTML and CSS minifying is a simple whitespace minifier, not a full parser, so check the result before shipping."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your code is processed on this device and is never uploaded to any server, including Cheakstar. The js-beautify and Terser libraries load from a public CDN.",
+  "privacyTitle": "Your code never leaves your device",
+  "steps": [
+   "Choose the language: JavaScript, HTML or CSS.",
+   "Choose Format (beautify) or Minify.",
+   "Paste your code and press Format code or Minify code.",
+   "Copy the result when it appears."
+  ]
+ },
+ "regex-tester": {
+  "faq": [
+   {
+    "a": "A pattern for matching text — for example, \\d+ matches one or more digits. This tool tests your pattern against text you paste and highlights every match.",
+    "q": "What is a regular expression?"
+   },
+   {
+    "a": "g finds all matches instead of the first, i ignores case, m makes ^ and $ work per line, s lets . match newlines, and u turns on Unicode mode.",
+    "q": "What do the flags do?"
+   },
+   {
+    "a": "Parts of the pattern in round brackets. Each match lists the text its groups captured, so you can see exactly what each bracket matched.",
+    "q": "What are groups?"
+   },
+   {
+    "a": "Yes, if it is very complex — the browser runs the test on its main thread. The page limits test text to 50,000 characters and shows 200 matches at most; if a test hangs, reload the page.",
+    "q": "Can a pattern freeze the page?"
+   }
+  ],
+  "goodToKnow": [
+   "The tester uses JavaScript's own regular-expression engine — the same engine a web page would use.",
+   "Patterns with nested repeats, such as (a+)+$, are the classic slow case — keep test text short while building one.",
+   "Matches are highlighted in the test text and each match's captured groups are listed below."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your pattern and test text are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Your pattern stays on your device",
+  "steps": [
+   "Type a regular expression in the pattern box.",
+   "Tick the flags you need: g, i, m, s or u.",
+   "Paste test text below the pattern.",
+   "Read the highlighted matches and the captured groups for each match."
+  ]
+ },
+ "timestamp-converter": {
+  "faq": [
+   {
+    "a": "The number of seconds since 1 January 1970 (the epoch). For example, 1700000000 is 14 November 2023, 22:13:20 UTC, and 0 is the epoch itself.",
+    "q": "What is a Unix timestamp?"
+   },
+   {
+    "a": "Both are used. Auto-detect treats values of 1,000,000,000,000 or more as milliseconds and smaller values as seconds — current timestamps are about 1.7 billion seconds or 1.7 trillion milliseconds.",
+    "q": "Seconds or milliseconds?"
+   },
+   {
+    "a": "Yes. Pick a date and time in the Date to timestamp section and press Convert to timestamp.",
+    "q": "Can I convert a date back to a timestamp?"
+   },
+   {
+    "a": "The local time shown is your device's time zone. UTC and ISO 8601 are shown alongside it so the same moment can be compared anywhere.",
+    "q": "Which time zone is used?"
+   }
+  ],
+  "goodToKnow": [
+   "Auto-detect treats values of 1,000,000,000,000 or more as milliseconds and smaller values as seconds.",
+   "Dates before 1970 give negative timestamps, which are valid.",
+   "The current timestamp at the top of the page updates every second."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the conversion is calculated on this device and nothing is uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Calculated on your device",
+  "steps": [
+   "Paste a Unix timestamp, or read the live one at the top of the page.",
+   "Choose seconds, milliseconds or auto-detect.",
+   "Press Convert to date and read the local time, UTC and ISO 8601.",
+   "To go the other way, pick a date and time and press Convert to timestamp."
+  ]
+ },
+ "jwt-decoder": {
+  "faq": [
+   {
+    "a": "A JSON Web Token — three base64url parts separated by dots (header.payload.signature). The header and payload are readable JSON; the signature proves who issued it.",
+    "q": "What is a JWT?"
+   },
+   {
+    "a": "No. Decoding only reads the token — it never checks the signature, so a decoded token may still be forged or expired. Never trust a token on the basis of decoding alone.",
+    "q": "Does decoding verify the token?"
+   },
+   {
+    "a": "No. Decoding happens only in this browser tab, and this page makes no network request at all. Even so, treat a real token like a password and do not paste a live production token into any website unless you are sure it is safe.",
+    "q": "Is my token sent anywhere?"
+   },
+   {
+    "a": "It is worked out from the exp claim in the payload: expired, expiring in a number of seconds, or no expiry claim present.",
+    "q": "What does the expiry status mean?"
+   }
+  ],
+  "goodToKnow": [
+   "Decoding is not verification: anyone can forge the contents of an unsigned or wrongly signed token.",
+   "The signature part is shown but never checked — this page only reads the token.",
+   "Expiry is worked out from the exp claim; issued-at (iat) and not-before (nbf) are shown when present."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your token is decoded on this device and is never sent to any server. This page makes no network request at all.",
+  "privacyTitle": "Your token never leaves this device",
+  "steps": [
+   "Paste a JWT (header.payload.signature) into the box.",
+   "Press Decode token.",
+   "Read the header and payload as JSON, with the expiry status.",
+   "Press Clear to remove the token from the page."
+  ]
+ },
+ "color-palette-generator": {
+  "faq": [
+   {
+    "a": "A set of colours that work together by their positions on the colour wheel — complementary pairs sit opposite each other, analogous colours sit side by side, and triadic colours sit 120 degrees apart.",
+    "q": "What is a colour harmony?"
+   },
+   {
+    "a": "Click any swatch to copy its HEX code, then paste it into your design, document or stylesheet.",
+    "q": "How do I use a colour?"
+   },
+   {
+    "a": "No. Always check that text on a colour has enough contrast before using it for headings or buttons.",
+    "q": "Does a pretty palette mean readable text?"
+   },
+   {
+    "a": "Yes. Press Random base colour to pick a fresh starting colour, then choose a harmony.",
+    "q": "Can I start from a random colour?"
+   }
+  ],
+  "goodToKnow": [
+   "Harmonies are worked out from the colour wheel — complementary, analogous, triadic, split-complementary, tetradic and monochromatic.",
+   "Every palette has five colours, each with a HEX code you can copy with one click.",
+   "A pretty palette is not a guarantee of readable text — check contrast before using a colour for text."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — palettes are worked out on this device and nothing is uploaded to any server, including Cheakstar.",
+  "privacyTitle": "Palettes are made on your device",
+  "steps": [
+   "Pick a base colour with the colour picker, or type a HEX code.",
+   "Choose a harmony: complementary, analogous, triadic, split-complementary, tetradic or monochromatic.",
+   "Press Generate palette.",
+   "Click any swatch to copy its HEX code."
+  ]
  }
-   });
+});
 window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
  "url-encoder-decoder": [
   {
