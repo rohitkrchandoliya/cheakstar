@@ -162,7 +162,8 @@ document.addEventListener("DOMContentLoaded", function () {
       play: '<circle cx="12" cy="12" r="9"/><path d="M10 8.5 16 12l-6 3.5z"/>',
       archive: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9"/><path d="M10 13h4"/>',
       calc: '<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M8.5 6.5h7"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01M8.5 14.5h.01M12 14.5h.01M15.5 14.5h.01M8.5 18h.01M12 18h.01M15.5 18h.01"/>',
-      trophy: '<path d="M7.5 4h9v4.2a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 5.8H4.8a2.7 2.7 0 0 0 2.9 3.4M16.5 5.8h2.7a2.7 2.7 0 0 1-2.9 3.4"/><path d="M12 12.7v3.3"/><path d="M8.8 20h6.4"/><path d="M10.2 16h3.6l.7 4H9.5z"/>'
+      trophy: '<path d="M7.5 4h9v4.2a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 5.8H4.8a2.7 2.7 0 0 0 2.9 3.4M16.5 5.8h2.7a2.7 2.7 0 0 1-2.9 3.4"/><path d="M12 12.7v3.3"/><path d="M8.8 20h6.4"/><path d="M10.2 16h3.6l.7 4H9.5z"/>',
+      clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3.2 2"/>'
     };
     function icon(name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || ICONS.grid) + "</svg>"; }
     var CHEV = '<svg class="cs-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 9.5 12 15.5 18 9.5"/></svg>';
@@ -233,7 +234,23 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/base64-encoder-decoder/", "Base64 Encoder & Decoder"],
           ["tools-preview/json-formatter/", "JSON Formatter & Validator"],
           ["tools-preview/text-diff-checker/", "Text Diff Checker"],
-          ["tools-preview/url-encoder-decoder/", "URL Encoder & Decoder"]
+          ["tools-preview/url-encoder-decoder/", "URL Encoder & Decoder"],
+          ["tools-preview/text-repeater/", "Text Repeater"],
+          ["tools-preview/remove-duplicate-lines/", "Remove Duplicate Lines"],
+          ["tools-preview/line-sorter/", "Line Sorter"],
+          ["tools-preview/lorem-ipsum-generator/", "Lorem Ipsum Generator"],
+          ["tools-preview/reverse-text/", "Reverse Text Generator"],
+          ["tools-preview/typing-speed-test/", "Typing Speed Test"]
+        ]},
+        { id: "web-dev", name: "Web & Dev", icon: "cpu", links: [
+          ["tools-preview/slug-generator/", "Slug Generator"],
+          ["tools-preview/uuid-generator/", "UUID Generator"],
+          ["tools-preview/markdown-preview/", "Markdown Preview"],
+          ["tools-preview/code-formatter/", "Code Formatter & Minifier"],
+          ["tools-preview/regex-tester/", "Regex Tester"],
+          ["tools-preview/timestamp-converter/", "Unix Timestamp Converter"],
+          ["tools-preview/jwt-decoder/", "JWT Decoder"],
+          ["tools-preview/color-palette-generator/", "Color Palette Generator"]
         ]},
         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           ["tools-preview/dns-lookup/", "DNS Lookup"],
@@ -258,7 +275,34 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/gst-calculator/", "GST Calculator"],
           ["tools-preview/date-difference-calculator/", "Date Difference Calculator"],
           ["tools-preview/percentage-calculator/", "Percentage Calculator"],
-          ["tools-preview/unit-converter/", "Unit Converter"]
+          ["tools-preview/unit-converter/", "Unit Converter"],
+          ["tools-preview/bmi-calculator/", "BMI Calculator"],
+          ["tools-preview/compound-interest-calculator/", "Compound Interest Calculator"],
+          ["tools-preview/fd-calculator/", "FD Calculator"],
+          ["tools-preview/rd-calculator/", "RD Calculator"],
+          ["tools-preview/ppf-calculator/", "PPF Calculator"],
+          ["tools-preview/discount-calculator/", "Discount Calculator"],
+          ["tools-preview/income-tax-calculator/", "Income Tax Calculator India"],
+          ["tools-preview/bmr-calculator/", "BMR & Calorie Calculator"],
+          ["tools-preview/cgpa-calculator/", "CGPA Calculator"],
+          ["tools-preview/pregnancy-due-date-calculator/", "Pregnancy Due Date Calculator"],
+          ["tools-preview/water-intake-calculator/", "Water Intake Calculator"],
+          ["tools-preview/scientific-calculator/", "Scientific Calculator"],
+          ["tools-preview/loan-amortization-calculator/", "Loan Amortization Calculator"]
+        ]},
+        { id: "daily", name: "Daily Utilities", icon: "clock", links: [
+          ["tools-preview/stopwatch/", "Stopwatch"],
+          ["tools-preview/online-timer/", "Online Timer"],
+          ["tools-preview/pomodoro-timer/", "Pomodoro Timer"],
+          ["tools-preview/world-clock/", "World Clock"],
+          ["tools-preview/time-zone-converter/", "Time Zone Converter"],
+          ["tools-preview/countdown-timer/", "Countdown Timer"],
+          ["tools-preview/tip-calculator/", "Tip Calculator"],
+          ["tools-preview/random-number-generator/", "Random Number Generator"],
+          ["tools-preview/coin-flip/", "Coin Flip"],
+          ["tools-preview/dice-roller/", "Dice Roller"],
+          ["tools-preview/currency-converter/", "Currency Converter"],
+          ["tools-preview/internet-speed-test/", "Internet Speed Test"]
         ]}
       ]}
     ];
