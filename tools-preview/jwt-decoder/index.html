@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>JWT Decoder - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">JWT Decoder</h1>
+<p class="tool-sub">Read a JSON Web Token's header and payload — on your device only.</p>
+<div class="tool-card">
+  <p>Paste a JWT (three base64url parts separated by dots) to see its header and payload as readable JSON, with the expiry status worked out from the <code>exp</code> claim. <strong>Decoding is not verification:</strong> this page only reads the token — it never checks the signature, so a decoded token may still be forged or expired.</p>
+
+  <label for="jw-in">JWT</label>
+  <textarea id="jw-in" class="tall" rows="4" placeholder="Paste a JWT here — header.payload.signature"></textarea>
+  <div class="btn-row">
+    <button id="jw-run" class="btn" type="button">Decode token</button>
+    <button id="jw-clear" class="btn ghost" type="button">Clear</button>
+  </div>
+  <p id="jw-status" class="status" role="status"></p>
+  <div class="result" id="jw-result" hidden data-result>
+    <p class="big" id="jw-headline"></p>
+    <div id="jw-rows"></div>
+    <h2 style="font-size:1.05rem; margin:14px 0 6px">Header</h2>
+    <pre id="jw-header" class="mono" style="white-space:pre-wrap; word-break:break-word; background:#f4f6f9; padding:10px; border-radius:6px"></pre>
+    <h2 style="font-size:1.05rem; margin:14px 0 6px">Payload</h2>
+    <pre id="jw-payload" class="mono" style="white-space:pre-wrap; word-break:break-word; background:#f4f6f9; padding:10px; border-radius:6px"></pre>
+  </div>
+</div>
+<div class="note"><strong>Privacy — read this first:</strong> your token never leaves this device. Decoding happens only in this browser tab, and this page makes no network request at all — there is no server to send your token to. Even so, treat a real token like a password: do not paste a live production token into any website, including this one, unless you are sure it is safe to expose. Decoding a token does not verify it — anyone can forge the contents of an unsigned or wrongly signed token.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var jwStatus = document.getElementById("jw-status");
+var jwResult = document.getElementById("jw-result");
+var jwHeadline = document.getElementById("jw-headline");
+var jwRows = document.getElementById("jw-rows");
+
+function addRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  jwRows.appendChild(p);
+}
+
+/* Decode one base64url segment to a UTF-8 string. Padding is added back
+   because base64url drops it. */
+function decodeSegment(seg) {
+  var b64 = seg.replace(/-/g, "+").replace(/_/g, "/");
+  while (b64.length % 4 !== 0) { b64 += "="; }
+  var binary = window.atob(b64);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) { bytes[i] = binary.charCodeAt(i); }
+  return new TextDecoder("utf-8").decode(bytes);
+}
+
+function fmtClaimDate(seconds) {
+  var d = new Date(seconds * 1000);
+  return isNaN(d.getTime()) ? "not a valid date" : d.toUTCString();
+}
+
+function decode() {
+  var token = document.getElementById("jw-in").value.trim();
+  jwRows.innerHTML = "";
+  jwResult.hidden = true;
+  if (!token) {
+    jwStatus.className = "status error";
+    jwStatus.textContent = "Paste a JWT first.";
+    return;
+  }
+  var parts = token.split(".");
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) {
+    jwStatus.className = "status error";
+    jwStatus.textContent = "That does not look like a JWT — it must have three parts separated by dots (header.payload.signature).";
+    return;
+  }
+  var header, payload;
+  try {
+    header = JSON.parse(decodeSegment(parts[0]));
+    payload = JSON.parse(decodeSegment(parts[1]));
+  } catch (e) {
+    jwStatus.className = "status error";
+    jwStatus.textContent = "The header or payload could not be decoded as JSON. Check that the token is complete and unmodified.";
+    return;
+  }
+  if (typeof header !== "object" || header === null || typeof payload !== "object" || payload === null) {
+    jwStatus.className = "status error";
+    jwStatus.textContent = "The decoded header or payload is not a JSON object.";
+    return;
+  }
+  document.getElementById("jw-header").textContent = JSON.stringify(header, null, 2);
+  document.getElementById("jw-payload").textContent = JSON.stringify(payload, null, 2);
+  addRow("Algorithm", header.alg ? String(header.alg) : "not stated in the header");
+  addRow("Token type", header.typ ? String(header.typ) : "not stated in the header");
+  addRow("Signature", "Present (" + parts[2].length + " characters) — shown, NOT verified. Decoding is not verification.");
+  if (typeof payload.exp === "number") {
+    var expMs = payload.exp * 1000;
+    var now = Date.now();
+    if (expMs <= now) {
+      jwHeadline.textContent = "Token expired on " + fmtClaimDate(payload.exp);
+      addRow("Expiry", fmtClaimDate(payload.exp) + " — expired " + Math.round((now - expMs) / 1000) + " seconds ago");
+    } else {
+      var remain = Math.round((expMs - now) / 1000);
+      jwHeadline.textContent = "Token is not expired — expires in " + remain + " seconds";
+      addRow("Expiry", fmtClaimDate(payload.exp) + " — " + remain + " seconds from now");
+    }
+  } else {
+    jwHeadline.textContent = "Token decoded — no expiry claim (exp) in the payload";
+    addRow("Expiry", "No exp claim, so no expiry can be worked out.");
+  }
+  if (typeof payload.iat === "number") {
+    addRow("Issued at", fmtClaimDate(payload.iat));
+  }
+  if (typeof payload.nbf === "number") {
+    addRow("Not valid before", fmtClaimDate(payload.nbf));
+  }
+  jwResult.hidden = false;
+  jwStatus.className = "status ok";
+  jwStatus.textContent = "Decoded locally — the token was never sent anywhere, and the signature was not verified.";
+}
+
+document.getElementById("jw-run").addEventListener("click", decode);
+document.getElementById("jw-clear").addEventListener("click", function () {
+  document.getElementById("jw-in").value = "";
+  jwRows.innerHTML = "";
+  jwResult.hidden = true;
+  jwStatus.className = "status";
+  jwStatus.textContent = "";
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="jwt-decoder"></script>
+</body>
+</html>
