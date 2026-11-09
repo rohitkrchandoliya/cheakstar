@@ -1325,8 +1325,365 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Use Copy results to take the lap table with you, then Reset to clear."
   ],
   "privacyTitle": "Timing stays on your device"
+ },
+ "online-timer": {
+   "faq": [
+    {
+    "a": "Yes. The end time is fixed when you press Start and the remaining time is worked out from the clock, so a background tab still finishes at the right moment. The alarm plays when the page is active again, and right away wherever the browser allows background sound.",
+     "q": "Does the timer keep running if I switch tabs?"
+    },
+    {
+      "a": "Check the device volume and that the tab is not muted. Some phones pause sounds from background tabs until the screen is on — keeping the screen awake while the timer runs avoids this.",
+     "q": "Why did I not hear the alarm?"
+    },
+    {
+      "a": "99 hours, 59 minutes and 59 seconds.",
+     "q": "What is the longest timer I can set?"
+    }
+     ],
+  "goodToKnow": [
+    "The remaining time is calculated from the clock, not by counting screen updates, so switching tabs does not make the timer drift.",
+   "The alarm is a sound played by this page — keep the tab open and the device sound on. On some phones the screen needs to stay awake for the sound to play at the exact finish.",
+   "Where supported, the page asks the screen to stay awake while the timer runs (Wake Lock)."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the countdown happens on this device and nothing is uploaded to any server, including Cheakstar.",
+  "steps": [
+    "Set the hours, minutes and seconds, or press a preset such as 10 min.",
+   "Press Start to begin the countdown.",
+   "Press Pause to hold the remaining time, and Resume to continue.",
+   "When the countdown reaches zero, the alarm sounds and the page shows Time is up."
+  ],
+  "privacyTitle": "Timing stays on your device"
+ },
+ "pomodoro-timer": {
+   "faq": [
+    {
+      "a": "A study and work method built on short, timed focus sessions — classically 25 minutes — separated by short breaks. The rhythm keeps attention fresh and makes a big task feel smaller.",
+     "q": "What is the Pomodoro technique?"
+    },
+    {
+      "a": "Yes. Set any focus length from 1 to 180 minutes and any break length from 1 to 60 minutes before you start.",
+     "q": "Can I change the 25 and 5 minutes?"
+    },
+    {
+      "a": "Yes. Phase end times are calculated from the clock, so the next phase begins at the right moment even if the tab was in the background.",
+     "q": "Does it keep time in a background tab?"
+    }
+   ],
+  "goodToKnow": [
+    "Phase changes happen automatically: focus, then break, then focus again, until you pause or reset.",
+   "Notifications are optional. They are requested only when you press Enable notifications, never automatically.",
+   "Closing or reloading the page clears the session count."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your sessions are counted only in this page and nothing is uploaded to any server, including Cheakstar.",
+  "steps": [
+    "Set the focus length (25 minutes is the classic choice) and the break length (5 minutes).",
+   "Press Start focus and work until the alarm sounds.",
+   "Take the break while the break timer runs — the next focus session starts on its own.",
+   "The counter under the clock shows how many focus sessions you have completed."
+  ],
+  "privacyTitle": "Sessions stay on your device"
+ },
+  world-clock": {
+ "faq": [
+ {
+   "a": "Cities in the same time zone share a clock — for example New Delhi and Mumbai both follow Indian Standard Time.",
+  "q": "Why do two cities show the same time?"
+ },
+ {
+   "a": "The city is 5 hours 30 minutes ahead of Coordinated Universal Time (UTC), the world's reference clock. India stays at UTC+5:30 all year.",
+  "q": "What does UTC+5:30 mean?"
+ },
+ {
+   "a": "Yes. Times are calculated from the official IANA time zone rules, which include each place's daylight saving dates.",
+  "q": "Does the clock
+"time-zone-converter": {
+ "faq": [
+  {
+    "a": "India is UTC+5:30 — half an hour ahead of the whole-hour pattern — so differences with most countries include a 30-minute part.",
+   "q": "Why is the difference 10 hours 30 minutes, not a round number?"
+  },
+  {
+    "a": "Pick a listed city in the same time zone as yours — for example, Paris and Berlin share Central European Time.",
+   "q": "What if my city is not listed?"
+  },
+  {
+    "a": "Yes, for the date given. It follows the official time zone rules, including the daylight saving in force on that date.",
+   "q": "Is the conversion exact?"
+  }
+ ],
+  "goodToKnow": [
+  "Daylight saving is applied for the exact date you pick, so the same clock time can convert differently in January and in July.",
+  "Use Swap cities to reverse the conversion in one press.",
+  "The city list holds 20 major cities. New Delhi and Mumbai are both listed even though they share Indian Standard Time, because people look for both."
+  ],
+ "privacyKind": "local
+  "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+  "steps": [
+  "Enter the date and time you want to convert.",
+  "Choose the city that time belongs to under From.",
+  "Choose the destination city under To.",
+  "Press Convert — the same moment in the second city appears, with the time difference."
+ ],
+  "privacyTitle": "Calculated on your device only"
+},
+"countdown-timer": {
+ "faq": [
+ {
+   "a": "Set the event, then press Copy shareable link. Anyone opening the link sees the same countdown to the same date.",
+  "q": "How do I share my countdown?"
+ },
+  {
+    "a": "Set this year's date; when it passes, change the date to next year's and the countdown starts again.",
+   "q": "Can I reuse it for a birthday every year?"
+  },
+ {
+   "a": "The page itself stops, but nothing is lost — the date lives in the link, so reopening it shows the correct time remaining.",
+  "q": "Does the countdown keep running if I close the page?"
  }
-});
+],
+ "goodToKnow": [
+  "The event name and date are stored inside the link (the part after the #). That part of a link is never sent to the website, so shared countdowns need no account and nothing is stored on a server.",
+ "If the date passes, the page says the day has been reached instead of showing negative numbers."
+],
+ "privacyKind": "local",
+ "privacyNote": "Runs entirely in your browser — the event name and date are kept in the page link on this device and are never uploaded to any server, including Cheakstar.",
+ "steps": [
+  "Type the event name, for example New Year 2027.",
+ "Pick the event date and time.",
+ "The countdown starts at once — days, hours, minutes and seconds to go.",
+ "Press Copy shareable link to send this exact countdown to someone else."
+],
+ "privacyTitle": "Your event stays in the link, not on a server"
+},
+"random-number-generator": {
+ "faq": [
+ {
+   "a": "They are drawn from the same cryptographic source your browser uses for security, which is designed to be unpredictable. No pattern from earlier draws affects the next one.",
+  "q": "Are these numbers really random?"
+ },
+  {
+    "a": "Simple generators in code follow a predictable sequence once their starting point is known. The cryptographic generator used here does not, and rejection sampling also removes a small bias that quick shortcut methods introduce.",
+   "q": "Why not just use a simple random function?"
+  },
+  {
+    "a": "Yes — for a 1-to-49 style draw, set the range 1 to 49, the count to 6, and turn on No repeats.",
+   "q": "Can I pick lottery-style numbers?"
+  }
+ ],
+  "goodToKnow": [
+  "Numbers come from the cryptographic random generator built into your browser, with rejection sampling — a method that keeps every value in the range equally likely.",
+  "With No repeats on, the count cannot be larger than the range itself."
+ ],
+ "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the numbers are generated on this device and nothing is uploaded to any server, including Cheakstar.",
+  "steps": [
+  "Set the smallest and largest numbers allowed.",
+  "Say how many numbers you want (1 to 10,000).",
+  "Turn on No repeats if every number must be different.",
+  "Press Generate, then Copy numbers to take the result with you."
+ ],
+ "privacyTitle": "Generated on your device only"
+},
+ "coin-flip": {
+   "faq": [
+  {
+    "a": "Yes. The result is decided by the cryptographic random generator in your browser before the coin animation starts, and each side has exactly the same chance.",
+   "q": "Is the flip fair?"
+  },
+    {
+      "a": "How many times in a row the same side has come up most recently — for example, Heads × 4 means the last four flips were all heads.",
+     "q": "What does the streak mean?"
+    },
+    {
+      "a": "No. The history is only a record for fun; the generator has no memory, so past flips give no clue about the next one.",
+     "q": "Can the next flip be predicted from the history?"
+    }
+   ],
+    "goodToKnow": [
+   "Each flip is an independent 50-50 event — a streak of heads does not change the chance of the next flip.",
+    "The tally and history are kept only in this page and clear on reload."
+   ],
+   "privacyKind": "local",
+    "privacyNote": "Runs entirely in your browser — flips and tallies stay in this page and nothing is uploaded to any server, including Cheakstar.",
+    "steps": [
+   "Call heads or tails.",
+    "Press Flip the coin and watch it spin.",
+    "The tally, current streak and recent history update after every flip.",
+    "Press Reset tally to start the score again."
+   ],
+   "privacyTitle": "Flips happen on your device"
+ },
+ "dice-roller": {
+   "faq": [
+  {
+    "a": "It is the common shorthand for rolling two six-sided dice and adding them — this page writes each roll in that form in the history.",
+   "q": "What does 2d6 mean?"
+  },
+    {
+      "a": "Yes. Each face has the same probability on every roll, and rolls do not influence each other.",
+     "q": "Are the dice fair?"
+    },
+    {
+      "a": "More combinations make 7 (1+6, 2+5, 3+4 and their reverses) than make 12 (only 6+6). The dice are fair; the totals are not equally likely.",
+     "q": "Why does a total of 7 come up more often than 12 with two dice?"
+    }
+   ],
+    "goodToKnow": [
+   "Rolls use the cryptographic random generator with rejection sampling, so every face is equally likely.",
+    "For a d6 the faces are drawn as pips; other dice show their number in the box."
+   ],
+   "privacyKind": "local",
+    "privacyNote": "Runs entirely in your browser — rolls and history stay in this page and nothing is uploaded to any server, including Cheakstar.",
+    "steps": [
+   "Choose the type of die — d6 is the ordinary cube; d20 is the twenty-sided role-playing die.",
+    "Choose how many dice to roll, from 1 to 6.",
+    "Press Roll the dice to see each die and the total.",
+    "Your last 10 rolls are listed under Recent rolls."
+   ],
+   "privacyTitle": "Rolls happen on your device"
+  "tip-calculator": {
+   "faq": [
+     "a": "It varies widely by country and by the kind of place. In many Indian restaurants, 5 to 10 percent is a common thank-you where no service charge is added; in the United States, 15 to 20 percent is customary.",
+     "q": "How much tip is normal?"
+    },
+    {
+      "a": "Custom differs by place. This calculator applies the percentage to the bill amount you enter, so enter the pre-tax amount if that is the custom you follow.",
+      "q": "Should the tip be on the amount before or after tax?"
+    },
+    {
+      "a": "Yes — the breakdown shows the tip per person, so you can just as easily add the full tip to one person's share.",
+      "q": "Can one person pay the whole tip?"
+    }
+   ],
+   "goodToKnow": [
+    "If the restaurant has already added a service charge to the bill, an extra tip is optional — check the bill first.",
+     "Amounts are rounded to two decimal places for display; after rounding, a shared bill can differ by a paisa or two per person.",
+   ],
+   "privacyKind": "local",
+   "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+   "steps": [
+    "Choose your currency (rupees by default).",
+    "Enter the bill amount and the tip percentage — or press a quick tip button.",
+    "Enter how many people are sharing.",
+    "Read the total per person, with the bill and tip shares shown separately."
+   ],
+   "privacyTitle": "Calculated on your device only"
+  },
+  "loan-amortization-calculator": {
+   "faq": [
+     "a": "It is the process of clearing a loan through fixed regular payments. An amortization schedule is the full table showing, for every payment, how much is interest, how much is principal, and what balance remains.",
+     "q": "What is amortization?"
+    },
+    {
+      "a": "Interest is charged on the outstanding balance every month. Stretching the same loan over more years means more months of interest, even though each EMI is smaller.",
+      "q": "Why is the total interest so high on long loans?"
+    },
+    {
+      "a": "Yes — extra payments cut the principal early, which reduces the interest of every later month. This schedule shows the standard plan without extra payments.",
+      "q": "Does paying extra shorten the schedule?"
+    ],
+   "goodToKnow": [
+    "In the early months, most of each payment is interest; the principal share grows over time. That is why the balance falls slowly at first.",
+    "The last payment is adjusted by a few paise so the balance ends at exactly zero — the same way bank schedules handle rounding.",
+    "For a quick EMI without the full table, the EMI Calculator gives the monthly figure on its own."
+   ],
+   "privacyKind": "local",
+   "privacyNote": "Runs entirely in your browser — the amounts you enter are processed on this device and are never uploaded to any server, including Cheakstar.",
+   "steps": [
+    "Enter the loan amount, the yearly interest rate and the time period.",
+    "Press Show schedule to build the month-by-month table.",
+    "Read the EMI, total interest and total payment at the top.",
+    "Move through the table 12 months at a time with the Previous and Next buttons."
+   ],
+   "privacyTitle": "Calculated on your device only"
+  },
+  "text-repeater": {
+   "faq": [
+    {
+      "a": "Very large results make the browser slow to copy and paste. 2,00,000 characters is far more than messaging, pattern and testing uses need.",
+      "q": "Why is there a character limit?"
+    },
+    {
+      "a": "Yes — anything you can type into the box can be repeated, including emoji and multi-line text.",
+      "q": "Can I repeat an emoji or a full sentence?"
+    }
+   ],
+   "goodToKnow": [
+    "One result is limited to 2,00,000 characters so the page stays fast; the tool warns you before building anything over the limit.",
+    "A custom separator can be up to 20 characters — handy for patterns like a comma or a pipe symbol."
+   ],
+   "privacyKind": "local",
+   "privacyNote": "Runs entirely in your browser — your text is processed on this device and is never uploaded to any server, including Cheakstar.",
+   "steps": [
+    "Type or paste the text you want to repeat.",
+    "Set how many copies you want, from 1 to 10,000.",
+    "Choose what goes between copies — a new line, a space, nothing, or your own separator.",
+    "Press Repeat the text, then Copy result."
+   ],
+   "privacyTitle": "Your text stays on your device"
+  },
+  "remove-duplicate-lines": {
+   "faq": [
+    {
+      "a": "With the spaces option on (the default), leading and trailing spaces are trimmed before comparing, so those lines count as duplicates of each other.",
+      "q": "What happens to lines that differ only in spaces?"
+    },
+    {
+      "a": "No. The comparison runs in this tab using an in-memory set — nothing leaves your device.",
+      "q": "Is my list uploaded for cleaning?"
+    },
+    {
+      "a": "Yes — the set-based method stays fast with tens of thousands of lines.",
+      "q": "Can it handle a big list?"
+    }
+   ],
+  "goodToKnow": [
+    "Blank lines are always dropped, and the summary counts them together with the duplicates removed.",
+    "With case-insensitive matching (the default), the first spelling seen is the one kept — Apple first, then apple, keeps Apple.",
+   ],
+  "privacyKind": "local",
+   "privacyNote": "Runs entirely in your browser — your text is processed on this device and is never uploaded to any server, including Cheakstar.",
+   "steps": [
+     "Paste your list, one item per line.",
+     "Choose whether spaces at the edges count, and whether capital and small letters count as the same line.",
+       "Pick the order: first appearance, or sorted A to Z.",
+    "Press Remove duplicates and copy the cleaned list.",
+   ],
+   "privacyTitle": "Your list stays on your device"
+ },
+ "line-sorter": {
+   "faq": [
+    {
+      "a": "Natural sort reads the digits as a number. Plain character-by-character sorting would put Item 10 first, because the character 1 comes before 2.",
+     "q": "Why does Item 2 come before Item 10?"
+    },
+    {
+      "a": "Lines without a number are placed after the numbered lines, sorted alphabetically among themselves.",
+     "q": "What does numeric sort do with lines that have no number?"
+    },
+    {
+      "a": "Yes — numeric sort reads the first number in each line, so a line like Asha — 42 is sorted by 42.",
+     "q": "Can I sort roll numbers or marks lists?"
+    }
+   ],
+  "goodToKnow": [
+    "Alphabetical sorting is natural sorting — numbers inside text compare by value, so Item 2 sorts before Item 10.",
+   "Shuffling uses the cryptographic random generator, the same fairness method as the dice and number tools on this site."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your text is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+    "Paste your list, one item per line.",
+   "Choose how to sort: A to Z, Z to A, by length, by the first number in each line, or shuffle.",
+   "Choose whether blank lines stay in the result.",
+   "Press Sort the lines and copy the result."
+  ],
+  "privacyTitle": "Your list stays on your device"
+ }
+   });
 window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
  "url-encoder-decoder": [
   {
