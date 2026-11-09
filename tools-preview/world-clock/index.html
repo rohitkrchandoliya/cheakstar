@@ -48,7 +48,7 @@ var CITIES = [
 ];
 
 var grid = document.getElementById("wck-grid");
-var status = document.getElementById("wck-status");
+var statusEl = document.getElementById("wck-status");
 
 function offsetLabel(zone, date) {
   try {
@@ -126,7 +126,7 @@ function tick() {
 
 tick();
 setInterval(tick, 1000);
-status.textContent = "Times update every second.";
+statusEl.textContent = "Times update every second.";
 </script>
 <script src="../../theme.js?v=20261106a"></script>
 <script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
