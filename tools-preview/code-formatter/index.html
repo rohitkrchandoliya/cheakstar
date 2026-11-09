@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Code Formatter &amp; Minifier - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.15.1/js/lib/beautify.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.15.1/js/lib/beautify-html.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.15.1/js/lib/beautify-css.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/terser@5.31.0/dist/bundle.min.js" defer></script>
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Code Formatter &amp; Minifier</h1>
+<p class="tool-sub">Beautify JavaScript, HTML or CSS — or shrink JavaScript for shipping.</p>
+<div class="tool-card">
+  <p>Paste code and make it readable again, or minify JavaScript to a compact form. Formatting uses the js-beautify parser and JavaScript minifying uses Terser — both run in this browser tab. Your code never leaves this device.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cf-lang">Language</label>
+      <select id="cf-lang">
+        <option value="js" selected>JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+      </select>
+    </div>
+    <div>
+      <label for="cf-mode">Action</label>
+      <select id="cf-mode">
+        <option value="format" selected>Format (beautify)</option>
+        <option value="minify">Minify</option>
+      </select>
+    </div>
+    <div>
+      <label for="cf-indent">Indent spaces</label>
+      <input id="cf-indent" type="number" min="1" max="8" step="1" value="2">
+    </div>
+  </div>
+  <label for="cf-in">Your code</label>
+  <textarea id="cf-in" class="tall mono" rows="10" placeholder="Paste your code here...">function greet(name){return "Hello, "+name+"!";}console.log(greet("world"));</textarea>
+  <div class="btn-row">
+    <button id="cf-run" class="btn" type="button">Format code</button>
+    <button id="cf-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="cf-status" class="status" role="status">Loading the formatter libraries…</p>
+  <label for="cf-out">Result</label>
+  <textarea id="cf-out" class="tall mono" rows="10" readonly data-result placeholder="The formatted or minified code will appear here."></textarea>
+</div>
+<div class="note"><strong>Good to know:</strong> formatting never changes what the code does — it only fixes spacing and line breaks. JavaScript minifying with Terser removes comments and whitespace and shortens local names where safe; HTML and CSS minifying here is a simple whitespace minifier, not a full parser, so check the result before shipping it. This page never runs your code (no <code>eval()</code> anywhere) — it only reads the text. Your code is processed in this browser tab and is never sent to any server. If the formatter libraries cannot load, the page says so instead of pretending to work.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cfStatus = document.getElementById("cf-status");
+var cfOut = document.getElementById("cf-out");
+var cfCopy = document.getElementById("cf-copy");
+var cfRun = document.getElementById("cf-run");
+var libsFailed = false;
+
+function beautifyReady() {
+  return typeof window.js_beautify === "function" &&
+    typeof window.html_beautify === "function" &&
+    typeof window.css_beautify === "function";
+}
+function terserReady() {
+  return typeof window.Terser !== "undefined" && typeof window.Terser.minify === "function";
+}
+function libsReady() { return beautifyReady() && terserReady(); }
+
+/* Simple whitespace minifier for HTML and CSS only. It removes comments
+   and collapses whitespace between tags/rules — it is not a full parser,
+   and the page says so. JavaScript minifying uses Terser instead. */
+function simpleMinify(code) {
+  return code
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*([{}:;,>])\s*/g, "$1")
+    .trim();
+}
+
+function run() {
+  var code = document.getElementById("cf-in").value;
+  var lang = document.getElementById("cf-lang").value;
+  var mode = document.getElementById("cf-mode").value;
+  var indent = Math.floor(Number(document.getElementById("cf-indent").value)) || 2;
+  cfCopy.disabled = true;
+  if (!code.trim()) {
+    cfStatus.className = "status error";
+    cfStatus.textContent = "Paste some code first.";
+    cfOut.value = "";
+    return;
+  }
+  if (!libsReady()) {
+    cfStatus.className = "status error";
+    cfStatus.textContent = libsFailed
+      ? "The formatter libraries (js-beautify, Terser) could not be loaded. Check your internet connection and reload the page."
+      : "The formatter libraries are still loading — press the button again in a moment.";
+    cfOut.value = "";
+    return;
+  }
+  try {
+    var out;
+    if (mode === "format") {
+      var opts = { indent_size: indent };
+      if (lang === "js") { out = window.js_beautify(code, opts); }
+      else if (lang === "html") { out = window.html_beautify(code, opts); }
+      else { out = window.css_beautify(code, opts); }
+      cfStatus.className = "status ok";
+      cfStatus.textContent = "Formatted with js-beautify (" + indent + "-space indent).";
+      cfOut.value = out;
+      cfCopy.disabled = false;
+    } else if (lang === "js") {
+      /* Terser 5 minify is asynchronous — it returns a Promise. */
+      cfStatus.className = "status";
+      cfStatus.textContent = "Minifying with Terser…";
+      window.Terser.minify(code, { compress: {}, mangle: false }).then(function (res) {
+        if (res && res.error) { throw new Error(String(res.error.message || res.error)); }
+        if (!res || typeof res.code !== "string") { throw new Error("Terser returned no code."); }
+        cfOut.value = res.code;
+        cfCopy.disabled = false;
+        cfStatus.className = "status ok";
+        cfStatus.textContent = "Minified with Terser: " + code.length + " characters became " + res.code.length + ".";
+      }).catch(function (e) {
+        cfStatus.className = "status error";
+        cfStatus.textContent = "Could not minify that code: " + (e && e.message ? e.message : "invalid JavaScript.");
+        cfOut.value = "";
+      });
+    } else {
+      out = simpleMinify(code);
+      cfStatus.className = "status ok";
+      cfStatus.textContent = "Minified with the simple whitespace minifier (" + lang.toUpperCase() + "): " + code.length + " characters became " + out.length + ". Check the result before shipping.";
+      cfOut.value = out;
+      cfCopy.disabled = false;
+    }
+  } catch (e) {
+    cfStatus.className = "status error";
+    cfStatus.textContent = "Could not process that code: " + (e && e.message ? e.message : "invalid code for the chosen language.");
+    cfOut.value = "";
+  }
+}
+
+var waited = 0;
+var waitTimer = setInterval(function () {
+  waited += 200;
+  if (libsReady()) {
+    clearInterval(waitTimer);
+    cfStatus.className = "status";
+    cfStatus.textContent = "Libraries loaded. Paste code and press Format code.";
+    cfRun.textContent = document.getElementById("cf-mode").value === "minify" ? "Minify code" : "Format code";
+  } else if (waited >= 10000) {
+    clearInterval(waitTimer);
+    libsFailed = true;
+    cfStatus.className = "status error";
+    cfStatus.textContent = "The formatter libraries (js-beautify, Terser) could not be loaded. Check your internet connection and reload the page.";
+  }
+}, 200);
+
+document.getElementById("cf-mode").addEventListener("change", function () {
+  cfRun.textContent = this.value === "minify" ? "Minify code" : "Format code";
+});
+cfRun.addEventListener("click", run);
+cfCopy.addEventListener("click", function () {
+  function done() {
+    cfStatus.className = "status ok";
+    cfStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cfOut.value).then(done, function () {
+      cfStatus.className = "status error";
+      cfStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    cfOut.select();
+    cfStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="code-formatter"></script>
+</body>
+</html>
