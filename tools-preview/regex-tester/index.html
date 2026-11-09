@@ -48,7 +48,7 @@ The address not-an-email@ is not valid, and neither is plain text.</textarea>
     <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">(…) (?:…) (?&lt;name&gt;…)</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Capturing group, non-capturing group, named group</td></tr>
     <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">{n} {n,} {n,m}</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Exactly n, at least n, between n and m times</td></tr>
     <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">^ $ \b</td><td style="padding:4px 8px; border-bottom:1px solid #e5e8ee">Start, end, word boundary</td></tr>
-    <tr><td class="mono" style="padding:4px 8px; border-bottom:1px solid #e5e8ee">|</td><td style="padding:4px 8px">Or — a or b</td></tr>
+    <tr><td class="mono" style="padding:4px 8px">|</td><td style="padding:4px 8px">Or — a or b</td></tr>
   </table>
 </div>
 <div class="note"><strong>Good to know:</strong> this tester runs your pattern in the browser with JavaScript's own regular-expression engine — the same engine a web page would use. A very complex pattern on long text can freeze the page, because the browser runs the test on its main thread; keep test text short while building a pattern, and if a test hangs, reload the page. Patterns with nested repeats such as <code>(a+)+$</code> are the classic slow case. Your pattern and test text never leave this browser tab.</div>
