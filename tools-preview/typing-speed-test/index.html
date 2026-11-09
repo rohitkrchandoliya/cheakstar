@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Typing Speed Test - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Typing Speed Test</h1>
+<p class="tool-sub">A one-minute typing test with words per minute, accuracy and error highlighting.</p>
+<div class="tool-card">
+  <p>Type the passage below exactly as shown. The clock starts with your first keystroke and runs for 60 seconds. Your speed is counted in words per minute (WPM), where one word means five characters, and every wrong character is shown in red as you type.</p>
+
+  <div class="result" style="margin-bottom:12px">
+    <p class="big"><span id="tt-clock">60</span> seconds left &nbsp;&middot;&nbsp; <span id="tt-wpm">0</span> WPM &nbsp;&middot;&nbsp; <span id="tt-acc">100</span>% accuracy</p>
+  </div>
+  <div id="tt-passage" class="mono" style="font-size:1.05rem; line-height:2; border:1px solid var(--line, #d8dee8); border-radius:8px; padding:14px 16px; margin-bottom:12px; min-height:120px" aria-label="Passage to type"></div>
+  <label for="tt-in">Type here</label>
+  <textarea id="tt-in" class="tall" rows="4" placeholder="Click Start, then type the passage above..." disabled></textarea>
+  <div class="btn-row">
+    <button id="tt-start" class="btn" type="button">Start test</button>
+    <button id="tt-restart" class="btn ghost" type="button">Restart</button>
+  </div>
+  <p id="tt-status" class="status" role="status">Press Start test, then type the passage. A fresh passage is given each time.</p>
+  <div class="result" id="tt-result" hidden data-result>
+    <p class="big" id="tt-headline"></p>
+    <div id="tt-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> WPM here follows the standard typing-test rule — one "word" is five characters, so it counts correctly typed characters divided by five, divided by the minutes spent. Accuracy is the share of typed characters that match the passage. Passages are written for this site, and nothing you type is sent anywhere or stored — the test runs entirely in this browser tab.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+/* Passages written for this site — original text, no copied material. */
+var PASSAGES = [
+  "A good morning starts the night before. Lay out your clothes, keep your bag ready by the door, and write down the one task that matters most tomorrow. When the alarm rings, you do not waste time deciding what to do first. Small habits like these quietly save the whole day, and they cost nothing but a few minutes of planning.",
+  "The old library stood at the end of the street, its windows warm with evening light. Inside, rows of books waited patiently for readers who never hurried. A student found a corner table, opened a thick atlas, and traced the rivers of a far country with one finger, dreaming of the day she would see them herself.",
+  "Rain on a tin roof sounds like a hundred small drums playing at once. Children run to the window to watch the streets turn into mirrors, while the smell of wet earth drifts in through the door. In many villages, the first rain is a small festival, and farmers look up at the sky with hope in their eyes.",
+  "Learning to cook begins with one simple dish. Chop the onions slowly, keep the flame low, and taste as you go. A pinch of salt at the right moment changes everything, and the same is true of patience. The cook who rushes burns the food; the cook who waits is rewarded with a meal worth sharing with friends.",
+  "A train journey teaches you to slow down. Fields slide past the window, stations come and go, and strangers share stories over cups of hot tea. There is no hurry inside a moving train, only the steady rhythm of wheels on track and the quiet pleasure of watching the world pass by."
+];
+var DURATION = 60;
+
+var ttClock = document.getElementById("tt-clock");
+var ttWpm = document.getElementById("tt-wpm");
+var ttAcc = document.getElementById("tt-acc");
+var ttPassage = document.getElementById("tt-passage");
+var ttIn = document.getElementById("tt-in");
+var ttStatus = document.getElementById("tt-status");
+var ttResult = document.getElementById("tt-result");
+var ttHeadline = document.getElementById("tt-headline");
+var ttRows = document.getElementById("tt-rows");
+
+var passage = "";
+var started = false;
+var finished = false;
+var startTime = 0;
+var timerId = null;
+var totalTyped = 0;
+var totalCorrect = 0;
+var bankedTyped = 0;
+var bankedCorrect = 0;
+var passageIndex = 0;
+
+function addRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  ttRows.appendChild(p);
+}
+
+function renderPassage() {
+  ttPassage.innerHTML = "";
+  var typed = ttIn.value;
+  for (var i = 0; i < passage.length; i++) {
+    var span = document.createElement("span");
+    span.textContent = passage[i];
+    if (i < typed.length) {
+      if (typed[i] === passage[i]) {
+        span.style.color = "#1a7f37";
+      } else {
+        span.style.color = "#c0392b";
+        span.style.background = "#fde8e8";
+      }
+    } else if (i === typed.length) {
+      span.style.background = "#ffe9a8";
+    }
+    ttPassage.appendChild(span);
+  }
+}
+
+function pickPassage() {
+  passageIndex = Math.floor(Math.random() * PASSAGES.length);
+  passage = PASSAGES[passageIndex];
+  ttIn.value = "";
+  renderPassage();
+}
+
+function liveStats() {
+  var elapsedMin = started ? (Date.now() - startTime) / 60000 : 0;
+  var wpm = elapsedMin > 0 ? Math.round((totalCorrect / 5) / elapsedMin) : 0;
+  var acc = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
+  ttWpm.textContent = String(wpm);
+  ttAcc.textContent = String(acc);
+  return { wpm: wpm, acc: acc };
+}
+
+function finish() {
+  finished = true;
+  clearInterval(timerId);
+  ttIn.disabled = true;
+  var stats = liveStats();
+  ttClock.textContent = "0";
+  var minutes = DURATION / 60;
+  var finalWpm = Math.round((totalCorrect / 5) / minutes);
+  ttHeadline.textContent = finalWpm + " words per minute, " + stats.acc + "% accuracy";
+  ttRows.innerHTML = "";
+  addRow("Words per minute", String(finalWpm) + " WPM (5 characters = 1 word)");
+  addRow("Accuracy", stats.acc + "%");
+  addRow("Correct characters", String(totalCorrect));
+  addRow("Characters typed", String(totalTyped));
+  addRow("Errors", String(totalTyped - totalCorrect));
+  ttResult.hidden = false;
+  ttStatus.className = "status ok";
+  ttStatus.textContent = "Test finished. Press Restart to try again with a new passage.";
+}
+
+function tick() {
+  var left = DURATION - Math.floor((Date.now() - startTime) / 1000);
+  if (left <= 0) { finish(); return; }
+  ttClock.textContent = String(left);
+  liveStats();
+}
+
+function startTest() {
+  pickPassage();
+  totalTyped = 0;
+  totalCorrect = 0;
+  bankedTyped = 0;
+  bankedCorrect = 0;
+  started = false;
+  finished = false;
+  clearInterval(timerId);
+  ttResult.hidden = true;
+  ttRows.innerHTML = "";
+  ttClock.textContent = String(DURATION);
+  ttWpm.textContent = "0";
+  ttAcc.textContent = "100";
+  ttIn.disabled = false;
+  ttIn.focus();
+  ttStatus.className = "status";
+  ttStatus.textContent = "Type the passage — the clock starts with your first keystroke.";
+}
+
+ttIn.addEventListener("input", function () {
+  if (finished || ttIn.disabled) { return; }
+  if (!started) {
+    started = true;
+    startTime = Date.now();
+    timerId = setInterval(tick, 200);
+    ttStatus.textContent = "Clock running — keep going until it reaches zero.";
+  }
+  var typed = ttIn.value;
+  /* Totals = characters banked from finished passages + the current
+     passage text, so deleting or retyping stays honest. */
+  var correct = 0;
+  var n = Math.min(typed.length, passage.length);
+  for (var i = 0; i < n; i++) {
+    if (typed[i] === passage[i]) { correct++; }
+  }
+  totalTyped = bankedTyped + typed.length;
+  totalCorrect = bankedCorrect + correct;
+  renderPassage();
+  liveStats();
+  if (typed.length >= passage.length) {
+    /* Passage complete before time is up: bank this passage and continue
+       with a fresh one so the full minute is used. */
+    bankedCorrect += correct;
+    bankedTyped += typed.length;
+    pickPassage();
+  }
+});
+
+document.getElementById("tt-start").addEventListener("click", startTest);
+document.getElementById("tt-restart").addEventListener("click", startTest);
+pickPassage();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="typing-speed-test"></script>
+</body>
+</html>
