@@ -2542,19 +2542,270 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
  ],
  "stopwatch": [
   {
-   "slug": "unit-converter",
-   "name": "Unit Converter",
-   "description": "Convert length, weight, temperature and data size units."
+   "slug": "online-timer",
+   "name": "Online Timer",
+   "description": "A countdown timer with presets and an audible alarm."
   },
   {
-   "slug": "voice-recorder",
-   "name": "Voice Recorder",
-   "description": "Record from your microphone and download the recording."
+   "slug": "pomodoro-timer",
+   "name": "Pomodoro Timer",
+   "description": "Focus in 25-minute work sessions with short breaks between them."
+  },
+  {
+   "slug": "countdown-timer",
+   "name": "Countdown Timer",
+   "description": "Count down the days, hours and minutes to any date or event."
+  }
+ ],
+ "online-timer": [
+  {
+   "slug": "stopwatch",
+   "name": "Stopwatch",
+   "description": "A precision stopwatch with laps, best and worst lap highlights."
+  },
+  {
+   "slug": "pomodoro-timer",
+   "name": "Pomodoro Timer",
+   "description": "Focus in 25-minute work sessions with short breaks between them."
+  },
+  {
+   "slug": "countdown-timer",
+   "name": "Countdown Timer",
+   "description": "Count down the days, hours and minutes to any date or event."
+  },
+  {
+   "slug": "world-clock",
+   "name": "World Clock",
+   "description": "Live local time for major cities around the world."
+  }
+ ],
+ "pomodoro-timer": [
+  {
+   "slug": "online-timer",
+   "name": "Online Timer",
+   "description": "A countdown timer with presets and an audible alarm."
+  },
+  {
+   "slug": "stopwatch",
+   "name": "Stopwatch",
+   "description": "A precision stopwatch with laps, best and worst lap highlights."
+  },
+  {
+   "slug": "countdown-timer",
+   "name": "Countdown Timer",
+   "description": "Count down the days, hours and minutes to any date or event."
+  }
+ ],
+ "world-clock": [
+  {
+   "slug": "time-zone-converter",
+   "name": "Time Zone Converter",
+   "description": "Convert a date and time between any two time zones."
+  },
+  {
+   "slug": "countdown-timer",
+   "name": "Countdown Timer",
+   "description": "Count down the days, hours and minutes to any date or event."
   },
   {
    "slug": "date-difference-calculator",
    "name": "Date Difference Calculator",
-   "description": "Count the days between any two dates."
+   "description": "Days between two dates, plus add or subtract days from a date."
+  }
+ ],
+ "time-zone-converter": [
+  {
+   "slug": "world-clock",
+   "name": "World Clock",
+   "description": "Live local time for major cities around the world."
+  },
+  {
+   "slug": "date-difference-calculator",
+   "name": "Date Difference Calculator",
+   "description": "Days between two dates, plus add or subtract days from a date."
+  },
+  {
+   "slug": "countdown-timer",
+   "name": "Countdown Timer",
+   "description": "Count down the days, hours and minutes to any date or event."
+  }
+ ],
+ "countdown-timer": [
+  {
+   "slug": "online-timer",
+   "name": "Online Timer",
+   "description": "A countdown timer with presets and an audible alarm."
+  },
+  {
+   "slug": "date-difference-calculator",
+   "name": "Date Difference Calculator",
+   "description": "Days between two dates, plus add or subtract days from a date."
+  },
+  {
+   "slug": "world-clock",
+   "name": "World Clock",
+   "description": "Live local time for major cities around the world."
+  },
+  {
+   "slug": "age-calculator",
+   "name": "Age Calculator",
+   "description": "Work out an exact age in years, months and days from a date of birth."
+  }
+ ],
+ "random-number-generator": [
+  {
+   "slug": "dice-roller",
+   "name": "Dice Roller",
+   "description": "Roll one to six dice, from a d4 up to a d20."
+  },
+  {
+   "slug": "coin-flip",
+   "name": "Coin Flip",
+   "description": "Flip a coin online and keep a tally of heads and tails."
+  },
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Percentage of a number, percentage change, and one number as a percent of another."
+  }
+ ],
+ "coin-flip": [
+  {
+   "slug": "dice-roller",
+   "name": "Dice Roller",
+   "description": "Roll one to six dice, from a d4 up to a d20."
+  },
+  {
+   "slug": "random-number-generator",
+   "name": "Random Number Generator",
+   "description": "Generate random numbers in any range, with or without repeats."
+  },
+  {
+   "slug": "stopwatch",
+   "name": "Stopwatch",
+   "description": "A precision stopwatch with laps, best and worst lap highlights."
+  }
+ ],
+ "dice-roller": [
+  {
+   "slug": "coin-flip",
+   "name": "Coin Flip",
+   "description": "Flip a coin online and keep a tally of heads and tails."
+  },
+  {
+   "slug": "random-number-generator",
+   "name": "Random Number Generator",
+   "description": "Generate random numbers in any range, with or without repeats."
+  },
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Percentage of a number, percentage change, and one number as a percent of another."
+  }
+ ],
+ "tip-calculator": [
+  {
+   "slug": "percentage-calculator",
+   "name": "Percentage Calculator",
+   "description": "Percentage of a number, percentage change, and one number as a percent of another."
+  },
+  {
+   "slug": "discount-calculator",
+   "name": "Discount Calculator",
+   "description": "Find the final price and your saving after one or two discounts."
+  },
+  {
+   "slug": "gst-calculator",
+   "name": "GST Calculator",
+   "description": "Add GST to a price, or take GST out of an inclusive price."
+  },
+  {
+   "slug": "emi-calculator",
+   "name": "EMI Calculator",
+   "description": "Monthly instalment, total interest and total payment for any loan."
+  }
+ ],
+ "loan-amortization-calculator": [
+  {
+   "slug": "emi-calculator",
+   "name": "EMI Calculator",
+   "description": "Monthly instalment, total interest and total payment for any loan."
+  },
+  {
+   "slug": "compound-interest-calculator",
+   "name": "Compound Interest Calculator",
+   "description": "See how a lump sum grows with periodic compounding, year by year."
+  },
+  {
+   "slug": "fd-calculator",
+   "name": "FD Calculator",
+   "description": "Estimate the maturity value and interest of a fixed deposit."
+  },
+  {
+   "slug": "sip-calculator",
+   "name": "SIP Calculator",
+   "description": "Future value of a monthly investment: how much you put in vs how much it grows."
+  }
+ ],
+ "text-repeater": [
+  {
+   "slug": "word-counter",
+   "name": "Word & Character Counter",
+   "description": "Count words, characters, sentences and reading time as you type."
+  },
+  {
+   "slug": "case-converter",
+   "name": "Case Converter & Line Tools",
+   "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+  },
+  {
+   "slug": "remove-duplicate-lines",
+   "name": "Remove Duplicate Lines",
+   "description": "Remove repeated lines from a list and keep each line once."
+  }
+ ],
+ "remove-duplicate-lines": [
+  {
+   "slug": "line-sorter",
+   "name": "Line Sorter",
+   "description": "Sort lines alphabetically, by length, numerically, or shuffle them."
+  },
+  {
+   "slug": "case-converter",
+   "name": "Case Converter & Line Tools",
+   "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+  },
+  {
+   "slug": "text-repeater",
+   "name": "Text Repeater",
+   "description": "Repeat a word, phrase or sentence as many times as you need."
+  },
+  {
+   "slug": "word-counter",
+   "name": "Word & Character Counter",
+   "description": "Count words, characters, sentences and reading time as you type."
+  }
+ ],
+ "line-sorter": [
+  {
+   "slug": "remove-duplicate-lines",
+   "name": "Remove Duplicate Lines",
+   "description": "Remove repeated lines from a list and keep each line once."
+  },
+  {
+   "slug": "case-converter",
+   "name": "Case Converter & Line Tools",
+   "description": "Change text case, remove duplicate lines, sort lines and clean up spaces."
+  },
+  {
+   "slug": "text-repeater",
+   "name": "Text Repeater",
+   "description": "Repeat a word, phrase or sentence as many times as you need."
+  },
+  {
+   "slug": "word-counter",
+   "name": "Word & Character Counter",
+   "description": "Count words, characters, sentences and reading time as you type."
   }
  ]
 });
