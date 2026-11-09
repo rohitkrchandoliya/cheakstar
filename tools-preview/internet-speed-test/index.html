@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Internet Speed Test - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Internet Speed Test</h1>
+<p class="tool-sub">Estimate your download speed by timing real downloads.</p>
+<div class="tool-card">
+  <p>This test downloads fixed-size files from Cloudflare's public speed endpoint and times them, then works out the speed in megabits per second. It measures your <strong>download speed only</strong> — it does not test upload speed, because there is no server here to receive an upload.</p>
+
+  <div class="btn-row">
+    <button id="st-run" class="btn" type="button">Start speed test</button>
+  </div>
+  <p id="st-status" class="status" role="status">Press Start speed test. The test downloads about 36 MB in total and takes a few seconds.</p>
+  <div class="result" id="st-result" hidden data-result>
+    <p class="big" id="st-headline"></p>
+    <div id="st-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> the number is an <strong>estimate, not a certified measurement</strong>. It depends on your connection, the Cloudflare server you reach, Wi-Fi signal, and other devices using the same connection at the same time — run it again a minute later and the number can move. A single run is only a rough guide; the average of three runs is steadier. Upload speed is not measured and is never claimed. No account, no sign-up, and nothing about you is sent anywhere — the test only downloads public test data.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var stStatus = document.getElementById("st-status");
+var stResult = document.getElementById("st-result");
+var stHeadline = document.getElementById("st-headline");
+var stRows = document.getElementById("st-rows");
+var stRun = document.getElementById("st-run");
+
+/* Download sizes in bytes. A small warm-up run first, then two larger
+   runs; the reported speed is the average of the two measured runs. */
+var RUN_SIZES = [1000000, 10000000, 25000000];
+
+function addRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  stRows.appendChild(p);
+}
+
+function timedDownload(bytes) {
+  var url = "https://speed.cloudflare.com/__down?bytes=" + bytes + "&r=" + Date.now() + Math.floor(Math.random() * 1000000);
+  var start = performance.now();
+  return fetch(url, { cache: "no-store" }).then(function (resp) {
+    if (!resp.ok) { throw new Error("Download failed (" + resp.status + ")"); }
+    return resp.arrayBuffer();
+  }).then(function (buf) {
+    var seconds = (performance.now() - start) / 1000;
+    var bits = buf.byteLength * 8;
+    return { mbps: bits / seconds / 1000000, seconds: seconds, bytes: buf.byteLength };
+  });
+}
+
+function runTest() {
+  stRun.disabled = true;
+  stResult.hidden = true;
+  stRows.innerHTML = "";
+  stStatus.className = "status";
+  var measured = [];
+  var chain = Promise.resolve();
+  RUN_SIZES.forEach(function (size, i) {
+    chain = chain.then(function () {
+      stStatus.textContent = i === 0
+        ? "Warming up — downloading a small test file…"
+        : "Measuring run " + i + " of " + (RUN_SIZES.length - 1) + "…";
+      return timedDownload(size);
+    }).then(function (res) {
+      if (i > 0) { measured.push(res); }
+    });
+  });
+  chain.then(function () {
+    if (!measured.length) { throw new Error("No run completed."); }
+    var avg = measured.reduce(function (sum, r) { return sum + r.mbps; }, 0) / measured.length;
+    stHeadline.textContent = "About " + avg.toFixed(1) + " Mbps download (estimate)";
+    measured.forEach(function (r, i) {
+      addRow("Run " + (i + 1) + " (" + (r.bytes / 1000000).toFixed(0) + " MB in " + r.seconds.toFixed(2) + " s)", r.mbps.toFixed(1) + " Mbps");
+    });
+    addRow("Average of measured runs", avg.toFixed(1) + " Mbps");
+    addRow("What was downloaded", "36 MB of test data from speed.cloudflare.com");
+    stResult.hidden = false;
+    stStatus.className = "status ok";
+    stStatus.textContent = "Download estimate only — upload speed is not measured. Re-run for a steadier average.";
+    stRun.disabled = false;
+  }).catch(function () {
+    stStatus.className = "status error";
+    stStatus.textContent = "Could not complete the test. Check your internet connection and try again — no speed is shown because no download finished.";
+    stRun.disabled = false;
+  });
+}
+
+stRun.addEventListener("click", runTest);
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="internet-speed-test"></script>
+</body>
+</html>
