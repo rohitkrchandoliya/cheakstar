@@ -201,9 +201,9 @@
           toolLink("json-formatter", "JSON Formatter & Validator"),
           toolLink("text-diff-checker", "Text Diff Checker"),
           toolLink("url-encoder-decoder", "URL Encoder & Decoder"),
-           toolLink("text-repeater", "Text Repeater"),
-           toolLink("remove-duplicate-lines", "Remove Duplicate Lines"),
-           toolLink("line-sorter", "Line Sorter")
+          toolLink("text-repeater", "Text Repeater"),
+          toolLink("remove-duplicate-lines", "Remove Duplicate Lines"),
+          toolLink("line-sorter", "Line Sorter")
         ]},
         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           toolLink("dns-lookup", "DNS Lookup"),
@@ -241,19 +241,19 @@
           toolLink("pregnancy-due-date-calculator", "Pregnancy Due Date Calculator"),
           toolLink("water-intake-calculator", "Water Intake Calculator"),
           toolLink("scientific-calculator", "Scientific Calculator"),
-           toolLink("loan-amortization-calculator", "Loan Amortization Calculator")
+          toolLink("loan-amortization-calculator", "Loan Amortization Calculator")
         ]},
         { id: "daily", name: "Daily Utilities", icon: "clock", links: [
           toolLink("stopwatch", "Stopwatch"),
-           toolLink("online-timer", "Online Timer"),
-           toolLink("pomodoro-timer", "Pomodoro Timer"),
-           toolLink("world-clock", "World Clock"),
-           toolLink("time-zone-converter", "Time Zone Converter"),
-           toolLink("countdown-timer", "Countdown Timer"),
-           toolLink("tip-calculator", "Tip Calculator"),
-           toolLink("random-number-generator", "Random Number Generator"),
-           toolLink("coin-flip", "Coin Flip"),
-           toolLink("dice-roller", "Dice Roller")
+          toolLink("online-timer", "Online Timer"),
+          toolLink("pomodoro-timer", "Pomodoro Timer"),
+          toolLink("world-clock", "World Clock"),
+          toolLink("time-zone-converter", "Time Zone Converter"),
+          toolLink("countdown-timer", "Countdown Timer"),
+          toolLink("tip-calculator", "Tip Calculator"),
+          toolLink("random-number-generator", "Random Number Generator"),
+          toolLink("coin-flip", "Coin Flip"),
+          toolLink("dice-roller", "Dice Roller")
         ]}
       ]}
     ];
