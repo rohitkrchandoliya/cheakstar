@@ -1398,7 +1398,23 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
  },
  {
    "a": "Yes. Times are calculated from the official IANA time zone rules, which include each place's daylight saving dates.",
-  "q": "Does the clock
+  "q": "Does the clock handle daylight saving?"
+ }
+],
+ "goodToKnow": [
+  "Offsets are each city's current difference from UTC and already include daylight saving where it applies.",
+ "The gap between two cities changes during the year when one of them moves its clocks and the other does not.",
+ "All clocks read from your device clock — if that is wrong, every time here is off by the same amount."
+],
+ "privacyKind": "local",
+ "privacyNote": "Runs entirely in your browser — the clocks are calculated on this device and nothing is uploaded to any server, including Cheakstar.",
+ "steps": [
+  "Open the page — every clock is already running.",
+ "Find your own time in the first card, labelled Your time.",
+ "Compare the city you need: the card shows the local time, the day and date, and the current UTC offset."
+],
+ "privacyTitle": "Times are worked out on your device"
+},
 "time-zone-converter": {
  "faq": [
   {
@@ -1544,8 +1560,10 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
     "Your last 10 rolls are listed under Recent rolls."
    ],
    "privacyTitle": "Rolls happen on your device"
+},
   "tip-calculator": {
    "faq": [
+    {
      "a": "It varies widely by country and by the kind of place. In many Indian restaurants, 5 to 10 percent is a common thank-you where no service charge is added; in the United States, 15 to 20 percent is customary.",
      "q": "How much tip is normal?"
     },
@@ -1574,6 +1592,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
   },
   "loan-amortization-calculator": {
    "faq": [
+    {
      "a": "It is the process of clearing a loan through fixed regular payments. An amortization schedule is the full table showing, for every payment, how much is interest, how much is principal, and what balance remains.",
      "q": "What is amortization?"
     },
@@ -1584,6 +1603,7 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
     {
       "a": "Yes — extra payments cut the principal early, which reduces the interest of every later month. This schedule shows the standard plan without extra payments.",
       "q": "Does paying extra shorten the schedule?"
+    }
     ],
    "goodToKnow": [
     "In the early months, most of each payment is interest; the principal share grows over time. That is why the balance falls slowly at first.",
