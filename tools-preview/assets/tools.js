@@ -203,8 +203,21 @@
           toolLink("url-encoder-decoder", "URL Encoder & Decoder"),
           toolLink("text-repeater", "Text Repeater"),
           toolLink("remove-duplicate-lines", "Remove Duplicate Lines"),
-          toolLink("line-sorter", "Line Sorter")
+          toolLink("line-sorter", "Line Sorter"),
+           toolLink("lorem-ipsum-generator", "Lorem Ipsum Generator"),
+           toolLink("reverse-text", "Reverse Text Generator"),
+           toolLink("typing-speed-test", "Typing Speed Test")
         ]},
+         { id: "web-dev", name: "Web & Dev", icon: "cpu", links: [
+            toolLink("slug-generator", "Slug Generator"),
+            toolLink("uuid-generator", "UUID Generator"),
+            toolLink("markdown-preview", "Markdown Preview"),
+            toolLink("code-formatter", "Code Formatter & Minifier"),
+            toolLink("regex-tester", "Regex Tester"),
+            toolLink("timestamp-converter", "Unix Timestamp Converter"),
+            toolLink("jwt-decoder", "JWT Decoder"),
+            toolLink("color-palette-generator", "Color Palette Generator")
+      ]},
         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           toolLink("dns-lookup", "DNS Lookup"),
           toolLink("rdap-whois-lookup", "Domain Info (WHOIS / RDAP)"),
@@ -253,7 +266,9 @@
           toolLink("tip-calculator", "Tip Calculator"),
           toolLink("random-number-generator", "Random Number Generator"),
           toolLink("coin-flip", "Coin Flip"),
-          toolLink("dice-roller", "Dice Roller")
+          toolLink("dice-roller", "Dice Roller"),
+           toolLink("currency-converter", "Currency Converter"),
+           toolLink("internet-speed-test", "Internet Speed Test")
         ]}
       ]}
     ];
