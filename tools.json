@@ -2,7 +2,7 @@
   "name": "Cheakstar Tools Catalogue",
   "description": "Machine-readable catalogue of the free tools on the Cheakstar website. Generated from the tools.js NAV catalogue and the tools hub page; do not edit by hand — rerun build-tools-json.py.",
   "generated": "2026-11-08",
-  "toolCount": 71,
+  "toolCount": 84,
   "categories": [
     {
       "id": "qr-video",
@@ -27,7 +27,7 @@
     {
       "id": "text",
       "name": "Text Tools",
-      "toolCount": 7
+      "toolCount": 10
     },
     {
       "id": "security",
@@ -42,12 +42,12 @@
     {
       "id": "calculators",
       "name": "Calculators",
-      "toolCount": 19
+      "toolCount": 20
     },
     {
       "id": "daily",
       "name": "Daily Utilities",
-      "toolCount": 1
+      "toolCount": 10
     }
   ],
   "tools": [
@@ -947,6 +947,78 @@
         "safely"
       ]
     },
+{
+      "name": "Text Repeater",
+      "slug": "text-repeater",
+      "category": "Text Tools",
+      "categoryId": "text",
+      "url": "tools-preview/text-repeater/",
+      "description": "Repeat a word, phrase or sentence as many times as you need.",
+      "keywords": [
+        "text",
+        "repeater",
+        "repeat",
+        "a",
+        "word",
+        "phrase",
+        "or",
+        "sentence",
+        "as",
+        "many",
+        "times",
+        "you",
+        "need",
+        "100"
+      ]
+    },
+    {
+      "name": "Remove Duplicate Lines",
+      "slug": "remove-duplicate-lines",
+      "category": "Text Tools",
+      "categoryId": "text",
+      "url": "tools-preview/remove-duplicate-lines/",
+      "description": "Remove repeated lines from a list and keep each line once.",
+      "keywords": [
+        "remove",
+        "duplicate",
+        "lines",
+        "repeated",
+        "from",
+        "a",
+        "list",
+        "and",
+        "keep",
+        "each",
+        "line",
+        "once",
+        "remover",
+        "dedupe"
+      ]
+    },
+    {
+      "name": "Line Sorter",
+      "slug": "line-sorter",
+      "category": "Text Tools",
+      "categoryId": "text",
+      "url": "tools-preview/line-sorter/",
+      "description": "Sort lines alphabetically, by length, numerically, or shuffle them.",
+      "keywords": [
+        "line",
+        "sorter",
+        "sort",
+        "lines",
+        "alphabetically",
+        "by",
+        "length",
+        "numerically",
+        "or",
+        "shuffle",
+        "them",
+        "online",
+        "alphabetize",
+        "list"
+      ]
+    },
     {
       "name": "DNS Lookup",
       "slug": "dns-lookup",
@@ -1676,6 +1748,36 @@
         "logarithm"
       ]
     },
+{
+      "name": "Loan Amortization Calculator",
+      "slug": "loan-amortization-calculator",
+      "category": "Calculators",
+      "categoryId": "calculators",
+      "url": "tools-preview/loan-amortization-calculator/",
+      "description": "See your loan balance fall month by month, with interest and principal for every payment.",
+      "keywords": [
+        "loan",
+        "amortization",
+        "calculator",
+        "see",
+        "your",
+        "balance",
+        "fall",
+        "month",
+        "by",
+        "with",
+        "interest",
+        "and",
+        "principal",
+        "for",
+        "every",
+        "payment",
+        "schedule",
+        "home",
+        "repayment",
+        "table"
+      ]
+    },
     {
       "name": "Stopwatch",
       "slug": "stopwatch",
@@ -1695,6 +1797,224 @@
         "lap",
         "highlights",
         "timer",
+        "online"
+      ]
+},
+    {
+      "name": "Online Timer",
+      "slug": "online-timer",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/online-timer/",
+      "description": "A countdown timer with presets and an audible alarm.",
+      "keywords": [
+        "online",
+        "timer",
+        "a",
+        "countdown",
+        "with",
+        "presets",
+        "and",
+        "an",
+        "audible",
+        "alarm",
+        "10",
+        "minute",
+        "5"
+      ]
+    },
+    {
+      "name": "Pomodoro Timer",
+      "slug": "pomodoro-timer",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/pomodoro-timer/",
+      "description": "Focus in 25-minute work sessions with short breaks between them.",
+      "keywords": [
+        "pomodoro",
+        "timer",
+        "focus",
+        "in",
+        "25-minute",
+        "work",
+        "sessions",
+        "with",
+        "short",
+        "breaks",
+        "between",
+        "them",
+        "study",
+        "25",
+        "minute"
+      ]
+    },
+    {
+      "name": "World Clock",
+      "slug": "world-clock",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/world-clock/",
+      "description": "Live local time for major cities around the world.",
+      "keywords": [
+        "world",
+        "clock",
+        "live",
+        "local",
+        "time",
+        "for",
+        "major",
+        "cities",
+        "around",
+        "the",
+        "now",
+        "london",
+        "new",
+        "york"
+      ]
+    },
+    {
+      "name": "Time Zone Converter",
+      "slug": "time-zone-converter",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/time-zone-converter/",
+      "description": "Convert a date and time between any two time zones.",
+      "keywords": [
+        "time",
+        "zone",
+        "converter",
+        "convert",
+        "a",
+        "date",
+        "and",
+        "between",
+        "any",
+        "two",
+        "zones",
+        "ist",
+        "to",
+        "est",
+        "meeting",
+        "planner"
+      ]
+    },
+    {
+      "name": "Countdown Timer",
+      "slug": "countdown-timer",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/countdown-timer/",
+      "description": "Count down the days, hours and minutes to any date or event.",
+      "keywords": [
+        "countdown",
+        "timer",
+        "count",
+        "down",
+        "the",
+        "days",
+        "hours",
+        "and",
+        "minutes",
+        "to",
+        "any",
+        "date",
+        "or",
+        "event",
+        "until",
+        "birthday",
+        "new",
+        "year"
+      ]
+    },
+    {
+      "name": "Tip Calculator",
+      "slug": "tip-calculator",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/tip-calculator/",
+      "description": "Work out the tip and split the bill fairly between friends.",
+      "keywords": [
+        "tip",
+        "calculator",
+        "work",
+        "out",
+        "the",
+        "and",
+        "split",
+        "bill",
+        "fairly",
+        "between",
+        "friends",
+        "percentage",
+        "restaurant"
+      ]
+    },
+    {
+      "name": "Random Number Generator",
+      "slug": "random-number-generator",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/random-number-generator/",
+      "description": "Generate random numbers in any range, with or without repeats.",
+      "keywords": [
+        "random",
+        "number",
+        "generator",
+        "generate",
+        "numbers",
+        "in",
+        "any",
+        "range",
+        "with",
+        "or",
+        "without",
+        "repeats",
+        "picker",
+        "draw",
+        "lottery"
+      ]
+    },
+    {
+      "name": "Coin Flip",
+      "slug": "coin-flip",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/coin-flip/",
+      "description": "Flip a coin online and keep a tally of heads and tails.",
+      "keywords": [
+        "coin",
+        "flip",
+        "a",
+        "online",
+        "and",
+        "keep",
+        "tally",
+        "of",
+        "heads",
+        "tails",
+        "or",
+        "toss"
+      ]
+    },
+    {
+      "name": "Dice Roller",
+      "slug": "dice-roller",
+      "category": "Daily Utilities",
+      "categoryId": "daily",
+      "url": "tools-preview/dice-roller/",
+      "description": "Roll one to six dice, from a d4 up to a d20.",
+      "keywords": [
+        "dice",
+        "roller",
+        "roll",
+        "one",
+        "to",
+        "six",
+        "from",
+        "a",
+        "d4",
+        "up",
+        "d20",
         "online"
       ]
     }
