@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Slug Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Slug Generator</h1>
+<p class="tool-sub">Turn a title into a clean, lowercase URL slug.</p>
+<div class="tool-card">
+  <p>Type a blog title or page heading and get a tidy URL slug — lowercase, words joined with hyphens, accents removed. For example, "How to Make the Best Coffee at Home!" becomes <code>how-to-make-the-best-coffee-at-home</code>.</p>
+
+  <label for="sg-in">Title</label>
+  <input id="sg-in" type="text" value="How to Make the Best Coffee at Home!" autocomplete="off">
+  <div class="row2">
+    <div>
+      <label for="sg-sep">Separator</label>
+      <select id="sg-sep">
+        <option value="-" selected>Hyphen (-)</option>
+        <option value="_">Underscore (_)</option>
+      </select>
+    </div>
+    <div>
+      <label for="sg-max">Maximum length (0 = no limit)</label>
+      <input id="sg-max" type="number" min="0" max="200" step="1" value="60">
+    </div>
+    <div>
+      <label class="check-line" for="sg-stop" style="margin-top:26px"><input id="sg-stop" type="checkbox"> Remove common stop words (a, the, and, of…)</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="sg-run" class="btn" type="button">Make slug</button>
+    <button id="sg-copy" class="btn ghost" type="button" disabled data-result>Copy slug</button>
+  </div>
+  <p id="sg-status" class="status" role="status"></p>
+  <label for="sg-out">Slug</label>
+  <input id="sg-out" type="text" readonly data-result placeholder="Your slug will appear here.">
+</div>
+<div class="note"><strong>Good to know:</strong> a slug is the readable part of a page address — it helps readers and search engines understand what the page is about. Accented letters are converted to plain ones (é becomes e), and anything that is not a letter or a number is replaced with the separator. Everything runs in this browser tab; your title is never sent anywhere.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var sgStatus = document.getElementById("sg-status");
+var sgOut = document.getElementById("sg-out");
+var sgCopy = document.getElementById("sg-copy");
+
+var STOP_WORDS = ["a", "an", "the", "and", "or", "but", "of", "to", "in", "on", "for", "with", "by", "at", "from", "is", "are", "was", "were", "be", "been", "as", "it", "its", "this", "that", "these", "those", "how", "what", "when", "where", "why", "who"];
+
+function makeSlug() {
+  var title = document.getElementById("sg-in").value;
+  var sep = document.getElementById("sg-sep").value;
+  var maxLen = Math.floor(Number(document.getElementById("sg-max").value));
+  var dropStop = document.getElementById("sg-stop").checked;
+  sgCopy.disabled = true;
+  if (!title.trim()) {
+    sgStatus.className = "status error";
+    sgStatus.textContent = "Type a title first.";
+    sgOut.value = "";
+    return;
+  }
+  /* Lowercase, split accented letters into base letter + mark, then drop
+     the marks (é -> e), so the slug stays plain ASCII. */
+  var text = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  var words = text.split(/[^a-z0-9]+/).filter(function (w) { return w.length > 0; });
+  if (dropStop) {
+    words = words.filter(function (w) { return STOP_WORDS.indexOf(w) === -1; });
+  }
+  var slug = words.join(sep);
+  if (isNaN(maxLen) || maxLen < 0) { maxLen = 0; }
+  if (maxLen > 0 && slug.length > maxLen) {
+    slug = slug.slice(0, maxLen);
+    /* Never end on a cut word: trim back to the last separator. */
+    var cut = slug.lastIndexOf(sep);
+    if (cut > 0) { slug = slug.slice(0, cut); }
+    slug = slug.replace(new RegExp("\\" + sep + "+$"), "");
+  }
+  if (!slug) {
+    sgStatus.className = "status error";
+    sgStatus.textContent = "Nothing is left after cleaning — try a title with letters or numbers.";
+    sgOut.value = "";
+    return;
+  }
+  sgOut.value = slug;
+  sgCopy.disabled = false;
+  sgStatus.className = "status ok";
+  sgStatus.textContent = "Slug ready — " + slug.length + " characters.";
+}
+
+document.getElementById("sg-run").addEventListener("click", makeSlug);
+["sg-in", "sg-sep", "sg-max", "sg-stop"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", makeSlug);
+  document.getElementById(id).addEventListener("change", makeSlug);
+});
+sgCopy.addEventListener("click", function () {
+  function done() {
+    sgStatus.className = "status ok";
+    sgStatus.textContent = "Slug copied — paste it into your page address.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(sgOut.value).then(done, function () {
+      sgStatus.className = "status error";
+      sgStatus.textContent = "Copy was blocked by the browser. Select the slug and copy it manually.";
+    });
+  } else {
+    sgOut.select();
+    sgStatus.textContent = "Copy is not available in this browser — the slug is selected, press Ctrl+C.";
+  }
+});
+makeSlug();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="slug-generator"></script>
+</body>
+</html>
