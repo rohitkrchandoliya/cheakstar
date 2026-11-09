@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Reverse Text Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Reverse Text Generator</h1>
+<p class="tool-sub">Flip text backwards — by characters, words or lines — or turn it upside down.</p>
+<div class="tool-card">
+  <p>Write text backwards for a puzzle, a social-media post or a design detail. Reversal is grapheme-safe, so emoji and combined characters stay whole instead of breaking apart.</p>
+
+  <label for="rt-in">Your text</label>
+  <textarea id="rt-in" class="tall" rows="6" placeholder="Type or paste your text here...">Hello, world!</textarea>
+  <div class="row2">
+    <div>
+      <label for="rt-mode">Reverse by</label>
+      <select id="rt-mode">
+        <option value="chars" selected>Characters (backwards)</option>
+        <option value="words">Words (word order reversed)</option>
+        <option value="lines">Lines (line order reversed)</option>
+      </select>
+    </div>
+    <div>
+      <label class="check-line" for="rt-flip" style="margin-top:26px"><input id="rt-flip" type="checkbox"> Upside-down mode (turn letters over)</label>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="rt-run" class="btn" type="button">Reverse the text</button>
+    <button id="rt-copy" class="btn ghost" type="button" disabled data-result>Copy result</button>
+  </div>
+  <p id="rt-status" class="status" role="status"></p>
+  <label for="rt-out">Result</label>
+  <textarea id="rt-out" class="tall" rows="6" readonly data-result placeholder="Your reversed text will appear here."></textarea>
+</div>
+<div class="note"><strong>Privacy:</strong> your text is reversed only in this browser tab and is never sent to any server. Upside-down mode swaps each letter for its flipped look-alike (a becomes &#0252;, e becomes &#01DD;); a few characters have no flipped match and are left as they are.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var rtStatus = document.getElementById("rt-status");
+var rtOut = document.getElementById("rt-out");
+var rtCopy = document.getElementById("rt-copy");
+
+/* Upside-down look-alikes for the letters, digits and marks that have one.
+   Characters without a flipped match are left unchanged. */
+var FLIP_MAP = {
+  a: "\u0250", b: "q", c: "\u0254", d: "p", e: "\u01DD", f: "\u025F",
+  g: "\u0253", h: "\u0265", i: "\u0131", j: "\u027E", k: "\u029E",
+  l: "l", m: "\u026F", n: "u", o: "o", p: "d", q: "b", r: "\u0279",
+  s: "s", t: "\u0287", u: "n", v: "\u028C", w: "\u028D", x: "x",
+  y: "\u028E", z: "z",
+  A: "\u2200", B: "\u15FA", C: "\u0186", D: "\u15E1", E: "\u018E",
+  F: "\u2132", G: "\u2141", H: "H", I: "I", J: "\u017F", K: "\u029E",
+  L: "\u02E5", M: "W", N: "N", O: "O", P: "\u0500", Q: "O",
+  R: "\u1D1A", S: "S", T: "\u22A5", U: "\u2229", V: "\u039B",
+  W: "M", X: "X", Y: "\u2144", Z: "Z",
+  "0": "0", "1": "\u0196", "2": "\u01E7", "3": "\u0190",
+  "4": "h", "5": "S", "6": "9", "7": "L", "8": "8", "9": "6",
+  ".": "\u02D9", ",": "'", "?": "\u00BF", "!": "\u00A1",
+  "'": ",", '"': ",,", "(": ")", ")": "(", "[": "]", "]": "[",
+  "{": "}", "}": "{", "<": ">", ">": "<", "&": "\u214B", "_": "\u203E"
+};
+
+/* Split into grapheme clusters where the browser supports it, so emoji
+   and combined characters (like e + combining accent) stay whole. */
+function graphemes(text) {
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    var seg = new Intl.Segmenter("en", { granularity: "grapheme" });
+    return Array.from(seg.segment(text), function (s) { return s.segment; });
+  }
+  return Array.from(text);
+}
+
+function flipChars(text) {
+  return graphemes(text).map(function (g) {
+    return FLIP_MAP[g] !== undefined ? FLIP_MAP[g] : g;
+  }).join("");
+}
+
+document.getElementById("rt-run").addEventListener("click", function () {
+  var raw = document.getElementById("rt-in").value;
+  var mode = document.getElementById("rt-mode").value;
+  var flip = document.getElementById("rt-flip").checked;
+  rtCopy.disabled = true;
+  if (!raw) {
+    rtStatus.className = "status error";
+    rtStatus.textContent = "Type or paste some text first.";
+    rtOut.value = "";
+    return;
+  }
+  var out;
+  if (mode === "chars") {
+    out = graphemes(raw).reverse().join("");
+  } else if (mode === "words") {
+    out = raw.split(/(\s+)/).reverse().join("");
+  } else {
+    out = raw.split(/\r\n|\r|\n/).reverse().join("\n");
+  }
+  if (flip) { out = flipChars(out); }
+  rtOut.value = out;
+  rtCopy.disabled = false;
+  rtStatus.className = "status ok";
+  rtStatus.textContent = "Reversed" + (flip ? " and flipped upside down." : ".");
+});
+
+rtCopy.addEventListener("click", function () {
+  function done() {
+    rtStatus.className = "status ok";
+    rtStatus.textContent = "Result copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(rtOut.value).then(done, function () {
+      rtStatus.className = "status error";
+      rtStatus.textContent = "Copy was blocked by the browser. Select the result text and copy it manually.";
+    });
+  } else {
+    rtOut.select();
+    rtStatus.textContent = "Copy is not available in this browser — the result is selected, press Ctrl+C.";
+  }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="reverse-text"></script>
+</body>
+</html>
