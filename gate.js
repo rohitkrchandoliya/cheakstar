@@ -132,6 +132,11 @@
   }
 
   /* ---------- guard: blur-wrap one result element ---------- */
+  /* One login card per page is enough: every result zone still gets
+     blurred, but only the first guarded zone carries the card — tools
+     with several result zones (a result plus its history list, say)
+     must not stack the same card two or three times. */
+  var cardPlaced = false;
   function guard(el, opts) {
     opts = opts || {};
     if (!el || el.closest(".gate-wrap")) return null;
@@ -143,7 +148,8 @@
     blur.setAttribute("aria-hidden", "true");
     wrap.appendChild(blur);
     blur.appendChild(el);
-    if (!opts.soft) {
+    if (!opts.soft && !cardPlaced) {
+      cardPlaced = true;
       var card = document.createElement("div");
       card.className = "gate-card";
       card.appendChild(buildCard(opts.kind || "tool", opts.onNavigate));
