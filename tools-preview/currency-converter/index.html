@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Currency Converter - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Currency Converter</h1>
+<p class="tool-sub">Convert between world currencies using the daily reference rate.</p>
+<div class="tool-card">
+  <p>Convert an amount from one currency to another — dollars to rupees, euros to pounds, and 30 currencies in all. The rate comes from the European Central Bank daily reference rate, fetched live when you convert.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cc-amount">Amount</label>
+      <input id="cc-amount" type="number" min="0" step="any" value="100">
+    </div>
+    <div>
+      <label for="cc-from">From</label>
+      <select id="cc-from"></select>
+    </div>
+    <div>
+      <label for="cc-to">To</label>
+      <select id="cc-to"></select>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="cc-run" class="btn" type="button">Convert</button>
+    <button id="cc-swap" class="btn ghost" type="button">Swap currencies</button>
+  </div>
+  <p id="cc-status" class="status" role="status">Loading the latest reference rate…</p>
+  <div class="result" id="cc-result" hidden data-result>
+    <p class="big" id="cc-headline"></p>
+    <div id="cc-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> the rate shown is the European Central Bank daily reference rate for the date printed with the result — it is a daily reference rate, not a live trading rate, and banks and money-transfer services add their own fee or margin, so the amount you actually receive can differ. If the rate cannot be loaded (for example, you are offline), the page says so plainly and shows no number — a rate is never guessed or invented. Your amount is sent only to the public rates service to fetch the conversion; no account or personal detail is involved.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ccStatus = document.getElementById("cc-status");
+var ccResult = document.getElementById("cc-result");
+var ccHeadline = document.getElementById("cc-headline");
+var ccRows = document.getElementById("cc-rows");
+
+/* Currency list from the Frankfurter service (European Central Bank
+   reference rates). Kept as data on the page; the rate itself is always
+   fetched live, never stored or invented here. */
+var CURRENCIES = [
+  ["AUD", "Australian Dollar"], ["BRL", "Brazilian Real"],
+  ["CAD", "Canadian Dollar"], ["CHF", "Swiss Franc"],
+  ["CNY", "Chinese Renminbi Yuan"], ["CZK", "Czech Koruna"],
+  ["DKK", "Danish Krone"], ["EUR", "Euro"],
+  ["GBP", "British Pound"], ["HKD", "Hong Kong Dollar"],
+  ["HUF", "Hungarian Forint"], ["IDR", "Indonesian Rupiah"],
+  ["ILS", "Israeli New Shekel"], ["INR", "Indian Rupee"],
+  ["ISK", "Icelandic Krona"], ["JPY", "Japanese Yen"],
+  ["KRW", "South Korean Won"], ["MXN", "Mexican Peso"],
+  ["MYR", "Malaysian Ringgit"], ["NOK", "Norwegian Krone"],
+  ["NZD", "New Zealand Dollar"], ["PHP", "Philippine Peso"],
+  ["PLN", "Polish Zloty"], ["RON", "Romanian Leu"],
+  ["SEK", "Swedish Krona"], ["SGD", "Singapore Dollar"],
+  ["THB", "Thai Baht"], ["TRY", "Turkish Lira"],
+  ["USD", "United States Dollar"], ["ZAR", "South African Rand"]
+];
+
+function fillSelect(select, selected) {
+  CURRENCIES.forEach(function (entry) {
+    var opt = document.createElement("option");
+    opt.value = entry[0];
+    opt.textContent = entry[0] + " — " + entry[1];
+    if (entry[0] === selected) { opt.selected = true; }
+    select.appendChild(opt);
+  });
+}
+fillSelect(document.getElementById("cc-from"), "USD");
+fillSelect(document.getElementById("cc-to"), "INR");
+
+function fmt(code, value) {
+  try {
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: code }).format(value);
+  } catch (e) {
+    return value.toLocaleString("en-IN", { maximumFractionDigits: 2 }) + " " + code;
+  }
+}
+
+function addRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  ccRows.appendChild(p);
+}
+
+function convert() {
+  var amount = Number(document.getElementById("cc-amount").value);
+  var from = document.getElementById("cc-from").value;
+  var to = document.getElementById("cc-to").value;
+  ccRows.innerHTML = "";
+  ccResult.hidden = true;
+  if (isNaN(amount) || amount < 0) {
+    ccStatus.className = "status error";
+    ccStatus.textContent = "Enter an amount (zero or more).";
+    return;
+  }
+  if (from === to) {
+    ccHeadline.textContent = fmt(from, amount) + " = " + fmt(to, amount);
+    addRow("Rate", "1 " + from + " = 1 " + to + " (same currency)");
+    addRow("Rate date", "No rate needed — both sides are the same currency.");
+    ccResult.hidden = false;
+    ccStatus.className = "status";
+    ccStatus.textContent = "Same currency, so the amount does not change.";
+    return;
+  }
+  ccStatus.className = "status";
+  ccStatus.textContent = "Fetching the reference rate…";
+  var url = "https://api.frankfurter.dev/v1/latest?from=" + encodeURIComponent(from) +
+    "&to=" + encodeURIComponent(to) + "&amount=" + encodeURIComponent(String(amount));
+  fetch(url).then(function (resp) {
+    if (!resp.ok) { throw new Error("Rate service returned " + resp.status); }
+    return resp.json();
+  }).then(function (data) {
+    if (!data || !data.rates || typeof data.rates[to] !== "number" || !data.date) {
+      throw new Error("Rate service returned an unexpected answer.");
+    }
+    var converted = data.rates[to];
+    var unitRate = converted / amount;
+    ccHeadline.textContent = fmt(from, amount) + " = " + fmt(to, converted);
+    addRow("Rate", "1 " + from + " = " + unitRate.toLocaleString("en-IN", { maximumFractionDigits: 6 }) + " " + to);
+    addRow("Inverse rate", "1 " + to + " = " + (1 / unitRate).toLocaleString("en-IN", { maximumFractionDigits: 6 }) + " " + from);
+    addRow("Rate date", data.date + " (European Central Bank daily reference rate)");
+    addRow("Source", "Frankfurter — European Central Bank reference rates");
+    ccResult.hidden = false;
+    ccStatus.className = "status ok";
+    ccStatus.textContent = "Daily reference rate, not a live trading rate.";
+  }).catch(function () {
+    ccStatus.className = "status error";
+    ccStatus.textContent = "Could not load the exchange rate. Check your internet connection and try again — no rate is shown because none could be fetched.";
+  });
+}
+
+document.getElementById("cc-run").addEventListener("click", convert);
+document.getElementById("cc-swap").addEventListener("click", function () {
+  var fromSel = document.getElementById("cc-from");
+  var toSel = document.getElementById("cc-to");
+  var tmp = fromSel.value;
+  fromSel.value = toSel.value;
+  toSel.value = tmp;
+  convert();
+});
+document.getElementById("cc-amount").addEventListener("input", convert);
+document.getElementById("cc-from").addEventListener("change", convert);
+document.getElementById("cc-to").addEventListener("change", convert);
+convert();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="currency-converter"></script>
+</body>
+</html>
