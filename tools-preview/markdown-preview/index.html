@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Markdown Preview - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js" defer></script>
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Markdown Preview</h1>
+<p class="tool-sub">Write Markdown and see the formatted result live, side by side.</p>
+<div class="tool-card">
+  <p>Type Markdown on the left and watch it render on the right — headings, lists, links, code and tables. The rendered HTML is cleaned (sanitised) before it is shown, so pasted Markdown cannot run scripts in this page.</p>
+
+  <div class="row2">
+    <div>
+      <label for="md-in">Markdown</label>
+      <textarea id="md-in" class="tall" rows="14"># Hello, Markdown
+
+Write **bold** text, *italic* text, and `code` here.
+
+- One list item
+- Another list item
+
+[Cheakstar](https://rohitkrchandoliya.github.io/cheakstar/) is the home of these tools.
+
+&gt; A quote looks like this.</textarea>
+    </div>
+    <div>
+      <label>Preview</label>
+      <div id="md-out" style="border:1px solid #d8dee8; border-radius:8px; padding:12px 16px; min-height:280px; overflow-wrap:break-word"></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="md-copy" class="btn ghost" type="button">Copy rendered HTML</button>
+    <button id="md-clear" class="btn ghost" type="button">Clear</button>
+  </div>
+  <p id="md-status" class="status" role="status">Loading the editor libraries…</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the preview is rendered with the marked library and then cleaned with DOMPurify before it is shown — any script or unsafe tag in the Markdown is stripped out, so the preview is safe to look at. Your text is processed in this browser tab and is never sent to any server. If the two libraries cannot load (for example, you are offline), the preview shows a clear message instead of a broken result.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var mdIn = document.getElementById("md-in");
+var mdOut = document.getElementById("md-out");
+var mdStatus = document.getElementById("md-status");
+var mdCopy = document.getElementById("md-copy");
+var libsFailed = false;
+
+function libsReady() {
+  return typeof window.marked !== "undefined" && typeof window.DOMPurify !== "undefined";
+}
+
+function render() {
+  if (!libsReady()) {
+    if (libsFailed) {
+      mdOut.textContent = "The editor libraries (marked and DOMPurify) could not be loaded. Check your internet connection and reload the page.";
+    } else {
+      mdOut.textContent = "Loading the editor libraries…";
+    }
+    return;
+  }
+  try {
+    var html = window.marked.parse(mdIn.value, { breaks: true });
+    /* Sanitisation is mandatory: rendered HTML is cleaned before it is
+       put on the page, so Markdown can never inject a script. */
+    mdOut.innerHTML = window.DOMPurify.sanitize(html);
+    mdStatus.className = "status ok";
+    mdStatus.textContent = "Preview is live — rendered with marked, cleaned with DOMPurify.";
+  } catch (e) {
+    mdOut.textContent = "The Markdown could not be rendered. Check the text and try again.";
+    mdStatus.className = "status error";
+    mdStatus.textContent = "Rendering failed.";
+  }
+}
+
+/* Deferred CDN scripts run after this inline script, so wait for them. */
+var waited = 0;
+var waitTimer = setInterval(function () {
+  waited += 200;
+  if (libsReady()) {
+    clearInterval(waitTimer);
+    render();
+  } else if (waited >= 10000) {
+    clearInterval(waitTimer);
+    libsFailed = true;
+    mdStatus.className = "status error";
+    mdStatus.textContent = "The editor libraries could not be loaded. Check your internet connection and reload the page.";
+    render();
+  }
+}, 200);
+
+mdIn.addEventListener("input", render);
+mdCopy.addEventListener("click", function () {
+  if (!libsReady()) {
+    mdStatus.className = "status error";
+    mdStatus.textContent = "The editor libraries have not loaded yet — nothing to copy.";
+    return;
+  }
+  var html = window.DOMPurify.sanitize(window.marked.parse(mdIn.value, { breaks: true }));
+  function done() {
+    mdStatus.className = "status ok";
+    mdStatus.textContent = "Rendered HTML copied — paste it anywhere.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(html).then(done, function () {
+      mdStatus.className = "status error";
+      mdStatus.textContent = "Copy was blocked by the browser.";
+    });
+  } else {
+    mdStatus.textContent = "Copy is not available in this browser.";
+  }
+});
+document.getElementById("md-clear").addEventListener("click", function () {
+  mdIn.value = "";
+  render();
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="markdown-preview"></script>
+</body>
+</html>
