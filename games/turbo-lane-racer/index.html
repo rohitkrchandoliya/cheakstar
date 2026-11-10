@@ -583,14 +583,7 @@ var cgx = (function () {
     beep: beep, sfx: sfx,
     muted: soundMuted, setMuted: setMuted,
     toggleMuted: function () { return setMuted(!soundMuted()); },
-    attachMuteToggle: attachMuteToggle,
-    /* Test hooks for the headless verification only - strip before
-       publish, the same rule as the games' window.__ hooks. */
-    _test: {
-      makeMemoryStore: function (slug) { return makeStore(slug, memBackend); },
-      audioState: function () { return audioCtx ? audioCtx.state : "none"; },
-      storeAvailable: storeOk
-    }
+    attachMuteToggle: attachMuteToggle
   };
 })();
 
@@ -1097,33 +1090,6 @@ var TurboLaneRacer = (function () {
   raceBuildSprites();
   raceBuildTrack();
   raceReset();
-  // Test hooks (used by the headless verification script only).
-  window.__race = {
-    get state() {
-      return {
-        phase: racePhase, running: raceRunning,
-        speedKmh: Math.round(raceSpeed / raceMaxSpeed * 240),
-        score: raceScore(), overtakes: raceOvertakes, crashes: raceCrashes,
-        checkpoints: raceCheckpoints, timeLeft: Math.ceil(raceTimeLeft),
-        playerX: Math.round(racePlayerX * 100) / 100,
-        distM: Math.round(raceDistM),
-        best: raceBest ? raceBest.score : 0,
-        tilt: Math.round(raceTilt * 100) / 100,
-        segments: raceSegments.length
-      };
-    },
-    debugSetInvincible: function (on) { raceInvincible = on ? 1e9 : 0; },
-    debugPlaceRivalAhead: function (parked) {
-      var car = raceCars[0];
-      car.z = raceWrap(racePosition + racePlayerZ + 8 * raceSegLen, raceTrackLen);
-      car.offset = Math.max(-0.8, Math.min(0.8, racePlayerX));
-      car.speed = parked ? 0 : raceMaxSpeed * 0.3;
-      car.prevRel = 8 * raceSegLen;
-      return true;
-    },
-    debugSetTime: function (s) { raceTimeLeft = s; },
-    debugSetNearCheckpoint: function () { raceNextCp = raceDist + 300; }
-  };
   return { reset: raceReset, redraw: raceDraw };
 })();
 
