@@ -12,99 +12,89 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
 
+  /* ---- Traffic Dodger ---- */
+  /* Portrait canvas, 320x500 logical units (the shipped field).
+     The cgx layer sizes the backing store from the CSS box x
+     devicePixelRatio (cgx.watchFit), so the road stays crisp in
+     windowed and fullscreen states - the shipped build kept a
+     fixed 320x500 bitmap and merely CSS-stretched it, which
+     blurred in fullscreen (spec 0.2). The wrapper is 360px wide
+     on a laptop (the shipped 320px looked small, spec 0.1);
+     fullscreen is height-bound (the board takes most of the
+     stage height) and the stage scrolls if the hold buttons
+     fall below the fold. */
+  .board-wrap { position: relative; width: min(360px, 92vw); margin: 1rem auto 0; }
+  #traf-board { display: block; width: 100%; aspect-ratio: 320 / 500; margin: 0; background: #14532d; border: 2px solid var(--navy); box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .cgx-fs:fullscreen .board-wrap, .cgx-fs:-webkit-full-screen .board-wrap { width: min(94vw, 52dvh, 430px); flex: none; margin-top: 0.5rem; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  /* On-screen left / right HOLD buttons (shipped controls):
+     press and hold to steer, release to stop. */
+  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
+  .traf-keys button { margin: 0; padding: 0.7rem 2.2rem; font-size: 1.15rem; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Traffic Dodger</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -112,271 +102,1176 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="traf-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Traffic Dodger</h2>
-  <p class="fs-desc">Steer your gold car with the left and right arrow keys, A and D, the on-screen buttons, or by dragging on the road. Traffic keeps coming faster — pass close to a car without touching it for a 25-point near-miss bonus.</p>
-  <div class="scorebar"><span>Score: <span id="traf-score">0</span></span><span>Near misses: <span id="traf-near">0</span></span><span>Speed: <span id="traf-speed">0</span> km/h</span></div>
-  <canvas class="board game-canvas" id="traf-board" width="320" height="500"></canvas>
+  <p class="fs-desc">Steer your gold car with the left and right arrow keys, A and D, the on-screen hold buttons, or by dragging on the road. Press P to pause. Traffic keeps coming faster - pass close to a car without touching it for a 25-point near-miss bonus, and drive over a gold coin for 50 points. Every 500 points the level rises and the traffic gets denser.</p>
+  <div class="scorebar"><span>Score: <span id="traf-score">0</span></span><span>Near misses: <span id="traf-near">0</span></span><span>Level: <span id="traf-level">1</span></span><span>Speed: <span id="traf-speed">0</span> km/h</span><span>Best: <span id="traf-best">0</span></span></div>
+  <div class="board-wrap">
+    <canvas class="board" id="traf-board" width="320" height="500" aria-label="Traffic Dodger board"></canvas>
+  </div>
   <p class="status" id="traf-status">Press Start and steer through the traffic.</p>
-  <div>
+  <p class="stats-line" id="traf-stats"></p>
+  <div class="ctrl-row">
     <button type="button" id="traf-start">Start</button>
     <button type="button" id="traf-new">New game</button>
   </div>
   <div class="traf-keys">
-    <button type="button" id="traf-left" aria-label="Steer left">&#9664;</button>
-    <button type="button" id="traf-right" aria-label="Steer right">&#9654;</button>
+    <button type="button" id="traf-left" aria-label="Hold to steer left">&#9664;</button>
+    <button type="button" id="traf-right" aria-label="Hold to steer right">&#9654;</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Honest note: a top-down 2D arcade driving game — you dodge traffic, it is not a driving simulator.</p>
+<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - your best score and the most near misses you have managed in a single run - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: a top-down 2D arcade driving game - you dodge traffic, it is not a driving simulator.</p>
+<script>"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G9 TRAFFIC DODGER ================= */
-var TrafficDodger = (function () {
-  var trafW = 320, trafH = 500;
-  var trafRoadL = 24, trafRoadR = 296, trafLanes = [69, 160, 251];
-  var trafCarW = 42, trafCarH = 70;
-  var trafPlayer = { x: 160, y: trafH - 112 };
-  var trafCars = [], trafScore = 0, trafNear = 0, trafElapsed = 0;
-  var trafRunning = false, trafOver = false, trafInvincible = false;
-  var trafSpawnIn = 0.6, trafDashOff = 0, trafHudIn = 0, trafLastTs = 0;
-  var trafKeyL = false, trafKeyR = false, trafBtnL = false, trafBtnR = false, trafDragX = null;
-  var trafColors = ["#2563eb", "#e11d48", "#16a34a", "#9333ea", "#ea580c", "#f8fafc"];
-  var trafCtx = $("traf-board").getContext("2d");
+/* ================= G9 TRAFFIC DODGER (polish pass) =================
+   The verified game core is kept exactly: the 320x500 portrait
+   field, the road from x 24 to x 296 with lane centres at
+   69 / 160 / 251, the player car 42x70 at y 388, relative speed
+   min(335, 150 + 4.2 x elapsed), score += speed x dt / 12, the
+   km/h readout (speed x 0.45), steering at 320 px/s from keys
+   and hold buttons and up to 340 px/s when dragging, the road
+   clamp, traffic factors 0.85-1.15, the spawn block (a lane is
+   blocked while one of its cars is above y 30), the crash test
+   and the near-miss rule: a car counts as passed once its top
+   passes the player's bottom edge, and the pass is a near miss
+   when the lateral gap is greater than 0 and less than 56 px,
+   worth +25. The dt clamp of 0.033 s, the 0.15 s HUD throttle
+   and the rAF loop gated on the running flag are all shipped.
+   Vehicle variety (below) generalises the two shipped overlap
+   formulas with each vehicle's own width/height; for a standard
+   car (42x70) both formulas are bit-identical to the shipped
+   ones. The polish adds everything around that core:
 
-  function trafRelSpeed() { return Math.min(335, 150 + trafElapsed * 4.2); }
-  function trafSyncHud() {
-    $("traf-score").textContent = String(Math.floor(trafScore));
-    $("traf-near").textContent = String(trafNear);
-    $("traf-speed").textContent = String(trafRunning || trafOver ? Math.round(trafRelSpeed() * 0.45) : 0);
+   - VEHICLE VARIETY. Traffic is no longer one flat rectangle:
+     cars (42x70, 60%), vans (44x86, 25%) and trucks (46x104,
+     15%), each drawn top-down in its own silhouette. A traffic
+     car's tail lights flare with a red halo when the player is
+     closing in behind it in the same lane (gap under 120 px).
+   - COINS. A gold coin worth +50 spawns in a random lane every
+     3.0-5.4 s (at most 2 on the road, never buried under a
+     fresh car: the lane must be clear down to y 140). Coins sit
+     on the road, so they approach at the full relative speed,
+     and are collected by driving over them.
+   - LEVELS = DISTANCE MILESTONES. Level = 1 + floor(score /
+     500). Each level multiplies the shipped spawn interval by
+     density = max(0.5, 1 - 0.08 x (level - 1)) - level 1: 1.00,
+     2: 0.92, 3: 0.84, 4: 0.76, 5: 0.68, 6: 0.60, 7: 0.52,
+     8+: 0.50 - and from level 3 a spawn event has a 20% chance
+     (35% from level 6) to add a second car in another free
+     lane. Levelling up shows a canvas banner, plays the win
+     jingle and updates the status line.
+   - FEEDBACK: a crash bursts 46 bounded explosion particles
+     with a screen shake and a wrecked player car for ~0.95 s
+     before the end screen; a near miss flashes the passed car,
+     draws whoosh lines beside it and floats a "+25" popup (a
+     coin floats "+50"); speed lines streak past the road edges
+     above 250 relative speed; the player car tilts into its
+     steering. The near-miss whoosh sound is the cgx "click"
+     effect - the shared layer has no sweep/whoosh sample, so a
+     short high blip stands in for it (documented, not hidden).
+   - PAUSE: the P key joins the shipped Start/Pause button,
+     with a canvas "Paused" overlay.
+   - END SCREEN via cgx.showResult with score, near misses,
+     best and a New best badge; PERSISTENCE through
+     cgx.store("traffic-dodger"), keys "best" and "nearMissBest"
+     (shape below). No engine hum: the shared beeper cannot do
+     a convincing one and it would fight the mute-by-default
+     rule, so the game stays silent apart from the effects. */
+var TrafficDodger = (function () {
+  var W = 320, H = 500, LOGICAL_W = 320, LOGICAL_H = 500;
+  var ROAD_L = 24, ROAD_R = 296, LANES = [69, 160, 251];
+  var PLAYER_W = 42, PLAYER_H = 70;
+  var PLAYER_Y = H - 112;                /* 388, as shipped */
+  var NEAR_MISS_MAX = 56;                /* shipped window: 0 < gap < 56 */
+  var COIN_VALUE = 50, COIN_R = 11, MAX_COINS = 2;
+  var LEVEL_EVERY = 500;
+  var TRAFFIC_TYPES = [
+    { name: "car", w: 42, h: 70, upTo: 0.60 },
+    { name: "van", w: 44, h: 86, upTo: 0.85 },
+    { name: "truck", w: 46, h: 104, upTo: 1.00 }
+  ];
+  var MAX_PARTICLES = 120, EXPLOSION_PARTICLES = 46, CRASH_ANIM_S = 0.95;
+
+  var board = $("traf-board");
+  var ctx = board.getContext("2d");
+  var startBtn = $("traf-start");
+  var stage = $("stage");
+
+  /* ---------------- persistence (cgx.store) ----------------
+     Two scalar keys, exactly as the spec names them:
+       "best"         -> cheakstar.games.traffic-dodger.best
+                         = a JSON number, the best final score.
+       "nearMissBest" -> cheakstar.games.traffic-dodger.nearMissBest
+                         = a JSON number, the most near misses
+                         in a single finished run.
+     This browser only, both written once when a run ends. */
+  var trafStore = cgx.store("traffic-dodger");
+  function loadNum(key) {
+    var v = trafStore.get(key, 0);
+    return (typeof v === "number" && v > 0) ? Math.floor(v) : 0;
   }
-  function trafReset() {
-    trafPlayer.x = 160;
-    trafCars = [];
-    trafScore = 0; trafNear = 0; trafElapsed = 0;
-    trafOver = false; trafSpawnIn = 0.6; trafDashOff = 0;
-    trafSyncHud();
-    trafDraw();
+  var best = loadNum("best");
+  var nearMissBest = loadNum("nearMissBest");
+
+  /* ---------------- game state ----------------
+     running is the shipped flag: the rAF loop only turns while
+     it is set, and Start / P toggle it (pause). started says a
+     run is in progress (for the Paused overlay). crashing runs
+     the ~0.95 s explosion before the end screen; trafOver is
+     set from the moment of the crash. */
+  var player = { x: 160, y: PLAYER_Y };
+  var cars = [], coins = [], particles = [], popups = [];
+  var score = 0, near = 0, coinsGot = 0, elapsed = 0, level = 1;
+  var running = false, started = false, trafOver = false, invincible = false;
+  var crashing = false, crashT = 0, shakeT = 0;
+  var spawnIn = 0.6, coinIn = 3.0, dashOff = 0, hudIn = 0, lastTs = 0, rafId = 0;
+  var keyL = false, keyR = false, btnL = false, btnR = false, dragX = null;
+  var tilt = 0, bannerT = 0, totalSpawns = 0;
+  var COLORS = ["#2563eb", "#e11d48", "#16a34a", "#9333ea", "#ea580c", "#f8fafc"];
+
+  function relSpeed() { return Math.min(335, 150 + elapsed * 4.2); }
+  function levelForScore(s) { return 1 + Math.floor(s / LEVEL_EVERY); }
+  function densityFactor() { return Math.max(0.5, 1 - 0.08 * (level - 1)); }
+  function extraSpawnChance() { return level < 3 ? 0 : (level < 6 ? 0.20 : 0.35); }
+  function phase() {
+    if (trafOver) return crashing ? "crashing" : "over";
+    if (running) return "playing";
+    return started ? "paused" : "ready";
   }
-  function trafSpawn(laneIdx) {
-    var factor = 0.85 + Math.random() * 0.3;
-    trafCars.push({
-      lane: laneIdx, x: trafLanes[laneIdx], y: -trafCarH - 6,
-      factor: factor, counted: false,
-      color: trafColors[Math.floor(Math.random() * trafColors.length)]
+  function setStatus(t) { $("traf-status").textContent = t; }
+  function dialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
+
+  /* ---------------- HUD ---------------- */
+  function syncHud() {
+    $("traf-score").textContent = String(Math.floor(score));
+    $("traf-near").textContent = String(near);
+    $("traf-level").textContent = String(level);
+    $("traf-speed").textContent = String(running || trafOver ? Math.round(relSpeed() * 0.45) : 0);
+    $("traf-best").textContent = String(Math.max(best, Math.floor(score)));
+    $("traf-stats").textContent =
+      "Best score: " + Math.max(best, Math.floor(score)) +
+      " · Most near misses in one run: " + Math.max(nearMissBest, near);
+  }
+
+  /* ---------------- spawning ---------------- */
+  function rollType() {
+    var r = Math.random();
+    for (var i = 0; i < TRAFFIC_TYPES.length; i++) if (r < TRAFFIC_TYPES[i].upTo) return TRAFFIC_TYPES[i];
+    return TRAFFIC_TYPES[0];
+  }
+  function laneBlocked(laneIdx, topLimit) {
+    for (var i = 0; i < cars.length; i++) if (cars[i].lane === laneIdx && cars[i].y < topLimit) return true;
+    return false;
+  }
+  /* The shipped spawn: a car of the rolled type at the top of
+     the lane, speed factor 0.85-1.15 (the shipped traffic
+     speed variation). */
+  function spawnCar(laneIdx, opts) {
+    opts = opts || {};
+    var type = opts.type ? typeByName(opts.type) : rollType();
+    var car = {
+      lane: laneIdx, x: LANES[laneIdx],
+      y: typeof opts.y === "number" ? opts.y : -type.h - 6,
+      w: type.w, h: type.h, type: type.name,
+      factor: typeof opts.factor === "number" ? opts.factor : 0.85 + Math.random() * 0.3,
+      counted: false, flash: 0, whoosh: 0, braking: false,
+      color: opts.color || COLORS[Math.floor(Math.random() * COLORS.length)]
+    };
+    cars.push(car);
+    totalSpawns++;
+    return car;
+  }
+  function typeByName(name) {
+    for (var i = 0; i < TRAFFIC_TYPES.length; i++) if (TRAFFIC_TYPES[i].name === name) return TRAFFIC_TYPES[i];
+    return TRAFFIC_TYPES[0];
+  }
+  function spawnCoin(laneIdx, y) {
+    var coin = { lane: laneIdx, x: LANES[laneIdx], y: typeof y === "number" ? y : -16, r: COIN_R };
+    coins.push(coin);
+    return coin;
+  }
+  function trySpawnCoin() {
+    if (coins.length >= MAX_COINS) return;
+    var lane = Math.floor(Math.random() * 3);
+    if (laneBlocked(lane, 140)) return;      /* not buried under a fresh car */
+    for (var i = 0; i < coins.length; i++) if (coins[i].lane === lane && coins[i].y < 100) return;
+    spawnCoin(lane);
+  }
+
+  /* ---------------- feedback helpers ---------------- */
+  function addPopup(x, y, text) {
+    popups.push({ x: x, y: y, text: text, life: 0.8, max: 0.8 });
+  }
+  function spawnParticles(cx, cy, count, palette, speedMax, lifeMax, sizeMax) {
+    for (var i = 0; i < count && particles.length < MAX_PARTICLES; i++) {
+      var a = Math.random() * Math.PI * 2, sp = 30 + Math.random() * speedMax;
+      particles.push({
+        x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 26,
+        life: 0.35 + Math.random() * lifeMax, max: 0.35 + lifeMax,
+        size: 2 + Math.random() * sizeMax,
+        color: palette[Math.floor(Math.random() * palette.length)]
+      });
+    }
+  }
+  function updateParticles(dt) {
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.life -= dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.vy += 300 * dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+    }
+  }
+  function updatePopups(dt) {
+    for (var i = popups.length - 1; i >= 0; i--) {
+      popups[i].life -= dt;
+      popups[i].y -= 34 * dt;
+      if (popups[i].life <= 0) popups.splice(i, 1);
+    }
+  }
+
+  /* ---------------- flow ---------------- */
+  function resetGame() {
+    player.x = 160;
+    cars = []; coins = []; particles = []; popups = [];
+    score = 0; near = 0; coinsGot = 0; elapsed = 0; level = 1;
+    trafOver = false; crashing = false; crashT = 0; shakeT = 0;
+    spawnIn = 0.6; coinIn = 3.0; dashOff = 0; tilt = 0; bannerT = 0;
+    totalSpawns = 0;
+    syncHud();
+    draw(performance.now());
+  }
+  function crash() {
+    trafOver = true;
+    crashing = true;
+    crashT = 0;
+    shakeT = 0.55;
+    cgx.sfx("lose");
+    spawnParticles(player.x, player.y + PLAYER_H / 2, EXPLOSION_PARTICLES,
+      ["#f97316", "#facc15", "#dc2626", "#9ca3af", "#f8fafc"], 190, 0.55, 4);
+    setStatus("Crash! Final score: " + Math.floor(score) + " with " + near + " near miss" + (near === 1 ? "" : "es") + ".");
+    draw(performance.now());
+  }
+  function finishCrash() {
+    crashing = false;
+    running = false;
+    cancelAnimationFrame(rafId);
+    var finalScore = Math.floor(score);
+    var isNewBest = finalScore > best;
+    if (isNewBest) { best = finalScore; trafStore.set("best", best); }
+    if (near > nearMissBest) { nearMissBest = near; trafStore.set("nearMissBest", nearMissBest); }
+    syncHud();
+    draw(performance.now());
+    cgx.showResult({
+      won: false,
+      title: "Game over",
+      message: "Crash! You scored " + finalScore + " points with " + near +
+        " near miss" + (near === 1 ? "" : "es") + " and collected " + coinsGot +
+        " coin" + (coinsGot === 1 ? "" : "s") + ", reaching level " + level + ".",
+      score: finalScore, scoreLabel: "Score",
+      best: best, bestLabel: "Best score",
+      newBest: isNewBest,
+      sound: false, /* the lose sound already played at the crash */
+      playAgainLabel: "Play again",
+      onPlayAgain: function () { resetGame(); setRunning(true); }
     });
   }
-  function trafDrawCar(x, y, color, isPlayer) {
-    var ctx = trafCtx;
-    var px = x - trafCarW / 2, py = y;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.roundRect(px, py, trafCarW, trafCarH, 9);
-    ctx.fill();
-    ctx.fillStyle = "#0b2036";
-    ctx.beginPath();
-    ctx.roundRect(px + 6, py + 13, trafCarW - 12, 15, 4);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.roundRect(px + 6, py + 42, trafCarW - 12, 12, 4);
-    ctx.fill();
-    ctx.fillStyle = isPlayer ? "#fff7cc" : "#fde68a";
-    ctx.fillRect(px + 5, py + 3, 7, 4);
-    ctx.fillRect(px + trafCarW - 12, py + 3, 7, 4);
-    ctx.fillStyle = "#dc2626";
-    ctx.fillRect(px + 5, py + trafCarH - 7, 7, 4);
-    ctx.fillRect(px + trafCarW - 12, py + trafCarH - 7, 7, 4);
+  function setRunning(on) {
+    if (crashing) return;               /* the crash animation owns the loop */
+    if (trafOver) on = false;
+    running = on;
+    if (on) started = true;
+    startBtn.textContent = on ? "Pause" : "Start";
+    if (on) {
+      lastTs = 0;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(loop);
+      setStatus("Dodge the traffic. Close passes score a bonus.");
+    } else {
+      cancelAnimationFrame(rafId);
+      if (!trafOver && started) setStatus("Paused. Press Start to continue.");
+      draw(performance.now());
+    }
+    syncHud();
   }
-  function trafDraw() {
-    var ctx = trafCtx;
+
+  /* ---------------- update ---------------- */
+  function update(dt) {
+    if (crashing) {
+      crashT += dt;
+      if (shakeT > 0) shakeT = Math.max(0, shakeT - dt);
+      updateParticles(dt);
+      updatePopups(dt);
+      if (crashT >= CRASH_ANIM_S) finishCrash();
+      return;
+    }
+    elapsed += dt;
+    /* Steering, exactly as shipped: drag follows the pointer at
+       up to 340 px/s, keys and hold buttons steer at 320 px/s,
+       and the car is clamped inside the road edges. */
+    var steer = 0;
+    if (keyL || btnL) steer -= 1;
+    if (keyR || btnR) steer += 1;
+    if (dragX !== null) {
+      var diff = dragX - player.x;
+      player.x += Math.max(-340 * dt, Math.min(340 * dt, diff));
+      tilt += (((diff > 4) ? 0.07 : (diff < -4) ? -0.07 : 0) - tilt) * Math.min(1, dt * 10);
+    } else {
+      player.x += steer * 320 * dt;
+      tilt += ((steer * 0.07) - tilt) * Math.min(1, dt * 10);
+    }
+    player.x = Math.max(ROAD_L + PLAYER_W / 2 + 1, Math.min(ROAD_R - PLAYER_W / 2 - 1, player.x));
+    var rel = relSpeed();
+    dashOff += rel * dt;
+    score += rel * dt / 12;
+    /* Level milestones: every 500 points the traffic densifies. */
+    var lv = levelForScore(score);
+    if (lv > level) {
+      level = lv;
+      bannerT = 1.6;
+      cgx.sfx("win");
+      setStatus("Level " + level + "! Traffic is getting denser.");
+      syncHud();
+    }
+    if (bannerT > 0) bannerT = Math.max(0, bannerT - dt);
+    /* Traffic spawning: the shipped interval, scaled by the
+       level density factor, with the shipped per-lane block. */
+    spawnIn -= dt;
+    if (spawnIn <= 0) {
+      spawnIn = Math.max(0.55, 1.05 - elapsed * 0.008) * densityFactor() * (0.8 + Math.random() * 0.45);
+      var lane = Math.floor(Math.random() * 3);
+      if (!laneBlocked(lane, 30)) {
+        spawnCar(lane);
+        if (Math.random() < extraSpawnChance()) {
+          var others = [0, 1, 2].filter(function (l) { return l !== lane; });
+          var lane2 = others[Math.floor(Math.random() * others.length)];
+          if (!laneBlocked(lane2, 30)) spawnCar(lane2);
+        }
+      }
+    }
+    /* Coins: a fresh chance every 3.0-5.4 s. */
+    coinIn -= dt;
+    if (coinIn <= 0) {
+      coinIn = 3.0 + Math.random() * 2.4;
+      trySpawnCoin();
+    }
+    for (var ci = coins.length - 1; ci >= 0; ci--) {
+      var coin = coins[ci];
+      coin.y += rel * dt;               /* coins sit on the road */
+      if (Math.abs(coin.x - player.x) < 36 && coin.y > player.y - 6 && coin.y < player.y + PLAYER_H + 6) {
+        coins.splice(ci, 1);
+        coinsGot++;
+        score += COIN_VALUE;
+        addPopup(coin.x, player.y - 10, "+" + COIN_VALUE);
+        spawnParticles(coin.x, coin.y, 6, ["#f3d67c", "#c9a227", "#ffffff"], 70, 0.25, 2.5);
+        cgx.sfx("good");
+        syncHud();
+        continue;
+      }
+      if (coin.y > H + 14) coins.splice(ci, 1);
+    }
+    /* Traffic, exactly as shipped: each car approaches at the
+       relative speed x its own factor; passing the player
+       counts the near miss with the shipped <56 px window. */
+    for (var j = cars.length - 1; j >= 0; j--) {
+      var car = cars[j];
+      car.y += rel * car.factor * dt;
+      if (car.flash > 0) car.flash = Math.max(0, car.flash - dt);
+      if (car.whoosh > 0) car.whoosh = Math.max(0, car.whoosh - dt);
+      var gapBehind = player.y - (car.y + car.h);
+      car.braking = Math.abs(car.x - player.x) < 24 && gapBehind > -10 && gapBehind < 120;
+      if (!car.counted && car.y > player.y + PLAYER_H) {
+        car.counted = true;
+        var lateral = Math.abs(car.x - player.x) - (PLAYER_W + car.w) / 2;
+        if (lateral > 0 && lateral < NEAR_MISS_MAX) {
+          near++;
+          score += 25;
+          car.flash = 0.18;
+          car.whoosh = 0.25;
+          addPopup(car.x, player.y - 12, "+25");
+          cgx.sfx("click");             /* whoosh stand-in, see header */
+          setStatus("Near miss! +25 points.");
+          syncHud();
+        }
+      }
+      if (!invincible) {
+        var overlapX = Math.abs(car.x - player.x) < (PLAYER_W + car.w) / 2 * 0.84;
+        var overlapY = car.y < player.y + PLAYER_H * 0.88 && car.y + car.h * 0.88 > player.y;
+        if (overlapX && overlapY) { crash(); return; }
+      }
+      if (car.y > H + 12) cars.splice(j, 1);
+    }
+    updateParticles(dt);
+    updatePopups(dt);
+    hudIn -= dt;
+    if (hudIn <= 0) { hudIn = 0.15; syncHud(); }
+  }
+  function loop(ts) {
+    if (!running && !crashing) return;
+    rafId = requestAnimationFrame(loop);
+    if (!lastTs) lastTs = ts;
+    var dt = Math.min(0.033, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (dt > 0) { update(dt); draw(ts); }
+  }
+
+  /* ---------------- drawing ---------------- */
+  var lastFit = null;
+  function applyLogical() {
+    var w = lastFit ? lastFit.width : board.width;
+    var h = lastFit ? lastFit.height : board.height;
+    ctx.setTransform(w / LOGICAL_W, 0, 0, h / LOGICAL_H, 0, 0);
+  }
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  /* One traffic vehicle, top-down, in its type's silhouette.
+     Headlights sit at the front (top), tail lights at the rear
+     (bottom, facing the player) - the shipped orientation. */
+  function drawVehicle(x, y, w, h, type, color, opts) {
+    opts = opts || {};
+    var px = x - w / 2, py = y;
+    ctx.fillStyle = color;
+    if (type === "truck") {
+      /* Cab at the front (top), trailer box behind it. */
+      rr(px, py, w, 34, 5); ctx.fill();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
+      rr(px + 1, py + 36, w - 2, h - 37, 3); ctx.fill();
+      ctx.strokeStyle = "rgba(7, 26, 46, 0.5)";
+      ctx.lineWidth = 1;
+      rr(px + 1, py + 36, w - 2, h - 37, 3); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(px + 5, py + 36); ctx.lineTo(px + 5, py + h - 1);
+      ctx.moveTo(px + w - 5, py + 36); ctx.lineTo(px + w - 5, py + h - 1);
+      ctx.stroke();
+    } else {
+      rr(px, py, w, h, type === "van" ? 6 : 9); ctx.fill();
+    }
+    ctx.fillStyle = "#0b2036";
+    if (type === "car") {
+      rr(px + 6, py + 13, w - 12, 15, 4); ctx.fill();          /* windshield */
+      rr(px + 6, py + h - 28, w - 12, 12, 4); ctx.fill();      /* rear window */
+    } else if (type === "van") {
+      rr(px + 5, py + 10, w - 10, 16, 4); ctx.fill();          /* windshield */
+      ctx.fillStyle = "rgba(11, 32, 54, 0.55)";
+      rr(px + 5, py + 34, w - 10, 18, 3); ctx.fill();          /* side glass band */
+    } else { /* truck cab glass */
+      rr(px + 5, py + 8, w - 10, 13, 4); ctx.fill();
+    }
+    /* Headlights (front, top corners). */
+    ctx.fillStyle = opts.isPlayer ? "#fff7cc" : "#fde68a";
+    ctx.fillRect(px + 5, py + 3, 7, 4);
+    ctx.fillRect(px + w - 12, py + 3, 7, 4);
+    /* Tail lights (rear, bottom corners) - they flare with a
+       halo when the player is closing in behind this vehicle. */
+    if (opts.braking) {
+      ctx.fillStyle = "rgba(255, 64, 64, 0.38)";
+      ctx.fillRect(px + 1, py + h - 11, 15, 12);
+      ctx.fillRect(px + w - 16, py + h - 11, 15, 12);
+      ctx.fillStyle = "#ff8080";
+    } else {
+      ctx.fillStyle = "#dc2626";
+    }
+    ctx.fillRect(px + 5, py + h - 7, 7, 4);
+    ctx.fillRect(px + w - 12, py + h - 7, 7, 4);
+    if (opts.flash > 0) {
+      ctx.fillStyle = "rgba(255, 255, 255, " + (0.55 * opts.flash / 0.18).toFixed(3) + ")";
+      rr(px, py, w, h, 8); ctx.fill();
+    }
+    if (opts.whoosh > 0) {
+      ctx.strokeStyle = "rgba(248, 250, 252, " + (0.75 * opts.whoosh / 0.25).toFixed(3) + ")";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(px - 20, py + h * 0.4); ctx.lineTo(px - 5, py + h * 0.4);
+      ctx.moveTo(px - 20, py + h * 0.62); ctx.lineTo(px - 5, py + h * 0.62);
+      ctx.moveTo(px + w + 5, py + h * 0.4); ctx.lineTo(px + w + 20, py + h * 0.4);
+      ctx.moveTo(px + w + 5, py + h * 0.62); ctx.lineTo(px + w + 20, py + h * 0.62);
+      ctx.stroke();
+    }
+  }
+  function drawPlayer(ts) {
+    ctx.save();
+    ctx.translate(player.x, player.y + PLAYER_H / 2);
+    if (crashing || (trafOver && !crashing)) {
+      ctx.rotate(0.16);                       /* wreck, slewed sideways */
+      drawVehicle(0, -PLAYER_H / 2, PLAYER_W, PLAYER_H, "car", "#6b5a1e", { isPlayer: true });
+    } else {
+      ctx.rotate(tilt);
+      drawVehicle(0, -PLAYER_H / 2, PLAYER_W, PLAYER_H, "car", "#c9a227", { isPlayer: true });
+    }
+    ctx.restore();
+  }
+  function draw(ts) {
+    var i, c;
+    applyLogical();
+    ctx.save();
+    if (shakeT > 0) {
+      var mag = 6 * (shakeT / 0.55);
+      ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
+    }
+    /* Grass and road, as shipped. */
     ctx.fillStyle = "#14532d";
-    ctx.fillRect(0, 0, trafW, trafH);
+    ctx.fillRect(-8, -8, W + 16, H + 16);
     ctx.fillStyle = "#1f2937";
-    ctx.fillRect(trafRoadL, 0, trafRoadR - trafRoadL, trafH);
+    ctx.fillRect(ROAD_L, -8, ROAD_R - ROAD_L, H + 16);
     ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(trafRoadL - 3, 0, 3, trafH);
-    ctx.fillRect(trafRoadR, 0, 3, trafH);
+    ctx.fillRect(ROAD_L - 3, -8, 3, H + 16);
+    ctx.fillRect(ROAD_R, -8, 3, H + 16);
+    /* Speed lines streak past the road edges at high speed. */
+    var rel = relSpeed();
+    if (rel > 250 && running && !crashing) {
+      ctx.strokeStyle = "rgba(248, 250, 252, " + (0.4 * (rel - 250) / 85).toFixed(3) + ")";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (i = 0; i < 8; i++) {
+        var sx = i % 2 === 0 ? ROAD_L + 7 : ROAD_R - 7;
+        var sy = ((i * 97 + dashOff * 2.2) % (H + 60)) - 30;
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx, sy + 30);
+      }
+      ctx.stroke();
+    }
+    /* Lane dashes, as shipped. */
     ctx.fillStyle = "#e8c85a";
     var dashH = 34, gap = 30;
     for (var li = 1; li <= 2; li++) {
-      var lx = trafRoadL + (trafRoadR - trafRoadL) * li / 3 - 2;
-      for (var y = -gap + (trafDashOff % (dashH + gap)); y < trafH; y += dashH + gap) {
+      var lx = ROAD_L + (ROAD_R - ROAD_L) * li / 3 - 2;
+      for (var y = -gap + (dashOff % (dashH + gap)); y < H; y += dashH + gap) {
         ctx.fillRect(lx, y, 4, dashH);
       }
     }
-    for (var i = 0; i < trafCars.length; i++) trafDrawCar(trafCars[i].x, trafCars[i].y, trafCars[i].color, false);
-    trafDrawCar(trafPlayer.x, trafPlayer.y, "#c9a227", true);
-    if (trafOver) {
-      ctx.fillStyle = "rgba(7,26,46,0.72)";
-      ctx.fillRect(0, 0, trafW, trafH);
-      ctx.fillStyle = "#fff";
+    /* Coins: a pulsing gold disc with a darker rim. */
+    for (i = 0; i < coins.length; i++) {
+      c = coins[i];
+      var pulse = 1 + 0.08 * Math.sin(ts / 160 + c.x);
+      ctx.fillStyle = "#8a6d1a";
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r * pulse + 2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#c9a227";
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r * pulse, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#f3d67c";
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r * 0.55 * pulse, 0, Math.PI * 2); ctx.fill();
+    }
+    for (i = 0; i < cars.length; i++) {
+      c = cars[i];
+      drawVehicle(c.x, c.y, c.w, c.h, c.type, c.color, { braking: c.braking, flash: c.flash, whoosh: c.whoosh });
+    }
+    drawPlayer(ts);
+    /* Explosion / sparkle particles. */
+    for (i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max + 0.25));
+      ctx.fillStyle = p.color;
+      var s = p.size * Math.max(0.3, p.life / p.max);
+      ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+    }
+    ctx.globalAlpha = 1;
+    /* Floating score popups ("+25", "+50"). */
+    for (i = 0; i < popups.length; i++) {
+      var pp = popups[i];
+      ctx.globalAlpha = Math.max(0, pp.life / pp.max);
+      ctx.font = "700 16px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "rgba(7, 26, 46, 0.85)";
+      ctx.strokeText(pp.text, pp.x, pp.y);
+      ctx.fillStyle = "#f3d67c";
+      ctx.fillText(pp.text, pp.x, pp.y);
+    }
+    ctx.globalAlpha = 1;
+    /* Level-up banner. */
+    if (bannerT > 0) {
+      ctx.globalAlpha = Math.min(1, bannerT / 0.3);
+      ctx.fillStyle = "rgba(7, 26, 46, 0.85)";
+      rr(W / 2 - 118, 120, 236, 74, 12); ctx.fill();
+      ctx.strokeStyle = "#c9a227";
+      ctx.lineWidth = 2;
+      rr(W / 2 - 118, 120, 236, 74, 12); ctx.stroke();
+      ctx.fillStyle = "#f3d67c";
       ctx.font = "700 25px system-ui, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Crash! Game over", trafW / 2, 230);
+      ctx.textBaseline = "middle";
+      ctx.fillText("Level " + level, W / 2, 146);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "14px system-ui, sans-serif";
+      ctx.fillText("Traffic is getting denser", W / 2, 172);
+      ctx.globalAlpha = 1;
     }
-  }
-  function trafCrash() {
-    trafOver = true;
-    trafSetRunning(false);
-    $("traf-status").textContent = "Crash! Final score: " + Math.floor(trafScore) + " with " + trafNear + " near misses. Press New game to drive again.";
-    trafDraw();
-  }
-  function trafUpdate(dt) {
-    trafElapsed += dt;
-    var steer = 0;
-    if (trafKeyL || trafBtnL) steer -= 1;
-    if (trafKeyR || trafBtnR) steer += 1;
-    if (trafDragX !== null) {
-      var diff = trafDragX - trafPlayer.x;
-      trafPlayer.x += Math.max(-340 * dt, Math.min(340 * dt, diff));
-    } else {
-      trafPlayer.x += steer * 320 * dt;
+    if (!running && started && !trafOver && !dialogOpen()) {
+      ctx.fillStyle = "rgba(7, 26, 46, 0.72)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#c9a227";
+      ctx.font = "700 38px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Paused", W / 2, H / 2 - 14);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "15px system-ui, sans-serif";
+      ctx.fillText("Press P or Start to continue", W / 2, H / 2 + 22);
     }
-    trafPlayer.x = Math.max(trafRoadL + trafCarW / 2 + 1, Math.min(trafRoadR - trafCarW / 2 - 1, trafPlayer.x));
-    var rel = trafRelSpeed();
-    trafDashOff += rel * dt;
-    trafScore += rel * dt / 12;
-    trafSpawnIn -= dt;
-    if (trafSpawnIn <= 0) {
-      trafSpawnIn = Math.max(0.55, 1.05 - trafElapsed * 0.008) * (0.8 + Math.random() * 0.45);
-      var lane = Math.floor(Math.random() * 3);
-      var blocked = false;
-      for (var i = 0; i < trafCars.length; i++) if (trafCars[i].lane === lane && trafCars[i].y < 30) blocked = true;
-      if (!blocked) trafSpawn(lane);
-    }
-    for (var j = trafCars.length - 1; j >= 0; j--) {
-      var car = trafCars[j];
-      car.y += rel * car.factor * dt;
-      if (!car.counted && car.y > trafPlayer.y + trafCarH) {
-        car.counted = true;
-        var lateral = Math.abs(car.x - trafPlayer.x) - trafCarW;
-        if (lateral > 0 && lateral < 56) {
-          trafNear++;
-          trafScore += 25;
-          $("traf-status").textContent = "Near miss! +25 points.";
-        }
-      }
-      if (!trafInvincible) {
-        var overlapX = Math.abs(car.x - trafPlayer.x) < trafCarW * 0.84;
-        var overlapY = car.y < trafPlayer.y + trafCarH * 0.88 && car.y + trafCarH * 0.88 > trafPlayer.y;
-        if (overlapX && overlapY) { trafCrash(); return; }
-      }
-      if (car.y > trafH + 12) trafCars.splice(j, 1);
-    }
-    trafHudIn -= dt;
-    if (trafHudIn <= 0) { trafHudIn = 0.15; trafSyncHud(); }
+    ctx.restore();
   }
-  function trafLoop(ts) {
-    if (!trafRunning) return;
-    if (!trafLastTs) trafLastTs = ts;
-    var dt = Math.min(0.033, (ts - trafLastTs) / 1000);
-    trafLastTs = ts;
-    trafUpdate(dt);
-    trafDraw();
-    if (trafRunning) requestAnimationFrame(trafLoop);
-  }
-  function trafSetRunning(on) {
-    if (trafOver) on = false;
-    trafRunning = on;
-    $("traf-start").textContent = on ? "Pause" : "Start";
-    if (on) {
-      trafLastTs = 0;
-      requestAnimationFrame(trafLoop);
-      $("traf-status").textContent = "Dodge the traffic. Close passes score a bonus.";
-    } else {
-      if (!trafOver) $("traf-status").textContent = "Paused. Press Start to continue.";
-      $("traf-start").textContent = "Start";
-    }
-    trafSyncHud();
-  }
-  document.addEventListener("keydown", function (ev) {
-    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { trafKeyL = true; ev.preventDefault(); }
-    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { trafKeyR = true; ev.preventDefault(); }
-  });
-  document.addEventListener("keyup", function (ev) {
-    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") trafKeyL = false;
-    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") trafKeyR = false;
-  });
-  function trafBindHold(id, setFn) {
-    var el = $(id);
-    el.addEventListener("pointerdown", function (ev) { ev.preventDefault(); setFn(true); });
-    el.addEventListener("pointerup", function () { setFn(false); });
-    el.addEventListener("pointerleave", function () { setFn(false); });
-    el.addEventListener("pointercancel", function () { setFn(false); });
-  }
-  trafBindHold("traf-left", function (on) { trafBtnL = on; });
-  trafBindHold("traf-right", function (on) { trafBtnR = on; });
-  function trafPointerPos(ev) {
-    var rect = $("traf-board").getBoundingClientRect();
-    return (ev.clientX - rect.left) * (trafW / rect.width);
-  }
-  $("traf-board").addEventListener("pointerdown", function (ev) { trafDragX = trafPointerPos(ev); });
-  $("traf-board").addEventListener("pointermove", function (ev) { if (trafDragX !== null) trafDragX = trafPointerPos(ev); });
-  $("traf-board").addEventListener("pointerup", function () { trafDragX = null; });
-  $("traf-board").addEventListener("pointercancel", function () { trafDragX = null; });
-  $("traf-start").addEventListener("click", function (ev) { trafSetRunning(!trafRunning); ev.currentTarget.blur(); });
-  $("traf-new").addEventListener("click", function (ev) {
-    trafSetRunning(false);
-    trafReset();
-    $("traf-status").textContent = "Press Start and steer through the traffic.";
-    ev.currentTarget.blur();
-  });
-  trafReset();
-  // Test hooks (used by the headless verification script only).
-  window.__traf = {
-    get state() {
-      return {
-        score: Math.floor(trafScore), nearMiss: trafNear,
-        playerX: Math.round(trafPlayer.x), running: trafRunning, over: trafOver,
-        trafficCount: trafCars.length
-      };
-    },
-    debugSpawnAdjacent: function () {
-      var laneIdx = 0, best = 1e9;
-      for (var i = 0; i < 3; i++) {
-        var d = Math.abs(trafLanes[i] - trafPlayer.x);
-        if (d < best) { best = d; laneIdx = i; }
-      }
-      var adj = laneIdx === 1 ? (Math.random() < 0.5 ? 0 : 2) : 1;
-      trafSpawn(adj);
-      return adj;
-    },
-    debugSetInvincible: function (on) { trafInvincible = !!on; }
-  };
-  return { reset: trafReset };
-})();
 
-/* ================= FULLSCREEN (staging addition) ================= */
-(function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
+  /* ---------------- input ----------------
+     Keyboard (arrows + A/D), on-screen hold buttons and board
+     drag are shipped; the P key pause is the addition. */
+  document.addEventListener("keydown", function (e) {
+    var tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+      keyL = true;
+      if (running) e.preventDefault();
+    } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+      keyR = true;
+      if (running) e.preventDefault();
+    } else if (e.key === "p" || e.key === "P") {
+      if (dialogOpen() || crashing) return;
+      e.preventDefault();
+      setRunning(!running);
+    }
+  });
+  document.addEventListener("keyup", function (e) {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keyL = false;
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keyR = false;
+  });
+  function holdButton(id, setFn) {
+    var el = $(id);
+    function on(e) { e.preventDefault(); setFn(true); }
+    function off(e) { if (e) e.preventDefault(); setFn(false); }
+    el.addEventListener("pointerdown", on);
+    el.addEventListener("pointerup", off);
+    el.addEventListener("pointerleave", off);
+    el.addEventListener("pointercancel", off);
+    el.addEventListener("contextmenu", function (e) { e.preventDefault(); });
   }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
+  holdButton("traf-left", function (v) { btnL = v; });
+  holdButton("traf-right", function (v) { btnR = v; });
+  function boardX(clientX) {
+    var r = board.getBoundingClientRect();
+    return (clientX - r.left) * (LOGICAL_W / r.width);
   }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
-  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
-    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
-  }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
-})();
+  board.addEventListener("pointerdown", function (e) {
+    if (dialogOpen()) return;
+    dragX = boardX(e.clientX);
+    if (board.setPointerCapture) {
+      try { board.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+  });
+  board.addEventListener("pointermove", function (e) {
+    if (dragX !== null && !dialogOpen()) dragX = boardX(e.clientX);
+  });
+  function endDrag() { dragX = null; }
+  board.addEventListener("pointerup", endDrag);
+  board.addEventListener("pointercancel", endDrag);
+  startBtn.addEventListener("click", function () {
+    cgx.sfx("click");
+    if (trafOver) {
+      if (crashing) { crashing = false; cancelAnimationFrame(rafId); running = false; }
+      resetGame();
+    }
+    setRunning(!running);
+  });
+  $("traf-new").addEventListener("click", function () {
+    cgx.sfx("click");
+    if (crashing) { crashing = false; cancelAnimationFrame(rafId); running = false; }
+    resetGame();
+    setStatus("New game ready. Press Start to drive.");
+  });
+
+  /* ---------------- boot ---------------- */
+  cgx.watchFit(board, { logicalW: LOGICAL_W, logicalH: LOGICAL_H }, function (fit) {
+    lastFit = fit;
+    draw(performance.now());
+  });
+  resetGame();
+  setRunning(false);
+  setStatus("Press Start and dodge the traffic in three lanes.");
+
+  return {
+    close: function () {
+      cancelAnimationFrame(rafId);
+      running = false;
+      dragX = null;
+    }
+  };
+}());
 </script>
+  <script>
+  (function () {
+    "use strict";
+    var stage = document.getElementById("stage");
+    var soundBtn = document.getElementById("traf-sound");
+    var fsBtn = document.getElementById("fs-btn");
+    var exitBtn = stage ? stage.querySelector(".fs-exit") : null;
+    if (soundBtn) cgx.attachMuteToggle(soundBtn);
+    if (fsBtn) fsBtn.addEventListener("click", function () { cgx.sfx("click"); cgx.toggleFullscreen(stage); });
+    if (exitBtn) exitBtn.addEventListener("click", function () {
+      if (document.fullscreenElement === stage) document.exitFullscreen();
+    });
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement) return;
+      setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 150);
+    });
+  })();
+  </script>
 </body>
 </html>
