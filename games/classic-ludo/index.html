@@ -66,7 +66,7 @@ body{ max-width:860px;}
 .play-stage:fullscreen .lu-stats, .play-stage:-webkit-full-screen .lu-stats{ color:#f3d67c;background:#0a2540;}
 /* ---- Ludo board ---- */
 #ludo-boardwrap{ position:relative;width:min(94vw, 620px);margin:0 auto;flex:0 0 auto;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
-#ludo-board{ display:grid;grid-template-columns:repeat(15, 1fr);width:100%;border: the 3px solid var(--navy);border-radius:8px;overflow:hidden;background:#fff;box-sizing:border-box;}
+#ludo-board{ display:grid;grid-template-columns:repeat(15, 1fr);width:100%;border:3px solid var(--navy);border-radius:8px;overflow:hidden;background:#fff;box-sizing:border-box;}
 .lu-cell{ aspect-ratio:1;background:#fff;border:1px solid #cbd5e1;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:700;color:#b45309;position:relative;padding:0;}
 .lu-cell.base-red{ background:#dc2626;border-color:#991b1b;}
 .lu-cell.base-green{ background:#16a34a;border-color:#166534;}
@@ -1217,7 +1217,7 @@ var Ludo = (function () {
       setStatus(NAMES[player.color] + " rolled a " + dice + ". Only one token can move - moving it for you.");
       aiTimer = setTimeout(function () { if (phase === "awaitMove") doMove(movable[0]); }, ms(AUTO_MOVE_MS));
     } else {
-      setStatus(Names[player.color] + " rolled a " + dice + ". Tap a glowing token (or press 1-4) to move it.");
+      setStatus(NAMES[player.color] + " rolled a " + dice + ". Tap a glowing token (or press 1-4) to move it.");
     }
   }
   function animateSteps(pIdx, t, fromPos, toPos, done) {
