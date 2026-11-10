@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Turbo Lane Racer - Cheakstar Games</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  h3 { color: var(--navy); margin-top: 1.5rem; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+  .error { color: #b91c1c; }
+  .ok { color: #166534; }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .limits li { margin: 0.25rem 0; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button:hover { background: #123a5c; }
+  button:disabled { background: #9aa5b1; cursor: default; }
+  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  label { font-weight: 600; }
+  .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
+  .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
+  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .game { display: none; }
+  .game.active { display: block; }
+  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+
+  /* Wave 1 games (shared) */
+  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
+  #snake-board { width: min(440px, 100%); }
+  #brk-board { width: min(480px, 100%); }
+  #flap-board { width: min(400px, 100%); }
+  #traf-board { width: min(320px, 100%); }
+  #tgt-board { width: min(480px, 100%); }
+  #stk-board { width: min(360px, 100%); }
+  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
+  .snake-keys button { margin: 0; padding: 0.6rem 0; }
+  .snake-keys .k-up { grid-column: 2; }
+  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
+  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
+  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
+  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
+  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
+
+  /* Whack-a-Bug */
+  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
+  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
+  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
+  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
+  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
+
+  /* Simon Sequence */
+  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
+  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
+  .sim-pad.p0 { background: #16a34a; }
+  .sim-pad.p1 { background: #dc2626; }
+  .sim-pad.p2 { background: #eab308; }
+  .sim-pad.p3 { background: #2563eb; }
+  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
+  .sim-pad:disabled { cursor: default; }
+
+  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  body { max-width: 860px; }
+  .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+  .play-bar .spacer { flex: 1; }
+  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .btn-link:hover { background: #d1d5db; }
+  .fs-exit { display: none; }
+  .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
+  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+  .play-stage:fullscreen .fs-desc { display: none; }
+  .play-stage:fullscreen .game-note { display: none; }
+  .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
+  .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
+  .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
+  .play-stage:fullscreen .board { margin-top: 0.5rem; }
+  .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
+  .play-stage:fullscreen button { margin-top: 0.35rem; }
+  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
+  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
+  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
+  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
+  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
+  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
+  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
+  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
+  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  @media (max-height: 640px) {
+    .play-stage:fullscreen h2 { display: none; }
+    .play-stage:fullscreen .status { min-height: 1.1em; }
+  }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+
+  /* Wave 2 games (shared) */
+  #race-board { width: min(480px, 100%); }
+  #space-board { width: min(400px, 100%); }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
+  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
+  #mine-board.mine-int { width: min(520px, 100%); }
+  #mine-board.mine-exp { width: min(720px, 100%); }
+  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
+  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
+  .mine-cell.flag { background: #fde68a; }
+  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
+  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
+  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
+  .slide-tile.home { background: #166534; }
+  #hang-board { width: min(560px, 100%); margin: 0 auto; }
+  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
+  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
+  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
+  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
+  .hang-key.ok { background: #166534; }
+  .hang-key.bad { background: #b91c1c; }
+  .hang-key:disabled { opacity: 0.9; cursor: default; }
+  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
+  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
+  .word-cell.sel { background: #fde68a; }
+  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
+  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
+  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
+  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
+  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
+  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
+  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
+  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
+  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
+  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
+  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
+  .flood-cell { aspect-ratio: 1; }
+  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
+  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
+  @media (max-width: 560px) {
+    .mine-cell { font-size: 0.65rem; }
+    .word-cell { font-size: 0.78rem; }
+    .slide-tile { font-size: 1rem; }
+    #hang-word { font-size: 1.15rem; }
+    #hang-keys { grid-template-columns: repeat(7, 1fr); }
+  }
+  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
+  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
+  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
+  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
+  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
+  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
+  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
+  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
+  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
+  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
+  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
+  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
+  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Turbo Lane Racer</h1>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+</header>
+<div class="play-bar">
+  <a class="btn-link" href="../index.html">&larr; All games</a>
+  <span class="spacer"></span>
+  <button type="button" id="fs-btn">Play fullscreen</button>
+</div>
+<section class="play-stage" id="stage">
+  <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
+  <h2>Turbo Lane Racer</h2>
+  <p class="fs-desc">A fast pseudo-3D arcade racing game: curves, hills, rival cars and timed checkpoints.</p>
+  <div class="scorebar"><span>Score: <span id="race-score">0</span></span><span>Speed: <span id="race-speed">0</span> km/h</span><span>Time: <span id="race-time">45</span>s</span><span>Overtakes: <span id="race-over">0</span></span><span>Checkpoints: <span id="race-cp">0</span></span></div>
+  <canvas class="board game-canvas" id="race-board" width="480" height="360"></canvas>
+  <p class="status" id="race-status">Press Start, then hold the up arrow to accelerate.</p>
+  <div>
+    <button type="button" id="race-start">Start</button>
+    <button type="button" id="race-new">New game</button>
+  </div>
+  <div class="traf-keys">
+    <button type="button" id="race-left" aria-label="Steer left">&#9664;</button>
+    <button type="button" id="race-up" aria-label="Accelerate">&#9650;</button>
+    <button type="button" id="race-down" aria-label="Brake">&#9660;</button>
+    <button type="button" id="race-right" aria-label="Steer right">&#9654;</button>
+  </div>
+</section>
+<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Turbo Lane Racer uses a classic pseudo-3D road technique on a 2D canvas (segmented roads like the arcade racers of the 1980s and 1990s); it is not a real 3D game. Your speed, score and race progress are stored only in this page while you play.</p>
+<script>
+"use strict";
+function $(id) { return document.getElementById(id); }
+/* ================= G14 TURBO LANE RACER ================= */
+var TurboLaneRacer = (function () {
+  var raceW = 480, raceH = 360;
+  var raceSegLen = 200, raceRumble = 3, raceRoadW = 2100;
+  var raceCamH = 1050, raceCamDepth = 0.84, racePlayerZ = raceCamH * raceCamDepth;
+  var raceDrawDist = 110, raceMaxSpeed = raceSegLen * 60;
+  var raceOffRoadLimit = raceMaxSpeed / 4;
+  var raceSegments = [], raceTrackLen = 0, raceCars = [];
+  var racePosition = 0, racePlayerX = 0, raceSpeed = 0;
+  var racePhase = "ready"; /* ready | playing | over */
+  var raceRunning = false, raceTimeLeft = 45, raceDist = 0, raceBaseScore = 0;
+  var raceOvertakes = 0, raceCrashes = 0, raceCheckpoints = 0, raceNextCp = 40000;
+  var raceInvincible = 0, raceLastTs = 0, raceHudIn = 0, raceSkyOff = 0;
+  var raceKeyL = false, raceKeyR = false, raceKeyU = false, raceKeyD = false;
+  var raceBtnL = false, raceBtnR = false, raceBtnU = false, raceBtnD = false;
+  var raceCtx = $("race-board").getContext("2d");
+  var raceCarColors = ["#2563eb", "#e11d48", "#16a34a", "#9333ea", "#ea580c", "#e2e8f0"];
+
+  function raceLerp(a, b, t) { return a + (b - a) * t; }
+  function raceWrap(v, m) { return ((v % m) + m) % m; }
+  function raceLastY() { return raceSegments.length ? raceSegments[raceSegments.length - 1].p2.world.y : 0; }
+  function raceAddSegment(curve, y) {
+    var n = raceSegments.length;
+    raceSegments.push({
+      index: n, curve: curve,
+      p1: { world: { x: 0, y: raceLastY(), z: n * raceSegLen }, camera: {}, screen: {} },
+      p2: { world: { x: 0, y: y, z: (n + 1) * raceSegLen }, camera: {}, screen: {} },
+      clip: 0
+    });
+  }
+  function raceAddRoad(enter, hold, leave, curve, dy) {
+    var startY = raceLastY(), endY = startY + dy * raceSegLen, total = enter + hold + leave, i, t;
+    for (i = 0; i < enter; i++) { t = i / total; raceAddSegment(curve, startY + (endY - startY) * (t * t * (3 - 2 * t))); }
+    for (i = 0; i < hold; i++) { t = (enter + i) / total; raceAddSegment(curve, startY + (endY - startY) * (t * t * (3 - 2 * t))); }
+    for (i = 0; i < leave; i++) { t = (enter + hold + i) / total; raceAddSegment(curve, startY + (endY - startY) * (t * t * (3 - 2 * t))); }
+  }
+  function raceBuildTrack() {
+    raceSegments = [];
+    raceAddRoad(40, 40, 40, 0, 0);
+    raceAddRoad(35, 35, 35, 2, 25);
+    raceAddRoad(35, 35, 35, -3, -15);
+    raceAddRoad(30, 30, 30, 0, 0);
+    raceAddRoad(35, 35, 35, 5, 10);
+    raceAddRoad(35, 35, 35, -2, 40);
+    raceAddRoad(35, 35, 35, 3, -30);
+    raceAddRoad(40, 40, 40, 0, 0);
+    raceTrackLen = raceSegments.length * raceSegLen;
+  }
+  function raceFindSegment(z) {
+    return raceSegments[Math.floor(z / raceSegLen) % raceSegments.length];
+  }
+  function raceScore() {
+    return Math.max(0, Math.floor(raceBaseScore) + raceOvertakes * 100 - raceCrashes * 50);
+  }
+  function raceSyncHud() {
+    $("race-score").textContent = String(raceScore());
+    $("race-speed").textContent = String(Math.round(raceSpeed / raceMaxSpeed * 240));
+    $("race-time").textContent = String(Math.max(0, Math.ceil(raceTimeLeft)));
+    $("race-over").textContent = String(raceOvertakes);
+    $("race-cp").textContent = String(raceCheckpoints);
+  }
+  function raceResetCars() {
+    raceCars = [];
+    for (var i = 0; i < 14; i++) {
+      raceCars.push({
+        z: (i / 14) * raceTrackLen + Math.random() * 6000,
+        offset: (Math.random() * 2 - 1) * 0.72,
+        speed: raceMaxSpeed * (0.30 + Math.random() * 0.22),
+        color: raceCarColors[i % raceCarColors.length],
+        prevRel: 0
+      });
+    }
+  }
+  function raceReset() {
+    racePosition = 0; racePlayerX = 0; raceSpeed = 0;
+    racePhase = "ready"; raceTimeLeft = 45; raceDist = 0; raceBaseScore = 0;
+    raceOvertakes = 0; raceCrashes = 0; raceCheckpoints = 0; raceNextCp = 40000;
+    raceInvincible = 0; raceSkyOff = 0;
+    raceResetCars();
+    for (var i = 0; i < raceCars.length; i++) {
+      var rel = raceCars[i].z - (racePosition + racePlayerZ);
+      raceCars[i].prevRel = rel;
+    }
+    raceSyncHud();
+    raceDraw();
+  }
+  function raceProject(p, cameraX, cameraY, cameraZ) {
+    p.camera.x = p.world.x - cameraX;
+    p.camera.y = p.world.y - cameraY;
+    p.camera.z = p.world.z - cameraZ;
+    p.screen.scale = raceCamDepth / Math.max(1, p.camera.z);
+    p.screen.x = Math.round(raceW / 2 + p.screen.scale * p.camera.x * raceW / 2);
+    p.screen.y = Math.round(raceH / 2 - p.screen.scale * p.camera.y * raceH / 2);
+    p.screen.w = Math.round(p.screen.scale * raceRoadW * raceW / 2);
+  }
+  function racePoly(x1, y1, x2, y2, x3, y3, x4, y4, color) {
+    var ctx = raceCtx;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3); ctx.lineTo(x4, y4);
+    ctx.closePath(); ctx.fill();
+  }
+  function raceDrawCarShape(cx, bottomY, w, color, isPlayer) {
+    var ctx = raceCtx;
+    var h = w * 0.52;
+    var x = cx - w / 2, y = bottomY - h;
+    ctx.fillStyle = "#111827";
+    ctx.fillRect(x + w * 0.04, bottomY - h * 0.28, w * 0.16, h * 0.28);
+    ctx.fillRect(x + w * 0.80, bottomY - h * 0.28, w * 0.16, h * 0.28);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(x, y + h * 0.25, w, h * 0.62, w * 0.08);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(x + w * 0.16, y, w * 0.68, h * 0.45, w * 0.07);
+    ctx.fill();
+    ctx.fillStyle = "#0b2036";
+    ctx.beginPath();
+    ctx.roundRect(x + w * 0.23, y + h * 0.08, w * 0.54, h * 0.3, w * 0.05);
+    ctx.fill();
+    ctx.fillStyle = isPlayer ? "#fff7cc" : "#fde68a";
+    if (!isPlayer) { ctx.fillRect(x + w * 0.1, y + h * 0.68, w * 0.14, h * 0.14); ctx.fillRect(x + w * 0.76, y + h * 0.68, w * 0.14, h * 0.14); }
+    ctx.fillStyle = "#dc2626";
+    ctx.fillRect(x + w * 0.08, y + h * 0.62, w * 0.16, h * 0.13);
+    ctx.fillRect(x + w * 0.76, y + h * 0.62, w * 0.16, h * 0.13);
+    if (isPlayer) {
+      ctx.fillStyle = "#111827";
+      ctx.fillRect(x - w * 0.03, y - h * 0.06, w * 1.06, h * 0.09);
+    }
+  }
+  function raceDraw() {
+    var ctx = raceCtx;
+    var grad = ctx.createLinearGradient(0, 0, 0, raceH);
+    grad.addColorStop(0, "#7dd3fc");
+    grad.addColorStop(0.55, "#bae6fd");
+    grad.addColorStop(0.56, "#14532d");
+    grad.addColorStop(1, "#166534");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, raceW, raceH);
+    ctx.fillStyle = "#fef9c3";
+    ctx.beginPath(); ctx.arc(raceW - 70, 44, 20, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#15803d";
+    ctx.beginPath();
+    var hillBase = raceH * 0.56, off = -(raceSkyOff % 240);
+    for (var hx = off; hx < raceW + 240; hx += 240) {
+      ctx.moveTo(hx, hillBase);
+      ctx.quadraticCurveTo(hx + 120, hillBase - 64, hx + 240, hillBase);
+    }
+    ctx.lineTo(raceW, hillBase); ctx.lineTo(0, hillBase);
+    ctx.fill();
+
+    var base = raceFindSegment(racePosition);
+    var basePct = (racePosition % raceSegLen) / raceSegLen;
+    var plyrSeg = raceFindSegment(racePosition + racePlayerZ);
+    var plyrPct = ((racePosition + racePlayerZ) % raceSegLen) / raceSegLen;
+    var plyrY = raceLerp(plyrSeg.p1.world.y, plyrSeg.p2.world.y, plyrPct);
+    var maxY = raceH, x = 0, dx = -(base.curve * basePct), n, seg;
+    var drawn = [];
+    for (n = 0; n < raceDrawDist; n++) {
+      seg = raceSegments[(base.index + n) % raceSegments.length];
+      var looped = seg.index < base.index;
+      var camZ = racePosition - (looped ? raceTrackLen : 0);
+      raceProject(seg.p1, racePlayerX * raceRoadW - x, plyrY + raceCamH, camZ);
+      raceProject(seg.p2, racePlayerX * raceRoadW - x - dx, plyrY + raceCamH, camZ);
+      x += dx; dx += seg.curve;
+      seg.clip = maxY;
+      if (seg.p1.camera.z <= raceCamDepth || seg.p2.screen.y >= seg.p1.screen.y || seg.p2.screen.y >= maxY) continue;
+      var light = Math.floor(seg.index / raceRumble) % 2 === 0;
+      ctx.fillStyle = light ? "#16a34a" : "#15803d";
+      ctx.fillRect(0, seg.p2.screen.y, raceW, seg.p1.screen.y - seg.p2.screen.y);
+      var r1 = seg.p1.screen.w / Math.max(6, 2 * 2), r2 = seg.p2.screen.w / Math.max(6, 2 * 2);
+      racePoly(seg.p1.screen.x - seg.p1.screen.w - r1, seg.p1.screen.y, seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y,
+               seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w - r2, seg.p2.screen.y, light ? "#e2e8f0" : "#dc2626");
+      racePoly(seg.p1.screen.x + seg.p1.screen.w + r1, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
+               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x + seg.p2.screen.w + r2, seg.p2.screen.y, light ? "#e2e8f0" : "#dc2626");
+      racePoly(seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
+               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, light ? "#475569" : "#3f4c5c");
+      maxY = seg.p1.screen.y;
+      drawn.push(seg);
+    }
+    /* Rival cars, farthest first. */
+    for (var d = drawn.length - 1; d >= 0; d--) {
+      seg = drawn[d];
+      for (var ci = 0; ci < raceCars.length; ci++) {
+        var car = raceCars[ci];
+        if (Math.floor(car.z / raceSegLen) % raceSegments.length !== seg.index) continue;
+        var pct = (car.z % raceSegLen) / raceSegLen;
+        var scale = raceLerp(seg.p1.screen.scale, seg.p2.screen.scale, pct);
+        var sx = raceLerp(seg.p1.screen.x, seg.p2.screen.x, pct) + scale * car.offset * raceRoadW * raceW / 2;
+        var sy = raceLerp(seg.p1.screen.y, seg.p2.screen.y, pct);
+        var cw = scale * 560 * raceW / 2;
+        if (cw < 2) continue;
+        if (sy - cw * 0.52 > seg.clip + cw * 0.52) continue;
+        raceDrawCarShape(sx, Math.min(sy, seg.clip + cw * 0.52), cw, car.color, false);
+      }
+    }
+    var bounce = racePhase === "playing" ? Math.sin(raceDist * 0.02) * Math.min(2, raceSpeed / raceMaxSpeed * 2.4) : 0;
+    raceDrawCarShape(raceW / 2 + racePlayerX * 26, raceH - 6 + bounce, 118, "#c9a227", true);
+    if (racePhase === "over") {
+      ctx.fillStyle = "rgba(7,26,46,0.7)";
+      ctx.fillRect(0, 0, raceW, raceH);
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 25px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Out of time!", raceW / 2, 160);
+      ctx.font = "600 16px system-ui, sans-serif";
+      ctx.fillText("Final score: " + raceScore(), raceW / 2, 190);
+    } else if (racePhase === "ready") {
+      ctx.fillStyle = "rgba(7,26,46,0.45)";
+      ctx.fillRect(0, 0, raceW, 64);
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 19px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Press Start, then hold the up arrow", raceW / 2, 40);
+    }
+  }
+  function raceOverlap(px, cx) {
+    return Math.abs(px - cx) < 0.46;
+  }
+  function raceUpdate(dt) {
+    var i, car;
+    for (i = 0; i < raceCars.length; i++) {
+      car = raceCars[i];
+      car.z = raceWrap(car.z + car.speed * dt, raceTrackLen);
+    }
+    if (racePhase !== "playing") return;
+    var plyrSeg = raceFindSegment(racePosition + racePlayerZ);
+    var speedPct = raceSpeed / raceMaxSpeed;
+    var dx = dt * 2.1 * speedPct;
+    if (raceKeyL || raceBtnL) racePlayerX -= dx;
+    if (raceKeyR || raceBtnR) racePlayerX += dx;
+    racePlayerX -= dx * speedPct * plyrSeg.curve * 0.31;
+    racePlayerX = Math.max(-2.3, Math.min(2.3, racePlayerX));
+    if (raceKeyU || raceBtnU) raceSpeed += (raceMaxSpeed / 4.5) * dt;
+    else if (raceKeyD || raceBtnD) raceSpeed -= raceMaxSpeed * 0.9 * dt;
+    else raceSpeed -= (raceMaxSpeed / 6) * dt;
+    if (racePlayerX < -1 || racePlayerX > 1) {
+      if (raceSpeed > raceOffRoadLimit) raceSpeed -= (raceMaxSpeed / 1.1) * dt;
+    }
+    raceSpeed = Math.max(0, Math.min(raceMaxSpeed, raceSpeed));
+    racePosition = raceWrap(racePosition + raceSpeed * dt, raceTrackLen);
+    var gained = raceSpeed * dt;
+    raceDist += gained;
+    raceBaseScore += gained / 60;
+    raceSkyOff += plyrSeg.curve * speedPct * dt * 14;
+    if (raceInvincible > 0) raceInvincible -= dt;
+    var pz = racePosition + racePlayerZ;
+    for (i = 0; i < raceCars.length; i++) {
+      car = raceCars[i];
+      var rel = car.z - pz;
+      if (rel > raceTrackLen / 2) rel -= raceTrackLen;
+      if (rel < -raceTrackLen / 2) rel += raceTrackLen;
+      if (car.prevRel > 0 && rel <= 0 && raceSpeed > car.speed) {
+        raceOvertakes++;
+        $("race-status").textContent = "Overtake! +100 points.";
+      }
+      car.prevRel = rel;
+      if (raceInvincible <= 0 && rel > -raceSegLen && rel < raceSegLen && raceSpeed > car.speed && raceOverlap(racePlayerX, car.offset)) {
+        raceCrashes++;
+        raceSpeed = car.speed * 0.25;
+        raceInvincible = 1.2;
+        $("race-status").textContent = "Crash! You lost speed and 50 points.";
+      }
+    }
+    if (raceDist >= raceNextCp) {
+      raceNextCp += 40000;
+      raceCheckpoints++;
+      raceTimeLeft += 15;
+      $("race-status").textContent = "Checkpoint! +15 seconds.";
+    }
+    raceTimeLeft -= dt;
+    if (raceTimeLeft <= 0) {
+      raceTimeLeft = 0;
+      racePhase = "over";
+      $("race-status").textContent = "Out of time. Final score: " + raceScore() + " with " + raceOvertakes + " overtakes. Press New game to race again.";
+    }
+    raceHudIn -= dt;
+    if (raceHudIn <= 0) { raceHudIn = 0.12; raceSyncHud(); }
+  }
+  function raceLoop(ts) {
+    if (!raceRunning) return;
+    if (!raceLastTs) raceLastTs = ts;
+    var dt = Math.min(0.033, (ts - raceLastTs) / 1000);
+    raceLastTs = ts;
+    raceUpdate(dt);
+    if (racePhase === "over") {
+      /* Coast to a stop, then end the loop (raceUpdate no longer moves
+         the car once the phase is over, so roll and decay it here). */
+      racePosition = raceWrap(racePosition + raceSpeed * dt, raceTrackLen);
+      raceSpeed = Math.max(0, raceSpeed - raceMaxSpeed * 0.9 * dt);
+    }
+    raceDraw();
+    if (racePhase === "over" && raceSpeed <= 0) { raceSetRunning(false); return; }
+    if (raceRunning) requestAnimationFrame(raceLoop);
+  }
+  function raceSetRunning(on) {
+    if (racePhase === "over") on = false;
+    if (on && racePhase === "ready") {
+      racePhase = "playing";
+      $("race-status").textContent = "Go! Reach the checkpoint before the timer runs out.";
+    }
+    raceRunning = on;
+    $("race-start").textContent = on ? "Pause" : "Start";
+    if (on) { raceLastTs = 0; requestAnimationFrame(raceLoop); }
+    else if (racePhase === "playing") $("race-status").textContent = "Paused. Press Start to continue.";
+    raceSyncHud();
+  }
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { raceKeyL = true; ev.preventDefault(); }
+    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { raceKeyR = true; ev.preventDefault(); }
+    else if (ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") { raceKeyU = true; ev.preventDefault(); }
+    else if (ev.key === "ArrowDown" || ev.key === "s" || ev.key === "S") { raceKeyD = true; ev.preventDefault(); }
+  });
+  document.addEventListener("keyup", function (ev) {
+    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") raceKeyL = false;
+    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") raceKeyR = false;
+    else if (ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") raceKeyU = false;
+    else if (ev.key === "ArrowDown" || ev.key === "s" || ev.key === "S") raceKeyD = false;
+  });
+  function raceBindHold(id, setFn) {
+    var el = $(id);
+    el.addEventListener("pointerdown", function (ev) { ev.preventDefault(); setFn(true); });
+    el.addEventListener("pointerup", function () { setFn(false); });
+    el.addEventListener("pointerleave", function () { setFn(false); });
+    el.addEventListener("pointercancel", function () { setFn(false); });
+  }
+  raceBindHold("race-left", function (on) { raceBtnL = on; });
+  raceBindHold("race-right", function (on) { raceBtnR = on; });
+  raceBindHold("race-up", function (on) { raceBtnU = on; });
+  raceBindHold("race-down", function (on) { raceBtnD = on; });
+  $("race-start").addEventListener("click", function (ev) { raceSetRunning(!raceRunning); ev.currentTarget.blur(); });
+  $("race-new").addEventListener("click", function (ev) {
+    raceSetRunning(false);
+    raceReset();
+    $("race-status").textContent = "Press Start, then hold the up arrow to accelerate.";
+    ev.currentTarget.blur();
+  });
+  raceBuildTrack();
+  raceReset();
+  // Test hooks (used by the headless verification script only).
+  window.__race = {
+    get state() {
+      return {
+        phase: racePhase, running: raceRunning,
+        speedKmh: Math.round(raceSpeed / raceMaxSpeed * 240),
+        score: raceScore(), overtakes: raceOvertakes, crashes: raceCrashes,
+        checkpoints: raceCheckpoints, timeLeft: Math.ceil(raceTimeLeft),
+        playerX: Math.round(racePlayerX * 100) / 100,
+        segments: raceSegments.length
+      };
+    },
+    debugSetInvincible: function (on) { raceInvincible = on ? 1e9 : 0; },
+    debugPlaceRivalAhead: function (parked) {
+      var car = raceCars[0];
+      car.z = raceWrap(racePosition + racePlayerZ + 8 * raceSegLen, raceTrackLen);
+      car.offset = Math.max(-0.8, Math.min(0.8, racePlayerX));
+      car.speed = parked ? 0 : raceMaxSpeed * 0.3;
+      car.prevRel = 8 * raceSegLen;
+      return true;
+    },
+    debugSetTime: function (s) { raceTimeLeft = s; },
+    debugSetNearCheckpoint: function () { raceNextCp = raceDist + 300; }
+  };
+  return { reset: raceReset };
+})();
+
+/* ================= FULLSCREEN (staging addition) ================= */
+(function () {
+  var stage = document.getElementById("stage");
+  var enterBtn = document.getElementById("fs-btn");
+  var exitBtn = document.getElementById("fs-exit");
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function request() {
+    if (stage.requestFullscreen) return stage.requestFullscreen();
+    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
+    return null;
+  }
+  function exit() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+    return null;
+  }
+  function sync() {
+    var on = !!fsElement();
+    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
+  }
+  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
+    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
+  }
+  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
+  exitBtn.addEventListener("click", function () { exit(); });
+  document.addEventListener("fullscreenchange", sync);
+  document.addEventListener("webkitfullscreenchange", sync);
+})();
+</script>
+</body>
+</html>
