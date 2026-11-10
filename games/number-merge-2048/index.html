@@ -12,111 +12,22 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
-  button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:active { transform: translateY(1px); }
+  button:disabled { background: #9aa5b1; cursor: default; transform: none; }
+  button:focus-visible, #merge-board:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
-  .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .scorebar { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.75rem; }
 
-  /* Gem Smash */
-  #gem-board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; max-width: 480px; margin-top: 1rem; }
-  .gem { aspect-ratio: 1; border: none; padding: 0; margin: 0; font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .gem.sel { outline: 3px solid var(--navy); outline-offset: -3px; }
-  .gem.hint { outline: 3px solid var(--gold); outline-offset: -3px; }
-
-  /* Memory Match */
-  #mem-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 480px; margin-top: 1rem; }
-  .mem-card { aspect-ratio: 1; border: 2px solid var(--navy); background: var(--navy); color: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; padding: 0.25rem; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .mem-card.flipped { background: #fff; color: var(--navy); }
-  .mem-card.matched { background: #dcfce7; border-color: #16a34a; color: #166534; cursor: default; }
-
-  /* Number Merge 2048 */
-  #merge-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 420px; margin-top: 1rem; background: #bbada0; padding: 6px; border-radius: 6px; }
-  .merge-cell { aspect-ratio: 1; background: #cdc1b4; color: #776e65; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
-  .merge-cell.v2 { background: #eee4da; }
-  .merge-cell.v4 { background: #ede0c8; }
-  .merge-cell.v8 { background: #f2b179; color: #fff; }
-  .merge-cell.v16 { background: #f59563; color: #fff; }
-  .merge-cell.v32 { background: #f67c5f; color: #fff; }
-  .merge-cell.v64 { background: #f65e3b; color: #fff; }
-  .merge-cell.v128 { background: #edcf72; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v256 { background: #edcc61; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v512 { background: #edc850; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v1024 { background: #edc53f; color: #fff; font-size: 1.1rem; }
-  .merge-cell.v2048 { background: #edc22e; color: #fff; font-size: 1.1rem; }
-  .merge-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .merge-keys button { margin: 0; padding: 0.6rem 0; }
-  .merge-keys .k-up { grid-column: 2; }
-  .merge-keys .k-left { grid-column: 1; grid-row: 2; }
-  .merge-keys .k-down { grid-column: 2; grid-row: 2; }
-  .merge-keys .k-right { grid-column: 3; grid-row: 2; }
-
-  /* BlockFit */
-  #bf-board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; max-width: 480px; margin-top: 1rem; background: var(--navy); padding: 4px; }
-  .bf-cell { aspect-ratio: 1; background: #fff; border: none; padding: 0; margin: 0; cursor: pointer; }
-  .bf-cell.filled { background: var(--gold); }
-  .bf-cell.preview { background: #93c5fd; }
-  .bf-cell.bad { background: #fca5a5; }
-  #bf-tray { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
-  .bf-piece { border: 2px solid var(--line); padding: 6px; cursor: pointer; background: #fff; }
-  .bf-piece.sel { border-color: var(--navy); outline: 3px solid var(--gold); }
-  .bf-piece.used { opacity: 0.25; cursor: default; }
-  .bf-mini { display: grid; gap: 2px; }
-  .bf-mini div { width: 18px; height: 18px; background: #e5e7eb; }
-  .bf-mini div.on { background: var(--gold); }
-  #bf-ghost { position: fixed; z-index: 50; pointer-events: none; opacity: 0.75; display: none; }
-
-  /* Ludo */
-  #ludo-board { display: grid; grid-template-columns: repeat(15, 1fr); max-width: 540px; margin-top: 1rem; border: 2px solid var(--navy); }
-  .lu-cell { aspect-ratio: 1; background: #fff; border: 1px solid #d1d5db; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--navy); flex-wrap: wrap; padding: 0; }
-  .lu-cell.base-red { background: #dc2626; border-color: #991b1b; }
-  .lu-cell.base-green { background: #16a34a; border-color: #166534; }
-  .lu-cell.base-yellow { background: #eab308; border-color: #854d0e; }
-  .lu-cell.base-blue { background: #2563eb; border-color: #1e40af; }
-  .lu-cell.home-red { background: #fca5a5; }
-  .lu-cell.home-green { background: #86efac; }
-  .lu-cell.home-yellow { background: #fde047; }
-  .lu-cell.home-blue { background: #93c5fd; }
-  .lu-cell.start-red { background: #dc2626; color: #fff; }
-  .lu-cell.start-green { background: #16a34a; color: #fff; }
-  .lu-cell.start-yellow { background: #eab308; color: #fff; }
-  .lu-cell.start-blue { background: #2563eb; color: #fff; }
-  .lu-cell.center { grid-row: 7 / 10; grid-column: 7 / 10; background: conic-gradient(#dc2626 0 25%, #16a34a 0 50%, #eab308 0 75%, #2563eb 0); color: #fff; font-size: 0.6rem; }
-  .lu-token { width: 78%; height: 78%; min-width: 12px; min-height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #111827; color: #fff; font-size: 0.65rem; font-weight: 700; cursor: default; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; }
-  .lu-token.movable { cursor: pointer; outline: 3px solid var(--gold); outline-offset: 1px; animation: lu-pulse 0.8s infinite alternate; }
-  @keyframes lu-pulse { from { transform: scale(1); } to { transform: scale(1.18); } }
-  .lu-dice { display: inline-flex; width: 56px; height: 56px; border: 2px solid var(--navy); border-radius: 8px; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; color: var(--navy); margin-right: 0.75rem; vertical-align: middle; }
-  .lu-setup { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; }
-  .lu-setup div { display: flex; flex-direction: column; gap: 0.25rem; }
-  @media (max-width: 560px) {
-    .gem { font-size: 0.9rem; }
-    .merge-cell { font-size: 1.2rem; }
-    .lu-token { font-size: 0.55rem; }
-    .lu-cell { font-size: 0.55rem; }
-  }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
@@ -128,28 +39,99 @@
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .merge-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #gem-board, .play-stage:fullscreen #mem-board { width: min(66vmin, 660px); max-width: 92vw; }
-  .play-stage:fullscreen #bf-board { width: min(57vmin, 620px); max-width: 92vw; }
-  .play-stage:fullscreen #merge-board { width: min(57vmin, 540px); max-width: 92vw; }
-  .play-stage:fullscreen #ludo-board { width: min(64vmin, 700px); max-width: 94vw; }
-  .play-stage:fullscreen #ludo-board + p { margin: 0.4rem 0; }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:fullscreen .lu-setup { display: none; }
-  .play-stage:fullscreen #bf-tray { margin-top: 0.5rem; }
-  .play-stage:fullscreen .bf-piece { padding: 3px; }
-  .play-stage:fullscreen .bf-mini div { width: 10px; height: 10px; }
-  .play-stage:fullscreen .lu-dice { width: 44px; height: 44px; font-size: 1.4rem; }
-  .play-stage:fullscreen .lu-dice { color: #fff; border-color: var(--gold); }
-  .play-stage:fullscreen #bf-ghost { z-index: 70; }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+  /* ---- Number Merge 2048 ---- */
+  .score-box { background: #bbada0; color: #fff; border-radius: 6px; padding: 0.3rem 0.8rem 0.4rem; min-width: 5.2rem; text-align: center; box-sizing: border-box; }
+  .score-box .score-label { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #eee4da; }
+  .score-box .score-value { display: block; font-size: 1.25rem; font-weight: 800; line-height: 1.2; }
+  .score-box.bump { animation: merge-score-bump 0.25s ease; }
+  @keyframes merge-score-bump { 40% { transform: scale(1.1); } }
+
+  #merge-board { --pad: 12px; --gap: 12px; --cell: 100px; position: relative; width: min(500px, 92vw); aspect-ratio: 1 / 1; margin: 1rem auto 0; background: #bbada0; border-radius: calc(var(--cell) * 0.06); touch-action: none; user-select: none; -webkit-user-select: none; }
+  /* Fullscreen: the cgx stage is a flex column, so the board must opt out
+     of flex shrink (aspect-ratio would drag its width down with its
+     height) and its size must leave room for the score bar, status line
+     and action buttons that stay visible while playing. */
+  .cgx-fs:fullscreen #merge-board, .cgx-fs:-webkit-full-screen #merge-board { flex: none; width: min(94vw, calc(100vh - 190px), 680px); margin-top: 0.5rem; }
+  .merge-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); padding: var(--pad); gap: var(--gap); box-sizing: border-box; }
+  .merge-cell { background: #cdc1b4; border-radius: calc(var(--cell) * 0.06); }
+  .merge-tiles, .merge-floaters { position: absolute; inset: 0; }
+  .merge-floaters { pointer-events: none; z-index: 5; }
+  .merge-tile { position: absolute; left: 0; top: 0; width: var(--cell); height: var(--cell); z-index: 1; transition: transform 120ms ease-in-out; will-change: transform; }
+  #merge-board.no-anim .merge-tile { transition: none !important; }
+  .tile-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: calc(var(--cell) * 0.06); font-weight: 700; color: #776e65; background: #cdc1b4; box-sizing: border-box; }
+  .tile-inner.f1 { font-size: calc(var(--cell) * 0.52); }
+  .tile-inner.f2 { font-size: calc(var(--cell) * 0.44); }
+  .tile-inner.f3 { font-size: calc(var(--cell) * 0.36); }
+  .tile-inner.f4 { font-size: calc(var(--cell) * 0.29); }
+  .tile-inner.f5 { font-size: calc(var(--cell) * 0.235); }
+  .tile-inner.v2 { background: #eee4da; }
+  .tile-inner.v4 { background: #ede0c8; }
+  .tile-inner.v8 { background: #f2b179; color: #fff; }
+  .tile-inner.v16 { background: #f59563; color: #fff; }
+  .tile-inner.v32 { background: #f67c5f; color: #fff; }
+  .tile-inner.v64 { background: #f65e3b; color: #fff; }
+  .tile-inner.v128 { background: #edcf72; color: #fff; }
+  .tile-inner.v256 { background: #edcc61; color: #fff; }
+  .tile-inner.v512 { background: #edc850; color: #fff; }
+  .tile-inner.v1024 { background: #edc53f; color: #fff; }
+  .tile-inner.v2048 { background: #edc22e; color: #fff; box-shadow: 0 0 30px 6px rgba(243, 215, 116, 0.55); }
+  .tile-inner.v4096 { background: #3c3a32; color: #f9f6f2; }
+  .tile-inner.v8192 { background: #2e2a24; color: #f9f6f2; box-shadow: inset 0 0 0 3px #edc22e; }
+  .tile-inner.v16384 { background: #23201c; color: #f9f6f2; box-shadow: inset 0 0 0 3px #edc22e, 0 0 18px 2px rgba(243, 215, 116, 0.45); }
+  .tile-inner.v32768 { background: #17150f; color: #f9f6f2; box-shadow: inset 0 0 0 3px #edc22e, 0 0 22px 4px rgba(243, 215, 116, 0.55); }
+  .tile-inner.v65536 { background: #100e08; color: #f9f6f2; box-shadow: inset 0 0 0 3px #edc22e, 0 0 26px 6px rgba(243, 215, 116, 0.65); }
+  .tile-inner.v131072 { background: #000; color: #edc22e; box-shadow: inset 0 0 0 3px #edc22e, 0 0 30px 8px rgba(243, 215, 116, 0.75); }
+  .tile-inner.vsuper { background: #000; color: #edc22e; box-shadow: inset 0 0 0 3px #edc22e, 0 0 30px 8px rgba(243, 215, 116, 0.75); }
+  .tile-inner.tile-new { animation: merge-tile-appear 140ms ease 30ms backwards; }
+  @keyframes merge-tile-appear { from { transform: scale(0); } to { transform: scale(1); } }
+  .tile-inner.tile-pop { animation: merge-tile-pop 180ms ease; }
+  @keyframes merge-tile-pop { 0% { transform: scale(0); } 55% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .merge-floater { position: absolute; text-align: center; font-weight: 800; color: #776e65; font-size: calc(var(--cell) * 0.3); animation: merge-floater-rise 600ms ease-out forwards; }
+  @keyframes merge-floater-rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-46px); opacity: 0; } }
+
+  .merge-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
+  .merge-keys button { margin: 0; padding: 0.6rem 0; font-size: 1.15rem; line-height: 1; }
+  .merge-keys .k-up { grid-column: 2; }
+  .merge-keys .k-left { grid-column: 1; grid-row: 2; }
+  .merge-keys .k-down { grid-column: 2; grid-row: 2; }
+  .merge-keys .k-right { grid-column: 3; grid-row: 2; }
+  @media (pointer: fine) { .merge-keys { display: none; } }
+  .merge-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .play-stage:fullscreen .merge-keys { margin-top: 0.5rem; }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Number Merge 2048</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -157,209 +139,945 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="merge-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
 
   <h2>Number Merge 2048</h2>
-  <p class="fs-desc">Slide the tiles with the arrow keys, the buttons below, or a swipe on the board. Tiles with the same number merge into one. Reach the 2048 tile.</p>
-  <div class="scorebar"><span>Score: <span id="merge-score">0</span></span><span>Best tile: <span id="merge-best">2</span></span></div>
-  <div class="board" id="merge-board" tabindex="0"></div>
-  <div class="merge-keys">
-    <button type="button" class="k-up" id="merge-up" aria-label="Move up">Up</button>
-    <button type="button" class="k-left" id="merge-left" aria-label="Move left">Left</button>
-    <button type="button" class="k-down" id="merge-down" aria-label="Move down">Down</button>
-    <button type="button" class="k-right" id="merge-right" aria-label="Move right">Right</button>
+  <p class="fs-desc">Slide the tiles with the arrow keys or WASD, the buttons below, a mouse drag, or a swipe. Tiles with the same number merge into one. Reach the 2048 tile - and keep going for an even bigger one if you can. Your game saves automatically after every move.</p>
+  <div class="scorebar">
+    <span class="score-box" id="merge-score-box"><span class="score-label">Score</span><span class="score-value" id="merge-score">0</span></span>
+    <span class="score-box"><span class="score-label">Best</span><span class="score-value" id="merge-bestscore">0</span></span>
+    <span class="score-box"><span class="score-label">Best tile</span><span class="score-value" id="merge-best">2</span></span>
+    <span class="score-box"><span class="score-label">Moves</span><span class="score-value" id="merge-moves">0</span></span>
   </div>
-  <p class="status" id="merge-status">Use the arrow keys, the buttons, or swipe on the board.</p>
-  <button type="button" id="merge-new">New game</button>
-
+  <div class="board" id="merge-board" tabindex="0" aria-label="2048 game board">
+    <div class="merge-grid" id="merge-grid"></div>
+    <div class="merge-tiles" id="merge-tiles"></div>
+    <div class="merge-floaters" id="merge-floaters"></div>
+  </div>
+  <div class="merge-keys">
+    <button type="button" class="k-up" id="merge-up" aria-label="Move up">&#8593;</button>
+    <button type="button" class="k-left" id="merge-left" aria-label="Move left">&#8592;</button>
+    <button type="button" class="k-down" id="merge-down" aria-label="Move down">&#8595;</button>
+    <button type="button" class="k-right" id="merge-right" aria-label="Move right">&#8594;</button>
+  </div>
+  <p class="status" id="merge-status">Use the arrow keys, WASD, the buttons, or swipe on the board.</p>
+  <div class="merge-actions">
+    <button type="button" id="merge-undo">Undo</button>
+    <button type="button" id="merge-new">New game</button>
+  </div>
+  <p class="note" id="merge-stats">On this device: no games played yet.</p>
 </section>
+<p class="note">Your privacy: Number Merge 2048 runs fully on your device. Your current game, your best scores and your statistics are saved in this browser, on this device only, so you can pick up where you left off. Nothing is uploaded, stored on a server, or tracked anywhere. Starting a new game clears the saved game, and your browser's site-data controls can erase everything at any time.</p>
+<script>
+
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();
+
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G4 NUMBER MERGE 2048 ================= */
+/* ================= G4 NUMBER MERGE 2048 (polish pass step 4) =================
+   Rules are unchanged from the shipped game: 4x4 grid, equal tiles merge
+   once per move, score grows by each merged value, a new tile (90% a 2,
+   10% a 4) spawns after every successful move, game over when the board
+   is full with no equal neighbours. What changed is the render layer
+   (persistent tile nodes that glide on CSS transforms instead of a full
+   innerHTML rebuild), persistence through cgx.store, animations, WASD +
+   drag controls, one-step undo and cgx end screens. */
 var Merge2048 = (function () {
-  var SIZE = 4;
-  var board = [], score = 0, best = 2, over = false, won = false, wonAnnounced = false;
-  function emptyBoard() {
-    var b = [];
-    for (var r = 0; r < SIZE; r++) b.push([0, 0, 0, 0]);
-    return b;
+  var SIZE = 4, TARGET = 2048, ANIM_MS = 130;
+  var store = cgx.store("number-merge-2048");
+  var boardEl = $("merge-board"), tilesEl = $("merge-tiles"), floatEl = $("merge-floaters");
+  var grid = [], allTiles = [], nextId = 1;
+  var score = 0, bestTile = 2, moves = 0;
+  var won = false, wonAnnounced = false, over = false;
+  var startedAt = 0, segmentStart = 0, bestAtGameStart = 0;
+  var animating = false, pendingPlan = null, undoSnap = null;
+  var stats = { played: 0, won: 0, winRate: 0, highestTile: 0, totalMoves: 0, totalTimeMs: 0 };
+  var cellPx = 100, gapPx = 12;
+
+  function emptyGrid() {
+    var g = [], r;
+    for (r = 0; r < SIZE; r++) g.push([null, null, null, null]);
+    return g;
   }
-  function newGame() {
-    board = emptyBoard();
-    score = 0; best = 2; over = false; won = false; wonAnnounced = false;
-    spawn(); spawn();
-    render();
-    $("merge-status").textContent = "Use the arrow keys, the buttons, or swipe on the board.";
+  function boardValues() {
+    return grid.map(function (row) {
+      return row.map(function (t) { return t ? t.value : 0; });
+    });
   }
-  function spawn() {
-    var empty = [];
-    for (var r = 0; r < SIZE; r++) for (var c = 0; c < SIZE; c++) if (board[r][c] === 0) empty.push([r, c]);
-    if (empty.length === 0) return;
-    var pick = empty[Math.floor(Math.random() * empty.length)];
-    board[pick[0]][pick[1]] = Math.random() < 0.9 ? 2 : 4;
-    if (board[pick[0]][pick[1]] > best) best = board[pick[0]][pick[1]];
+  function dialogOpen() { return !!document.querySelector(".cgx-overlay.open"); }
+  function currentBestScore() {
+    var b = store.get("best", null);
+    return b && b.bySize && b.bySize["4"] ? (b.bySize["4"].score || 0) : 0;
   }
-  function slideLine(line) {
-    var tiles = [];
-    for (var i = 0; i < SIZE; i++) if (line[i] !== 0) tiles.push(line[i]);
-    var out = [], gained = 0;
-    for (var j = 0; j < tiles.length; j++) {
-      if (j + 1 < tiles.length && tiles[j] === tiles[j + 1]) {
-        var merged = tiles[j] * 2;
-        out.push(merged);
-        gained += merged;
-        if (merged > best) best = merged;
-        if (merged === 2048) won = true;
-        j++;
-      } else {
-        out.push(tiles[j]);
-      }
-    }
-    while (out.length < SIZE) out.push(0);
-    return { line: out, gained: gained };
+
+  /* ---------- tiles ---------- */
+  function valueClass(v) { return v <= 131072 ? "v" + v : "vsuper"; }
+  function fontClass(v) {
+    var n = String(v).length;
+    return n <= 2 ? "f1" : n === 3 ? "f2" : n === 4 ? "f3" : n === 5 ? "f4" : "f5";
   }
-  function move(dir) {
-    if (over) return false;
-    var moved = false, gained = 0;
-    for (var i = 0; i < SIZE; i++) {
-      var line = [], res;
-      if (dir === "left") {
-        for (var c = 0; c < SIZE; c++) line.push(board[i][c]);
-        res = slideLine(line);
-        for (var c2 = 0; c2 < SIZE; c2++) if (board[i][c2] !== res.line[c2]) moved = true;
-        board[i] = res.line;
-      } else if (dir === "right") {
-        for (var c3 = SIZE - 1; c3 >= 0; c3--) line.push(board[i][c3]);
-        res = slideLine(line);
-        for (var k = 0; k < SIZE; k++) if (board[i][SIZE - 1 - k] !== res.line[k]) moved = true;
-        for (var k2 = 0; k2 < SIZE; k2++) board[i][SIZE - 1 - k2] = res.line[k2];
-      } else if (dir === "up") {
-        for (var r = 0; r < SIZE; r++) line.push(board[r][i]);
-        res = slideLine(line);
-        for (var r2 = 0; r2 < SIZE; r2++) if (board[r2][i] !== res.line[r2]) moved = true;
-        for (var r3 = 0; r3 < SIZE; r3++) board[r3][i] = res.line[r3];
-      } else if (dir === "down") {
-        for (var r4 = SIZE - 1; r4 >= 0; r4--) line.push(board[r4][i]);
-        res = slideLine(line);
-        for (var k3 = 0; k3 < SIZE; k3++) if (board[SIZE - 1 - k3][i] !== res.line[k3]) moved = true;
-        for (var k4 = 0; k4 < SIZE; k4++) board[SIZE - 1 - k4][i] = res.line[k4];
-      }
-      gained += res.gained;
-    }
-    if (!moved) return false;
-    score += gained;
-    spawn();
-    render();
-    if (won && !wonAnnounced) {
-      wonAnnounced = true;
-      $("merge-status").textContent = "You reached 2048. You can keep playing for a higher score.";
-    } else if (!wonAnnounced) {
-      $("merge-status").textContent = gained > 0 ? "Merged for " + gained + " points." : "Moved.";
-    }
-    if (isGameOver()) {
-      over = true;
-      $("merge-status").textContent = "No moves left. Final score " + score + ". Best tile " + best + ".";
-    }
-    return true;
+  function tileX(c) { return gapPx + c * (cellPx + gapPx); }
+  function tileY(r) { return gapPx + r * (cellPx + gapPx); }
+  function setTilePos(tile) {
+    tile.el.style.transform = "translate(" + tileX(tile.c) + "px," + tileY(tile.r) + "px)";
   }
-  function isGameOver() {
-    for (var r = 0; r < SIZE; r++) for (var c = 0; c < SIZE; c++) {
-      if (board[r][c] === 0) return false;
-      if (c + 1 < SIZE && board[r][c] === board[r][c + 1]) return false;
-      if (r + 1 < SIZE && board[r][c] === board[r + 1][c]) return false;
-    }
-    return true;
+  function createTile(value, r, c, animClass) {
+    var tile = { id: nextId++, value: value, r: r, c: c, el: null };
+    var el = document.createElement("div");
+    el.className = "merge-tile";
+    el.setAttribute("data-tid", String(tile.id));
+    var inner = document.createElement("div");
+    inner.className = "tile-inner " + valueClass(value) + " " + fontClass(value) + (animClass ? " " + animClass : "");
+    inner.textContent = String(value);
+    el.appendChild(inner);
+    tilesEl.appendChild(el);
+    tile.el = el;
+    allTiles.push(tile);
+    setTilePos(tile);
+    return tile;
   }
-  function render() {
-    var el = $("merge-board");
-    el.innerHTML = "";
-    for (var r = 0; r < SIZE; r++) {
-      for (var c = 0; c < SIZE; c++) {
-        var d = document.createElement("div");
-        var v = board[r][c];
-        d.className = "merge-cell" + (v > 0 ? " v" + v : "");
-        d.id = "merge-" + r + "-" + c;
-        d.textContent = v > 0 ? String(v) : "";
-        el.appendChild(d);
-      }
+  function removeTile(tile) {
+    if (tile.el && tile.el.parentNode) tile.el.parentNode.removeChild(tile.el);
+    var i = allTiles.indexOf(tile);
+    if (i !== -1) allTiles.splice(i, 1);
+  }
+  function clearTiles() {
+    while (allTiles.length) removeTile(allTiles[0]);
+    grid = emptyGrid();
+  }
+  function layout(instant) {
+    var w = boardEl.clientWidth;
+    if (!w) return;
+    gapPx = Math.max(6, Math.min(16, Math.round(w * 0.032)));
+    cellPx = (w - 5 * gapPx) / 4;
+    boardEl.style.setProperty("--pad", gapPx + "px");
+    boardEl.style.setProperty("--gap", gapPx + "px");
+    boardEl.style.setProperty("--cell", cellPx + "px");
+    if (instant) boardEl.classList.add("no-anim");
+    var i;
+    for (i = 0; i < allTiles.length; i++) setTilePos(allTiles[i]);
+    if (instant) { void boardEl.offsetWidth; boardEl.classList.remove("no-anim"); }
+  }
+  function rebuildFromValues(values) {
+    clearTiles();
+    var r, c;
+    for (r = 0; r < SIZE; r++) for (c = 0; c < SIZE; c++) {
+      if (values[r][c] > 0) grid[r][c] = createTile(values[r][c], r, c, "");
     }
+    layout(true);
+  }
+  function addFloater(value, r, c) {
+    var f = document.createElement("div");
+    f.className = "merge-floater";
+    f.textContent = "+" + value;
+    f.style.left = tileX(c) + "px";
+    f.style.top = tileY(r) + "px";
+    f.style.width = cellPx + "px";
+    floatEl.appendChild(f);
+    setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 650);
+  }
+
+  /* ---------- persistence ---------- */
+  function persistAll() {
+    store.set("state", {
+      size: SIZE, board: boardValues(), score: score, bestTile: bestTile,
+      moves: moves, startedAt: startedAt, won: won
+    });
+    var b = store.get("best", null) || { bySize: { "4": { score: 0, tile: 0 } } };
+    if (!b.bySize) b.bySize = {};
+    if (!b.bySize["4"]) b.bySize["4"] = { score: 0, tile: 0 };
+    if (score > b.bySize["4"].score) b.bySize["4"].score = score;
+    if (bestTile > b.bySize["4"].tile) b.bySize["4"].tile = bestTile;
+    store.set("best", b);
+    if (bestTile > stats.highestTile) stats.highestTile = bestTile;
+    stats.winRate = stats.played ? Math.round(1000 * stats.won / stats.played) / 1000 : 0;
+    store.set("stats", stats);
+  }
+  function snapshotState() {
+    return { board: boardValues(), score: score, bestTile: bestTile, moves: moves, won: won, wonAnnounced: wonAnnounced };
+  }
+  function accumulateTime() {
+    if (segmentStart && moves > 0) stats.totalTimeMs += Date.now() - segmentStart;
+    segmentStart = Date.now();
+  }
+
+  /* ---------- HUD ---------- */
+  function updateHud() {
     $("merge-score").textContent = String(score);
-    $("merge-best").textContent = String(best);
+    $("merge-bestscore").textContent = String(currentBestScore());
+    $("merge-best").textContent = String(bestTile);
+    $("merge-moves").textContent = String(moves);
+    $("merge-undo").disabled = !undoSnap || animating;
+    $("merge-stats").textContent = "On this device: " + stats.played + (stats.played === 1 ? " game" : " games") +
+      " played, " + stats.won + " won, highest tile " + (stats.highestTile || 0) + ".";
   }
-  $("merge-up").addEventListener("click", function () { move("up"); });
-  $("merge-down").addEventListener("click", function () { move("down"); });
-  $("merge-left").addEventListener("click", function () { move("left"); });
-  $("merge-right").addEventListener("click", function () { move("right"); });
-  $("merge-new").addEventListener("click", newGame);
+  function setStatus(msg) { $("merge-status").textContent = msg; }
+
+  /* ---------- move planning (values only; no DOM touched) ---------- */
+  function lineCoords(dir, i) {
+    var coords = [], k;
+    if (dir === "left") { for (k = 0; k < SIZE; k++) coords.push([i, k]); }
+    else if (dir === "right") { for (k = SIZE - 1; k >= 0; k--) coords.push([i, k]); }
+    else if (dir === "up") { for (k = 0; k < SIZE; k++) coords.push([k, i]); }
+    else { for (k = SIZE - 1; k >= 0; k--) coords.push([k, i]); }
+    return coords;
+  }
+  function planMove(dir) {
+    var result = emptyGrid(), movements = [], merges = [], gained = 0, changed = false;
+    var i, coords, tiles, ti, ci, t, t2, target, val;
+    for (i = 0; i < SIZE; i++) {
+      coords = lineCoords(dir, i);
+      tiles = [];
+      for (ti = 0; ti < SIZE; ti++) if (grid[coords[ti][0]][coords[ti][1]]) tiles.push(grid[coords[ti][0]][coords[ti][1]]);
+      ti = 0; ci = 0;
+      while (ti < tiles.length) {
+        t = tiles[ti]; target = coords[ci];
+        if (ti + 1 < tiles.length && tiles[ti + 1].value === t.value) {
+          t2 = tiles[ti + 1]; val = t.value * 2;
+          movements.push({ tile: t, toR: target[0], toC: target[1], merge: true });
+          movements.push({ tile: t2, toR: target[0], toC: target[1], merge: true });
+          merges.push({ toR: target[0], toC: target[1], value: val });
+          result[target[0]][target[1]] = { mergedValue: val };
+          gained += val; changed = true; ti += 2;
+        } else {
+          movements.push({ tile: t, toR: target[0], toC: target[1], merge: false });
+          result[target[0]][target[1]] = { tile: t };
+          if (t.r !== target[0] || t.c !== target[1]) changed = true;
+          ti += 1;
+        }
+        ci++;
+      }
+    }
+    return { changed: changed, movements: movements, merges: merges, gained: gained, resultGrid: result };
+  }
+  function isGameOverValues(v) {
+    var r, c;
+    for (r = 0; r < SIZE; r++) for (c = 0; c < SIZE; c++) {
+      if (v[r][c] === 0) return false;
+      if (c + 1 < SIZE && v[r][c] === v[r][c + 1]) return false;
+      if (r + 1 < SIZE && v[r][c] === v[r + 1][c]) return false;
+    }
+    return true;
+  }
+  function spawnTile(animate) {
+    var empty = [], r, c;
+    for (r = 0; r < SIZE; r++) for (c = 0; c < SIZE; c++) if (!grid[r][c]) empty.push([r, c]);
+    if (!empty.length) return;
+    var pick = empty[Math.floor(Math.random() * empty.length)];
+    var value = Math.random() < 0.9 ? 2 : 4;
+    grid[pick[0]][pick[1]] = createTile(value, pick[0], pick[1], animate ? "tile-new" : "");
+    if (value > bestTile) bestTile = value;
+  }
+
+  /* ---------- move execution ---------- */
+  function move(dir) {
+    if (over || animating || dialogOpen()) return false;
+    var plan = planMove(dir);
+    if (!plan.changed) return false;
+    undoSnap = snapshotState();
+    store.set("undo", undoSnap);
+    animating = true;
+    var i, mv;
+    for (i = 0; i < plan.movements.length; i++) {
+      mv = plan.movements[i];
+      mv.tile.r = mv.toR; mv.tile.c = mv.toC;
+      if (mv.merge) mv.tile.el.style.zIndex = 2;
+      setTilePos(mv.tile);
+    }
+    pendingPlan = plan;
+    setTimeout(finalizeMove, ANIM_MS);
+    return true;
+  }
+  function finalizeMove() {
+    var plan = pendingPlan; pendingPlan = null;
+    var survivors = {}, r, c, cell;
+    for (r = 0; r < SIZE; r++) for (c = 0; c < SIZE; c++) {
+      cell = plan.resultGrid[r][c];
+      if (cell && cell.tile) survivors[cell.tile.id] = true;
+    }
+    var snapshot = allTiles.slice(), i;
+    for (i = 0; i < snapshot.length; i++) if (!survivors[snapshot[i].id]) removeTile(snapshot[i]);
+    for (r = 0; r < SIZE; r++) for (c = 0; c < SIZE; c++) {
+      cell = plan.resultGrid[r][c];
+      if (!cell) grid[r][c] = null;
+      else if (cell.tile) { grid[r][c] = cell.tile; cell.tile.el.style.zIndex = 1; }
+      else grid[r][c] = createTile(cell.mergedValue, r, c, "tile-pop");
+    }
+    score += plan.gained;
+    moves++;
+    stats.totalMoves++;
+    for (i = 0; i < plan.merges.length; i++) {
+      if (plan.merges[i].value > bestTile) bestTile = plan.merges[i].value;
+      addFloater(plan.merges[i].value, plan.merges[i].toR, plan.merges[i].toC);
+    }
+    spawnTile(true);
+    animating = false;
+    if (plan.gained > 0) {
+      cgx.sfx("good");
+      var box = $("merge-score-box");
+      box.classList.remove("bump"); void box.offsetWidth; box.classList.add("bump");
+    } else cgx.sfx("place");
+    var justWon = false;
+    if (!won && plan.merges.some(function (m) { return m.value === TARGET; })) {
+      won = true; justWon = true; stats.won++;
+    }
+    if (isGameOverValues(boardValues())) over = true;
+    persistAll();
+    updateHud();
+    if (justWon && !wonAnnounced) {
+      wonAnnounced = true;
+      setStatus("You reached 2048. You can keep playing for a higher score.");
+      setTimeout(showWin, 220);
+    } else if (over) {
+      accumulateTime();
+      persistAll();
+      setStatus("No moves left. Final score " + score + ". Best tile " + bestTile + ".");
+      setTimeout(showGameOver, 220);
+    } else if (!wonAnnounced || plan.gained === 0) {
+      setStatus(plan.gained > 0 ? "Merged for " + plan.gained + " points." : "Moved.");
+    }
+    if (!justWon && !over && wonAnnounced) {
+      setStatus(plan.gained > 0 ? "Merged for " + plan.gained + " points." : "Moved.");
+    }
+  }
+
+  /* ---------- dialogs ---------- */
+  function showWin() {
+    cgx.showResult({
+      won: true, title: "You made 2048!",
+      message: "You built the 2048 tile with a score of " + score + ". Keep going for an even bigger tile, or start a new game.",
+      score: score, best: currentBestScore(), newBest: score > bestAtGameStart,
+      playAgainLabel: "Keep going", closeLabel: "Close",
+      onPlayAgain: afterWin, onClose: afterWin
+    });
+  }
+  function afterWin() { if (over) showGameOver(); }
+  function showGameOver() {
+    cgx.showResult({
+      won: false, title: "Game over",
+      message: "No moves left. Final score " + score + ", best tile " + bestTile + ".",
+      score: score, best: currentBestScore(), newBest: score > bestAtGameStart,
+      playAgainLabel: "Play again",
+      onPlayAgain: function () { startNewGame(false); }
+    });
+  }
+
+  /* ---------- game lifecycle ---------- */
+  function startNewGame(firstBoot) {
+    if (!firstBoot) accumulateTime();
+    clearTiles();
+    score = 0; bestTile = 2; moves = 0;
+    won = false; wonAnnounced = false; over = false; animating = false; pendingPlan = null;
+    undoSnap = null; store.remove("undo");
+    startedAt = Date.now(); segmentStart = Date.now();
+    spawnTile(false); spawnTile(false);
+    stats.played++;
+    bestAtGameStart = currentBestScore();
+    persistAll();
+    updateHud();
+    setStatus("Use the arrow keys, WASD, the buttons, or swipe on the board.");
+  }
+  function requestNewGame(ev) {
+    if (ev && ev.currentTarget) ev.currentTarget.blur();
+    if (animating) return;
+    if (moves > 0 && !over) {
+      cgx.confirm("Start a new game?",
+        "Your current game (score " + score + ", " + moves + " moves) will be replaced. Your best scores and statistics are kept.",
+        function () { startNewGame(false); });
+    } else startNewGame(false);
+  }
+  function undo() {
+    if (animating || !undoSnap || dialogOpen()) return;
+    var s = undoSnap;
+    undoSnap = null; store.remove("undo");
+    rebuildFromValues(s.board);
+    score = s.score; bestTile = s.bestTile; moves = s.moves;
+    won = s.won; wonAnnounced = s.wonAnnounced; over = false;
+    persistAll();
+    updateHud();
+    setStatus("Undid the last move.");
+    cgx.sfx("click");
+  }
+
+  /* ---------- controls ---------- */
+  function bindClick(id, fn) {
+    $(id).addEventListener("click", function (ev) { fn(); ev.currentTarget.blur(); });
+  }
+  bindClick("merge-up", function () { move("up"); });
+  bindClick("merge-down", function () { move("down"); });
+  bindClick("merge-left", function () { move("left"); });
+  bindClick("merge-right", function () { move("right"); });
+  bindClick("merge-undo", undo);
+  $("merge-new").addEventListener("click", requestNewGame);
   document.addEventListener("keydown", function (e) {
-    /* Staging split: dedicated page, the monolith tab guard was removed. */
-    var map = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
-    if (map[e.key]) { e.preventDefault(); move(map[e.key]); }
+    if (dialogOpen()) return;
+    var k = e.key, dir = null;
+    if (k === "ArrowUp") dir = "up";
+    else if (k === "ArrowDown") dir = "down";
+    else if (k === "ArrowLeft") dir = "left";
+    else if (k === "ArrowRight") dir = "right";
+    else if (k.length === 1) {
+      var low = k.toLowerCase();
+      if (low === "w") dir = "up";
+      else if (low === "s") dir = "down";
+      else if (low === "a") dir = "left";
+      else if (low === "d") dir = "right";
+      else if (low === "u") { if (!e.repeat) undo(); return; }
+      else if (low === "n") { if (!e.repeat) requestNewGame(null); return; }
+    }
+    if (dir) {
+      e.preventDefault();
+      if (!e.repeat) move(dir);
+    } else if (k === " " && (e.target === document.body || e.target === boardEl)) {
+      e.preventDefault();
+    }
   });
-  var touchX = null, touchY = null;
-  $("merge-board").addEventListener("touchstart", function (e) {
-    touchX = e.touches[0].clientX; touchY = e.touches[0].clientY;
-  }, { passive: true });
-  $("merge-board").addEventListener("touchend", function (e) {
-    if (touchX === null) return;
-    var dx = e.changedTouches[0].clientX - touchX, dy = e.changedTouches[0].clientY - touchY;
-    touchX = null; touchY = null;
+  function handleSwipe(dx, dy) {
     if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
     if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? "right" : "left");
     else move(dy > 0 ? "down" : "up");
+  }
+  var stage = $("stage"), gX = null, gY = null;
+  stage.addEventListener("pointerdown", function (e) { gX = e.clientX; gY = e.clientY; });
+  stage.addEventListener("pointerup", function (e) {
+    if (gX === null) return;
+    var dx = e.clientX - gX, dy = e.clientY - gY;
+    gX = null; gY = null;
+    handleSwipe(dx, dy);
+  });
+  stage.addEventListener("pointercancel", function () { gX = null; gY = null; });
+  var tX = null, tY = null;
+  boardEl.addEventListener("touchstart", function (e) {
+    tX = e.touches[0].clientX; tY = e.touches[0].clientY;
   }, { passive: true });
-  newGame();
-  window.__merge2048 = {
-    get board() { return board.map(function (row) { return row.slice(); }); },
-    get score() { return score; },
-    get best() { return best; },
-    get over() { return over; },
-    setup: function (b) {
-      board = b.map(function (row) { return row.slice(); });
-      score = 0; over = false; won = false; wonAnnounced = false;
-      best = 2;
-      for (var r = 0; r < SIZE; r++) for (var c = 0; c < SIZE; c++) if (board[r][c] > best) best = board[r][c];
-      render();
-    },
-    move: move
-  };
-  return { newGame: newGame, move: move };
+  boardEl.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
+  boardEl.addEventListener("touchend", function (e) {
+    if (tX === null) return;
+    var dx = e.changedTouches[0].clientX - tX, dy = e.changedTouches[0].clientY - tY;
+    tX = null; tY = null;
+    handleSwipe(dx, dy);
+  });
+  window.addEventListener("resize", function () { layout(true); });
+  cgx.onFullscreenChange(function () {
+    layout(true);
+    setTimeout(function () { layout(true); }, 90);
+  });
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function () { layout(true); });
+    ro.observe(boardEl);
+  }
+
+  /* ---------- init ---------- */
+  (function buildGridCells() {
+    var g = $("merge-grid"), i;
+    for (i = 0; i < SIZE * SIZE; i++) {
+      var d = document.createElement("div");
+      d.className = "merge-cell";
+      g.appendChild(d);
+    }
+  })();
+  (function loadStats() {
+    var s = store.get("stats", null);
+    if (s) {
+      stats.played = s.played || 0; stats.won = s.won || 0; stats.winRate = s.winRate || 0;
+      stats.highestTile = s.highestTile || 0; stats.totalMoves = s.totalMoves || 0;
+      stats.totalTimeMs = s.totalTimeMs || 0;
+    }
+  })();
+  grid = emptyGrid();
+  var saved = store.get("state", null);
+  undoSnap = store.get("undo", null);
+  if (saved && saved.board && saved.board.some(function (row) { return row.some(function (v) { return v > 0; }); })) {
+    rebuildFromValues(saved.board);
+    score = saved.score || 0;
+    bestTile = saved.bestTile || 2;
+    moves = saved.moves || 0;
+    won = !!saved.won;
+    wonAnnounced = won;
+    startedAt = saved.startedAt || Date.now();
+    segmentStart = Date.now();
+    bestAtGameStart = currentBestScore();
+    over = isGameOverValues(saved.board);
+    setStatus(over
+      ? "That saved game is over. Final score " + score + ". Start a new game when you are ready."
+      : "Welcome back - your saved game was restored. Undo is available for your last move.");
+    updateHud();
+  } else {
+    startNewGame(true);
+  }
+  layout(true);
+  window.addEventListener("load", function () { layout(true); });
+
+  return { newGame: function () { startNewGame(false); }, move: move };
 })();
 
-
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("merge-sound"));
 })();
-
 </script>
 </body>
 </html>
