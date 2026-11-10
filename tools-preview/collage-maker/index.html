@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Collage Maker - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#cm-canvas { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Collage Maker</h1>
+<p class="tool-sub">Combine your photos into one grid collage.</p>
+<div class="tool-card">
+  <p>Pick 2 to 9 photos and this tool arranges them into one neat grid collage you can download as a PNG or JPEG. Each photo is centre-cropped to fill its cell evenly, and the collage is exported at 1200 pixels wide so it stays sharp when shared.</p>
+
+  <label for="cm-files">Choose photos (2 to 9)</label>
+  <input id="cm-files" type="file" accept="image/*" multiple>
+  <div class="row2">
+    <div>
+      <label for="cm-layout">Layout</label>
+      <select id="cm-layout">
+        <option value="auto" selected>Auto grid</option>
+        <option value="cols2">2 columns</option>
+        <option value="cols3">3 columns</option>
+        <option value="cols1">1 column</option>
+      </select>
+    </div>
+    <div>
+      <label for="cm-gap">Spacing between photos (px)</label>
+      <input id="cm-gap" type="number" min="0" max="100" step="1" value="12">
+    </div>
+    <div>
+      <label for="cm-bg">Background colour</label>
+      <input id="cm-bg" type="color" value="#ffffff">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="cm-run" class="btn" type="button">Make collage</button>
+  </div>
+  <p id="cm-status" class="status" role="status"></p>
+  <div class="result" id="cm-result" hidden data-result>
+    <canvas id="cm-canvas" width="1200" height="800"></canvas>
+    <p class="kv" id="cm-meta"></p>
+    <div class="btn-row">
+      <button id="cm-dl-png" class="btn" type="button">Download PNG</button>
+      <button id="cm-dl-jpg" class="btn ghost" type="button">Download JPEG</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> your photos are processed on your device only — they are never uploaded or sent anywhere, and nothing is stored. Photos are centre-cropped to fill square cells, so the edges of wide or tall photos are trimmed; the spacing and background colour frame the grid. Very large photos are scaled down to fit the 1200-pixel-wide export.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var cmStatus = document.getElementById("cm-status");
+var cmResult = document.getElementById("cm-result");
+var cmCanvas = document.getElementById("cm-canvas");
+var cmMeta = document.getElementById("cm-meta");
+var cmPicked = [];
+
+function cmSetStatus(cmText, cmKind) {
+  cmStatus.className = cmKind ? "status " + cmKind : "status";
+  cmStatus.textContent = cmText;
+}
+
+function cmFmtSize(cmBytes) {
+  if (cmBytes < 1024) { return cmBytes + " B"; }
+  if (cmBytes < 1024 * 1024) { return (cmBytes / 1024).toFixed(1) + " KB"; }
+  return (cmBytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function cmLoadImage(cmFile) {
+  return new Promise(function (cmResolve, cmReject) {
+    var cmUrl = URL.createObjectURL(cmFile);
+    var cmImg = new Image();
+    cmImg.onload = function () { cmResolve({ img: cmImg, url: cmUrl }); };
+    cmImg.onerror = function () {
+      URL.revokeObjectURL(cmUrl);
+      cmReject(new Error("Could not read " + cmFile.name + " as an image."));
+    };
+    cmImg.src = cmUrl;
+  });
+}
+function cmBuild() {
+  if (cmPicked.length < 2) {
+    cmSetStatus("Choose at least 2 photos first.", "error");
+    return;
+  }
+  if (cmPicked.length > 9) {
+    cmSetStatus("Choose at most 9 photos — you picked " + cmPicked.length + ".", "error");
+    return;
+  }
+  var cmLayout = document.getElementById("cm-layout").value;
+  var cmGap = Number(document.getElementById("cm-gap").value);
+  if (isNaN(cmGap) || cmGap < 0) { cmGap = 0; }
+  if (cmGap > 100) { cmGap = 100; }
+  var cmBg = document.getElementById("cm-bg").value || "#ffffff";
+  cmResult.hidden = true;
+  cmSetStatus("Building your collage...", "");
+  var cmLoads = cmPicked.map(function (cmFile) { return cmLoadImage(cmFile); });
+  Promise.all(cmLoads).then(function (cmImages) {
+    var cmCount = cmImages.length;
+    var cmCols;
+    if (cmLayout === "cols1") { cmCols = 1; }
+    else if (cmLayout === "cols2") { cmCols = 2; }
+    else if (cmLayout === "cols3") { cmCols = 3; }
+    else { cmCols = Math.ceil(Math.sqrt(cmCount)); }
+    if (cmCols > cmCount) { cmCols = cmCount; }
+    var cmRows = Math.ceil(cmCount / cmCols);
+    var cmWidth = 1200;
+    var cmCell = Math.floor((cmWidth - cmGap * (cmCols + 1)) / cmCols);
+    var cmHeight = cmGap * (cmRows + 1) + cmCell * cmRows;
+    cmCanvas.width = cmWidth;
+    cmCanvas.height = cmHeight;
+    var cmCtx = cmCanvas.getContext("2d");
+    cmCtx.fillStyle = cmBg;
+    cmCtx.fillRect(0, 0, cmWidth, cmHeight);
+    cmImages.forEach(function (cmEntry, cmIdx) {
+      var cmCol = cmIdx % cmCols;
+      var cmRow = Math.floor(cmIdx / cmCols);
+      var cmX = cmGap + cmCol * (cmCell + cmGap);
+      var cmY = cmGap + cmRow * (cmCell + cmGap);
+      var cmIw = cmEntry.img.naturalWidth;
+      var cmIh = cmEntry.img.naturalHeight;
+      var cmScale = Math.max(cmCell / cmIw, cmCell / cmIh);
+      var cmDw = cmIw * cmScale;
+      var cmDh = cmIh * cmScale;
+      var cmDx = cmX + (cmCell - cmDw) / 2;
+      var cmDy = cmY + (cmCell - cmDh) / 2;
+      cmCtx.save();
+      cmCtx.beginPath();
+      cmCtx.rect(cmX, cmY, cmCell, cmCell);
+      cmCtx.clip();
+      cmCtx.drawImage(cmEntry.img, cmDx, cmDy, cmDw, cmDh);
+      cmCtx.restore();
+      URL.revokeObjectURL(cmEntry.url);
+    });
+    cmMeta.textContent = cmCount + " photos · export size " + cmWidth + " × " + cmHeight + " px";
+    cmResult.hidden = false;
+    cmCanvas.toBlob(function (cmBlob) {
+      if (cmBlob) {
+        cmMeta.textContent = cmCount + " photos · export size " + cmWidth + " × " + cmHeight +
+          " px · PNG file " + cmFmtSize(cmBlob.size);
+      }
+    }, "image/png");
+    cmSetStatus("Collage ready — download it as a PNG or JPEG below.", "ok");
+  }).catch(function (cmErr) {
+    cmSetStatus(cmErr && cmErr.message ? cmErr.message : "One of the photos could not be read.", "error");
+  });
+}
+function cmDownload(cmKind) {
+  var cmType = cmKind === "jpeg" ? "image/jpeg" : "image/png";
+  var cmFileName = cmKind === "jpeg" ? "collage.jpg" : "collage.png";
+  cmCanvas.toBlob(function (cmBlob) {
+    if (!cmBlob) {
+      cmSetStatus("Could not create the image file. Build the collage again and retry.", "error");
+      return;
+    }
+    var cmUrl = URL.createObjectURL(cmBlob);
+    var cmLink = document.createElement("a");
+    cmLink.href = cmUrl;
+    cmLink.download = cmFileName;
+    document.body.appendChild(cmLink);
+    cmLink.click();
+    document.body.removeChild(cmLink);
+    setTimeout(function () { URL.revokeObjectURL(cmUrl); }, 5000);
+    cmSetStatus("Downloaded " + cmFileName + " (" + cmFmtSize(cmBlob.size) + ").", "ok");
+  }, cmType, 0.92);
+}
+
+document.getElementById("cm-files").addEventListener("change", function () {
+  cmPicked = Array.prototype.slice.call(this.files || []);
+  cmResult.hidden = true;
+  if (cmPicked.length === 0) {
+    cmSetStatus("", "");
+  } else if (cmPicked.length < 2) {
+    cmSetStatus("One photo picked — choose at least one more to make a collage.", "error");
+  } else if (cmPicked.length > 9) {
+    cmSetStatus(cmPicked.length + " photos picked — the limit is 9.", "error");
+  } else {
+    cmSetStatus(cmPicked.length + " photos picked. Press Make collage.", "");
+  }
+});
+document.getElementById("cm-run").addEventListener("click", cmBuild);
+document.getElementById("cm-dl-png").addEventListener("click", function () { cmDownload("png"); });
+document.getElementById("cm-dl-jpg").addEventListener("click", function () { cmDownload("jpeg"); });
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="collage-maker"></script>
+</body>
+</html>
