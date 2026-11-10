@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image to Base64 - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#ib-preview, #ib-backimg { max-width: 100%; max-height: 260px; border-radius: 8px; }
+#ib-out, #ib-in { width: 100%; box-sizing: border-box; font-family: monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image to Base64</h1>
+<p class="tool-sub">Convert an image to a Base64 string, and back, on your device.</p>
+<div class="tool-card">
+  <p>Developers and website builders often need an image as text — for example to embed a small icon directly inside HTML or CSS. The first part below turns an image file into its Base64 data URL; the second part does the reverse, turning a pasted Base64 string or data URL back into a viewable, downloadable image.</p>
+
+  <h2>Image to Base64</h2>
+  <label for="ib-file">Choose an image</label>
+  <input id="ib-file" type="file" accept="image/*">
+  <p id="ib-status" class="status" role="status"></p>
+  <div class="result" id="ib-result" hidden data-result>
+    <p class="kv" id="ib-meta"></p>
+    <img id="ib-preview" alt="Preview of the chosen image">
+    <label for="ib-out">Base64 data URL</label>
+    <textarea id="ib-out" rows="6" readonly></textarea>
+    <div class="btn-row">
+      <button id="ib-copy" class="btn" type="button">Copy Base64</button>
+    </div>
+    <p class="kv" id="ib-count"></p>
+  </div>
+  <h2>Base64 back to image</h2>
+  <label for="ib-in">Paste a Base64 string or a full data URL</label>
+  <textarea id="ib-in" rows="5" placeholder="data:image/png;base64,iVBORw0KGgo... or just the Base64 text"></textarea>
+  <div class="btn-row">
+    <button id="ib-preview-btn" class="btn" type="button">Preview image</button>
+  </div>
+  <p id="ib-status2" class="status" role="status"></p>
+  <div class="result" id="ib-result2" hidden data-result>
+    <img id="ib-backimg" alt="Image decoded from the pasted Base64">
+    <p class="kv" id="ib-meta2"></p>
+    <div class="btn-row">
+      <button id="ib-download" class="btn" type="button">Download image</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> files never leave your device — the conversion happens in this browser tab and nothing is uploaded anywhere. Base64 makes data about one third larger than the original file, so it suits small images like icons and logos; large photos are better kept as normal files. When you paste plain Base64 without a data URL header, the tool assumes a PNG image — if the preview does not appear, paste the full data URL (starting with data:image/...) instead.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ibStatus = document.getElementById("ib-status");
+var ibResult = document.getElementById("ib-result");
+var ibMeta = document.getElementById("ib-meta");
+var ibPreview = document.getElementById("ib-preview");
+var ibOut = document.getElementById("ib-out");
+var ibCount = document.getElementById("ib-count");
+var ibStatus2 = document.getElementById("ib-status2");
+var ibResult2 = document.getElementById("ib-result2");
+var ibBackImg = document.getElementById("ib-backimg");
+var ibMeta2 = document.getElementById("ib-meta2");
+var ibBackUrl = "";
+function ibFormatBytes(bytes) {
+  if (bytes < 1024) { return bytes + " bytes"; }
+  if (bytes < 1024 * 1024) { return (bytes / 1024).toFixed(1) + " KB"; }
+  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function ibHandleFile() {
+  var ibFileInput = document.getElementById("ib-file");
+  var ibFile = ibFileInput.files && ibFileInput.files[0];
+  ibResult.hidden = true;
+  if (!ibFile) {
+    ibStatus.className = "status";
+    ibStatus.textContent = "";
+    return;
+  }
+  if (ibFile.type.indexOf("image/") !== 0) {
+    ibStatus.className = "status error";
+    ibStatus.textContent = "That file is not an image. Choose a PNG, JPG, GIF, WebP or similar image file.";
+    return;
+  }
+  var ibReader = new FileReader();
+  ibReader.onload = function () {
+    var ibDataUrl = String(ibReader.result || "");
+    var ibProbe = new Image();
+    ibProbe.onload = function () {
+      ibMeta.textContent = "File: " + ibFile.name + " · Size: " + ibFormatBytes(ibFile.size) + " · Dimensions: " + ibProbe.naturalWidth + " × " + ibProbe.naturalHeight + " pixels";
+      ibPreview.src = ibDataUrl;
+      ibOut.value = ibDataUrl;
+      ibCount.textContent = "Base64 length: " + ibDataUrl.length.toLocaleString("en-IN") + " characters (the text is about " + Math.round((ibDataUrl.length / Math.max(1, ibFile.size)) * 100 - 100) + "% larger than the file).";
+      ibResult.hidden = false;
+      ibStatus.className = "status ok";
+      ibStatus.textContent = "Converted. Copy the Base64 text below.";
+    };
+    ibProbe.onerror = function () {
+      ibStatus.className = "status error";
+      ibStatus.textContent = "The browser could not read that image file. It may be damaged or in a format this browser cannot display.";
+    };
+    ibProbe.src = ibDataUrl;
+  };
+  ibReader.onerror = function () {
+    ibStatus.className = "status error";
+    ibStatus.textContent = "The file could not be read. Try again with another image.";
+  };
+  ibReader.readAsDataURL(ibFile);
+}
+function ibCopy() {
+  var ibText = ibOut.value;
+  if (!ibText) { return; }
+  function ibDone() {
+    ibStatus.className = "status ok";
+    ibStatus.textContent = "Base64 copied to the clipboard.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ibText).then(ibDone, function () {
+      ibOut.select();
+      document.execCommand("copy");
+      ibDone();
+    });
+  } else {
+    ibOut.select();
+    document.execCommand("copy");
+    ibDone();
+  }
+}
+
+function ibShowBack() {
+  var ibRaw = document.getElementById("ib-in").value.trim();
+  ibResult2.hidden = true;
+  if (!ibRaw) {
+    ibStatus2.className = "status error";
+    ibStatus2.textContent = "Paste a Base64 string or data URL first.";
+    return;
+  }
+  var ibClean = ibRaw.replace(/\s+/g, "");
+  var ibUrl;
+  if (ibClean.indexOf("data:") === 0) {
+    ibUrl = ibClean;
+  } else {
+    if (!/^[A-Za-z0-9+/=]+$/.test(ibClean)) {
+      ibStatus2.className = "status error";
+      ibStatus2.textContent = "That text does not look like Base64. Base64 uses only A–Z, a–z, 0–9, + / and = padding.";
+      return;
+    }
+    ibUrl = "data:image/png;base64," + ibClean;
+  }
+  var ibProbe = new Image();
+  ibProbe.onload = function () {
+    ibBackUrl = ibUrl;
+    ibBackImg.src = ibUrl;
+    var ibMimePart = ibUrl.slice(5, ibUrl.indexOf(";"));
+    ibMeta2.textContent = "Decoded image: " + ibProbe.naturalWidth + " × " + ibProbe.naturalHeight + " pixels · Type: " + (ibMimePart || "unknown");
+    ibResult2.hidden = false;
+    ibStatus2.className = "status ok";
+    ibStatus2.textContent = "Image decoded. You can download it below.";
+  };
+  ibProbe.onerror = function () {
+    ibStatus2.className = "status error";
+    ibStatus2.textContent = "That text could not be decoded as an image. If it is plain Base64 of a JPG or another format, paste the full data URL (starting with data:image/...) so the type is clear.";
+  };
+  ibProbe.src = ibUrl;
+}
+function ibDownloadBack() {
+  if (!ibBackUrl) { return; }
+  var ibMime = "image/png";
+  var ibMatch = ibBackUrl.match(/^data:([^;,]+)/);
+  if (ibMatch) { ibMime = ibMatch[1]; }
+  var ibExt = "png";
+  if (ibMime === "image/jpeg") { ibExt = "jpg"; }
+  else if (ibMime === "image/gif") { ibExt = "gif"; }
+  else if (ibMime === "image/webp") { ibExt = "webp"; }
+  else if (ibMime === "image/svg+xml") { ibExt = "svg"; }
+  else if (ibMime === "image/bmp") { ibExt = "bmp"; }
+  var ibLink = document.createElement("a");
+  ibLink.href = ibBackUrl;
+  ibLink.download = "decoded-image." + ibExt;
+  document.body.appendChild(ibLink);
+  ibLink.click();
+  document.body.removeChild(ibLink);
+  ibStatus2.className = "status ok";
+  ibStatus2.textContent = "Image downloaded as decoded-image." + ibExt + ".";
+}
+
+document.getElementById("ib-file").addEventListener("change", ibHandleFile);
+document.getElementById("ib-copy").addEventListener("click", ibCopy);
+document.getElementById("ib-preview-btn").addEventListener("click", ibShowBack);
+document.getElementById("ib-download").addEventListener("click", ibDownloadBack);
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-to-base64"></script>
+</body>
+</html>
