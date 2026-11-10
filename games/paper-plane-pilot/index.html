@@ -36,12 +36,14 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
 .cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
 .fs-exit { display:none; }
 .cgx-fs:fullscreen .fs-exit { display:inline-block; position:absolute; top:0.6rem; right:0.6rem; z-index:5; }
+  .cgx-fs:fullscreen h2 { display:none; }
+  .cgx-fs:fullscreen #fs-desc { display:none; }
 .stats-line { color:#555; font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
 .keys-note { color:#555; font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
 /* ===== Paper Plane Pilot ===== */
 .board-wrap { position:relative; width:min(600px, 100%); margin:1rem auto 0; }
 #plane-board { display:block; width:100%; aspect-ratio:480 / 360; margin:0; background:#7dd3fc; border:2px solid var(--navy); box-sizing:border-box; touch-action:none; user-select:none; -webkit-user-select:none; }
-.cgx-fs:fullscreen .board-wrap { width:min(94vw, 116dvh, 920px); flex:none; margin-top:0.5rem; }
+.cgx-fs:fullscreen .board-wrap { width:min(94vw, calc((100dvh - 160px) * 4 / 3), 920px); flex:none; margin-top:0.5rem; }
 .plane-prog { max-width:640px; margin:0.7rem auto 0; padding:0 0.4rem; }
 .plane-prog-row { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; font-size:0.88rem; color:#555; font-weight:600; }
 .plane-prog-track { height:10px; background:#dbe3ee; border:1px solid #cbd5e1; border-radius:999px; overflow:hidden; margin-top:0.3rem; }
