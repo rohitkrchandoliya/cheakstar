@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>PDF Delete Pages - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+#pd-list label { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+#pd-list canvas { max-width: 72px; height: auto; border: 1px solid rgba(128, 128, 128, 0.6); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF Delete Pages</h1>
+<p class="tool-sub">Remove pages from a PDF and download the trimmed file.</p>
+<div class="tool-card">
+  <p>Choose a PDF, tick the pages you want to remove, and this tool builds a new PDF with only the remaining pages, in their original order. Handy for dropping a blank page, a cover sheet, or pages that were scanned by mistake.</p>
+
+  <label for="pd-file">Choose a PDF file</label>
+  <input id="pd-file" type="file" accept="application/pdf,.pdf">
+  <div id="pd-list"></div>
+  <div class="btn-row">
+    <button id="pd-run" class="btn" type="button" disabled>Delete marked pages and build new PDF</button>
+    <button id="pd-check-all" class="btn ghost" type="button" disabled>Mark all</button>
+    <button id="pd-check-none" class="btn ghost" type="button" disabled>Mark none</button>
+  </div>
+  <p id="pd-status" class="status" role="status">Choose a PDF file to begin.</p>
+  <div class="result" id="pd-result" hidden data-result>
+    <p class="big" id="pd-headline"></p>
+    <div id="pd-rows"></div>
+    <div class="btn-row">
+      <a id="pd-download" class="btn" href="#" download="trimmed.pdf">Download trimmed PDF</a>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> everything runs on your device, in this browser tab — your PDF is never uploaded to any server, and nothing about it is sent anywhere. Password-protected or damaged PDFs cannot be opened, and the tool will say so plainly. A PDF must keep at least one page, so marking every page for deletion is refused. The original file on your device is never changed; you download a new file.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pdStatus = document.getElementById("pd-status");
+var pdResult = document.getElementById("pd-result");
+var pdHeadline = document.getElementById("pd-headline");
+var pdRows = document.getElementById("pd-rows");
+var pdList = document.getElementById("pd-list");
+var pdRunBtn = document.getElementById("pd-run");
+var pdCheckAllBtn = document.getElementById("pd-check-all");
+var pdCheckNoneBtn = document.getElementById("pd-check-none");
+var pdDownload = document.getElementById("pd-download");
+var pdBytes = null;
+var pdPageCount = 0;
+var pdFileName = "";
+var pdUrl = null;
+
+function pdSetStatus(text, kind) {
+  pdStatus.textContent = text;
+  pdStatus.className = kind ? "status " + kind : "status";
+}
+
+function pdAddRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  pdRows.appendChild(p);
+}
+
+function pdBoxes() {
+  return pdList.querySelectorAll("input[type='checkbox']");
+}
+
+function pdMarkedPages() {
+  var marked = [];
+  var boxes = pdBoxes();
+  for (var i = 0; i < boxes.length; i++) {
+    if (boxes[i].checked) { marked.push(Number(boxes[i].value)); }
+  }
+  return marked;
+}
+
+function pdBuildList() {
+  pdList.innerHTML = "";
+  for (var n = 1; n <= pdPageCount; n++) {
+    (function (pageNum) {
+      var row = document.createElement("label");
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = String(pageNum);
+      var text = document.createElement("span");
+      text.textContent = "Page " + pageNum;
+      var thumb = document.createElement("span");
+      thumb.id = "pd-thumb-" + pageNum;
+      row.appendChild(box);
+      row.appendChild(text);
+      row.appendChild(thumb);
+      pdList.appendChild(row);
+    })(n);
+  }
+}
+/* Bonus only: small page previews beside the numbers, drawn with PDF.js.
+   Any failure here is ignored on purpose — the checkbox list is the tool. */
+function pdRenderThumbs() {
+  try {
+    if (typeof pdfjsLib === "undefined" || !pdBytes) { return; }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    var loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(pdBytes.slice(0)) });
+    loadingTask.promise.then(function (pdf) {
+      for (var n = 1; n <= pdf.numPages; n++) {
+        (function (pageNum) {
+          pdf.getPage(pageNum).then(function (page) {
+            var viewport = page.getViewport({ scale: 0.3 });
+            var canvas = document.createElement("canvas");
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            var context = canvas.getContext("2d");
+            page.render({ canvasContext: context, viewport: viewport }).promise.then(function () {
+              var slot = document.getElementById("pd-thumb-" + pageNum);
+              if (slot) { slot.appendChild(canvas); }
+            }).catch(function () { /* previews are a bonus; ignore */ });
+          }).catch(function () { /* previews are a bonus; ignore */ });
+        })(n);
+      }
+    }).catch(function () { /* previews are a bonus; ignore */ });
+  } catch (e) { /* previews are a bonus; ignore */ }
+}
+
+document.getElementById("pd-file").addEventListener("change", function (evt) {
+  var files = evt.target.files || [];
+  pdResult.hidden = true;
+  pdList.innerHTML = "";
+  pdBytes = null;
+  pdPageCount = 0;
+  pdRunBtn.disabled = true;
+  pdCheckAllBtn.disabled = true;
+  pdCheckNoneBtn.disabled = true;
+  if (files.length === 0) { pdSetStatus("Choose a PDF file to begin."); return; }
+  if (typeof PDFLib === "undefined") {
+    pdSetStatus("The PDF library (pdf-lib) did not load. Check your connection and reload the page.", "error");
+    return;
+  }
+  var file = files[0];
+  pdFileName = file.name;
+  pdSetStatus("Reading " + file.name + "...");
+  var reader = new FileReader();
+  reader.onload = function () {
+    pdBytes = reader.result;
+    PDFLib.PDFDocument.load(pdBytes.slice(0)).then(function (doc) {
+      pdPageCount = doc.getPageCount();
+      pdBuildList();
+      pdRunBtn.disabled = false;
+      pdCheckAllBtn.disabled = false;
+      pdCheckNoneBtn.disabled = false;
+      pdSetStatus(file.name + " has " + pdPageCount + (pdPageCount === 1 ? " page" : " pages") +
+        ". Tick the pages to delete, then build the new PDF.", "ok");
+      pdRenderThumbs();
+    }).catch(function () {
+      pdBytes = null;
+      pdSetStatus("Could not read " + file.name + " as a PDF. It may be damaged or password-protected.", "error");
+    });
+  };
+  reader.onerror = function () { pdSetStatus("Could not read " + file.name + ".", "error"); };
+  reader.readAsArrayBuffer(file);
+  evt.target.value = "";
+});
+pdCheckAllBtn.addEventListener("click", function () {
+  var boxes = pdBoxes();
+  for (var i = 0; i < boxes.length; i++) { boxes[i].checked = true; }
+});
+pdCheckNoneBtn.addEventListener("click", function () {
+  var boxes = pdBoxes();
+  for (var i = 0; i < boxes.length; i++) { boxes[i].checked = false; }
+});
+
+pdRunBtn.addEventListener("click", function () {
+  if (!pdBytes || pdPageCount === 0) { return; }
+  if (typeof PDFLib === "undefined") {
+    pdSetStatus("The PDF library (pdf-lib) did not load. Check your connection and reload the page.", "error");
+    return;
+  }
+  var marked = pdMarkedPages();
+  if (marked.length === 0) {
+    pdResult.hidden = true;
+    pdSetStatus("No pages are marked. Tick at least one page to delete, or leave the file as it is.", "error");
+    return;
+  }
+  if (marked.length >= pdPageCount) {
+    pdResult.hidden = true;
+    pdSetStatus("Every page is marked for deletion, and a PDF must keep at least one page. Unmark at least one page and try again — nothing was downloaded.", "error");
+    return;
+  }
+  var keep = [];
+  for (var n = 1; n <= pdPageCount; n++) {
+    if (marked.indexOf(n) === -1) { keep.push(n - 1); }
+  }
+  pdSetStatus("Building the new PDF...");
+  pdRunBtn.disabled = true;
+  PDFLib.PDFDocument.load(pdBytes.slice(0)).then(function (src) {
+    return PDFLib.PDFDocument.create().then(function (out) {
+      return out.copyPages(src, keep).then(function (pages) {
+        pages.forEach(function (page) { out.addPage(page); });
+        return out.save();
+      });
+    });
+  }).then(function (bytes) {
+    if (pdUrl) { URL.revokeObjectURL(pdUrl); }
+    var blob = new Blob([bytes], { type: "application/pdf" });
+    pdUrl = URL.createObjectURL(blob);
+    var base = pdFileName.replace(/\.pdf$/i, "");
+    pdDownload.href = pdUrl;
+    pdDownload.download = base + "-trimmed.pdf";
+    pdRows.innerHTML = "";
+    pdHeadline.textContent = keep.length + (keep.length === 1 ? " page" : " pages") + " remaining";
+    pdAddRow("Original file", pdFileName);
+    pdAddRow("Pages before", String(pdPageCount));
+    pdAddRow("Pages deleted", String(marked.length) + " (page" + (marked.length === 1 ? "" : "s") + " " + marked.join(", ") + ")");
+    pdAddRow("Pages remaining", String(keep.length));
+    pdAddRow("New file size", (blob.size / 1024).toFixed(1) + " KB");
+    pdResult.hidden = false;
+    pdSetStatus("Done. Your trimmed PDF is ready to download below.", "ok");
+    pdRunBtn.disabled = false;
+  }).catch(function () {
+    pdSetStatus("Building the new PDF failed. The file may be damaged or password-protected.", "error");
+    pdRunBtn.disabled = false;
+  });
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="pdf-delete-pages"></script>
+</body>
+</html>
