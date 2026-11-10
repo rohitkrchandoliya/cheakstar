@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Aim Trainer - Cheakstar Games</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  h3 { color: var(--navy); margin-top: 1.5rem; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+  .error { color: #b91c1c; }
+  .ok { color: #166534; }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .limits li { margin: 0.25rem 0; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button:hover { background: #123a5c; }
+  button:disabled { background: #9aa5b1; cursor: default; }
+  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  label { font-weight: 600; }
+  .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
+  .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
+  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .game { display: none; }
+  .game.active { display: block; }
+  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+
+  /* Wave 1 games (shared) */
+  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
+  #snake-board { width: min(440px, 100%); }
+  #brk-board { width: min(480px, 100%); }
+  #flap-board { width: min(400px, 100%); }
+  #traf-board { width: min(320px, 100%); }
+  #tgt-board { width: min(480px, 100%); }
+  #stk-board { width: min(360px, 100%); }
+  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
+  .snake-keys button { margin: 0; padding: 0.6rem 0; }
+  .snake-keys .k-up { grid-column: 2; }
+  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
+  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
+  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
+  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
+  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
+
+  /* Whack-a-Bug */
+  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
+  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
+  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
+  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
+  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
+
+  /* Simon Sequence */
+  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
+  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
+  .sim-pad.p0 { background: #16a34a; }
+  .sim-pad.p1 { background: #dc2626; }
+  .sim-pad.p2 { background: #eab308; }
+  .sim-pad.p3 { background: #2563eb; }
+  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
+  .sim-pad:disabled { cursor: default; }
+
+  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  body { max-width: 860px; }
+  .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+  .play-bar .spacer { flex: 1; }
+  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .btn-link:hover { background: #d1d5db; }
+  .fs-exit { display: none; }
+  .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
+  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+  .play-stage:fullscreen .fs-desc { display: none; }
+  .play-stage:fullscreen .game-note { display: none; }
+  .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
+  .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
+  .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
+  .play-stage:fullscreen .board { margin-top: 0.5rem; }
+  .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
+  .play-stage:fullscreen button { margin-top: 0.35rem; }
+  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
+  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
+  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
+  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
+  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
+  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
+  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
+  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
+  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  @media (max-height: 640px) {
+    .play-stage:fullscreen h2 { display: none; }
+    .play-stage:fullscreen .status { min-height: 1.1em; }
+  }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+
+  /* Wave 2 games (shared) */
+  #race-board { width: min(480px, 100%); }
+  #space-board { width: min(400px, 100%); }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
+  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
+  #mine-board.mine-int { width: min(520px, 100%); }
+  #mine-board.mine-exp { width: min(720px, 100%); }
+  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
+  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
+  .mine-cell.flag { background: #fde68a; }
+  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
+  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
+  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
+  .slide-tile.home { background: #166534; }
+  #hang-board { width: min(560px, 100%); margin: 0 auto; }
+  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
+  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
+  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
+  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
+  .hang-key.ok { background: #166534; }
+  .hang-key.bad { background: #b91c1c; }
+  .hang-key:disabled { opacity: 0.9; cursor: default; }
+  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
+  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
+  .word-cell.sel { background: #fde68a; }
+  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
+  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
+  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
+  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
+  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
+  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
+  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
+  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
+  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
+  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
+  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
+  .flood-cell { aspect-ratio: 1; }
+  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
+  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
+  @media (max-width: 560px) {
+    .mine-cell { font-size: 0.65rem; }
+    .word-cell { font-size: 0.78rem; }
+    .slide-tile { font-size: 1rem; }
+    #hang-word { font-size: 1.15rem; }
+    #hang-keys { grid-template-columns: repeat(7, 1fr); }
+  }
+  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
+  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
+  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
+  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
+  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
+  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
+  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
+  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
+  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
+  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
+  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
+  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
+  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+
+
+  /* Wave 3 games (shared) */
+  #park-board, #plane-board, #arch-board, #aim-board { width: min(480px, 100%); }
+  #pin-board { width: min(400px, 100%); }
+  /* Sudoku */
+  #sud-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 0; margin: 1rem auto 0; width: min(450px, 100%); border: 3px solid var(--navy); background: var(--navy); }
+  .sud-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-size: 1.25rem; font-weight: 600; padding: 0; margin: 0; cursor: pointer; line-height: 1; position: relative; }
+  .sud-cell.br { border-right: 2px solid var(--navy); }
+  .sud-cell.bb { border-bottom: 2px solid var(--navy); }
+  .sud-cell.given { font-weight: 800; background: #eef2f7; cursor: pointer; }
+  .sud-cell.peer { background: #f1f5f9; }
+  .sud-cell.same { background: #fde68a; }
+  .sud-cell.sel { background: #fbbf24; }
+  .sud-cell.bad { background: #fecaca; }
+  .sud-cell .sud-notes { display: grid; grid-template-columns: repeat(3, 1fr); font-size: 0.5rem; font-weight: 600; color: #64748b; line-height: 1.15; width: 100%; }
+  .sud-cell .sud-notes span { text-align: center; }
+  #sud-pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 450px; margin: 0.8rem auto 0; }
+  .sud-pad-btn { margin: 0; padding: 0.55rem 0; font-size: 1.1rem; font-weight: 700; }
+  /* Chess Puzzles */
+  #ches-board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0; margin: 1rem auto 0; width: min(440px, 100%); border: 3px solid var(--navy); }
+  .ches-sq { aspect-ratio: 1; border: none; font-size: 1.7rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .ches-sq.light { background: #f1e7c8; }
+  .ches-sq.dark { background: #9db38a; }
+  .ches-sq.sel { background: #fbbf24 !important; }
+  .ches-sq.hint { box-shadow: inset 0 0 0 4px #c9a227; }
+  .ches-sq.last { box-shadow: inset 0 0 0 3px #2563eb; }
+  .ches-sq .pw { color: #f8fafc; text-shadow: 0 0 3px #111827, 0 0 3px #111827, 1px 1px 2px #111827; }
+  .ches-sq .pb { color: #111827; text-shadow: 0 0 3px #f8fafc, 0 0 2px #f8fafc; }
+  #ches-line { text-align: center; font-weight: 600; color: var(--navy); min-height: 1.4em; margin-top: 0.6rem; }
+  /* Solitaire */
+  #sol-board { margin-top: 0.5rem; }
+  .sol-toprow { display: flex; gap: 10px; align-items: flex-start; margin-top: 0.75rem; }
+  .sol-gap { flex: 0 0 18px; }
+  .sol-pile { width: 64px; height: 90px; border: 2px dashed #9aa5b1; border-radius: 8px; position: relative; flex: 0 0 auto; background: #f8fafc; }
+  .sol-pile.filled { border-style: solid; border-color: transparent; background: transparent; }
+  .sol-cols { display: flex; gap: 10px; margin-top: 14px; align-items: flex-start; }
+  .sol-col { width: 64px; position: relative; flex: 0 0 auto; min-height: 90px; }
+  .sol-card { width: 64px; height: 90px; border: 1.5px solid #334155; border-radius: 8px; background: #fff; position: absolute; left: 0; padding: 3px 5px; box-sizing: border-box; font-weight: 700; font-size: 0.95rem; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .sol-card.inpile { position: absolute; top: 0; left: 0; }
+  .sol-card.red { color: #b91c1c; }
+  .sol-card.black { color: #111827; }
+  .sol-card.down { background: repeating-linear-gradient(45deg, #0a2540 0 6px, #123a5c 6px 12px); border-color: var(--gold); cursor: default; }
+  .sol-card.sel { outline: 3px solid var(--gold); outline-offset: 1px; z-index: 50 !important; }
+  .sol-card .sol-suit { font-size: 1.15rem; line-height: 1; }
+  @media (max-width: 560px) {
+    .sud-cell { font-size: 1rem; }
+    .sud-cell .sud-notes { font-size: 0.38rem; }
+    .ches-sq { font-size: 1.15rem; }
+    .sol-pile, .sol-col, .sol-card { width: 44px; }
+    .sol-pile, .sol-card { height: 62px; }
+    .sol-col { min-height: 62px; }
+    .sol-card { font-size: 0.72rem; padding: 2px 3px; }
+    .sol-card .sol-suit { font-size: 0.85rem; }
+    .sol-gap { flex-basis: 6px; }
+    .sol-toprow, .sol-cols { gap: 5px; }
+  }
+  .play-stage:fullscreen #park-board, .play-stage:fullscreen #plane-board, .play-stage:fullscreen #arch-board, .play-stage:fullscreen #aim-board { width: min(80vmin, 680px); }
+  .play-stage:fullscreen #pin-board { width: min(47.5vmin, 400px); }
+  .play-stage:fullscreen #sud-board { width: min(56vmin, 470px); }
+  .play-stage:fullscreen #sud-pad { margin-top: 0.4rem; }
+  .play-stage:fullscreen #ches-board { width: min(52vmin, 470px); margin-top: 0.4rem; }
+  .play-stage:fullscreen label[for="ches-pick"] { display: none; }
+  .play-stage:fullscreen #ches-pick { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .play-stage:fullscreen #ches-line { margin-top: 0.25rem; }
+  /* Wave 3 reconciliation additions */
+  .ches-sq.white-piece { color: #f8fafc; text-shadow: 0 0 3px #111827, 0 0 3px #111827, 1px 1px 2px #111827; }
+  .ches-sq.black-piece { color: #111827; text-shadow: 0 0 3px #f8fafc, 0 0 2px #f8fafc; }
+  .sud-label { display: block; font-weight: 700; margin-top: 0.8rem; }
+  .sol-card .sol-corner { display: block; }
+  .sol-card .sol-big { display: block; text-align: center; font-size: 1.5rem; line-height: 1.6; }
+  .sol-count { position: absolute; right: -6px; top: -6px; background: var(--gold); color: #111827; border-radius: 999px; font-size: 0.7rem; font-weight: 800; padding: 1px 6px; z-index: 60; }
+  .sol-pile.empty { display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #64748b; }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Aim Trainer</h1>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+</header>
+<div class="play-bar">
+  <a class="btn-link" href="../index.html">&larr; All games</a>
+  <span class="spacer"></span>
+  <button type="button" id="fs-btn">Play fullscreen</button>
+</div>
+<section class="play-stage" id="stage">
+  <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
+  <h2>Aim Trainer</h2>
+  <p class="fs-desc">Reaction mode: press Start, wait for the board to turn green, and click as fast as you can - clicking early is a fault. Five rounds give your average and best time. Precision mode: 30 seconds of targets that fade after about a second; the scoreboard tracks hits, accuracy and streaks.</p>
+  <div class="scorebar"><span>Mode: <span id="aim-mode-label">Reaction</span></span><span id="aim-stat">Press Start, then click as soon as the board turns green.</span></div>
+  <label class="sud-label" for="aim-mode">Mode</label>
+  <select id="aim-mode"><option value="reaction">Reaction - click when it turns green</option><option value="precision">Precision - 30 seconds of targets</option></select>
+  <canvas class="board game-canvas" id="aim-board" width="480" height="360"></canvas>
+  <p class="status" id="aim-status">Reaction: wait for green, click too early and the round is a fault. Five rounds per game.</p>
+  <div>
+    <button type="button" id="aim-start">Start</button>
+    <button type="button" id="aim-new">New game</button>
+  </div>
+</section>
+<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Honest note: reaction times include your screen and input lag, so treat them as a fun personal measure rather than a laboratory number.</p>
+<script>
+"use strict";
+function $(id) { return document.getElementById(id); }
+/* ================= G29 AIM TRAINER ================= */
+var AimTrainer = (function () {
+  var aimW = 480, aimH = 360;
+  var aimMode = "reaction";
+  var aimPhase = "ready"; /* ready | waiting | green | precision | over */
+  var aimRunning = false, aimLastTs = 0;
+  var aimTimer = null, aimGreenAt = 0;
+  var aimRounds = [], aimFaults = 0;
+  var aimTimeLeft = 0, aimTargets = [], aimHits = 0, aimShots = 0, aimStreak = 0, aimBestStreak = 0, aimHudIn = 0;
+  var aimCtx = $("aim-board").getContext("2d");
+
+  function aimStatText() {
+    if (aimMode === "reaction") {
+      if (!aimRounds.length && !aimFaults) return "Press Start, then click as soon as the board turns green.";
+      var parts = [];
+      if (aimRounds.length) {
+        var sum = aimRounds.reduce(function (a, b) { return a + b; }, 0);
+        parts.push("Average " + Math.round(sum / aimRounds.length) + " ms");
+        parts.push("Best " + Math.min.apply(null, aimRounds) + " ms");
+        parts.push("Round " + Math.min(5, aimRounds.length + aimFaults + (aimPhase === "waiting" || aimPhase === "green" ? 1 : 0)) + " of 5");
+      }
+      if (aimFaults) parts.push("Faults " + aimFaults);
+      return parts.join(" - ") || "Press Start, then click as soon as the board turns green.";
+    }
+    var acc = aimShots ? Math.round(aimHits * 100 / aimShots) : 100;
+    return "Time " + Math.ceil(aimTimeLeft) + "s - Hits " + aimHits + " - Accuracy " + acc + "% - Best streak " + aimBestStreak;
+  }
+  function aimSyncHud() {
+    $("aim-mode-label").textContent = aimMode === "reaction" ? "Reaction" : "Precision";
+    $("aim-stat").textContent = aimStatText();
+  }
+  function aimReset() {
+    if (aimTimer) { clearTimeout(aimTimer); aimTimer = null; }
+    aimPhase = "ready";
+    aimRounds = []; aimFaults = 0;
+    aimTimeLeft = 30; aimTargets = []; aimHits = 0; aimShots = 0; aimStreak = 0; aimBestStreak = 0;
+    aimSyncHud();
+    aimDraw();
+  }
+  function aimDraw() {
+    var ctx = aimCtx, i, t;
+    if (aimMode === "reaction") {
+      ctx.fillStyle = aimPhase === "green" ? "#16a34a" : (aimPhase === "waiting" ? "#b91c1c" : "#0b2036");
+      ctx.fillRect(0, 0, aimW, aimH);
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 22px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      if (aimPhase === "waiting") ctx.fillText("Wait for green...", aimW / 2, aimH / 2);
+      else if (aimPhase === "green") ctx.fillText("CLICK!", aimW / 2, aimH / 2);
+      else if (aimPhase === "over") {
+        ctx.font = "700 24px system-ui, sans-serif";
+        ctx.fillText("Game over", aimW / 2, 150);
+        ctx.font = "600 16px system-ui, sans-serif";
+        if (aimRounds.length) {
+          var sum = aimRounds.reduce(function (a, b) { return a + b; }, 0);
+          ctx.fillText("Average " + Math.round(sum / aimRounds.length) + " ms - Best " + Math.min.apply(null, aimRounds) + " ms", aimW / 2, 182);
+        }
+        ctx.fillText("Faults: " + aimFaults, aimW / 2, 208);
+      } else ctx.fillText("Press Start", aimW / 2, aimH / 2);
+      return;
+    }
+    ctx.fillStyle = "#0b2036";
+    ctx.fillRect(0, 0, aimW, aimH);
+    ctx.strokeStyle = "rgba(148,163,184,0.25)";
+    ctx.lineWidth = 1;
+    for (i = 0; i <= 8; i++) { ctx.beginPath(); ctx.moveTo(i * 60, 0); ctx.lineTo(i * 60, aimH); ctx.stroke(); }
+    for (i = 0; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(0, i * 60); ctx.lineTo(aimW, i * 60); ctx.stroke(); }
+    for (i = 0; i < aimTargets.length; i++) {
+      t = aimTargets[i];
+      var rings = [[t.r, "#dc2626"], [t.r * 0.66, "#f8fafc"], [t.r * 0.33, "#dc2626"]];
+      for (var j = 0; j < rings.length; j++) {
+        ctx.fillStyle = rings[j][1];
+        ctx.beginPath(); ctx.arc(t.x, t.y, rings[j][0], 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.fillStyle = "#fff";
+    ctx.font = "700 20px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    if (aimPhase === "ready") ctx.fillText("Press Start", aimW / 2, aimH / 2);
+    if (aimPhase === "over") {
+      ctx.fillStyle = "rgba(7,26,46,0.7)";
+      ctx.fillRect(0, 0, aimW, aimH);
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 24px system-ui, sans-serif";
+      ctx.fillText("Time up!", aimW / 2, 158);
+      ctx.font = "600 16px system-ui, sans-serif";
+      ctx.fillText(aimStatText(), aimW / 2, 190);
+    }
+  }
+  function aimSpawnTarget() {
+    var r = 16 + Math.random() * 10;
+    aimTargets.push({
+      x: r + 6 + Math.random() * (aimW - 2 * r - 12),
+      y: r + 6 + Math.random() * (aimH - 2 * r - 12),
+      r: r, ttl: 1.2
+    });
+  }
+  function aimNextWait() {
+    aimPhase = "waiting";
+    aimTimer = setTimeout(function () {
+      aimPhase = "green";
+      aimGreenAt = performance.now();
+      aimDraw();
+    }, 900 + Math.random() * 2400);
+    aimDraw();
+  }
+  function aimFinishReaction() {
+    aimPhase = "over";
+    aimSetRunning(false);
+    aimSyncHud();
+    aimDraw();
+    var text = "Five rounds done. ";
+    if (aimRounds.length) {
+      var sum = aimRounds.reduce(function (a, b) { return a + b; }, 0);
+      text += "Average " + Math.round(sum / aimRounds.length) + " ms, best " + Math.min.apply(null, aimRounds) + " ms, faults " + aimFaults + ".";
+    } else text += "All rounds were faults - wait for the green!";
+    $("aim-status").textContent = text;
+  }
+  function aimUpdate(dt) {
+    if (aimMode === "precision" && aimPhase === "precision") {
+      aimTimeLeft -= dt;
+      for (var i = aimTargets.length - 1; i >= 0; i--) {
+        aimTargets[i].ttl -= dt;
+        if (aimTargets[i].ttl <= 0) { aimTargets.splice(i, 1); aimStreak = 0; }
+      }
+      while (aimTargets.length < 3) aimSpawnTarget();
+      if (aimTimeLeft <= 0) {
+        aimTimeLeft = 0;
+        aimPhase = "over";
+        aimSetRunning(false);
+        $("aim-status").textContent = "Time up! " + aimStatText() + ". Press New game for another round.";
+      }
+      aimHudIn -= dt;
+      if (aimHudIn <= 0) { aimHudIn = 0.2; aimSyncHud(); }
+    }
+  }
+  function aimLoop(ts) {
+    if (!aimRunning) return;
+    if (!aimLastTs) aimLastTs = ts;
+    var dt = Math.min(0.05, (ts - aimLastTs) / 1000);
+    aimLastTs = ts;
+    aimUpdate(dt);
+    aimDraw();
+    if (aimRunning) requestAnimationFrame(aimLoop);
+  }
+  function aimSetRunning(on) {
+    if (aimPhase === "over") on = false;
+    if (on && aimPhase === "ready") {
+      if (aimMode === "reaction") {
+        aimNextWait();
+        $("aim-status").textContent = "Wait for green, then click the board as fast as you can.";
+      } else {
+        aimPhase = "precision";
+        aimTargets = [];
+        aimSpawnTarget(); aimSpawnTarget(); aimSpawnTarget();
+        $("aim-status").textContent = "Click the targets before they fade. Misses and expired targets break your streak.";
+      }
+    }
+    aimRunning = on;
+    $("aim-start").textContent = on ? "Pause" : "Start";
+    if (on) { aimLastTs = 0; requestAnimationFrame(aimLoop); }
+    aimSyncHud();
+  }
+  $("aim-board").addEventListener("pointerdown", function (ev) {
+    if (!aimRunning) return;
+    var rect = $("aim-board").getBoundingClientRect();
+    var px = (ev.clientX - rect.left) * (aimW / rect.width);
+    var py = (ev.clientY - rect.top) * (aimH / rect.height);
+    if (aimMode === "reaction") {
+      if (aimPhase === "waiting") {
+        if (aimTimer) { clearTimeout(aimTimer); aimTimer = null; }
+        aimFaults++;
+        aimSyncHud();
+        if (aimRounds.length + aimFaults >= 5) { aimFinishReaction(); return; }
+        $("aim-status").textContent = "Too soon - that round is a fault. Wait for green this time.";
+        aimNextWait();
+      } else if (aimPhase === "green") {
+        var ms = Math.round(performance.now() - aimGreenAt);
+        aimRounds.push(ms);
+        aimSyncHud();
+        if (aimRounds.length + aimFaults >= 5) { aimFinishReaction(); return; }
+        $("aim-status").textContent = ms + " ms! Waiting for the next round...";
+        aimNextWait();
+      }
+      aimDraw();
+      return;
+    }
+    if (aimPhase !== "precision") return;
+    aimShots++;
+    var hit = false;
+    for (var i = aimTargets.length - 1; i >= 0; i--) {
+      var t = aimTargets[i];
+      var dx = px - t.x, dy = py - t.y;
+      if (dx * dx + dy * dy <= t.r * t.r) { aimTargets.splice(i, 1); hit = true; break; }
+    }
+    if (hit) {
+      aimHits++;
+      aimStreak++;
+      aimBestStreak = Math.max(aimBestStreak, aimStreak);
+      aimSpawnTarget();
+    } else aimStreak = 0;
+    aimSyncHud();
+  });
+  $("aim-mode").addEventListener("change", function () {
+    aimMode = $("aim-mode").value;
+    aimSetRunning(false);
+    aimReset();
+    $("aim-status").textContent = aimMode === "reaction"
+      ? "Reaction: wait for green, click too early and the round is a fault. Five rounds per game."
+      : "Precision: 30 seconds - click targets before they fade; the scoreboard tracks hits, accuracy and streaks.";
+  });
+  $("aim-start").addEventListener("click", function (ev) { aimSetRunning(!aimRunning); ev.currentTarget.blur(); });
+  $("aim-new").addEventListener("click", function (ev) {
+    aimSetRunning(false);
+    aimReset();
+    $("aim-status").textContent = aimMode === "reaction"
+      ? "Reaction: wait for green, click too early and the round is a fault. Five rounds per game."
+      : "Precision: 30 seconds - click targets before they fade; the scoreboard tracks hits, accuracy and streaks.";
+    ev.currentTarget.blur();
+  });
+  aimReset();
+  // Test hooks (used by the headless verification script only).
+  window.__aim = {
+    get state() {
+      return {
+        phase: aimPhase, running: aimRunning, mode: aimMode,
+        rounds: aimRounds.slice(), faults: aimFaults,
+        hits: aimHits, shots: aimShots, streak: aimStreak, bestStreak: aimBestStreak,
+        timeLeft: Math.round(aimTimeLeft * 10) / 10,
+        targets: aimTargets.map(function (t) { return { x: Math.round(t.x), y: Math.round(t.y), r: Math.round(t.r) }; })
+      };
+    },
+    debugForceGreen: function () {
+      if (aimTimer) { clearTimeout(aimTimer); aimTimer = null; }
+      aimPhase = "green";
+      aimGreenAt = performance.now();
+      aimDraw();
+      return true;
+    },
+    debugSpawnTarget: function () { aimSpawnTarget(); return aimTargets.length; },
+    debugSetTimeLeft: function (s) { aimTimeLeft = s; return aimTimeLeft; }
+  };
+  return { reset: aimReset };
+})();
+
+
+/* ================= FULLSCREEN (staging addition) ================= */
+(function () {
+  var stage = document.getElementById("stage");
+  var enterBtn = document.getElementById("fs-btn");
+  var exitBtn = document.getElementById("fs-exit");
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function request() {
+    if (stage.requestFullscreen) return stage.requestFullscreen();
+    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
+    return null;
+  }
+  function exit() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+    return null;
+  }
+  function sync() {
+    var on = !!fsElement();
+    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
+  }
+  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
+    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
+  }
+  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
+  exitBtn.addEventListener("click", function () { exit(); });
+  document.addEventListener("fullscreenchange", sync);
+  document.addEventListener("webkitfullscreenchange", sync);
+})();
+</script>
+</body>
+</html>
