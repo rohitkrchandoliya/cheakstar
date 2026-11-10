@@ -483,7 +483,7 @@ var SudokuGame = (function () {
     },
     debugSolution: function () { return sudSolution.slice(); },
     debugFirstEmpty: function () {
-      for (var i = 0; i < 81; i++) if (sudValue[i] === 0) return -1;
+      for (var i = 0; i < 81; i++) if (sudValue[i] === 0) return i;
       return -1;
     },
     debugSetNearWin: function () {
