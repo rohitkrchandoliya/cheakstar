@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Password Strength Checker - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Password Strength Checker</h1>
+<p class="tool-sub">Check how strong a password really is, privately on your device.</p>
+<div class="tool-card">
+  <p>Length alone does not make a password strong — a long one built from a common word, a name or a keyboard pattern can still fall quickly. This checker uses the zxcvbn library, which estimates strength the way an attacker would meet it: dictionary words, patterns, repeats and dates all count against it.</p>
+
+  <label for="ps-pw">Password to check</label>
+  <input id="ps-pw" type="password" autocomplete="off" spellcheck="false" placeholder="Type or paste a password">
+  <div class="btn-row">
+    <button id="ps-run" class="btn" type="button">Check strength</button>
+    <button id="ps-toggle" class="btn ghost" type="button">Show password</button>
+  </div>
+  <p id="ps-status" class="status" role="status">Type a password, then check it — the check runs here in your browser as you type.</p>
+  <div class="result" id="ps-result" hidden data-result>
+    <p class="big" id="ps-headline"></p>
+    <div id="ps-rows"></div>
+    <div id="ps-feedback"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> the password you type is never transmitted, stored or logged — the zxcvbn library runs entirely in your browser on this device, and the field is cleared from the page when you close or reload it. This tool checks strength only: how hard the password is to guess. It does <strong>not</strong> check whether the password has appeared in a data breach, and a strong score is not a promise — a password reused on a site that leaks it is weak everywhere it is reused. Use a different strong password for every account, kept in a password manager.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var psStatus = document.getElementById("ps-status");
+var psResult = document.getElementById("ps-result");
+var psHeadline = document.getElementById("ps-headline");
+var psRows = document.getElementById("ps-rows");
+var psFeedback = document.getElementById("ps-feedback");
+var psPw = document.getElementById("ps-pw");
+var psToggle = document.getElementById("ps-toggle");
+
+var PS_LABELS = ["Very weak", "Weak", "Fair", "Strong", "Very strong"];
+
+function psAddRow(label, value) {
+  var p = document.createElement("p");
+  p.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = label + ":";
+  p.appendChild(b);
+  p.appendChild(document.createTextNode(" " + value));
+  psRows.appendChild(p);
+}
+
+function psLibraryReady() {
+  return typeof zxcvbn === "function";
+}
+function psCheck() {
+  psRows.innerHTML = "";
+  psFeedback.innerHTML = "";
+  var pw = psPw.value;
+  if (!pw) {
+    psResult.hidden = true;
+    psStatus.className = "status";
+    psStatus.textContent = "Type a password first — nothing can be checked in an empty field.";
+    return;
+  }
+  if (!psLibraryReady()) {
+    psResult.hidden = true;
+    psStatus.className = "status error";
+    psStatus.textContent = "The strength library (zxcvbn) could not be loaded, so this password cannot be checked. Check your internet connection and reload the page — no score is shown rather than a guessed one.";
+    return;
+  }
+  var res;
+  try {
+    res = zxcvbn(pw);
+  } catch (e) {
+    psResult.hidden = true;
+    psStatus.className = "status error";
+    psStatus.textContent = "The check failed for this input. Try again, or shorten the password — no score is shown rather than a guessed one.";
+    return;
+  }
+  var label = PS_LABELS[res.score] || "Unknown";
+  psHeadline.textContent = "Score " + res.score + " of 4 — " + label;
+  psAddRow("Strength", label);
+  psAddRow("Guesses needed (order of)", String(res.guesses));
+  if (res.crack_times_display && res.crack_times_display.offline_fast_hashing_1e10_per_second) {
+    psAddRow("Time to crack, offline fast hash", res.crack_times_display.offline_fast_hashing_1e10_per_second);
+  }
+  if (res.crack_times_display && res.crack_times_display.online_no_throttling_10_per_second) {
+    psAddRow("Time to crack, online attack", res.crack_times_display.online_no_throttling_10_per_second);
+  }
+  var fb = res.feedback || { warning: "", suggestions: [] };
+  if (fb.warning) {
+    var wp = document.createElement("p");
+    wp.className = "kv";
+    var wb = document.createElement("b");
+    wb.textContent = "Watch out:";
+    wp.appendChild(wb);
+    wp.appendChild(document.createTextNode(" " + fb.warning));
+    psFeedback.appendChild(wp);
+  }
+  if (fb.suggestions && fb.suggestions.length > 0) {
+    var head = document.createElement("p");
+    head.className = "kv";
+    var hb = document.createElement("b");
+    hb.textContent = "To make it stronger:";
+    head.appendChild(hb);
+    psFeedback.appendChild(head);
+    var ul = document.createElement("ul");
+    fb.suggestions.forEach(function (tip) {
+      var li = document.createElement("li");
+      li.textContent = tip;
+      ul.appendChild(li);
+    });
+    psFeedback.appendChild(ul);
+  }
+  if (!fb.warning && (!fb.suggestions || fb.suggestions.length === 0)) {
+    var np = document.createElement("p");
+    np.className = "kv";
+    np.textContent = "zxcvbn found no specific weakness to warn about in this password.";
+    psFeedback.appendChild(np);
+  }
+
+  psResult.hidden = false;
+  psStatus.className = res.score >= 3 ? "status ok" : "status";
+  psStatus.textContent = res.score >= 3
+    ? "Checked on your device. That is a solid score — keep this password for this account only."
+    : "Checked on your device. The suggestions below come from zxcvbn's analysis of this exact password.";
+}
+document.getElementById("ps-run").addEventListener("click", psCheck);
+psPw.addEventListener("input", function () {
+  if (!psPw.value) {
+    psResult.hidden = true;
+    psStatus.className = "status";
+    psStatus.textContent = "Type a password, then check it — the check runs here in your browser as you type.";
+    return;
+  }
+  psCheck();
+});
+psToggle.addEventListener("click", function () {
+  if (psPw.type === "password") {
+    psPw.type = "text";
+    psToggle.textContent = "Hide password";
+  } else {
+    psPw.type = "password";
+    psToggle.textContent = "Show password";
+  }
+  psPw.focus();
+});
+
+if (!psLibraryReady()) {
+  psStatus.className = "status error";
+  psStatus.textContent = "The strength library (zxcvbn) could not be loaded, so passwords cannot be checked right now. Check your internet connection and reload the page.";
+}
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="password-strength-checker"></script>
+</body>
+</html>
