@@ -715,8 +715,8 @@ var ColorFlood = (function () {
     var d = floodBest[floodSizeKey];
     $("flood-stats").textContent =
       floodCfg.label + " records - Best: " + (d.bestMoves === null ? "none yet" : d.bestMoves + " moves") +
-      " \u00b7 Solved " + d.solves +
-      " \u00b7 Win streak: " + d.streak + " (best " + d.bestStreak + ")";
+      " \u00B7 Solved " + d.solves +
+      " \u00B7 Win streak: " + d.streak + " (best " + d.bestStreak + ")";
     var html = "", k, s;
     for (k in floodConfigs) {
       s = floodBest[k];
