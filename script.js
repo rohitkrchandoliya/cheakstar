@@ -201,7 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/passport-photo-maker/", "Passport Photo Maker"],
           ["tools-preview/resize-image-to-kb/", "Resize Image to KB"],
           ["tools-preview/color-picker-from-image/", "Color Picker from Image"],
-          ["tools-preview/favicon-generator/", "Favicon Generator"]
+          ["tools-preview/favicon-generator/", "Favicon Generator"],
+          ["tools-preview/barcode-generator/", "Barcode Generator"],
+          ["tools-preview/image-to-base64/", "Image to Base64 Converter"],
+          ["tools-preview/meme-generator/", "Meme Generator"],
+          ["tools-preview/collage-maker/", "Photo Collage Maker"]
         ]},
         { id: "pdf", name: "PDF Tools", icon: "doc", links: [
           ["tools-preview/pdf-merge/", "PDF Merge"],
@@ -211,7 +215,10 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/pdf-compressor/", "PDF Compressor"],
           ["tools-preview/rotate-pdf/", "Rotate PDF"],
           ["tools-preview/pdf-to-text/", "PDF to Text"],
-          ["tools-preview/text-to-pdf/", "Text to PDF"]
+          ["tools-preview/text-to-pdf/", "Text to PDF"],
+          ["tools-preview/pdf-watermark/", "Add Watermark to PDF"],
+          ["tools-preview/pdf-page-numbers/", "Add Page Numbers to PDF"],
+          ["tools-preview/pdf-delete-pages/", "Delete Pages from PDF"]
         ]},
         { id: "audio-video", name: "Audio & Video Tools", icon: "play", links: [
           ["tools-preview/media-info/", "Media Info"],
@@ -225,7 +232,10 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/audio-merger/", "Audio Merger"],
           ["tools-preview/video-merger/", "Video Merger"],
           ["tools-preview/voice-recorder/", "Voice Recorder"],
-          ["tools-preview/screen-recorder/", "Screen Recorder"]
+          ["tools-preview/screen-recorder/", "Screen Recorder"],
+          ["tools-preview/microphone-test/", "Microphone Test"],
+          ["tools-preview/webcam-test/", "Webcam Test"],
+          ["tools-preview/speaker-test/", "Speaker / Headphone Test"]
         ]},
         { id: "text", name: "Text Tools", icon: "pen", links: [
           ["tools-preview/word-counter/", "Word & Character Counter"],
@@ -250,7 +260,8 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/regex-tester/", "Regex Tester"],
           ["tools-preview/timestamp-converter/", "Unix Timestamp Converter"],
           ["tools-preview/jwt-decoder/", "JWT Decoder"],
-          ["tools-preview/color-palette-generator/", "Color Palette Generator"]
+          ["tools-preview/color-palette-generator/", "Color Palette Generator"],
+          ["tools-preview/gradient-generator/", "CSS Gradient Generator"]
         ]},
         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           ["tools-preview/dns-lookup/", "DNS Lookup"],
@@ -262,7 +273,9 @@ document.addEventListener("DOMContentLoaded", function () {
           ["tools-preview/phone-number-checker/", "Phone Number Checker"],
           ["tools-preview/security-headers-check/", "Website Security Headers Check"],
           ["tools-preview/email-breach-check/", "Email Breach Check"],
-          ["tools-preview/password-breach-check/", "Leaked Password Check"]
+          ["tools-preview/password-breach-check/", "Leaked Password Check"],
+          ["tools-preview/password-generator/", "Password Generator"],
+          ["tools-preview/password-strength-checker/", "Password Strength Checker"]
         ]},
         { id: "files", name: "Daily File Tools", icon: "archive", links: [
           ["tools-preview/zip-extractor/", "ZIP Extractor"],
