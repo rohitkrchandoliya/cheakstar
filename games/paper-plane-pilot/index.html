@@ -3,314 +3,783 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:,">
-<title>Paper Plane Pilot - Cheakstar Games</title>
+<title>Paper Plane Pilot - Cheakstar</title>
+<meta name="description" content="Glide a paper plane as far as you can: hold to climb, dive for speed, ride gold thermals, collect stars worth 25 points, dodge the birds, and earn the 500 m, 1 km and 2 km distance badges.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <style>
-  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
-  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
-  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
-  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
-  button:hover { background: #123a5c; }
-  button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
-  label { font-weight: 600; }
-  .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
-  .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
-
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
-  body { max-width: 860px; }
-  .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
-  .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
-  .btn-link:hover { background: #d1d5db; }
-  .fs-exit { display: none; }
-  .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
-  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
-  .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
-  .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
-  .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
-  .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
-  .play-stage:fullscreen .board { margin-top: 0.5rem; }
-  .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
-  .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
-  @media (max-height: 640px) {
-    .play-stage:fullscreen h2 { display: none; }
-    .play-stage:fullscreen .status { min-height: 1.1em; }
-  }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
-
-
-  /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
-  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
-  #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
-  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
-  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
-  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
-  .hang-key.ok { background: #166534; }
-  .hang-key.bad { background: #b91c1c; }
-  .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
-  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
-  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
-  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
-    #hang-word { font-size: 1.15rem; }
-    #hang-keys { grid-template-columns: repeat(7, 1fr); }
-  }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
-
-
-  /* Wave 3 games (shared) */
-  #park-board, #plane-board, #arch-board, #aim-board { width: min(480px, 100%); }
-  #pin-board { width: min(400px, 100%); }
-  /* Sudoku */
-  #sud-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 0; margin: 1rem auto 0; width: min(450px, 100%); border: 3px solid var(--navy); background: var(--navy); }
-  .sud-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-size: 1.25rem; font-weight: 600; padding: 0; margin: 0; cursor: pointer; line-height: 1; position: relative; }
-  .sud-cell.br { border-right: 2px solid var(--navy); }
-  .sud-cell.bb { border-bottom: 2px solid var(--navy); }
-  .sud-cell.given { font-weight: 800; background: #eef2f7; cursor: pointer; }
-  .sud-cell.peer { background: #f1f5f9; }
-  .sud-cell.same { background: #fde68a; }
-  .sud-cell.sel { background: #fbbf24; }
-  .sud-cell.bad { background: #fecaca; }
-  .sud-cell .sud-notes { display: grid; grid-template-columns: repeat(3, 1fr); font-size: 0.5rem; font-weight: 600; color: #64748b; line-height: 1.15; width: 100%; }
-  .sud-cell .sud-notes span { text-align: center; }
-  #sud-pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 450px; margin: 0.8rem auto 0; }
-  .sud-pad-btn { margin: 0; padding: 0.55rem 0; font-size: 1.1rem; font-weight: 700; }
-  /* Chess Puzzles */
-  #ches-board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0; margin: 1rem auto 0; width: min(440px, 100%); border: 3px solid var(--navy); }
-  .ches-sq { aspect-ratio: 1; border: none; font-size: 1.7rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; }
-  .ches-sq.light { background: #f1e7c8; }
-  .ches-sq.dark { background: #9db38a; }
-  .ches-sq.sel { background: #fbbf24 !important; }
-  .ches-sq.hint { box-shadow: inset 0 0 0 4px #c9a227; }
-  .ches-sq.last { box-shadow: inset 0 0 0 3px #2563eb; }
-  .ches-sq .pw { color: #f8fafc; text-shadow: 0 0 3px #111827, 0 0 3px #111827, 1px 1px 2px #111827; }
-  .ches-sq .pb { color: #111827; text-shadow: 0 0 3px #f8fafc, 0 0 2px #f8fafc; }
-  #ches-line { text-align: center; font-weight: 600; color: var(--navy); min-height: 1.4em; margin-top: 0.6rem; }
-  /* Solitaire */
-  #sol-board { margin-top: 0.5rem; }
-  .sol-toprow { display: flex; gap: 10px; align-items: flex-start; margin-top: 0.75rem; }
-  .sol-gap { flex: 0 0 18px; }
-  .sol-pile { width: 64px; height: 90px; border: 2px dashed #9aa5b1; border-radius: 8px; position: relative; flex: 0 0 auto; background: #f8fafc; }
-  .sol-pile.filled { border-style: solid; border-color: transparent; background: transparent; }
-  .sol-cols { display: flex; gap: 10px; margin-top: 14px; align-items: flex-start; }
-  .sol-col { width: 64px; position: relative; flex: 0 0 auto; min-height: 90px; }
-  .sol-card { width: 64px; height: 90px; border: 1.5px solid #334155; border-radius: 8px; background: #fff; position: absolute; left: 0; padding: 3px 5px; box-sizing: border-box; font-weight: 700; font-size: 0.95rem; cursor: pointer; user-select: none; -webkit-user-select: none; }
-  .sol-card.inpile { position: absolute; top: 0; left: 0; }
-  .sol-card.red { color: #b91c1c; }
-  .sol-card.black { color: #111827; }
-  .sol-card.down { background: repeating-linear-gradient(45deg, #0a2540 0 6px, #123a5c 6px 12px); border-color: var(--gold); cursor: default; }
-  .sol-card.sel { outline: 3px solid var(--gold); outline-offset: 1px; z-index: 50 !important; }
-  .sol-card .sol-suit { font-size: 1.15rem; line-height: 1; }
-  @media (max-width: 560px) {
-    .sud-cell { font-size: 1rem; }
-    .sud-cell .sud-notes { font-size: 0.38rem; }
-    .ches-sq { font-size: 1.15rem; }
-    .sol-pile, .sol-col, .sol-card { width: 44px; }
-    .sol-pile, .sol-card { height: 62px; }
-    .sol-col { min-height: 62px; }
-    .sol-card { font-size: 0.72rem; padding: 2px 3px; }
-    .sol-card .sol-suit { font-size: 0.85rem; }
-    .sol-gap { flex-basis: 6px; }
-    .sol-toprow, .sol-cols { gap: 5px; }
-  }
-  .play-stage:fullscreen #park-board, .play-stage:fullscreen #plane-board, .play-stage:fullscreen #arch-board, .play-stage:fullscreen #aim-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #pin-board { width: min(47.5vmin, 400px); }
-  .play-stage:fullscreen #sud-board { width: min(56vmin, 470px); }
-  .play-stage:fullscreen #sud-pad { margin-top: 0.4rem; }
-  .play-stage:fullscreen #ches-board { width: min(52vmin, 470px); margin-top: 0.4rem; }
-  .play-stage:fullscreen label[for="ches-pick"] { display: none; }
-  .play-stage:fullscreen #ches-pick { padding-top: 0.3rem; padding-bottom: 0.3rem; }
-  .play-stage:fullscreen #ches-line { margin-top: 0.25rem; }
-  /* Wave 3 reconciliation additions */
-  .ches-sq.white-piece { color: #f8fafc; text-shadow: 0 0 3px #111827, 0 0 3px #111827, 1px 1px 2px #111827; }
-  .ches-sq.black-piece { color: #111827; text-shadow: 0 0 3px #f8fafc, 0 0 2px #f8fafc; }
-  .sud-label { display: block; font-weight: 700; margin-top: 0.8rem; }
-  .sol-card .sol-corner { display: block; }
-  .sol-card .sol-big { display: block; text-align: center; font-size: 1.5rem; line-height: 1.6; }
-  .sol-count { position: absolute; right: -6px; top: -6px; background: var(--gold); color: #111827; border-radius: 999px; font-size: 0.7rem; font-weight: 800; padding: 1px 6px; z-index: 60; }
-  .sol-pile.empty { display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: #64748b; }
-
+:root { --navy:#0a2540; --gold:#c9a227; --gold-d:#a8861c; --bg:#f4f6fb; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:#333; text-align:center; }
+header { background:var(--navy); color:#fff; padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+header .brand { color:#fff; text-decoration:none; font-weight:bold; font-size:1.25rem; }
+header .brand span { color:var(--gold); }
+header nav a { color:#fff; text-decoration:none; margin-left:1rem; }
+header nav a:hover { color:var(--gold); }
+h2 { color:var(--navy); margin-bottom:0.2rem; }
+.note { color:#555; max-width:640px; margin:0.4rem auto 0; }
+button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:var(--navy); font-weight:bold; cursor:pointer; font-size:1rem; }
+button:hover { background:var(--gold-d); color:#fff; }
+button:disabled { background:#9aa7b4; color:#e2e8f0; cursor:not-allowed; }
+label { font-weight:bold; color:var(--navy); margin-right:0.3rem; }
+select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:1rem; }
+.status { font-weight:bold; color:var(--navy); min-height:1.4em; margin:0.8rem auto 0; max-width:680px; }
+.scorebar { display:flex; gap:0.6rem; justify-content:center; align-items:stretch; flex-wrap:wrap; margin-top:0.9rem; }
+.scorebar .cell { background:#fff; border:1px solid #dbe3ee; border-top:3px solid var(--gold); border-radius:8px; padding:0.45rem 0.85rem; min-width:86px; }
+.scorebar .k { display:block; font-size:0.68rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; color:#64748b; }
+.scorebar .v { display:block; font-size:1.25rem; font-weight:bold; color:var(--navy); line-height:1.15; }
+.ctrl-row { margin-top:0.35rem; }
+/* ===== house toolbar + fullscreen (same pattern as the sibling polish builds) ===== */
+.play-bar { display:flex; gap:0.5rem; justify-content:flex-end; max-width:1100px; margin:0.6rem auto 0; padding:0 0.6rem; }
+.tool-btn { background:#fff; border:2px solid var(--navy); color:var(--navy); border-radius:8px; padding:0.35rem 0.7rem; font-size:1.05rem; line-height:1; cursor:pointer; margin:0; }
+.tool-btn:hover { background:var(--navy); color:#fff; }
+.cgx-fs { position:relative; }
+.cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
+.fs-exit { display:none; }
+.cgx-fs:fullscreen .fs-exit { display:inline-block; position:absolute; top:0.6rem; right:0.6rem; z-index:5; }
+.stats-line { color:#555; font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
+.keys-note { color:#555; font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
+/* ===== Paper Plane Pilot ===== */
+.board-wrap { position:relative; width:min(600px, 100%); margin:1rem auto 0; }
+#plane-board { display:block; width:100%; aspect-ratio:480 / 360; margin:0; background:#7dd3fc; border:2px solid var(--navy); box-sizing:border-box; touch-action:none; user-select:none; -webkit-user-select:none; }
+.cgx-fs:fullscreen .board-wrap { width:min(94vw, 116dvh, 920px); flex:none; margin-top:0.5rem; }
+.plane-prog { max-width:640px; margin:0.7rem auto 0; padding:0 0.4rem; }
+.plane-prog-row { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; font-size:0.88rem; color:#555; font-weight:600; }
+.plane-prog-track { height:10px; background:#dbe3ee; border:1px solid #cbd5e1; border-radius:999px; overflow:hidden; margin-top:0.3rem; }
+#plane-prog-fill { height:100%; width:0%; background:var(--gold); border-radius:999px; }
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 </style>
 </head>
 <body>
 <header>
-  <h1>Paper Plane Pilot</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+<a class="brand" href="../../../index.html">Cheak<span>star</span></a>
+<nav><a href="../../../index.html">Home</a><a href="../../../tools.html">Tools</a><a href="../../index.html">Games</a><a href="../../../blog.html">Blog</a><a href="../../../contact.html">Contact</a></nav>
 </header>
+
 <div class="play-bar">
-  <a class="btn-link" href="../index.html">&larr; All games</a>
-  <span class="spacer"></span>
-  <button type="button" id="fs-btn">Play fullscreen</button>
+<button type="button" class="tool-btn" id="plane-sound" aria-label="Toggle sound" title="Sound on or off">🔊</button>
+<button type="button" class="tool-btn" id="fs-btn" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button>
 </div>
-<section class="play-stage" id="stage">
-  <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
-  <h2>Paper Plane Pilot</h2>
-  <p class="fs-desc">Press Start and hold Space, the up arrow, or a press on the sky to climb; release to dive and build speed. Gold thermal columns lift you for free, stars are worth 25 points, and birds and the ground end the flight.</p>
-  <div class="scorebar"><span>Distance: <span id="plane-dist">0</span> m</span><span>Stars: <span id="plane-stars">0</span></span><span>Score: <span id="plane-score">0</span></span></div>
-  <canvas class="board game-canvas" id="plane-board" width="480" height="360"></canvas>
-  <p class="status" id="plane-status">Press Start. Hold Space, the up arrow, or press the sky to climb; let go to dive and gain speed.</p>
-  <div>
-    <button type="button" id="plane-start">Start</button>
-    <button type="button" id="plane-new">New flight</button>
-  </div>
+
+<section class="cgx-fs" id="fs-wrap">
+<button type="button" class="tool-btn fs-exit" id="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen">✕</button>
+<h2>✈️ Paper Plane Pilot</h2>
+<p class="note" id="fs-desc">Press Start and hold Space, the up arrow, or a press on the sky to climb; release to dive and build speed. Gold thermal columns lift you for free, stars are worth 25 points, and birds and the ground end the flight.</p>
+
+<div class="scorebar">
+<div class="cell"><span class="k">Distance m</span><span class="v" id="plane-dist">0</span></div>
+<div class="cell"><span class="k">Stars</span><span class="v" id="plane-stars">0</span></div>
+<div class="cell"><span class="k">Score</span><span class="v" id="plane-score">0</span></div>
+<div class="cell"><span class="k">Speed m/s</span><span class="v" id="plane-speed">17</span></div>
+<div class="cell"><span class="k">Best m</span><span class="v" id="plane-best">0</span></div>
+</div>
+
+<div class="plane-prog">
+<div class="plane-prog-row"><span id="plane-prog-label">Next flag at 100 m - 100 m to go</span><span id="plane-wind">Wind: calm</span></div>
+<div class="plane-prog-track"><div id="plane-prog-fill"></div></div>
+</div>
+
+<div class="board-wrap">
+<canvas id="plane-board" width="480" height="360" aria-label="Sky. Fly the paper plane: hold to climb, release to dive, collect stars and avoid birds."></canvas>
+</div>
+
+<p class="status" id="plane-status" role="status">Press Start. Hold Space, the up arrow, or press the sky to climb; let go to dive and gain speed.</p>
+<p class="stats-line" id="plane-stats"></p>
+
+<div class="ctrl-row">
+<button type="button" id="plane-start">Start</button>
+<button type="button" id="plane-new">New flight</button>
+<button type="button" id="plane-pause">Pause</button>
+</div>
+
+<p class="keys-note">Keys: hold Space, ArrowUp or W (or press and hold the sky) to climb, release to dive; ArrowDown or S dives faster, P pauses, R starts a new flight at once. The mouse and touch work by pressing and holding the sky.</p>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Honest note: a tiny arcade glide model - real paper planes are at the mercy of far stranger physics than this.</p>
+
+<p class="note">Your progress - best distance, best score, stars and badges - is saved only in this browser on this device. Nothing is sent to a server. Honest note: a tiny arcade glide model - real paper planes are at the mercy of far stranger physics than this.</p>
+
 <script>
 "use strict";
-function $(id) { return document.getElementById(id); }
-/* ================= G24 PAPER PLANE PILOT ================= */
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+    /* Test hooks for the headless verification only - strip before
+       publish, the same rule as the games' window.__ hooks. */
+
+  };
+})();
+</script>
+  
+<script>
+/* Paper Plane Pilot - polished build.
+   Kept verbatim from the shipped game: the flight physics (hold to
+   climb at -560, release gravity +330, thermal lift -300 inside a
+   44 px column, vertical speed clamped to -165..215), the glide
+   speed formula 150 + 0.35 * max(0, vy) - 0.12 * max(0, -vy), the
+   distance scale (horizontal pixels / 9), the spawn rule (first
+   spawn at world 420, gap 150 + 190 random, star on a roll below
+   0.38), the star test (24 px, 25 points), the bird test (20 px),
+   the ceiling clamp at 14, the ground crash below 332, the score
+   formula floor(distance) + 25 per star, the controls (hold Space,
+   ArrowUp or W, or press the canvas, to climb) and every status
+   string, canvas text and description line.
+   Polish on top (spec section 24): parallax hills under the shipped
+   clouds, 100 m flags standing in the world with a pop as one is
+   crossed, distance badges at 500 / 1000 / 2000 m, a paper flutter
+   wobble, a fading star-dust trail behind the plane, star-collect
+   bursts with a floating "+25", rising particles inside thermals, a
+   crash tumble and spin before the end card (a crash used to be an
+   instant overlay), a P pause menu with a genuinely frozen loop,
+   R restart, an ArrowDown / S dive key, wind gusts and a bird share
+   that grow with distance (the difficulty ramp section 24 (d) asks
+   for; the shipped physics terms themselves are untouched - the
+   wind is a purely additive zero-mean gust term, and at distance 0
+   the spawn distribution is exactly the shipped one), a distance
+   progress bar, speed and wind indicators, best distance / best
+   score / total stars / badges persistence through
+   cgx.store("paper-plane-pilot"), a cgx end card, DPR-crisp canvas
+   fit via cgx.watchFit, a sky gradient built once and cached (the
+   shipped code allocated a new gradient every frame) and in-place
+   object removal (the shipped code ran filter() every frame).
+   The spec's colon storage keys (cheakstar:plane:bestDist,
+   cheakstar:plane:bestScore, cheakstar:plane:totalStars) are the
+   old notation; like every sibling polish build the store uses the
+   dot key cheakstar.games.paper-plane-pilot.best holding
+   { dist, score, stars, flights, badges }. */
 var PaperPlanePilot = (function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
   var planeW = 480, planeH = 360, planeX = 92;
   var planeY = 150, planeVy = 0, planeDist = 0, planeStarsGot = 0;
-  var planePhase = "ready"; /* ready | flying | over */
+  var planePhase = "ready"; /* ready | flying | crashing | over */
   var planeRunning = false, planeHold = false, planeInvincible = false;
   var planeLastTs = 0, planeHudIn = 0, planeWorldX = 0, planeNextSpawn = 300;
   var planeObjs = []; /* {x (world), y, kind: 'star'|'bird'|'thermal', taken} */
-  var planeKeyHold = false;
+  var planeKeyHold = false, planeKeyDive = false;
+  var planePaused = false, planeRafLive = false;
+  var planeWindNow = 0, planeSpeedNow = 150;
+  var planeCrashReason = "", planeCrashT = 0, planeTumble = 0, planeCrashSpeed = 0;
+  var planeLastFlag = 0, planeFlagPopT = 9, planeRunBadges = [];
+  var planeNewBest = false, planeNewBadges = [];
+  var planeSkyGrad = null;
+  var PLANE_BADGES = [500, 1000, 2000];
   var planeCtx = $("plane-board").getContext("2d");
+  var planeStore = cgx.store("paper-plane-pilot");
+  var planeBest = planeLoadBest();
+  /* Fixed effect pools, reused round-robin: no per-frame allocation
+     in the hot loop (spec section 24 (f)). */
+  var planeTrail = [], planeParts = [], planeFloats = [];
+  var planeTrailHead = 0, planePartHead = 0, planeFloatHead = 0, planeTrailIn = 0;
+  (function () {
+    var i;
+    for (i = 0; i < 26; i++) planeTrail.push({ wx: 0, y: 0, life: 0 });
+    for (i = 0; i < 90; i++) planeParts.push({ wx: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, color: "#c9a227", size: 2 });
+    for (i = 0; i < 8; i++) planeFloats.push({ wx: 0, y: 0, life: 0, text: "", color: "#a8861c" });
+  })();
+  var planeHudCache = { dist: null, stars: null, score: null, speed: null, best: null, progW: null, progLabel: null, wind: null };
 
-  function planeScore() { return Math.floor(planeDist) + planeStarsGot * 25; }
-  function planeSyncHud() {
-    $("plane-dist").textContent = String(Math.floor(planeDist));
-    $("plane-stars").textContent = String(planeStarsGot);
-    $("plane-score").textContent = String(planeScore());
+  function planeLoadBest() {
+    var raw = planeStore.get("best", null), out = { dist: 0, score: 0, stars: 0, flights: 0, badges: [] }, i;
+    if (!raw || typeof raw !== "object") return out;
+    if (typeof raw.dist === "number" && isFinite(raw.dist)) out.dist = Math.floor(raw.dist);
+    if (typeof raw.score === "number" && isFinite(raw.score)) out.score = Math.floor(raw.score);
+    if (typeof raw.stars === "number" && isFinite(raw.stars)) out.stars = Math.floor(raw.stars);
+    if (typeof raw.flights === "number" && isFinite(raw.flights)) out.flights = Math.floor(raw.flights);
+    if (Array.isArray(raw.badges)) for (i = 0; i < PLANE_BADGES.length; i++) if (raw.badges.indexOf(PLANE_BADGES[i]) !== -1) out.badges.push(PLANE_BADGES[i]);
+    return out;
   }
+  function planeScore() { return Math.floor(planeDist) + planeStarsGot * 25; }
+  function planeDialogOpen() { return !!document.querySelector(".cgx-overlay.open"); }
+  /* Difficulty ramp (spec 24 (d)): wind gusts are a zero-mean
+     additive term whose amplitude grows with distance; the bird
+     share of the non-star spawns grows in steps. At distance 0 both
+     reduce to the shipped behaviour (bird share 0.28 of all spawns,
+     gusts of at most about 12 against gravity 330). */
+  function planeWindAt(wx, dist) {
+    var amp = Math.min(46, 8 + dist * 0.02);
+    return Math.sin(wx * 0.0016) * amp + Math.sin(wx * 0.0043 + 1.7) * amp * 0.5;
+  }
+  function planeBirdChance(dist) { return 0.28 + Math.min(0.22, Math.floor(dist / 400) * 0.055); }
+  function planeGapFactor(dist) { return Math.max(0.75, 1 - dist / 4000); }
+
+  function planeSyncHud() {
+    var d = Math.floor(planeDist), s = planeScore(), spd = Math.round(planeSpeedNow / 9), nextFlag, progW, progLabel, windTxt;
+    if (planeHudCache.dist !== d) { planeHudCache.dist = d; $("plane-dist").textContent = String(d); }
+    if (planeHudCache.stars !== planeStarsGot) { planeHudCache.stars = planeStarsGot; $("plane-stars").textContent = String(planeStarsGot); }
+    if (planeHudCache.score !== s) { planeHudCache.score = s; $("plane-score").textContent = String(s); }
+    if (planeHudCache.speed !== spd) { planeHudCache.speed = spd; $("plane-speed").textContent = String(spd); }
+    if (planeHudCache.best !== planeBest.dist) { planeHudCache.best = planeBest.dist; $("plane-best").textContent = String(planeBest.dist); }
+    nextFlag = (Math.floor(d / 100) + 1) * 100;
+    progW = d % 100;
+    if (planeHudCache.progW !== progW) { planeHudCache.progW = progW; $("plane-prog-fill").style.width = progW + "%"; }
+    progLabel = "Next flag at " + nextFlag + " m - " + (nextFlag - d) + " m to go";
+    if (planeHudCache.progLabel !== progLabel) { planeHudCache.progLabel = progLabel; $("plane-prog-label").textContent = progLabel; }
+    if (planeWindNow > 6) windTxt = "Wind: down gust " + Math.round(planeWindNow);
+    else if (planeWindNow < -6) windTxt = "Wind: up gust " + Math.round(-planeWindNow);
+    else windTxt = "Wind: calm";
+    if (planeHudCache.wind !== windTxt) { planeHudCache.wind = windTxt; $("plane-wind").textContent = windTxt; }
+  }
+  function planeSyncStats() {
+    var txt = "Best distance " + planeBest.dist + " m. Best score " + planeBest.score + ". Stars collected " + planeBest.stars + ". Flights " + planeBest.flights + ".";
+    txt += planeBest.badges.length ? " Badges: " + planeBest.badges.map(function (b) { return b + " m"; }).join(", ") + "." : " Badges: none yet - the first is at 500 m.";
+    $("plane-stats").textContent = txt;
+  }
+
   function planeSpawn() {
     var roll = Math.random();
     if (roll < 0.38) {
       planeObjs.push({ x: planeWorldX + planeW + 60, y: 50 + Math.random() * 240, kind: "star", taken: false });
-    } else if (roll < 0.66) {
+    } else if (roll < 0.38 + planeBirdChance(planeDist)) {
       planeObjs.push({ x: planeWorldX + planeW + 60, y: 46 + Math.random() * 250, kind: "bird", taken: false });
     } else {
       planeObjs.push({ x: planeWorldX + planeW + 60, y: 0, kind: "thermal", taken: false });
     }
-    planeNextSpawn += 150 + Math.random() * 190;
+    planeNextSpawn += (150 + Math.random() * 190) * planeGapFactor(planeDist);
   }
   function planeReset() {
     planeY = 150; planeVy = 0; planeDist = 0; planeStarsGot = 0;
     planeWorldX = 0; planeObjs = []; planeNextSpawn = 420;
     planePhase = "ready"; planeInvincible = false;
+    planePaused = false; planeHold = false; planeKeyHold = false; planeKeyDive = false;
+    planeWindNow = 0; planeSpeedNow = 150; planeLastFlag = 0; planeFlagPopT = 9;
+    planeRunBadges = []; planeNewBest = false; planeNewBadges = [];
+    planeCrashT = 0; planeTumble = 0; planeCrashSpeed = 0; planeCrashReason = "";
+    var i;
+    for (i = 0; i < planeTrail.length; i++) planeTrail[i].life = 0;
+    for (i = 0; i < planeParts.length; i++) planeParts[i].life = 0;
+    for (i = 0; i < planeFloats.length; i++) planeFloats[i].life = 0;
     planeSyncHud();
+    planeSyncStats();
     planeDraw();
+  }
+
+  function planeBurst(wx, y, color, n, spread, up) {
+    var i, p;
+    for (i = 0; i < n; i++) {
+      p = planeParts[planePartHead]; planePartHead = (planePartHead + 1) % planeParts.length;
+      p.wx = wx; p.y = y;
+      p.vx = (Math.random() * 2 - 1) * spread;
+      p.vy = (Math.random() * 2 - 1) * spread - up;
+      p.max = 0.45 + Math.random() * 0.35; p.life = p.max;
+      p.color = color; p.size = 1.6 + Math.random() * 1.8;
+    }
+  }
+  function planeFloat(wx, y, text, color) {
+    var f = planeFloats[planeFloatHead]; planeFloatHead = (planeFloatHead + 1) % planeFloats.length;
+    f.wx = wx; f.y = y; f.life = 0.95; f.text = text; f.color = color;
+  }
+  function planeStepFx(dt) {
+    var i, p, f, t;
+    for (i = 0; i < planeParts.length; i++) { p = planeParts[i]; if (p.life > 0) { p.life -= dt; p.wx += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; } }
+    for (i = 0; i < planeFloats.length; i++) { f = planeFloats[i]; if (f.life > 0) { f.life -= dt; f.y -= 26 * dt; } }
+    for (i = 0; i < planeTrail.length; i++) { t = planeTrail[i]; if (t.life > 0) t.life = Math.max(0, t.life - dt / 1.1); }
+    if (planeFlagPopT < 9) planeFlagPopT += dt;
+  }
+
+  function planeSky() {
+    if (!planeSkyGrad) {
+      planeSkyGrad = planeCtx.createLinearGradient(0, 0, 0, planeH);
+      planeSkyGrad.addColorStop(0, "#7dd3fc");
+      planeSkyGrad.addColorStop(0.8, "#e0f2fe");
+      planeSkyGrad.addColorStop(0.81, "#86c06c");
+      planeSkyGrad.addColorStop(1, "#5da24a");
+    }
+    return planeSkyGrad;
+  }
+  function planeHills(par, base, amp, freq, color) {
+    var ctx = planeCtx, x, y, off = planeWorldX * par;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, planeH);
+    for (x = 0; x <= planeW; x += 12) {
+      y = base + Math.sin((x + off) * freq) * amp + Math.sin((x + off) * freq * 2.7) * amp * 0.35;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(planeW, planeH);
+    ctx.closePath(); ctx.fill();
+  }
+  function planeDrawFlags() {
+    var ctx = planeCtx, first = Math.max(1, Math.floor((planeWorldX - 60) / 900)), last = Math.ceil((planeWorldX + planeW + 60) / 900), k, fx, pop;
+    ctx.font = "700 10px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    for (k = first; k <= last; k++) {
+      fx = k * 900 - planeWorldX;
+      if (fx < -40 || fx > planeW + 40) continue;
+      pop = (k === planeLastFlag && planeFlagPopT < 0.4) ? 1 + 0.45 * Math.sin(Math.PI * (planeFlagPopT / 0.4)) : 1;
+      ctx.strokeStyle = "#0a2540";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(fx, 332); ctx.lineTo(fx, 332 - 34 * pop); ctx.stroke();
+      ctx.fillStyle = "#c9a227";
+      ctx.beginPath();
+      ctx.moveTo(fx, 332 - 34 * pop); ctx.lineTo(fx + 17 * pop, 332 - 27 * pop); ctx.lineTo(fx, 332 - 20 * pop);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#0a2540";
+      ctx.fillText((k * 100) + "m", fx, 346);
+    }
   }
   function planeDraw() {
     var ctx = planeCtx, i, o;
-    var grad = ctx.createLinearGradient(0, 0, 0, planeH);
-    grad.addColorStop(0, "#7dd3fc");
-    grad.addColorStop(0.8, "#e0f2fe");
-    grad.addColorStop(0.81, "#86c06c");
-    grad.addColorStop(1, "#5da24a");
-    ctx.fillStyle = grad;
+    ctx.fillStyle = planeSky();
     ctx.fillRect(0, 0, planeW, planeH);
     ctx.fillStyle = "rgba(255,255,255,0.85)";
     for (i = 0; i < 5; i++) {
@@ -320,6 +789,28 @@ var PaperPlanePilot = (function () {
       ctx.ellipse(cx, cy, 30, 10, 0, 0, Math.PI * 2);
       ctx.ellipse(cx + 20, cy + 3, 20, 8, 0, 0, Math.PI * 2);
       ctx.fill();
+    }
+    planeHills(0.25, 297, 12, 0.011, "rgba(70,140,80,0.55)");
+    planeHills(0.55, 313, 15, 0.016, "rgba(56,120,64,0.75)");
+    planeDrawFlags();
+    /* Star-dust trail behind the plane. */
+    for (i = 0; i < planeTrail.length; i++) {
+      var tr = planeTrail[i], tsx;
+      if (tr.life <= 0) continue;
+      tsx = tr.wx - planeWorldX;
+      if (tsx < -10 || tsx > planeW + 10) continue;
+      ctx.fillStyle = "rgba(201,162,39," + (0.4 * tr.life).toFixed(3) + ")";
+      ctx.beginPath(); ctx.arc(tsx, tr.y, 1.5 + 2 * tr.life, 0, Math.PI * 2); ctx.fill();
+    }
+    /* Wind streaks while a strong gust is blowing. */
+    if (planePhase === "flying" && Math.abs(planeWindNow) > 18) {
+      ctx.strokeStyle = "rgba(255,255,255," + Math.min(0.5, Math.abs(planeWindNow) / 120).toFixed(3) + ")";
+      ctx.lineWidth = 1.5;
+      for (i = 0; i < 6; i++) {
+        var wx2 = ((i * 149 - planeWorldX * (1.6 + Math.abs(planeWindNow) * 0.02)) % (planeW + 90) + planeW + 90) % (planeW + 90) - 45;
+        var wy2 = 40 + (i * 53) % 220;
+        ctx.beginPath(); ctx.moveTo(wx2, wy2); ctx.lineTo(wx2 + 22, wy2 + (planeWindNow > 0 ? 5 : -5)); ctx.stroke();
+      }
     }
     for (i = 0; i < planeObjs.length; i++) {
       o = planeObjs[i];
@@ -336,6 +827,12 @@ var PaperPlanePilot = (function () {
           ctx.moveTo(sx - 8 + t * 8, ty);
           ctx.lineTo(sx - 8 + t * 8, ty - 22);
           ctx.stroke();
+        }
+        ctx.fillStyle = "rgba(202,138,4,0.5)";
+        for (var q = 0; q < 5; q++) {
+          var qy = 322 - ((planeWorldX * 1.5 + q * 61 + (o.x % 89)) % 285);
+          var qx = sx - 14 + ((q * 29 + (o.x % 13)) % 29) + Math.sin(qy * 0.05 + q) * 2;
+          ctx.beginPath(); ctx.arc(qx, qy, 2, 0, Math.PI * 2); ctx.fill();
         }
       } else if (o.kind === "star") {
         if (o.taken) continue;
@@ -366,11 +863,15 @@ var PaperPlanePilot = (function () {
         ctx.closePath(); ctx.fill();
       }
     }
-    /* The plane. */
+    /* The plane (banking from velocity is shipped; the flutter
+       wobble and the crash tumble are polish on top). */
     var tilt = Math.max(-0.5, Math.min(0.6, planeVy / 320));
+    var rot = tilt;
+    if (planePhase === "crashing") rot = planeTumble;
+    else if (planePhase === "flying") rot = tilt + Math.sin(performance.now() / 90) * 0.03 + Math.sin(performance.now() / 37) * 0.012;
     ctx.save();
     ctx.translate(planeX, planeY);
-    ctx.rotate(tilt);
+    ctx.rotate(rot);
     ctx.fillStyle = "#f8fafc";
     ctx.beginPath();
     ctx.moveTo(22, 0); ctx.lineTo(-16, -11); ctx.lineTo(-8, 0); ctx.lineTo(-16, 11);
@@ -382,6 +883,29 @@ var PaperPlanePilot = (function () {
     ctx.moveTo(22, 0); ctx.lineTo(-8, 0);
     ctx.stroke();
     ctx.restore();
+    /* Bursts and floating score text. */
+    for (i = 0; i < planeParts.length; i++) {
+      var pt = planeParts[i], psx;
+      if (pt.life <= 0) continue;
+      psx = pt.wx - planeWorldX;
+      if (psx < -12 || psx > planeW + 12) continue;
+      ctx.globalAlpha = Math.max(0, pt.life / pt.max);
+      ctx.fillStyle = pt.color;
+      ctx.fillRect(psx - pt.size / 2, pt.y - pt.size / 2, pt.size, pt.size);
+    }
+    ctx.globalAlpha = 1;
+    ctx.font = "700 14px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    for (i = 0; i < planeFloats.length; i++) {
+      var fl = planeFloats[i], fsx;
+      if (fl.life <= 0) continue;
+      fsx = fl.wx - planeWorldX;
+      if (fsx < -50 || fsx > planeW + 50) continue;
+      ctx.globalAlpha = Math.min(1, fl.life * 2);
+      ctx.fillStyle = fl.color;
+      ctx.fillText(fl.text, fsx, fl.y);
+    }
+    ctx.globalAlpha = 1;
     if (planePhase === "ready") {
       ctx.fillStyle = "rgba(7,26,46,0.5)";
       ctx.fillRect(0, 0, planeW, 56);
@@ -401,28 +925,121 @@ var PaperPlanePilot = (function () {
     }
   }
   function planeCrash(reason) {
+    planePhase = "crashing";
+    planeCrashReason = reason;
+    planeCrashT = 0; planeTumble = 0;
+    planeCrashSpeed = planeSpeedNow;
+    cgx.sfx("bad");
+    planeBurst(planeWorldX + planeX, planeY, "#f8fafc", 12, 90, 20);
+    planeBurst(planeWorldX + planeX, planeY, "#94a3b8", 8, 70, 10);
+  }
+  function planeFinishCrash() {
     planePhase = "over";
     planeSetRunning(false);
-    $("plane-status").textContent = reason + " Final score: " + planeScore() + " (" + Math.floor(planeDist) + " m, " + planeStarsGot + " stars). Press New flight to go again.";
+    $("plane-status").textContent = planeCrashReason + " Final score: " + planeScore() + " (" + Math.floor(planeDist) + " m, " + planeStarsGot + " stars). Press New flight to go again.";
+    planeRecordFlight();
     planeSyncHud();
     planeDraw();
+    planeShowEnd();
+  }
+  function planeRecordFlight() {
+    var d = Math.floor(planeDist), s = planeScore(), i;
+    planeNewBest = d > planeBest.dist || s > planeBest.score;
+    if (d > planeBest.dist) planeBest.dist = d;
+    if (s > planeBest.score) planeBest.score = s;
+    planeBest.stars += planeStarsGot;
+    planeBest.flights += 1;
+    planeNewBadges = [];
+    for (i = 0; i < planeRunBadges.length; i++) {
+      if (planeBest.badges.indexOf(planeRunBadges[i]) === -1) { planeBest.badges.push(planeRunBadges[i]); planeNewBadges.push(planeRunBadges[i]); }
+    }
+    planeBest.badges.sort(function (a, b) { return a - b; });
+    planeStore.set("best", planeBest);
+    planeSyncStats();
+  }
+  function planeShowEnd() {
+    if (planeNewBest) cgx.confetti();
+    cgx.sfx(planeNewBest ? "win" : "lose");
+    return cgx.dialog({
+      title: "Flight over!",
+      buildBody: function (body) {
+        var table = document.createElement("div"), nb, badge, bl;
+        table.className = "cgx-score-table";
+        [["Distance", Math.floor(planeDist) + " m"], ["Score", String(planeScore())], ["Stars this flight", String(planeStarsGot)], ["Best distance", planeBest.dist + " m"], ["Best score", String(planeBest.score)], ["Stars collected (all flights)", String(planeBest.stars)]].forEach(function (r) {
+          var row = document.createElement("div"), a = document.createElement("span"), b = document.createElement("span");
+          row.className = "cgx-score-row";
+          a.textContent = r[0]; b.textContent = r[1];
+          row.appendChild(a); row.appendChild(b); table.appendChild(row);
+        });
+        body.appendChild(table);
+        if (planeNewBest) {
+          nb = document.createElement("p");
+          badge = document.createElement("span");
+          badge.className = "cgx-newbest";
+          badge.textContent = "New best!";
+          nb.appendChild(badge);
+          body.appendChild(nb);
+        }
+        if (planeRunBadges.length) {
+          bl = document.createElement("p");
+          bl.textContent = "Badges this flight: " + planeRunBadges.map(function (b) { return b + " m"; }).join(", ") + (planeNewBadges.length ? " (new!)" : "") + ".";
+          body.appendChild(bl);
+        }
+      },
+      buttons: [
+        { label: "Fly again", primary: true, value: "again", onClick: function () { planeReset(); planeSetRunning(true); } },
+        { label: "Close", value: "close" }
+      ]
+    });
   }
   function planeUpdate(dt) {
+    if (planePhase === "crashing") {
+      planeCrashT += dt;
+      planeStepFx(dt);
+      planeVy = Math.min(260, planeVy + 900 * dt);
+      planeY += planeVy * dt;
+      planeCrashSpeed = Math.max(0, planeCrashSpeed - 240 * dt);
+      planeWorldX += planeCrashSpeed * dt;
+      planeDist += planeCrashSpeed * dt / 9;
+      if (planeY >= planeH - 28) { planeY = planeH - 28; planeVy = 0; }
+      else planeTumble += dt * 8.5;
+      if (planeCrashT >= 0.9) planeFinishCrash();
+      return;
+    }
     if (planePhase !== "flying") return;
     var holding = planeHold || planeKeyHold;
     planeVy += (holding ? -560 : 330) * dt;
+    if (planeKeyDive && !holding) planeVy += 260 * dt;
     var inThermal = false, i, o;
     for (i = 0; i < planeObjs.length; i++) {
       o = planeObjs[i];
       if (o.kind === "thermal" && Math.abs(o.x - (planeWorldX + planeX)) < 22) inThermal = true;
     }
     if (inThermal) planeVy -= 300 * dt;
+    planeWindNow = planeWindAt(planeWorldX, planeDist);
+    planeVy += planeWindNow * dt;
     planeVy = Math.max(-165, Math.min(215, planeVy));
     planeY += planeVy * dt;
     var speed = 150 + Math.max(0, planeVy) * 0.35 + Math.max(0, -planeVy) * -0.12;
+    planeSpeedNow = speed;
     planeWorldX += speed * dt;
     planeDist += speed * dt / 9;
     while (planeWorldX > planeNextSpawn - planeW) planeSpawn();
+    var flagNow = Math.floor(planeDist / 100), bi, metres, crossedBadge = false;
+    if (flagNow > planeLastFlag) {
+      for (bi = planeLastFlag + 1; bi <= flagNow; bi++) {
+        metres = bi * 100;
+        planeFloat(planeWorldX + planeX + 30, planeY - 26, metres + " m", "#0a2540");
+        if (PLANE_BADGES.indexOf(metres) !== -1) {
+          crossedBadge = true;
+          if (planeRunBadges.indexOf(metres) === -1) planeRunBadges.push(metres);
+          planeBurst(planeWorldX + planeX, planeY, "#c9a227", 16, 120, 30);
+        }
+      }
+      planeLastFlag = flagNow;
+      planeFlagPopT = 0;
+      cgx.sfx(crossedBadge ? "win" : "good");
+    }
     var px = planeWorldX + planeX;
     for (i = 0; i < planeObjs.length; i++) {
       o = planeObjs[i];
@@ -431,6 +1048,9 @@ var PaperPlanePilot = (function () {
       if (o.kind === "star" && dx * dx + dy * dy < 24 * 24) {
         o.taken = true;
         planeStarsGot++;
+        planeBurst(o.x, o.y, "#c9a227", 10, 95, 25);
+        planeFloat(o.x, o.y - 16, "+25", "#a8861c");
+        cgx.sfx("good");
         $("plane-status").textContent = "Star collected! +25 points.";
         planeSyncHud();
       } else if (o.kind === "bird" && !planeInvincible && dx * dx + dy * dy < 20 * 20) {
@@ -438,22 +1058,44 @@ var PaperPlanePilot = (function () {
         return;
       }
     }
-    planeObjs = planeObjs.filter(function (o) { return o.x > planeWorldX - 80; });
+    /* In-place removal: the shipped filter() allocated a new array
+       every frame; swap-with-last plus pop allocates nothing. */
+    for (i = planeObjs.length - 1; i >= 0; i--) {
+      if (planeObjs[i].x <= planeWorldX - 80) {
+        planeObjs[i] = planeObjs[planeObjs.length - 1];
+        planeObjs.pop();
+      }
+    }
     if (planeY < 14) { planeY = 14; planeVy = Math.max(planeVy, 0); }
     if (planeY > planeH - 28) { planeCrash("You hit the ground!"); return; }
+    planeStepFx(dt);
+    planeTrailIn -= dt;
+    if (planeTrailIn <= 0) {
+      var tr;
+      planeTrailIn = 0.016;
+      tr = planeTrail[planeTrailHead]; planeTrailHead = (planeTrailHead + 1) % planeTrail.length;
+      tr.wx = planeWorldX + planeX - 14; tr.y = planeY + 4; tr.life = 1;
+    }
     planeHudIn -= dt;
     if (planeHudIn <= 0) { planeHudIn = 0.15; planeSyncHud(); }
   }
   function planeLoop(ts) {
-    if (!planeRunning) return;
+    var dt;
+    if (!planeRunning || planePaused) { planeRafLive = false; return; }
     if (!planeLastTs) planeLastTs = ts;
-    var dt = Math.min(0.033, (ts - planeLastTs) / 1000);
+    dt = Math.min(0.033, (ts - planeLastTs) / 1000);
     planeLastTs = ts;
-    planeUpdate(dt);
+    if (dt > 0) planeUpdate(dt);
     planeDraw();
-    if (planeRunning) requestAnimationFrame(planeLoop);
+    if (planeRunning && !planePaused) requestAnimationFrame(planeLoop);
+    else planeRafLive = false;
+  }
+  function planeKickLoop() {
+    if (!planeRafLive) { planeRafLive = true; planeLastTs = 0; requestAnimationFrame(planeLoop); }
   }
   function planeSetRunning(on) {
+    if (planePaused) { planeResumeFromPause(); return; }
+    if (planeDialogOpen()) return;
     if (planePhase === "over") on = false;
     if (on && planePhase === "ready") {
       planePhase = "flying";
@@ -461,77 +1103,76 @@ var PaperPlanePilot = (function () {
     }
     planeRunning = on;
     $("plane-start").textContent = on ? "Pause" : "Start";
-    if (on) { planeLastTs = 0; requestAnimationFrame(planeLoop); }
+    if (on) planeKickLoop();
     else if (planePhase === "flying") $("plane-status").textContent = "Paused. Press Start to continue.";
     planeSyncHud();
   }
+  function planeResumeFromPause() {
+    if (!planePaused) return;
+    planePaused = false;
+    if ((planePhase === "flying" || planePhase === "crashing") && planeRunning) planeKickLoop();
+  }
+  function planeOpenPause() {
+    if (planePhase !== "flying" || !planeRunning || planePaused || planeDialogOpen()) return;
+    planePaused = true;
+    planeKeyHold = false; planeHold = false; planeKeyDive = false;
+    cgx.sfx("click");
+    cgx.dialog({
+      title: "Paused",
+      bodyText: "The plane is frozen while this menu is open.",
+      dismissible: false,
+      buttons: [
+        { label: "Resume", primary: true, value: "resume", onClick: function () { planeResumeFromPause(); } },
+        { label: "Restart flight", value: "restart", onClick: function () { planePaused = false; planeReset(); planeSetRunning(true); } }
+      ]
+    });
+  }
   document.addEventListener("keydown", function (ev) {
+    var tag = (ev.target && ev.target.tagName) || "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (planeDialogOpen()) return;
+    if (ev.key === "p" || ev.key === "P") { planeOpenPause(); ev.preventDefault(); return; }
+    if (ev.key === "r" || ev.key === "R") {
+      if (planePhase === "flying" || planePhase === "crashing" || planePhase === "over") { planeReset(); planeSetRunning(true); }
+      ev.preventDefault(); return;
+    }
+    if (ev.key === "ArrowDown" || ev.key === "s" || ev.key === "S") { planeKeyDive = true; ev.preventDefault(); return; }
     if (ev.key === " " || ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") { planeKeyHold = true; ev.preventDefault(); }
   });
   document.addEventListener("keyup", function (ev) {
+    if (ev.key === "ArrowDown" || ev.key === "s" || ev.key === "S") planeKeyDive = false;
     if (ev.key === " " || ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") planeKeyHold = false;
   });
   $("plane-board").addEventListener("pointerdown", function (ev) { ev.preventDefault(); planeHold = true; });
   document.addEventListener("pointerup", function () { planeHold = false; });
   document.addEventListener("pointercancel", function () { planeHold = false; });
-  $("plane-start").addEventListener("click", function (ev) { planeSetRunning(!planeRunning); ev.currentTarget.blur(); });
+  $("plane-board").addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+  $("plane-start").addEventListener("click", function (ev) { cgx.sfx("click"); planeSetRunning(!planeRunning); ev.currentTarget.blur(); });
   $("plane-new").addEventListener("click", function (ev) {
+    if (planeDialogOpen()) return;
+    cgx.sfx("click");
     planeSetRunning(false);
     planeReset();
     $("plane-status").textContent = "Press Start. Hold Space, the up arrow, or press the sky to climb; let go to dive and gain speed.";
     ev.currentTarget.blur();
   });
+  $("plane-pause").addEventListener("click", function (ev) { planeOpenPause(); ev.currentTarget.blur(); });
+
   planeReset();
-  // Test hooks (used by the headless verification script only).
-  window.__plane = {
-    get state() {
-      return {
-        phase: planePhase, running: planeRunning,
-        distance: Math.floor(planeDist), stars: planeStarsGot, score: planeScore(),
-        y: Math.round(planeY), vy: Math.round(planeVy)
-      };
-    },
-    debugSetInvincible: function (on) { planeInvincible = !!on; },
-    debugPlaceStarAhead: function () {
-      planeObjs.push({ x: planeWorldX + planeX + 55, y: planeY, kind: "star", taken: false });
-      return true;
-    },
-    debugPlaceBirdAhead: function () {
-      planeObjs.push({ x: planeWorldX + planeX + 55, y: planeY, kind: "bird", taken: false });
-      return true;
-    }
-  };
+  planeSyncStats();
+  cgx.watchFit($("plane-board"), { logicalW: planeW, logicalH: planeH }, function () { planeDraw(); });
   return { reset: planeReset };
 })();
+</script>
 
-
-/* ================= FULLSCREEN (staging addition) ================= */
+<script>
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
-  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
-    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
-  }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  var wrap = document.getElementById("fs-wrap");
+  var btn = document.getElementById("fs-btn");
+  function toggle() { cgx.toggleFullscreen(wrap); }
+  btn.addEventListener("click", toggle);
+  document.getElementById("fs-exit").addEventListener("click", toggle);
+  cgx.attachMuteToggle(document.getElementById("plane-sound"));
 })();
 </script>
 </body>
