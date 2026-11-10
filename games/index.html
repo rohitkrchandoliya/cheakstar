@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Games - Cheakstar</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .card { border: 1px solid var(--line); border-top: 4px solid var(--gold); padding: 1rem; display: flex; flex-direction: column; background: #fff; }
+  .card h2 { margin: 0; font-size: 1.15rem; color: var(--navy); }
+  .card .tag { color: var(--gold); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.25rem; }
+  .card p { color: var(--muted); font-size: 0.95rem; flex: 1; }
+  .card a { display: inline-block; text-align: center; padding: 0.6rem 1.2rem; background: var(--navy); color: #fff; text-decoration: none; font-weight: 600; }
+  .card a:hover { background: #123a5c; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Games</h1>
+  <p>Free games that run entirely in your browser. No download, no sign-in, no account. Your game data never leaves this device.</p>
+</header>
+<div class="privacy">
+  <strong>Your privacy.</strong> These games run fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Every game also has a fullscreen mode for distraction-free play.
+</div>
+<div class="cards">
+  <div class="card">
+    <h2>Gem Smash</h2>
+    <div class="tag">Match-3 puzzle</div>
+    <p>Swap neighbouring gems to match three or more of a kind. Cascades score extra. Reach 500 points within 30 moves.</p>
+    <a href="gem-smash/index.html">Play Gem Smash</a>
+  </div>
+  <div class="card">
+    <h2>Memory Match</h2>
+    <div class="tag">Memory game</div>
+    <p>Flip two cards at a time and find all 8 matching pairs. Fewer moves and less time make a better game.</p>
+    <a href="memory-match/index.html">Play Memory Match</a>
+  </div>
+  <div class="card">
+    <h2>Number Merge 2048</h2>
+    <div class="tag">Number puzzle</div>
+    <p>Slide the tiles so equal numbers merge into one bigger tile. Keep going until you build the 2048 tile.</p>
+    <a href="number-merge-2048/index.html">Play Number Merge 2048</a>
+  </div>
+  <div class="card">
+    <h2>BlockFit Puzzle</h2>
+    <div class="tag">Block puzzle</div>
+    <p>Place the three pieces on a 10 by 10 board. A full row or column clears. The game ends when no piece fits.</p>
+    <a href="blockfit-puzzle/index.html">Play BlockFit Puzzle</a>
+  </div>
+  <div class="card">
+    <h2>Classic Ludo</h2>
+    <div class="tag">Board game, 2-4 players</div>
+    <p>The traditional race board game on one device: pass-and-play for 2 to 4 players, or play against computer opponents.</p>
+    <a href="classic-ludo/index.html">Play Classic Ludo</a>
+  </div>
+</div>
+<p class="note">Honest notes: all games here are original implementations built for this site. Ludo is the traditional board game; it plays on one device with pass-and-play or computer opponents - there is no online multiplayer. The Ludo computer opponent plays a fair casual game, not an expert one.</p>
+</body>
+</html>
