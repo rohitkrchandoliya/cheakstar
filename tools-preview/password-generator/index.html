@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Password Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Password Generator</h1>
+<p class="tool-sub">Generate strong random passwords on your device.</p>
+<div class="tool-card">
+  <p>Create a password that is genuinely random, not a word with a number swapped in. Choose the length and the character sets, and this page builds the password with your browser's secure random generator — the same source your device uses for its own security keys.</p>
+
+  <label for="pg-length">Length: <span id="pg-length-show">16</span> characters</label>
+  <div class="row2">
+    <div><input id="pg-length-range" type="range" min="8" max="64" step="1" value="16"></div>
+    <div><input id="pg-length" type="number" min="8" max="64" step="1" value="16"></div>
+  </div>
+  <p class="check-line"><label><input type="checkbox" id="pg-upper" checked> Uppercase letters (A–Z)</label></p>
+  <p class="check-line"><label><input type="checkbox" id="pg-lower" checked> Lowercase letters (a–z)</label></p>
+  <p class="check-line"><label><input type="checkbox" id="pg-digits" checked> Digits (0–9)</label></p>
+  <p class="check-line"><label><input type="checkbox" id="pg-symbols" checked> Symbols (! @ # $ % …)</label></p>
+  <p class="check-line"><label><input type="checkbox" id="pg-noambig"> Exclude look-alike characters (I, l, 1, O, 0)</label></p>
+
+  <div class="btn-row">
+    <button id="pg-run" class="btn" type="button">Generate password</button>
+  </div>
+  <p id="pg-status" class="status" role="status"></p>
+  <div class="result" id="pg-result" hidden data-result>
+    <label for="pg-out">Your password</label>
+    <input id="pg-out" type="text" class="mono" readonly>
+    <div class="btn-row">
+      <button id="pg-copy" class="btn" type="button">Copy password</button>
+    </div>
+    <label for="pg-count">Or make a set to choose from (1–20)</label>
+    <div class="row2">
+      <div><input id="pg-count" type="number" min="1" max="20" step="1" value="5"></div>
+      <div><button id="pg-bulk-run" class="btn ghost" type="button">Generate set</button></div>
+    </div>
+    <textarea id="pg-bulk" class="tall mono" readonly hidden></textarea>
+    <div class="btn-row">
+      <button id="pg-bulk-copy" class="btn ghost" type="button" hidden>Copy the set</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> passwords are generated on your device only. They exist just in this page's memory while you look at them — they are never stored, never sent anywhere, and they disappear when you close or reload the page. Randomness comes from <span class="mono">crypto.getRandomValues</span>, the secure generator built into your browser, and each character is picked without bias. Save the password you use in a password manager; a strong password you cannot remember or recover is a lock-out waiting to happen. Nothing here checks whether a password has appeared in a data breach — the strength checker tool is the companion for judging quality.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pgStatus = document.getElementById("pg-status");
+var pgResult = document.getElementById("pg-result");
+var pgOut = document.getElementById("pg-out");
+var pgLength = document.getElementById("pg-length");
+var pgLengthRange = document.getElementById("pg-length-range");
+var pgLengthShow = document.getElementById("pg-length-show");
+var pgCount = document.getElementById("pg-count");
+var pgBulk = document.getElementById("pg-bulk");
+var pgBulkCopy = document.getElementById("pg-bulk-copy");
+
+var PG_SETS = [
+  { id: "pg-upper", chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ" },
+  { id: "pg-lower", chars: "abcdefghijklmnopqrstuvwxyz" },
+  { id: "pg-digits", chars: "0123456789" },
+  { id: "pg-symbols", chars: "!@#$%^&*()-_=+[]{};:,.<>?" }
+];
+var PG_AMBIGUOUS = "Il1O0";
+/* Unbiased random index in [0, max) from crypto.getRandomValues.
+   Bytes at or above the largest multiple of max that fits in a byte
+   are rejected and redrawn, so every index is equally likely —
+   a plain modulo would quietly favour the first few characters. */
+function pgRandomBelow(max) {
+  var limit = Math.floor(256 / max) * max;
+  var buf = new Uint8Array(1);
+  do {
+    crypto.getRandomValues(buf);
+  } while (buf[0] >= limit);
+  return buf[0] % max;
+}
+
+function pgChosenSets() {
+  var noAmbig = document.getElementById("pg-noambig").checked;
+  var sets = [];
+  PG_SETS.forEach(function (set) {
+    if (!document.getElementById(set.id).checked) { return; }
+    var chars = set.chars;
+    if (noAmbig) {
+      chars = chars.split("").filter(function (c) {
+        return PG_AMBIGUOUS.indexOf(c) === -1;
+      }).join("");
+    }
+    if (chars.length > 0) { sets.push(chars); }
+  });
+  return sets;
+}
+
+function pgMakePassword(len, sets) {
+  var pool = sets.join("");
+  var chars = [];
+  var i;
+  /* One character from each chosen set first, so every set the user
+     asked for is actually represented, then fill from the full pool. */
+  for (i = 0; i < sets.length; i++) {
+    chars.push(sets[i].charAt(pgRandomBelow(sets[i].length)));
+  }
+  while (chars.length < len) {
+    chars.push(pool.charAt(pgRandomBelow(pool.length)));
+  }
+  /* Fisher–Yates shuffle with the same unbiased random source, so the
+     guaranteed characters are not sitting in predictable positions. */
+  for (i = chars.length - 1; i > 0; i--) {
+    var j = pgRandomBelow(i + 1);
+    var tmp = chars[i];
+    chars[i] = chars[j];
+    chars[j] = tmp;
+  }
+  return chars.join("");
+}
+function pgClampLength() {
+  var len = Number(pgLength.value);
+  if (isNaN(len)) { len = 16; }
+  len = Math.max(8, Math.min(64, Math.round(len)));
+  pgLength.value = String(len);
+  pgLengthRange.value = String(len);
+  pgLengthShow.textContent = String(len);
+  return len;
+}
+
+function pgSecureAvailable() {
+  return typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function";
+}
+
+function pgGenerate() {
+  if (!pgSecureAvailable()) {
+    pgStatus.className = "status error";
+    pgStatus.textContent = "This browser does not offer a secure random generator, so no password was made. Use a current browser on an https page instead.";
+    return false;
+  }
+  var sets = pgChosenSets();
+  if (sets.length === 0) {
+    pgStatus.className = "status error";
+    pgStatus.textContent = "Tick at least one character set — a password needs something to be made from.";
+    return false;
+  }
+  var len = pgClampLength();
+  pgOut.value = pgMakePassword(len, sets);
+  pgResult.hidden = false;
+  pgStatus.className = "status ok";
+  pgStatus.textContent = "New " + len + "-character password generated on your device.";
+  return true;
+}
+
+function pgGenerateBulk() {
+  if (!pgGenerate()) { return; }
+  var count = Number(pgCount.value);
+  if (isNaN(count)) { count = 5; }
+  count = Math.max(1, Math.min(20, Math.round(count)));
+  pgCount.value = String(count);
+  var sets = pgChosenSets();
+  var len = pgClampLength();
+  var lines = [];
+  for (var i = 0; i < count; i++) {
+    lines.push(pgMakePassword(len, sets));
+  }
+  pgBulk.value = lines.join("\n");
+  pgBulk.hidden = false;
+  pgBulkCopy.hidden = false;
+  pgStatus.className = "status ok";
+  pgStatus.textContent = count + " passwords generated — pick one, save it in your password manager, and ignore the rest.";
+}
+function pgCopyText(text, okMessage) {
+  var done = function () {
+    pgStatus.className = "status ok";
+    pgStatus.textContent = okMessage;
+  };
+  var fail = function () {
+    pgStatus.className = "status";
+    pgStatus.textContent = "Copy did not work automatically — select the text and copy it with Ctrl+C (Cmd+C on a Mac).";
+  };
+  var fallback = function () {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { if (document.execCommand("copy")) { done(); } else { fail(); } } catch (e) { fail(); }
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } else {
+    fallback();
+  }
+}
+
+document.getElementById("pg-run").addEventListener("click", pgGenerate);
+document.getElementById("pg-bulk-run").addEventListener("click", pgGenerateBulk);
+document.getElementById("pg-copy").addEventListener("click", function () {
+  if (pgOut.value) { pgCopyText(pgOut.value, "Password copied to the clipboard."); }
+});
+pgBulkCopy.addEventListener("click", function () {
+  if (pgBulk.value) { pgCopyText(pgBulk.value, "The set was copied to the clipboard."); }
+});
+pgLength.addEventListener("input", function () {
+  var v = Number(pgLength.value);
+  if (!isNaN(v)) {
+    v = Math.max(8, Math.min(64, Math.round(v)));
+    pgLengthRange.value = String(v);
+    pgLengthShow.textContent = String(v);
+  }
+});
+pgLength.addEventListener("change", pgClampLength);
+pgLengthRange.addEventListener("input", function () {
+  pgLength.value = pgLengthRange.value;
+  pgLengthShow.textContent = pgLengthRange.value;
+});
+
+pgGenerate();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="password-generator"></script>
+</body>
+</html>
