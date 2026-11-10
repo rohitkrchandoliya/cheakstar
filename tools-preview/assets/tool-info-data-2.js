@@ -2144,6 +2144,396 @@ window.CK_TOOL_INFO = Object.assign(window.CK_TOOL_INFO || {}, {
    "Press Generate palette.",
    "Click any swatch to copy its HEX code."
   ]
+ },
+ "barcode-generator": {
+  "faq": [
+   {
+    "a": "CODE128 suits most labels and inventory tags and accepts letters and numbers. EAN-13 is the retail standard for products sold in shops, and UPC is its North American counterpart. CODE39 is an older format still used for assets and badges.",
+    "q": "Which format should I use?"
+   },
+   {
+    "a": "EAN-13 needs 12 or 13 digits. With 12 digits the tool works out the check digit for you; with 13, the last digit must be the correct check digit — if it is wrong, the tool says so and shows the right one.",
+    "q": "Why was my EAN-13 rejected?"
+   },
+   {
+    "a": "The barcode itself is a standard, correctly formed code. Selling in a shop usually also needs an officially registered product number (such as a GS1 GTIN) — this tool draws the bars, it does not register numbers.",
+    "q": "Will shops accept these barcodes?"
+   }
+  ],
+  "goodToKnow": [
+   "Barcodes are drawn in your browser with the JsBarcode library — the text you type is never uploaded.",
+   "The PNG download is rendered at three times display size so it prints sharply.",
+   "Always print and test-scan a barcode once before printing a full batch of labels."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — nothing you encode is sent to any server.",
+  "privacyTitle": "Your text stays on your device",
+  "steps": [
+   "Choose the barcode format: CODE128, EAN-13, UPC or CODE39.",
+   "Type the text or numbers to encode.",
+   "Press Generate barcode and check the preview.",
+   "Download the barcode as a PNG or SVG file."
+  ]
+ },
+ "image-to-base64": {
+  "faq": [
+   {
+    "a": "A data URL embeds an image directly inside HTML, CSS or JSON, so no separate image file is needed. It is handy for small icons, email templates and API payloads.",
+    "q": "What is a data URL used for?"
+   },
+   {
+    "a": "Yes — Base64 text is about a third larger than the image file itself. This tool shows the exact character count and the size increase so you can decide.",
+    "q": "Does Base64 make the file bigger?"
+   },
+   {
+    "a": "No. The conversion runs in your browser with the FileReader API; the image never leaves this device.",
+    "q": "Is my image uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "A plain Base64 string without a prefix is treated as a PNG when decoding — the preview tells you if it cannot be read as an image.",
+   "Very large images produce very long strings; some apps and mail clients truncate pasted text, so test big images once.",
+   "The download of a decoded image uses the file type from its data URL prefix."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — no image or string is sent to any server.",
+  "privacyTitle": "Your image never leaves this device",
+  "steps": [
+   "Choose an image file to convert it to a Base64 data URL.",
+   "Copy the data URL, or just the Base64 text, from the output box.",
+   "To go the other way, paste a Base64 string or data URL into the second box.",
+   "Press Preview to see the decoded image, then download it if you need the file."
+  ]
+ },
+ "meme-generator": {
+  "faq": [
+   {
+    "a": "This tool works only with an image you choose from your device. It does not provide or copy anyone else's template images.",
+    "q": "Can I use the meme templates I see online?"
+   },
+   {
+    "a": "Captions are automatically made smaller until they fit the width of the image, so the whole line stays visible.",
+    "q": "Why did my long caption shrink?"
+   },
+   {
+    "a": "The meme keeps your image's own proportions, capped at 2048 pixels on the longest side so phones can handle it.",
+    "q": "What size is the downloaded meme?"
+   }
+  ],
+  "goodToKnow": [
+   "Text is drawn in the classic meme style — bold white letters with a black outline — so it stays readable on busy photos.",
+   "Editing happens on a canvas in your browser; your photo is never uploaded.",
+   "The captions update live as you type, so there is no separate preview step."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed locally and never uploaded.",
+  "privacyTitle": "Your photo stays on your device",
+  "steps": [
+   "Choose your own photo or image.",
+   "Type the top and bottom captions.",
+   "Adjust the font size slider until the text fits the way you want.",
+   "Press Download PNG to save the finished meme."
+  ]
+ },
+ "collage-maker": {
+  "faq": [
+   {
+    "a": "Every photo is centre-cropped to a square cell, so subjects near the edges of a photo can be cut. Choose photos with the subject near the centre for the best result.",
+    "q": "How are the photos fitted into the grid?"
+   },
+   {
+    "a": "The export is 1200 pixels wide; the height depends on the layout and the number of rows your photos need.",
+    "q": "What size is the finished collage?"
+   },
+   {
+    "a": "No. The collage is assembled on a canvas in your browser — nothing leaves this device.",
+    "q": "Are my photos uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "JPEG download is smaller for sharing; PNG keeps the sharpest edges.",
+   "The gap slider sets the space between photos, from touching (0) up to 100 pixels.",
+   "Photos are placed in the order you selected them, left to right, top to bottom."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your photos are processed locally and never uploaded.",
+  "privacyTitle": "Your photos stay on your device",
+  "steps": [
+   "Choose 2 to 9 photos.",
+   "Pick a layout and set the gap and background colour.",
+   "Press Make collage to build the grid.",
+   "Download the collage as a PNG or JPEG."
+  ]
+ },
+ "pdf-watermark": {
+  "faq": [
+   {
+    "a": "No. Your original file is untouched — the tool creates a new watermarked copy for you to download.",
+    "q": "Does this change my original PDF?"
+   },
+   {
+    "a": "The text is drawn onto every page as regular page content. Like any PDF edit it is not a security feature — use it to mark drafts and copies, not to protect a document.",
+    "q": "Can the watermark be removed later?"
+   },
+   {
+    "a": "Ordinary PDFs work. Password-protected or damaged PDFs cannot be read, and the tool will say so plainly.",
+    "q": "Which PDFs are supported?"
+   }
+  ],
+  "goodToKnow": [
+   "Stamping uses the open-source pdf-lib library loaded in your browser.",
+   "Diagonal stamps are rotated 30 degrees and centred on each page, whatever the page size.",
+   "Opacity runs from faint (0.1) to strong (0.9) — 0.3 to 0.5 suits most drafts."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser using pdf-lib — your file is never uploaded to any server.",
+  "privacyTitle": "Your PDF stays on your device",
+  "steps": [
+   "Choose a PDF file.",
+   "Type the watermark text and pick a position: diagonal, header or footer.",
+   "Set the opacity and font size.",
+   "Press Add watermark, then download the stamped copy."
+  ]
+ },
+ "pdf-page-numbers": {
+  "faq": [
+   {
+    "a": "Yes — set the starting number and the pages are numbered from there, which suits a document that follows an earlier part in a separate file.",
+    "q": "Can I start numbering from a number other than 1?"
+   },
+   {
+    "a": "No — you download a new copy with the numbers added; your original PDF is untouched.",
+    "q": "Does the original file change?"
+   },
+   {
+    "a": "At the position you choose, 36 points (about half an inch) in from the edges of each page.",
+    "q": "Where exactly are the numbers placed?"
+   }
+  ],
+  "goodToKnow": [
+   "Numbering uses the open-source pdf-lib library in your browser.",
+   "Centre positions are worked out from the real text width in Helvetica, so numbers stay centred on any page size.",
+   "\"Page X of Y\" counts every page in the file, including the first."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser using pdf-lib — your file is never uploaded to any server.",
+  "privacyTitle": "Your PDF stays on your device",
+  "steps": [
+   "Choose a PDF file.",
+   "Pick the number format and position.",
+   "Set the starting number if your document does not begin at page 1.",
+   "Press Add page numbers, then download the numbered copy."
+  ]
+ },
+ "pdf-delete-pages": {
+  "faq": [
+   {
+    "a": "No. The tool builds a new PDF containing only the pages you kept; your original file is untouched.",
+    "q": "Is my original PDF changed?"
+   },
+   {
+    "a": "No — a PDF must keep at least one page, so the tool asks you to unmark at least one page.",
+    "q": "Can I delete every page?"
+   },
+   {
+    "a": "Thumbnails are a preview extra drawn when the PDF viewer library loads. If it cannot load, the numbered page list still works and deleting pages is unaffected.",
+    "q": "Why did the thumbnails not appear?"
+   }
+  ],
+  "goodToKnow": [
+   "Deleting uses the open-source pdf-lib library in your browser.",
+   "Pages keep their original order and quality — the kept pages are copied, not re-rendered.",
+   "Password-protected or damaged PDFs cannot be opened, and the tool will say so."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser using pdf-lib — your file is never uploaded to any server.",
+  "privacyTitle": "Your PDF stays on your device",
+  "steps": [
+   "Choose a PDF file and wait for the page list.",
+   "Tick the pages you want to remove — thumbnails help you recognise them.",
+   "Press Delete marked pages.",
+   "Download the trimmed PDF."
+  ]
+ },
+ "microphone-test": {
+  "faq": [
+   {
+    "a": "Microphone access always needs your permission. This page only uses the microphone while the test is running, and stopping the test releases it.",
+    "q": "Why does the browser ask for permission?"
+   },
+   {
+    "a": "Move closer to the microphone, check the system input level, and make sure the right microphone is selected in your system settings — many laptops default to a quiet built-in mic.",
+    "q": "The meter barely moves when I speak. What helps?"
+   },
+   {
+    "a": "No. The short test recording is held in this page only, for playback, and disappears when you leave the page. Nothing is uploaded.",
+    "q": "Is my voice recorded or uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "The peak readout remembers the loudest moment, which helps you spot clipping and dropouts.",
+   "Headset microphones usually give a steadier level than a laptop's built-in microphone.",
+   "If the browser says permission was denied, check the site settings in the address bar to allow it."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the microphone stream and any test recording never leave your device.",
+  "privacyTitle": "Your voice stays in this page",
+  "steps": [
+   "Press Start test and allow microphone access when the browser asks.",
+   "Speak at your normal volume and watch the level meter move.",
+   "Press Record to capture up to ten seconds, then play it back.",
+   "Press Stop test when you are done — the microphone is released."
+  ]
+ },
+ "webcam-test": {
+  "faq": [
+   {
+    "a": "Many webcams advertise a high resolution but deliver less on a busy USB connection or in low light. The readout shows what the camera is really sending right now.",
+    "q": "Why does the resolution matter?"
+   },
+   {
+    "a": "No. The preview is drawn locally in your browser; no frame is uploaded. A snapshot is saved only if you press the button, and only to your own device.",
+    "q": "Is the camera feed sent anywhere?"
+   },
+   {
+    "a": "Use the camera or site-settings icon in the address bar, allow the camera for this site, then press Start camera again.",
+    "q": "The browser blocked my camera. How do I allow it?"
+   }
+  ],
+  "goodToKnow": [
+   "Frame rate is shown only when the device reports it — some cameras do not, and the page says so instead of guessing.",
+   "Good light in front of you matters more than a better camera for how you look on a call.",
+   "Stopping the test turns the camera off and clears the preview."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the camera preview is local and no image is uploaded.",
+  "privacyTitle": "Your camera stays on your device",
+  "steps": [
+   "Press Start camera and allow camera access when the browser asks.",
+   "Check your framing, lighting and background in the live preview.",
+   "Read the resolution and frame rate your camera actually delivers.",
+   "Optionally save a snapshot, then press Stop camera when you finish."
+  ]
+ },
+ "speaker-test": {
+  "faq": [
+   {
+    "a": "Usually the headphones are on the wrong way round, or the speakers are swapped. Turn the headphones around or swap the speaker positions — the test itself is fine.",
+    "q": "I heard the left sound on my right side. Is something broken?"
+   },
+   {
+    "a": "440 Hz is the standard tuning note (A4) — a steady, easy-to-hear pitch that plays safely on almost any speaker or headphone.",
+    "q": "Why a 440 Hz tone?"
+   },
+   {
+    "a": "No. Every sound is generated live with the Web Audio API in your browser — nothing is downloaded.",
+    "q": "Does the page play any file?"
+   }
+  ],
+  "goodToKnow": [
+   "Start with the volume low: test tones are pure and can feel louder than music at the same setting.",
+   "The sweep climbs from 100 Hz to 1000 Hz over three seconds; a buzz or rattle at one point suggests a loose speaker or grille.",
+   "On phones, the left/right test works best with headphones — a single phone speaker cannot separate channels."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Sounds are generated in your browser with the Web Audio API — no audio file is downloaded and nothing is uploaded.",
+  "privacyTitle": "Sounds are made on your device",
+  "steps": [
+   "Set the volume slider to a comfortable level.",
+   "Press the 440 Hz tone to check both sides together.",
+   "Press Left channel and Right channel to check each side on its own.",
+   "Use the sweep to listen for rattles or dead spots between 100 Hz and 1000 Hz."
+  ]
+ },
+ "gradient-generator": {
+  "faq": [
+   {
+    "a": "A background declaration using linear-gradient or radial-gradient with your colour stops as HEX codes and percentage positions, ready to paste into any CSS file or style block.",
+    "q": "What CSS does this generate?"
+   },
+   {
+    "a": "Stops are spaced evenly from 0% to 100% across the gradient. Two stops sit at 0% and 100%; five stops sit at 0%, 25%, 50%, 75% and 100%.",
+    "q": "How are the stop positions worked out?"
+   },
+   {
+    "a": "No. The gradient is calculated in your browser and the code is generated on this device.",
+    "q": "Is anything uploaded?"
+   }
+  ],
+  "goodToKnow": [
+   "HEX codes can be typed directly — short forms like #abc are expanded automatically.",
+   "Radial gradients are generated as a circle centred in the preview box.",
+   "The preview uses the exact CSS shown in the code box, so what you see is what you paste."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colours are never sent to any server.",
+  "privacyTitle": "Made entirely on your device",
+  "steps": [
+   "Choose linear or radial and set the angle for linear gradients.",
+   "Adjust the colour stops — pick colours, add up to five stops, or remove stops down to two.",
+   "Watch the preview and the CSS code update as you change anything.",
+   "Press Copy CSS and paste the code into your stylesheet."
+  ]
+ },
+ "password-generator": {
+  "faq": [
+   {
+    "a": "They are drawn from your browser's cryptographic random source (crypto.getRandomValues) with rejection sampling, so every character is unbiased. If a browser has no secure random source, the tool refuses rather than falling back to weak randomness.",
+    "q": "How random are these passwords?"
+   },
+   {
+    "a": "Only when a password must be read aloud or typed from paper — removing look-alike characters (I, l, 1, O, 0) makes that easier, at a small cost in strength.",
+    "q": "Should I exclude ambiguous characters?"
+   },
+   {
+    "a": "In a password manager. A generated password is meant to be unique per account, not memorised or reused.",
+    "q": "Where should I keep a generated password?"
+   }
+  ],
+  "goodToKnow": [
+   "Every generated password includes at least one character from each set you selected.",
+   "Passwords exist only in this page's memory — reloading the page wipes them.",
+   "Length matters more than complexity tricks: each extra character multiplies the guessing work."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — passwords are created in this page's memory and are never stored, logged or sent anywhere.",
+  "privacyTitle": "Generated here, kept nowhere",
+  "steps": [
+   "Set the length — 16 or more characters is a good default.",
+   "Choose which character sets to include.",
+   "Press Generate and copy the password into your password manager.",
+   "Use Generate a set when you need several passwords at once."
+  ]
+ },
+ "password-strength-checker": {
+  "faq": [
+   {
+    "a": "By zxcvbn, the open-source estimator from Dropbox. Instead of counting character types, it models how a real attacker guesses: dictionaries, names, dates, keyboard patterns and repeats.",
+    "q": "How is the score worked out?"
+   },
+   {
+    "a": "No. zxcvbn runs in this browser tab; the password is never transmitted, stored or logged.",
+    "q": "Is my password sent anywhere to check it?"
+   },
+   {
+    "a": "No. Strength and reuse are different risks: a strong password reused on a breached site is still compromised. Every account needs its own password — the Leaked Password Check covers breach lookups.",
+    "q": "Does a strong score mean the password is safe to reuse?"
+   }
+  ],
+  "goodToKnow": [
+   "Crack times are estimates for a motivated attacker with modern hardware — treat them as comparisons, not promises.",
+   "A passphrase of several random words usually scores better than a short string of symbols.",
+   "The checker and the generator pair well: check a password idea here, then generate a stronger one."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser using zxcvbn — your password is never sent to any server.",
+  "privacyTitle": "Your password never leaves this device",
+  "steps": [
+   "Type or paste the password you want to judge.",
+   "Read the score, from 0 (very weak) to 4 (very strong).",
+   "Check the estimated guessing times for online and offline attacks.",
+   "Fix anything the feedback names — patterns, dates, names and repeated words are called out."
+  ]
  }
 });
 window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
