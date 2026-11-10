@@ -37,38 +37,10 @@
 
   /* Wave 1 games (shared) */
   .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
   .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
   .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
 
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
 
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
 
   /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
   body { max-width: 860px; }
@@ -88,14 +60,6 @@
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
   .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
@@ -104,72 +68,45 @@
 
 
   /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
-  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
-  #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
-  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
-  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
-  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
-  .hang-key.ok { background: #166534; }
-  .hang-key.bad { background: #b91c1c; }
-  .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
-  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
-  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
-  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
-    #hang-word { font-size: 1.15rem; }
-    #hang-keys { grid-template-columns: repeat(7, 1fr); }
+  #race-board { width: min(760px, 100%); }
+  .play-stage:fullscreen #race-board { width: min(97vw, calc((100vh - 176px) * 4 / 3)); width: min(97vw, calc((100dvh - 176px) * 4 / 3)); }
+
+  /* ---- Turbo Lane Racer polish (step 3a) ---- */
+  button:focus-visible, .btn-link:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .traf-keys button { min-width: 64px; min-height: 52px; font-size: 1.25rem; touch-action: none; }
+  .play-stage:fullscreen h2 { display: none; }
+  @media (pointer: fine) { .play-stage:fullscreen .traf-keys { display: none; } }
+  @media (max-height: 560px) {
+    .play-stage:fullscreen #race-board { width: min(97vw, calc((100vh - 118px) * 4 / 3)); width: min(97vw, calc((100dvh - 118px) * 4 / 3)); }
+    .play-stage:fullscreen .status { display: none; }
   }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Turbo Lane Racer</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -177,13 +114,14 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="race-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Turbo Lane Racer</h2>
   <p class="fs-desc">A fast pseudo-3D arcade racing game: curves, hills, rival cars and timed checkpoints.</p>
-  <div class="scorebar"><span>Score: <span id="race-score">0</span></span><span>Speed: <span id="race-speed">0</span> km/h</span><span>Time: <span id="race-time">45</span>s</span><span>Overtakes: <span id="race-over">0</span></span><span>Checkpoints: <span id="race-cp">0</span></span></div>
+  <div class="scorebar"><span>Score: <span id="race-score">0</span></span><span>Speed: <span id="race-speed">0</span> km/h</span><span>Time: <span id="race-time">45</span>s</span><span>Overtakes: <span id="race-over">0</span></span><span>Checkpoints: <span id="race-cp">0</span></span><span>Best: <span id="race-best">0</span></span></div>
   <canvas class="board game-canvas" id="race-board" width="480" height="360"></canvas>
   <p class="status" id="race-status">Press Start, then hold the up arrow to accelerate.</p>
   <div>
@@ -196,8 +134,467 @@
     <button type="button" id="race-down" aria-label="Brake">&#9660;</button>
     <button type="button" id="race-right" aria-label="Steer right">&#9654;</button>
   </div>
+  <p class="note game-note">Keys: arrow keys or WASD to drive, P pauses. On a touch screen, hold the buttons - or drag sideways on the road itself to steer.</p>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Turbo Lane Racer uses a classic pseudo-3D road technique on a 2D canvas (segmented roads like the arcade racers of the 1980s and 1990s); it is not a real 3D game. Your speed, score and race progress are stored only in this page while you play.</p>
+<p class="note">Your privacy: this game runs fully on your device. Your best score and race records are saved in this browser, on this device only, so they are still here when you come back. Nothing is uploaded, shared or tracked anywhere, and your browser's site-data controls can erase everything at any time. Turbo Lane Racer uses a classic pseudo-3D road technique on a 2D canvas (segmented roads like the arcade racers of the 1980s and 1990s); it is not a real 3D game.</p>
+<script>
+
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle,
+    /* Test hooks for the headless verification only - strip before
+       publish, the same rule as the games' window.__ hooks. */
+    _test: {
+      makeMemoryStore: function (slug) { return makeStore(slug, memBackend); },
+      audioState: function () { return audioCtx ? audioCtx.state : "none"; },
+      storeAvailable: storeOk
+    }
+  };
+})();
+
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
@@ -217,6 +614,16 @@ var TurboLaneRacer = (function () {
   var raceKeyL = false, raceKeyR = false, raceKeyU = false, raceKeyD = false;
   var raceBtnL = false, raceBtnR = false, raceBtnU = false, raceBtnD = false;
   var raceCtx = $("race-board").getContext("2d");
+  /* Polish step 3a: persistence via the cgx shared layer. */
+  var raceStore = cgx.store("turbo-lane-racer");
+  var raceBest = raceStore.get("best", null);
+  var raceDistM = 0;          /* speedometer-consistent distance, metres */
+  var raceTilt = 0;           /* smoothed steering lean, -1..1 */
+  var raceOverDone = false;   /* game-over dialog + save happen once */
+  var raceSkyGrad = null, raceHillPath = null;
+  var racePlayerSprite = null, raceCarSprites = [];
+  var raceBuckets = [], raceTouched = [], raceTouchedCount = 0;
+  var raceDrawnList = [];
   var raceCarColors = ["#2563eb", "#e11d48", "#16a34a", "#9333ea", "#ea580c", "#e2e8f0"];
 
   function raceLerp(a, b, t) { return a + (b - a) * t; }
@@ -224,11 +631,15 @@ var TurboLaneRacer = (function () {
   function raceLastY() { return raceSegments.length ? raceSegments[raceSegments.length - 1].p2.world.y : 0; }
   function raceAddSegment(curve, y) {
     var n = raceSegments.length;
+    var light = Math.floor(n / raceRumble) % 2 === 0;
     raceSegments.push({
       index: n, curve: curve,
       p1: { world: { x: 0, y: raceLastY(), z: n * raceSegLen }, camera: {}, screen: {} },
       p2: { world: { x: 0, y: y, z: (n + 1) * raceSegLen }, camera: {}, screen: {} },
-      clip: 0
+      clip: 0,
+      grass: light ? "#16a34a" : "#15803d",
+      road: light ? "#475569" : "#3f4c5c",
+      rumble: light ? "#e2e8f0" : "#dc2626"
     });
   }
   function raceAddRoad(enter, hold, leave, curve, dy) {
@@ -270,6 +681,8 @@ var TurboLaneRacer = (function () {
         offset: (Math.random() * 2 - 1) * 0.72,
         speed: raceMaxSpeed * (0.30 + Math.random() * 0.22),
         color: raceCarColors[i % raceCarColors.length],
+        sprite: raceCarSprites[i % raceCarColors.length],
+        seg: 0,
         prevRel: 0
       });
     }
@@ -279,6 +692,8 @@ var TurboLaneRacer = (function () {
     racePhase = "ready"; raceTimeLeft = 45; raceDist = 0; raceBaseScore = 0;
     raceOvertakes = 0; raceCrashes = 0; raceCheckpoints = 0; raceNextCp = 40000;
     raceInvincible = 0; raceSkyOff = 0;
+    raceDistM = 0; raceTilt = 0; raceOverDone = false;
+    raceShowBest();
     raceResetCars();
     for (var i = 0; i < raceCars.length; i++) {
       var rel = raceCars[i].z - (racePosition + racePlayerZ);
@@ -303,8 +718,7 @@ var TurboLaneRacer = (function () {
     ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3); ctx.lineTo(x4, y4);
     ctx.closePath(); ctx.fill();
   }
-  function raceDrawCarShape(cx, bottomY, w, color, isPlayer) {
-    var ctx = raceCtx;
+  function raceDrawCarShape(ctx, cx, bottomY, w, color, isPlayer) {
     var h = w * 0.52;
     var x = cx - w / 2, y = bottomY - h;
     ctx.fillStyle = "#111827";
@@ -331,26 +745,90 @@ var TurboLaneRacer = (function () {
       ctx.fillRect(x - w * 0.03, y - h * 0.06, w * 1.06, h * 0.09);
     }
   }
+  /* Render one car to an offscreen sprite at 3x its logical width,
+     plus a ladder of half-size copies. Software rasterisers pay for
+     the whole source when scaling a big sprite down to a few pixels
+     (a distant car), so the per-frame blit picks the smallest rung
+     that is still >= the destination width, keeping the downscale
+     near or under 2x. ratio = sprite height / sprite width, kept so
+     the blit preserves the shape's exact proportions at any scale. */
+  function raceMakeSprite(refW, color, isPlayer) {
+    var SS = 3;
+    var pxW = Math.round(refW * SS);
+    var pxH = Math.round(refW * 0.52 * (isPlayer ? 1.06 : 1) * SS);
+    var cv = document.createElement("canvas");
+    cv.width = pxW; cv.height = pxH;
+    var c2 = cv.getContext("2d");
+    raceDrawCarShape(c2, pxW / 2, isPlayer ? pxH : pxW * 0.52, pxW, color, isPlayer);
+    var rungs = [{ img: cv, w: pxW }];
+    var fracs = [0.5, 0.25, 0.125], fi, rw, rh, rc, rctx;
+    for (fi = 0; fi < fracs.length; fi++) {
+      rw = Math.max(8, Math.round(pxW * fracs[fi]));
+      rh = Math.max(4, Math.round(pxH * fracs[fi]));
+      rc = document.createElement("canvas");
+      rc.width = rw; rc.height = rh;
+      rctx = rc.getContext("2d");
+      rctx.drawImage(cv, 0, 0, rw, rh);
+      rungs.push({ img: rc, w: rw });
+    }
+    rungs.sort(function (a, b) { return a.w - b.w; });
+    return { rungs: rungs, ratio: pxH / pxW };
+  }
+  function racePickRung(sprite, w) {
+    var rungs = sprite.rungs, i;
+    for (i = 0; i < rungs.length; i++) if (rungs[i].w >= w) return rungs[i].img;
+    return rungs[rungs.length - 1].img;
+  }
+  function raceDrawCar(sprite, cx, bottomY, w) {
+    var h = w * sprite.ratio;
+    raceCtx.drawImage(racePickRung(sprite, w), cx - w / 2, bottomY - h, w, h);
+  }
+  /* Sky gradient + sun and the hill silhouette are static (the hills
+     only scroll sideways). The gradient is created ONCE here and
+     reused every frame (the original created it fresh per frame),
+     and the hill silhouette is kept as a Path2D that is filled at
+     its parallax offset: both measured cheaper in the software
+     rasteriser than a full-screen pre-rendered blit, which the fit
+     transform's fractional scale turns into a full resample. The
+     hill path holds 3 humps over 720 logical px so it covers the
+     480-wide stage at any offset in (-240, 240). */
+  function raceBuildSkyline() {
+    var hx;
+    raceSkyGrad = raceCtx.createLinearGradient(0, 0, 0, raceH);
+    raceSkyGrad.addColorStop(0, "#7dd3fc");
+    raceSkyGrad.addColorStop(0.55, "#bae6fd");
+    raceSkyGrad.addColorStop(0.56, "#14532d");
+    raceSkyGrad.addColorStop(1, "#166534");
+    raceHillPath = new Path2D();
+    for (hx = 0; hx < 720; hx += 240) {
+      raceHillPath.moveTo(hx, 64);
+      raceHillPath.quadraticCurveTo(hx + 120, 0, hx + 240, 64);
+    }
+    raceHillPath.lineTo(720, 64); raceHillPath.lineTo(0, 64);
+    raceHillPath.closePath();
+  }
+  function raceBuildSprites() {
+    racePlayerSprite = raceMakeSprite(118, "#c9a227", true);
+    raceCarSprites = [];
+    for (var i = 0; i < raceCarColors.length; i++) {
+      raceCarSprites.push(raceMakeSprite(128, raceCarColors[i], false));
+    }
+  }
   function raceDraw() {
     var ctx = raceCtx;
-    var grad = ctx.createLinearGradient(0, 0, 0, raceH);
-    grad.addColorStop(0, "#7dd3fc");
-    grad.addColorStop(0.55, "#bae6fd");
-    grad.addColorStop(0.56, "#14532d");
-    grad.addColorStop(1, "#166534");
-    ctx.fillStyle = grad;
+    /* Sky, sun and hills: cached gradient fill + sun + a Path2D
+       hill fill (was a fresh createLinearGradient plus a multi-hump
+       path rebuilt on every frame). */
+    ctx.fillStyle = raceSkyGrad;
     ctx.fillRect(0, 0, raceW, raceH);
     ctx.fillStyle = "#fef9c3";
     ctx.beginPath(); ctx.arc(raceW - 70, 44, 20, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#15803d";
-    ctx.beginPath();
     var hillBase = raceH * 0.56, off = -(raceSkyOff % 240);
-    for (var hx = off; hx < raceW + 240; hx += 240) {
-      ctx.moveTo(hx, hillBase);
-      ctx.quadraticCurveTo(hx + 120, hillBase - 64, hx + 240, hillBase);
-    }
-    ctx.lineTo(raceW, hillBase); ctx.lineTo(0, hillBase);
-    ctx.fill();
+    ctx.save();
+    ctx.translate(off, hillBase - 64);
+    ctx.fillStyle = "#15803d";
+    ctx.fill(raceHillPath);
+    ctx.restore();
 
     var base = raceFindSegment(racePosition);
     var basePct = (racePosition % raceSegLen) / raceSegLen;
@@ -358,7 +836,7 @@ var TurboLaneRacer = (function () {
     var plyrPct = ((racePosition + racePlayerZ) % raceSegLen) / raceSegLen;
     var plyrY = raceLerp(plyrSeg.p1.world.y, plyrSeg.p2.world.y, plyrPct);
     var maxY = raceH, x = 0, dx = -(base.curve * basePct), n, seg;
-    var drawn = [];
+    var drawn = raceDrawnList; drawn.length = 0;
     for (n = 0; n < raceDrawDist; n++) {
       seg = raceSegments[(base.index + n) % raceSegments.length];
       var looped = seg.index < base.index;
@@ -368,25 +846,43 @@ var TurboLaneRacer = (function () {
       x += dx; dx += seg.curve;
       seg.clip = maxY;
       if (seg.p1.camera.z <= raceCamDepth || seg.p2.screen.y >= seg.p1.screen.y || seg.p2.screen.y >= maxY) continue;
-      var light = Math.floor(seg.index / raceRumble) % 2 === 0;
-      ctx.fillStyle = light ? "#16a34a" : "#15803d";
+      ctx.fillStyle = seg.grass;
       ctx.fillRect(0, seg.p2.screen.y, raceW, seg.p1.screen.y - seg.p2.screen.y);
-      var r1 = seg.p1.screen.w / Math.max(6, 2 * 2), r2 = seg.p2.screen.w / Math.max(6, 2 * 2);
+      var r1 = seg.p1.screen.w / 6, r2 = seg.p2.screen.w / 6;
       racePoly(seg.p1.screen.x - seg.p1.screen.w - r1, seg.p1.screen.y, seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w - r2, seg.p2.screen.y, light ? "#e2e8f0" : "#dc2626");
+               seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w - r2, seg.p2.screen.y, seg.rumble);
       racePoly(seg.p1.screen.x + seg.p1.screen.w + r1, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x + seg.p2.screen.w + r2, seg.p2.screen.y, light ? "#e2e8f0" : "#dc2626");
+               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x + seg.p2.screen.w + r2, seg.p2.screen.y, seg.rumble);
       racePoly(seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, light ? "#475569" : "#3f4c5c");
+               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.road);
       maxY = seg.p1.screen.y;
       drawn.push(seg);
     }
-    /* Rival cars, farthest first. */
+    /* Rival cars, farthest first. Each car is bucketed under its own
+       segment (index maintained in raceUpdate): one pass over the 14
+       cars replaces the old drawn-segments x cars nested scan, which
+       ran up to 110 x 14 floor/mod checks per frame. */
+    var bi, car;
+    for (bi = 0; bi < raceCars.length; bi++) {
+      car = raceCars[bi];
+      var bk = raceBuckets[car.seg];
+      if (!bk) { bk = raceBuckets[car.seg] = []; }
+      /* Record the segment for the end-of-frame clear whenever its
+         bucket is empty at push time. (Recording only at bucket
+         CREATION was a real bug: buckets persist across frames, so
+         from frame 2 on they were never cleared and every car was
+         re-drawn once per frame it had spent in the segment -
+         ghost copies along its recent path and draw cost growing
+         the longer a race ran.) */
+      if (!bk.length) raceTouched[raceTouchedCount++] = car.seg;
+      bk.push(car);
+    }
     for (var d = drawn.length - 1; d >= 0; d--) {
       seg = drawn[d];
-      for (var ci = 0; ci < raceCars.length; ci++) {
-        var car = raceCars[ci];
-        if (Math.floor(car.z / raceSegLen) % raceSegments.length !== seg.index) continue;
+      var carsHere = raceBuckets[seg.index];
+      if (!carsHere) continue;
+      for (var ci = 0; ci < carsHere.length; ci++) {
+        car = carsHere[ci];
         var pct = (car.z % raceSegLen) / raceSegLen;
         var scale = raceLerp(seg.p1.screen.scale, seg.p2.screen.scale, pct);
         var sx = raceLerp(seg.p1.screen.x, seg.p2.screen.x, pct) + scale * car.offset * raceRoadW * raceW / 2;
@@ -394,21 +890,19 @@ var TurboLaneRacer = (function () {
         var cw = scale * 560 * raceW / 2;
         if (cw < 2) continue;
         if (sy - cw * 0.52 > seg.clip + cw * 0.52) continue;
-        raceDrawCarShape(sx, Math.min(sy, seg.clip + cw * 0.52), cw, car.color, false);
+        raceDrawCar(car.sprite, sx, Math.min(sy, seg.clip + cw * 0.52), cw);
       }
     }
+    for (bi = 0; bi < raceTouchedCount; bi++) raceBuckets[raceTouched[bi]].length = 0;
+    raceTouchedCount = 0;
+    /* Player car: pre-rendered sprite, leaning into the steering. */
     var bounce = racePhase === "playing" ? Math.sin(raceDist * 0.02) * Math.min(2, raceSpeed / raceMaxSpeed * 2.4) : 0;
-    raceDrawCarShape(raceW / 2 + racePlayerX * 26, raceH - 6 + bounce, 118, "#c9a227", true);
-    if (racePhase === "over") {
-      ctx.fillStyle = "rgba(7,26,46,0.7)";
-      ctx.fillRect(0, 0, raceW, raceH);
-      ctx.fillStyle = "#fff";
-      ctx.font = "700 25px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Out of time!", raceW / 2, 160);
-      ctx.font = "600 16px system-ui, sans-serif";
-      ctx.fillText("Final score: " + raceScore(), raceW / 2, 190);
-    } else if (racePhase === "ready") {
+    ctx.save();
+    ctx.translate(raceW / 2 + racePlayerX * 26, raceH - 6 + bounce);
+    if (raceTilt) ctx.rotate(raceTilt * 0.055);
+    ctx.drawImage(racePickRung(racePlayerSprite, 118), -59, -118 * racePlayerSprite.ratio, 118, 118 * racePlayerSprite.ratio);
+    ctx.restore();
+    if (racePhase === "ready") {
       ctx.fillStyle = "rgba(7,26,46,0.45)";
       ctx.fillRect(0, 0, raceW, 64);
       ctx.fillStyle = "#fff";
@@ -416,6 +910,8 @@ var TurboLaneRacer = (function () {
       ctx.textAlign = "center";
       ctx.fillText("Press Start, then hold the up arrow", raceW / 2, 40);
     }
+    /* The "over" phase no longer paints its own text: the cgx result
+       dialog (raceFinish) presents the results, fullscreen-safe. */
   }
   function raceOverlap(px, cx) {
     return Math.abs(px - cx) < 0.46;
@@ -425,6 +921,7 @@ var TurboLaneRacer = (function () {
     for (i = 0; i < raceCars.length; i++) {
       car = raceCars[i];
       car.z = raceWrap(car.z + car.speed * dt, raceTrackLen);
+      car.seg = Math.floor(car.z / raceSegLen) % raceSegments.length;
     }
     if (racePhase !== "playing") return;
     var plyrSeg = raceFindSegment(racePosition + racePlayerZ);
@@ -444,6 +941,7 @@ var TurboLaneRacer = (function () {
     racePosition = raceWrap(racePosition + raceSpeed * dt, raceTrackLen);
     var gained = raceSpeed * dt;
     raceDist += gained;
+    raceDistM += (raceSpeed / raceMaxSpeed * 240) * dt / 3.6;
     raceBaseScore += gained / 60;
     raceSkyOff += plyrSeg.curve * speedPct * dt * 14;
     if (raceInvincible > 0) raceInvincible -= dt;
@@ -456,6 +954,7 @@ var TurboLaneRacer = (function () {
       if (car.prevRel > 0 && rel <= 0 && raceSpeed > car.speed) {
         raceOvertakes++;
         $("race-status").textContent = "Overtake! +100 points.";
+        cgx.sfx("place");
       }
       car.prevRel = rel;
       if (raceInvincible <= 0 && rel > -raceSegLen && rel < raceSegLen && raceSpeed > car.speed && raceOverlap(racePlayerX, car.offset)) {
@@ -463,6 +962,7 @@ var TurboLaneRacer = (function () {
         raceSpeed = car.speed * 0.25;
         raceInvincible = 1.2;
         $("race-status").textContent = "Crash! You lost speed and 50 points.";
+        cgx.sfx("bad");
       }
     }
     if (raceDist >= raceNextCp) {
@@ -470,6 +970,7 @@ var TurboLaneRacer = (function () {
       raceCheckpoints++;
       raceTimeLeft += 15;
       $("race-status").textContent = "Checkpoint! +15 seconds.";
+      cgx.sfx("good");
     }
     raceTimeLeft -= dt;
     if (raceTimeLeft <= 0) {
@@ -492,9 +993,45 @@ var TurboLaneRacer = (function () {
       racePosition = raceWrap(racePosition + raceSpeed * dt, raceTrackLen);
       raceSpeed = Math.max(0, raceSpeed - raceMaxSpeed * 0.9 * dt);
     }
+    var steer = ((raceKeyR || raceBtnR) ? 1 : 0) - ((raceKeyL || raceBtnL) ? 1 : 0);
+    raceTilt += (steer - raceTilt) * Math.min(1, dt * 9);
     raceDraw();
-    if (racePhase === "over" && raceSpeed <= 0) { raceSetRunning(false); return; }
+    if (racePhase === "over" && raceSpeed <= 0) {
+      raceSetRunning(false);
+      if (!raceOverDone) { raceOverDone = true; raceFinish(); }
+      return;
+    }
     if (raceRunning) requestAnimationFrame(raceLoop);
+  }
+  function raceShowBest() {
+    $("race-best").textContent = String(raceBest ? raceBest.score : 0);
+  }
+  function raceFinish() {
+    var finalScore = raceScore();
+    var prev = raceBest || { score: 0, distance: 0, overtakes: 0, checkpoints: 0, races: 0 };
+    var isBest = finalScore > prev.score;
+    raceBest = {
+      score: Math.max(prev.score, finalScore),
+      distance: Math.max(prev.distance, Math.round(raceDistM)),
+      overtakes: Math.max(prev.overtakes, raceOvertakes),
+      checkpoints: Math.max(prev.checkpoints, raceCheckpoints),
+      races: (prev.races || 0) + 1
+    };
+    raceStore.set("best", raceBest);
+    raceShowBest();
+    cgx.showResult({
+      won: isBest,
+      title: "Out of time!",
+      message: "Distance " + (raceDistM / 1000).toFixed(2) + " km - " + raceOvertakes +
+        " overtakes - " + raceCheckpoints + " checkpoints - " + raceCrashes +
+        " crashes. Best distance " + (raceBest.distance / 1000).toFixed(2) + " km in " +
+        raceBest.races + (raceBest.races === 1 ? " race." : " races."),
+      score: finalScore, scoreLabel: "Final score",
+      best: raceBest.score, bestLabel: "Best score",
+      newBest: isBest,
+      playAgainLabel: "Race again",
+      onPlayAgain: function () { raceReset(); raceSetRunning(true); }
+    });
   }
   function raceSetRunning(on) {
     if (racePhase === "over") on = false;
@@ -513,6 +1050,7 @@ var TurboLaneRacer = (function () {
     else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { raceKeyR = true; ev.preventDefault(); }
     else if (ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") { raceKeyU = true; ev.preventDefault(); }
     else if (ev.key === "ArrowDown" || ev.key === "s" || ev.key === "S") { raceKeyD = true; ev.preventDefault(); }
+    if ((ev.key === "p" || ev.key === "P") && racePhase === "playing" && !ev.repeat) raceSetRunning(!raceRunning);
   });
   document.addEventListener("keyup", function (ev) {
     if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") raceKeyL = false;
@@ -531,13 +1069,32 @@ var TurboLaneRacer = (function () {
   raceBindHold("race-right", function (on) { raceBtnR = on; });
   raceBindHold("race-up", function (on) { raceBtnU = on; });
   raceBindHold("race-down", function (on) { raceBtnD = on; });
+  var raceBoardEl = $("race-board");
+  var raceDragX = null, raceDragPlayerX = 0;
+  raceBoardEl.addEventListener("pointerdown", function (ev) {
+    if (racePhase !== "playing") return;
+    raceDragX = ev.clientX; raceDragPlayerX = racePlayerX;
+    if (raceBoardEl.setPointerCapture) { try { raceBoardEl.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ } }
+    ev.preventDefault();
+  });
+  raceBoardEl.addEventListener("pointermove", function (ev) {
+    if (raceDragX === null) return;
+    var rect = raceBoardEl.getBoundingClientRect();
+    racePlayerX = Math.max(-2.3, Math.min(2.3, raceDragPlayerX + (ev.clientX - raceDragX) / Math.max(1, rect.width) * 2.4));
+  });
+  function raceDragEnd() { raceDragX = null; }
+  raceBoardEl.addEventListener("pointerup", raceDragEnd);
+  raceBoardEl.addEventListener("pointercancel", raceDragEnd);
   $("race-start").addEventListener("click", function (ev) { raceSetRunning(!raceRunning); ev.currentTarget.blur(); });
   $("race-new").addEventListener("click", function (ev) {
+    cgx.closeDialog();
     raceSetRunning(false);
     raceReset();
     $("race-status").textContent = "Press Start, then hold the up arrow to accelerate.";
     ev.currentTarget.blur();
   });
+  raceBuildSkyline();
+  raceBuildSprites();
   raceBuildTrack();
   raceReset();
   // Test hooks (used by the headless verification script only).
@@ -549,6 +1106,9 @@ var TurboLaneRacer = (function () {
         score: raceScore(), overtakes: raceOvertakes, crashes: raceCrashes,
         checkpoints: raceCheckpoints, timeLeft: Math.ceil(raceTimeLeft),
         playerX: Math.round(racePlayerX * 100) / 100,
+        distM: Math.round(raceDistM),
+        best: raceBest ? raceBest.score : 0,
+        tilt: Math.round(raceTilt * 100) / 100,
         segments: raceSegments.length
       };
     },
@@ -564,36 +1124,28 @@ var TurboLaneRacer = (function () {
     debugSetTime: function (s) { raceTimeLeft = s; },
     debugSetNearCheckpoint: function () { raceNextCp = raceDist + 300; }
   };
-  return { reset: raceReset };
+  return { reset: raceReset, redraw: raceDraw };
 })();
 
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ============ FULLSCREEN + SOUND + FIT (via the cgx shared layer) ============ */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("race-sound"));
+  /* The canvas backing store follows its CSS box x devicePixelRatio on
+     resize and on fullscreen changes; drawing stays in logical
+     480x360 units, so fullscreen is sharp instead of a stretched
+     bitmap (spec 0.2). Redraw happens through the layer callback. */
+  cgx.watchFit($("race-board"), { logicalW: 480, logicalH: 360 }, function () { TurboLaneRacer.redraw(); });
 })();
 </script>
 </body>
