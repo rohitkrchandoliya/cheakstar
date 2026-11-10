@@ -34,6 +34,7 @@
   .play-stage:fullscreen .fs-desc, .play-stage:-webkit-full-screen .fs-desc { display: none; }
   .play-stage:fullscreen .status, .play-stage:-webkit-full-screen .status, .play-stage:fullscreen .scorebar, .play-stage:-webkit-full-screen .scorebar { color: #e2e8f0; }
   .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2 { color: #f3d67c; }
+  .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2 { display: none; }
 
   /* ---- Space Blaster board ---- */
   .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
@@ -45,7 +46,7 @@
      the old rule min(54vmin, 430px) left it at 414px on a 1366x768
      laptop). The cgx layer re-fits the backing store to this box x DPR,
      so the bigger board stays sharp. */
-  .cgx-fs:fullscreen #space-board, .cgx-fs:-webkit-full-screen #space-board { width: min(94vw, 62vh, 560px); }
+  .cgx-fs:fullscreen #space-board, .cgx-fs:-webkit-full-screen #space-board { width: min(94vw, calc((100dvh - 140px) * 4 / 5), 560px); }
 
 
   /* ---- Cheakstar Games shared layer (cgx) ---- */
