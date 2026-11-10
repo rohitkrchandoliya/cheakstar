@@ -167,7 +167,11 @@
           toolLink("passport-photo-maker", "Passport Photo Maker"),
           toolLink("resize-image-to-kb", "Resize Image to KB"),
           toolLink("color-picker-from-image", "Color Picker from Image"),
-          toolLink("favicon-generator", "Favicon Generator")
+          toolLink("favicon-generator", "Favicon Generator"),
+          toolLink("barcode-generator", "Barcode Generator"),
+          toolLink("image-to-base64", "Image to Base64 Converter"),
+          toolLink("meme-generator", "Meme Generator"),
+          toolLink("collage-maker", "Photo Collage Maker")
         ]},
         { id: "pdf", name: "PDF Tools", icon: "doc", links: [
           toolLink("pdf-merge", "PDF Merge"),
@@ -177,7 +181,10 @@
           toolLink("pdf-compressor", "PDF Compressor"),
           toolLink("rotate-pdf", "Rotate PDF"),
           toolLink("pdf-to-text", "PDF to Text"),
-          toolLink("text-to-pdf", "Text to PDF")
+          toolLink("text-to-pdf", "Text to PDF"),
+          toolLink("pdf-watermark", "Add Watermark to PDF"),
+          toolLink("pdf-page-numbers", "Add Page Numbers to PDF"),
+          toolLink("pdf-delete-pages", "Delete Pages from PDF")
         ]},
         { id: "audio-video", name: "Audio & Video Tools", icon: "play", links: [
           toolLink("media-info", "Media Info"),
@@ -191,7 +198,10 @@
           toolLink("audio-merger", "Audio Merger"),
           toolLink("video-merger", "Video Merger"),
           toolLink("voice-recorder", "Voice Recorder"),
-          toolLink("screen-recorder", "Screen Recorder")
+          toolLink("screen-recorder", "Screen Recorder"),
+          toolLink("microphone-test", "Microphone Test"),
+          toolLink("webcam-test", "Webcam Test"),
+          toolLink("speaker-test", "Speaker / Headphone Test")
         ]},
         { id: "text", name: "Text Tools", icon: "pen", links: [
           toolLink("word-counter", "Word & Character Counter"),
@@ -204,21 +214,22 @@
           toolLink("text-repeater", "Text Repeater"),
           toolLink("remove-duplicate-lines", "Remove Duplicate Lines"),
           toolLink("line-sorter", "Line Sorter"),
-           toolLink("lorem-ipsum-generator", "Lorem Ipsum Generator"),
-           toolLink("reverse-text", "Reverse Text Generator"),
-           toolLink("typing-speed-test", "Typing Speed Test")
+          toolLink("lorem-ipsum-generator", "Lorem Ipsum Generator"),
+          toolLink("reverse-text", "Reverse Text Generator"),
+          toolLink("typing-speed-test", "Typing Speed Test")
         ]},
          { id: "web-dev", name: "Web & Dev", icon: "cpu", links: [
-            toolLink("slug-generator", "Slug Generator"),
-            toolLink("uuid-generator", "UUID Generator"),
-            toolLink("markdown-preview", "Markdown Preview"),
-            toolLink("code-formatter", "Code Formatter & Minifier"),
-            toolLink("regex-tester", "Regex Tester"),
-            toolLink("timestamp-converter", "Unix Timestamp Converter"),
-            toolLink("jwt-decoder", "JWT Decoder"),
-            toolLink("color-palette-generator", "Color Palette Generator")
-      ]},
-        { id: "security", name: "Security & OSINT", icon: "shield", links: [
+          toolLink("slug-generator", "Slug Generator"),
+          toolLink("uuid-generator", "UUID Generator"),
+          toolLink("markdown-preview", "Markdown Preview"),
+          toolLink("code-formatter", "Code Formatter & Minifier"),
+          toolLink("regex-tester", "Regex Tester"),
+          toolLink("timestamp-converter", "Unix Timestamp Converter"),
+          toolLink("jwt-decoder", "JWT Decoder"),
+          toolLink("color-palette-generator", "Color Palette Generator"),
+          toolLink("gradient-generator", "CSS Gradient Generator")
+        ]},
+         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           toolLink("dns-lookup", "DNS Lookup"),
           toolLink("rdap-whois-lookup", "Domain Info (WHOIS / RDAP)"),
           toolLink("ip-lookup", "IP Address Lookup"),
@@ -228,7 +239,9 @@
           toolLink("phone-number-checker", "Phone Number Checker"),
           toolLink("security-headers-check", "Website Security Headers Check"),
           toolLink("email-breach-check", "Email Breach Check"),
-          toolLink("password-breach-check", "Leaked Password Check")
+          toolLink("password-breach-check", "Leaked Password Check"),
+          toolLink("password-generator", "Password Generator"),
+          toolLink("password-strength-checker", "Password Strength Checker")
         ]},
         { id: "files", name: "Daily File Tools", icon: "archive", links: [
           toolLink("zip-extractor", "ZIP Extractor"),
@@ -267,8 +280,8 @@
           toolLink("random-number-generator", "Random Number Generator"),
           toolLink("coin-flip", "Coin Flip"),
           toolLink("dice-roller", "Dice Roller"),
-           toolLink("currency-converter", "Currency Converter"),
-           toolLink("internet-speed-test", "Internet Speed Test")
+          toolLink("currency-converter", "Currency Converter"),
+          toolLink("internet-speed-test", "Internet Speed Test")
         ]}
       ]}
     ];
