@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Classic Ludo - Cheakstar Games</title>
+<style>
+  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
+  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  h3 { color: var(--navy); margin-top: 1.5rem; }
+  .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+  .error { color: #b91c1c; }
+  .ok { color: #166534; }
+  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
+  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .limits li { margin: 0.25rem 0; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button:hover { background: #123a5c; }
+  button:disabled { background: #9aa5b1; cursor: default; }
+  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
+  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  label { font-weight: 600; }
+  .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
+  .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
+  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .game { display: none; }
+  .game.active { display: block; }
+  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+
+  /* Gem Smash */
+  #gem-board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; max-width: 480px; margin-top: 1rem; }
+  .gem { aspect-ratio: 1; border: none; padding: 0; margin: 0; font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .gem.sel { outline: 3px solid var(--navy); outline-offset: -3px; }
+  .gem.hint { outline: 3px solid var(--gold); outline-offset: -3px; }
+
+  /* Memory Match */
+  #mem-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 480px; margin-top: 1rem; }
+  .mem-card { aspect-ratio: 1; border: 2px solid var(--navy); background: var(--navy); color: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; padding: 0.25rem; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .mem-card.flipped { background: #fff; color: var(--navy); }
+  .mem-card.matched { background: #dcfce7; border-color: #16a34a; color: #166534; cursor: default; }
+
+  /* Number Merge 2048 */
+  #merge-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 420px; margin-top: 1rem; background: #bbada0; padding: 6px; border-radius: 6px; }
+  .merge-cell { aspect-ratio: 1; background: #cdc1b4; color: #776e65; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+  .merge-cell.v2 { background: #eee4da; }
+  .merge-cell.v4 { background: #ede0c8; }
+  .merge-cell.v8 { background: #f2b179; color: #fff; }
+  .merge-cell.v16 { background: #f59563; color: #fff; }
+  .merge-cell.v32 { background: #f67c5f; color: #fff; }
+  .merge-cell.v64 { background: #f65e3b; color: #fff; }
+  .merge-cell.v128 { background: #edcf72; color: #fff; font-size: 1.25rem; }
+  .merge-cell.v256 { background: #edcc61; color: #fff; font-size: 1.25rem; }
+  .merge-cell.v512 { background: #edc850; color: #fff; font-size: 1.25rem; }
+  .merge-cell.v1024 { background: #edc53f; color: #fff; font-size: 1.1rem; }
+  .merge-cell.v2048 { background: #edc22e; color: #fff; font-size: 1.1rem; }
+  .merge-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
+  .merge-keys button { margin: 0; padding: 0.6rem 0; }
+  .merge-keys .k-up { grid-column: 2; }
+  .merge-keys .k-left { grid-column: 1; grid-row: 2; }
+  .merge-keys .k-down { grid-column: 2; grid-row: 2; }
+  .merge-keys .k-right { grid-column: 3; grid-row: 2; }
+
+  /* BlockFit */
+  #bf-board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; max-width: 480px; margin-top: 1rem; background: var(--navy); padding: 4px; }
+  .bf-cell { aspect-ratio: 1; background: #fff; border: none; padding: 0; margin: 0; cursor: pointer; }
+  .bf-cell.filled { background: var(--gold); }
+  .bf-cell.preview { background: #93c5fd; }
+  .bf-cell.bad { background: #fca5a5; }
+  #bf-tray { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+  .bf-piece { border: 2px solid var(--line); padding: 6px; cursor: pointer; background: #fff; }
+  .bf-piece.sel { border-color: var(--navy); outline: 3px solid var(--gold); }
+  .bf-piece.used { opacity: 0.25; cursor: default; }
+  .bf-mini { display: grid; gap: 2px; }
+  .bf-mini div { width: 18px; height: 18px; background: #e5e7eb; }
+  .bf-mini div.on { background: var(--gold); }
+  #bf-ghost { position: fixed; z-index: 50; pointer-events: none; opacity: 0.75; display: none; }
+
+  /* Ludo */
+  #ludo-board { display: grid; grid-template-columns: repeat(15, 1fr); max-width: 540px; margin-top: 1rem; border: 2px solid var(--navy); }
+  .lu-cell { aspect-ratio: 1; background: #fff; border: 1px solid #d1d5db; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--navy); flex-wrap: wrap; padding: 0; }
+  .lu-cell.base-red { background: #dc2626; border-color: #991b1b; }
+  .lu-cell.base-green { background: #16a34a; border-color: #166534; }
+  .lu-cell.base-yellow { background: #eab308; border-color: #854d0e; }
+  .lu-cell.base-blue { background: #2563eb; border-color: #1e40af; }
+  .lu-cell.home-red { background: #fca5a5; }
+  .lu-cell.home-green { background: #86efac; }
+  .lu-cell.home-yellow { background: #fde047; }
+  .lu-cell.home-blue { background: #93c5fd; }
+  .lu-cell.start-red { background: #dc2626; color: #fff; }
+  .lu-cell.start-green { background: #16a34a; color: #fff; }
+  .lu-cell.start-yellow { background: #eab308; color: #fff; }
+  .lu-cell.start-blue { background: #2563eb; color: #fff; }
+  .lu-cell.center { grid-row: 7 / 10; grid-column: 7 / 10; background: conic-gradient(#dc2626 0 25%, #16a34a 0 50%, #eab308 0 75%, #2563eb 0); color: #fff; font-size: 0.6rem; }
+  .lu-token { width: 78%; height: 78%; min-width: 12px; min-height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #111827; color: #fff; font-size: 0.65rem; font-weight: 700; cursor: default; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; }
+  .lu-token.movable { cursor: pointer; outline: 3px solid var(--gold); outline-offset: 1px; animation: lu-pulse 0.8s infinite alternate; }
+  @keyframes lu-pulse { from { transform: scale(1); } to { transform: scale(1.18); } }
+  .lu-dice { display: inline-flex; width: 56px; height: 56px; border: 2px solid var(--navy); border-radius: 8px; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; color: var(--navy); margin-right: 0.75rem; vertical-align: middle; }
+  .lu-setup { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; }
+  .lu-setup div { display: flex; flex-direction: column; gap: 0.25rem; }
+  @media (max-width: 560px) {
+    .gem { font-size: 0.9rem; }
+    .merge-cell { font-size: 1.2rem; }
+    .lu-token { font-size: 0.55rem; }
+    .lu-cell { font-size: 0.55rem; }
+  }
+
+  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  body { max-width: 860px; }
+  .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+  .play-bar .spacer { flex: 1; }
+  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .btn-link:hover { background: #d1d5db; }
+  .fs-exit { display: none; }
+  .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
+  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+  .play-stage:fullscreen .fs-desc { display: none; }
+  .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
+  .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
+  .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
+  .play-stage:fullscreen .board { margin-top: 0.5rem; }
+  .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
+  .play-stage:fullscreen button { margin-top: 0.35rem; }
+  .play-stage:fullscreen .merge-keys { margin-top: 0.5rem; }
+  .play-stage:fullscreen #gem-board, .play-stage:fullscreen #mem-board { width: min(66vmin, 660px); max-width: 92vw; }
+  .play-stage:fullscreen #bf-board { width: min(57vmin, 620px); max-width: 92vw; }
+  .play-stage:fullscreen #merge-board { width: min(57vmin, 540px); max-width: 92vw; }
+  .play-stage:fullscreen #ludo-board { width: min(64vmin, 700px); max-width: 94vw; }
+  .play-stage:fullscreen #ludo-board + p { margin: 0.4rem 0; }
+  @media (max-height: 640px) {
+    .play-stage:fullscreen h2 { display: none; }
+    .play-stage:fullscreen .status { min-height: 1.1em; }
+  }
+  .play-stage:fullscreen .lu-setup { display: none; }
+  .play-stage:fullscreen #bf-tray { margin-top: 0.5rem; }
+  .play-stage:fullscreen .bf-piece { padding: 3px; }
+  .play-stage:fullscreen .bf-mini div { width: 10px; height: 10px; }
+  .play-stage:fullscreen .lu-dice { width: 44px; height: 44px; font-size: 1.4rem; }
+  .play-stage:fullscreen .lu-dice { color: #fff; border-color: var(--gold); }
+  .play-stage:fullscreen #bf-ghost { z-index: 70; }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Classic Ludo</h1>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+</header>
+<div class="play-bar">
+  <a class="btn-link" href="../index.html">&larr; All games</a>
+  <span class="spacer"></span>
+  <button type="button" id="fs-btn">Play fullscreen</button>
+</div>
+<section class="play-stage" id="stage">
+  <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
+
+  <h2>Classic Ludo</h2>
+  <p class="fs-desc">The traditional race board game. Roll a 6 to bring a token out of base. Race all 4 tokens around the board and into the centre. Landing on an opponent sends their token back to base, unless the square is a safe square (marked with a star). Rolling a 6, capturing, or finishing a token gives another turn. Three 6s in a row ends your turn.</p>
+  <div class="lu-setup" id="ludo-setup">
+    <div><label for="ludo-players">Players</label>
+      <select id="ludo-players"><option value="2">2 players</option><option value="3">3 players</option><option value="4" selected>4 players</option></select></div>
+    <div><label for="ludo-green">Green</label>
+      <select id="ludo-green"><option value="human">Human</option><option value="computer" selected>Computer</option></select></div>
+    <div><label for="ludo-yellow">Yellow</label>
+      <select id="ludo-yellow"><option value="human">Human</option><option value="computer" selected>Computer</option></select></div>
+    <div><label for="ludo-blue">Blue</label>
+      <select id="ludo-blue"><option value="human">Human</option><option value="computer" selected>Computer</option></select></div>
+    <button type="button" id="ludo-start">Start game</button>
+  </div>
+  <div class="scorebar"><span>Turn: <span id="ludo-turn">Red</span></span><span>Red home: <span id="ludo-red-home">0</span>/4</span><span>Green home: <span id="ludo-green-home">0</span>/4</span><span>Yellow home: <span id="ludo-yellow-home">0</span>/4</span><span>Blue home: <span id="ludo-blue-home">0</span>/4</span></div>
+  <div class="board" id="ludo-board"></div>
+  <p><span class="lu-dice" id="ludo-dice">-</span><button type="button" id="ludo-roll">Roll dice</button></p>
+  <p class="status" id="ludo-status">Choose the players and press Start game.</p>
+  <button type="button" id="ludo-new">New game</button>
+
+</section>
+<script>
+"use strict";
+function $(id) { return document.getElementById(id); }
+/* ================= G2 CLASSIC LUDO ================= */
+var Ludo = (function () {
+  var PATH = [
+    [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
+    [5, 6], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6],
+    [0, 7],
+    [0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8],
+    [6, 9], [6, 10], [6, 11], [6, 12], [6, 13], [6, 14],
+    [7, 14],
+    [8, 14], [8, 13], [8, 12], [8, 11], [8, 10], [8, 9],
+    [9, 8], [10, 8], [11, 8], [12, 8], [13, 8], [14, 8],
+    [14, 7],
+    [14, 6], [13, 6], [12, 6], [11, 6], [10, 6], [9, 6],
+    [8, 5], [8, 4], [8, 3], [8, 2], [8, 1], [8, 0],
+    [7, 0],
+    [6, 0]
+  ];
+  var ORDER = ["red", "green", "yellow", "blue"];
+  var NAMES = { red: "Red", green: "Green", yellow: "Yellow", blue: "Blue" };
+  var HEX = { red: "#dc2626", green: "#16a34a", yellow: "#ca8a04", blue: "#2563eb" };
+  var START = { red: 0, green: 13, yellow: 26, blue: 39 };
+  var HOME_COL = {
+    red: [[7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6]],
+    green: [[1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7]],
+    yellow: [[7, 13], [7, 12], [7, 11], [7, 10], [7, 9], [7, 8]],
+    blue: [[13, 7], [12, 7], [11, 7], [10, 7], [9, 7], [8, 7]]
+  };
+  var BASE_SLOTS = {
+    red: [[1, 1], [1, 4], [4, 1], [4, 4]],
+    green: [[1, 10], [1, 13], [4, 10], [4, 13]],
+    yellow: [[10, 10], [10, 13], [13, 10], [13, 13]],
+    blue: [[10, 1], [10, 4], [13, 1], [13, 4]]
+  };
+  var SAFE = {};
+  [[6, 1], [1, 8], [8, 13], [13, 6], [2, 6], [6, 12], [12, 8], [8, 2]].forEach(function (p) { SAFE[p[0] + "," + p[1]] = true; });
+  var STAR = { "2,6": true, "6,12": true, "12,8": true, "8,2": true };
+  var START_CELL = { "6,1": "red", "1,8": "green", "8,13": "yellow", "13,6": "blue" };
+  var HOME_CELL = {};
+  ORDER.forEach(function (col) {
+    HOME_COL[col].forEach(function (p) { HOME_CELL[p[0] + "," + p[1]] = col; });
+  });
+
+  var players = [], current = 0, dice = 0, rolled = false, movable = [],
+      sixCount = 0, started = false, over = false, aiTimer = null;
+
+  function defaultPlayers() {
+    return ORDER.map(function (col) {
+      return { color: col, isComputer: col !== "red", tokens: [-1, -1, -1, -1] };
+    });
+  }
+  function cellKey(r, c) { return r + "," + c; }
+  function tokenCell(player, tokenIdx) {
+    var pos = player.tokens[tokenIdx];
+    if (pos === -1) return BASE_SLOTS[player.color][tokenIdx];
+    if (pos <= 50) return PATH[(START[player.color] + pos) % 52];
+    if (pos <= 56) return HOME_COL[player.color][pos - 51];
+    return null; // finished: centre
+  }
+  function pathIndexOf(player, pos) {
+    return (START[player.color] + pos) % 52;
+  }
+  function buildBoard() {
+    var el = $("ludo-board");
+    el.innerHTML = "";
+    for (var r = 0; r < 15; r++) {
+      for (var c = 0; c < 15; c++) {
+        if (r >= 6 && r <= 8 && c >= 6 && c <= 8) continue;
+        var d = document.createElement("div");
+        d.className = "lu-cell";
+        d.id = "lu-" + r + "-" + c;
+        var key = cellKey(r, c);
+        if (r < 6 && c < 6) d.classList.add("base-red");
+        else if (r < 6 && c > 8) d.classList.add("base-green");
+        else if (r > 8 && c > 8) d.classList.add("base-yellow");
+        else if (r > 8 && c < 6) d.classList.add("base-blue");
+        else if (HOME_CELL[key]) d.classList.add("home-" + HOME_CELL[key]);
+        else if (START_CELL[key]) d.classList.add("start-" + START_CELL[key]);
+        if (STAR[key]) d.textContent = "*";
+        el.appendChild(d);
+      }
+    }
+    var centre = document.createElement("div");
+    centre.className = "lu-cell center";
+    centre.id = "lu-center";
+    centre.textContent = "HOME";
+    el.appendChild(centre);
+  }
+  function render() {
+    buildBoard();
+    var list = started ? players : defaultPlayers();
+    list.forEach(function (player) {
+      for (var t = 0; t < 4; t++) {
+        var cell = tokenCell(player, t);
+        var host = cell ? $("lu-" + cell[0] + "-" + cell[1]) : $("lu-center");
+        if (!host) continue;
+        var tok = document.createElement("button");
+        tok.type = "button";
+        tok.className = "lu-token";
+        tok.id = "ludo-token-" + player.color + "-" + t;
+        tok.style.background = HEX[player.color];
+        tok.textContent = String(t + 1);
+        tok.setAttribute("aria-label", NAMES[player.color] + " token " + (t + 1));
+        if (started && !over && players[current] === player && movable.indexOf(t) !== -1) {
+          tok.classList.add("movable");
+          (function (pi, ti) {
+            tok.addEventListener("click", function () { moveToken(pi, ti); });
+          })(players.indexOf(player), t);
+        }
+        host.appendChild(tok);
+      }
+    });
+    ORDER.forEach(function (col) {
+      var p = null;
+      for (var i = 0; i < players.length; i++) if (players[i].color === col) p = players[i];
+      var home = p ? p.tokens.filter(function (x) { return x === 57; }).length : 0;
+      $( "ludo-" + col + "-home").textContent = String(home);
+    });
+    $("ludo-turn").textContent = started ? NAMES[players[current].color] : "Red";
+    $("ludo-dice").textContent = dice > 0 ? String(dice) : "-";
+    $("ludo-roll").disabled = !started || over || rolled || (started && players[current].isComputer);
+  }
+  function computeMovable() {
+    movable = [];
+    var p = players[current];
+    for (var t = 0; t < 4; t++) {
+      var pos = p.tokens[t];
+      if (pos === -1 && dice === 6) movable.push(t);
+      else if (pos >= 0 && pos + dice <= 57) movable.push(t);
+    }
+  }
+  function start() {
+    var n = parseInt($("ludo-players").value, 10);
+    players = [];
+    for (var i = 0; i < n; i++) {
+      var col = ORDER[i];
+      var comp = col !== "red" && $("ludo-" + col).value === "computer";
+      players.push({ color: col, isComputer: comp, tokens: [-1, -1, -1, -1] });
+    }
+    current = 0; dice = 0; rolled = false; movable = [];
+    sixCount = 0; started = true; over = false;
+    if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+    render();
+    $("ludo-status").textContent = NAMES[players[0].color] + " to play. Roll the dice.";
+    maybeComputerTurn();
+  }
+  function roll() {
+    if (!started || over || rolled) return false;
+    dice = 1 + Math.floor(Math.random() * 6);
+    if (dice === 6) sixCount++; else sixCount = 0;
+    if (sixCount === 3) {
+      sixCount = 0;
+      rolled = true;
+      render();
+      $("ludo-status").textContent = "Three 6s in a row. " + NAMES[players[current].color] + " loses the turn.";
+      aiTimer = setTimeout(nextTurn, 1200);
+      return true;
+    }
+    computeMovable();
+    rolled = true;
+    render();
+    if (movable.length === 0) {
+      $("ludo-status").textContent = "Rolled a " + dice + ". No move possible for " + NAMES[players[current].color] + ".";
+      aiTimer = setTimeout(nextTurn, 1200);
+      return true;
+    }
+    $("ludo-status").textContent = NAMES[players[current].color] + " rolled a " + dice + ". Tap a highlighted token to move it.";
+    if (players[current].isComputer) {
+      aiTimer = setTimeout(function () {
+        var pick = chooseMove(players[current]);
+        if (pick !== -1) moveToken(current, pick);
+      }, 900);
+    }
+    return true;
+  }
+  function chooseMove(player) {
+    if (movable.length === 0) return -1;
+    var bestIdx = movable[0], bestScore = -1;
+    for (var m = 0; m < movable.length; m++) {
+      var t = movable[m], pos = player.tokens[t], score = 0;
+      var target = pos === -1 ? 0 : pos + dice;
+      if (pos === -1) score += 60;
+      if (target === 57) score += 80;
+      if (target >= 51 && target <= 56) score += 30;
+      if (target <= 50) {
+        var cell = PATH[pathIndexOf(player, target)];
+        if (SAFE[cellKey(cell[0], cell[1])]) score += 40;
+        for (var i = 0; i < players.length; i++) {
+          if (players[i] === player) continue;
+          for (var k = 0; k < 4; k++) {
+            var op = players[i].tokens[k];
+            if (op >= 0 && op <= 50 && pathIndexOf(players[i], op) === pathIndexOf(player, target) && !SAFE[cellKey(cell[0], cell[1])]) score += 100;
+          }
+        }
+      }
+      score += Math.max(0, target);
+      if (score > bestScore) { bestScore = score; bestIdx = t; }
+    }
+    return bestIdx;
+  }
+  function moveToken(playerIdx, tokenIdx) {
+    if (!started || over || playerIdx !== current) return false;
+    if (movable.indexOf(tokenIdx) === -1) return false;
+    var player = players[playerIdx];
+    var pos = player.tokens[tokenIdx];
+    var target = pos === -1 ? 0 : pos + dice;
+    player.tokens[tokenIdx] = target;
+    var captured = false, finished = false;
+    if (target <= 50) {
+      var cell = PATH[pathIndexOf(player, target)];
+      var key = cellKey(cell[0], cell[1]);
+      if (!SAFE[key]) {
+        for (var i = 0; i < players.length; i++) {
+          if (players[i] === player) continue;
+          for (var k = 0; k < 4; k++) {
+            var op = players[i].tokens[k];
+            if (op >= 0 && op <= 50 && pathIndexOf(players[i], op) === pathIndexOf(player, target)) {
+              players[i].tokens[k] = -1;
+              captured = true;
+            }
+          }
+        }
+      }
+    }
+    if (target === 57) finished = true;
+    var extraTurn = dice === 6 || captured || finished;
+    movable = [];
+    rolled = false;
+    if (player.tokens.every(function (x) { return x === 57; })) {
+      over = true;
+      render();
+      $("ludo-status").textContent = NAMES[player.color] + " wins the game. All 4 tokens are home.";
+      return true;
+    }
+    render();
+    if (extraTurn) {
+      $("ludo-status").textContent = NAMES[player.color] + (captured ? " captured a token" : finished ? " brought a token home" : " rolled a 6") + " and plays again. Roll the dice.";
+    } else {
+      nextTurn();
+      return true;
+    }
+    maybeComputerTurn();
+    return true;
+  }
+  function nextTurn() {
+    current = (current + 1) % players.length;
+    sixCount = 0;
+    dice = 0;
+    rolled = false;
+    movable = [];
+    render();
+    $("ludo-status").textContent = NAMES[players[current].color] + " to play. Roll the dice.";
+    maybeComputerTurn();
+  }
+  function maybeComputerTurn() {
+    if (!started || over) return;
+    if (players[current].isComputer) {
+      aiTimer = setTimeout(function () { roll(); }, 900);
+    }
+  }
+  $("ludo-start").addEventListener("click", start);
+  $("ludo-roll").addEventListener("click", function () { roll(); });
+  $("ludo-new").addEventListener("click", function () {
+    if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+    players = []; current = 0; dice = 0; rolled = false; movable = [];
+    sixCount = 0; started = false; over = false;
+    render();
+    $("ludo-status").textContent = "Choose the players and press Start game.";
+  });
+  render();
+  window.__ludo = {
+    get pathLength() { return PATH.length; },
+    get state() {
+      return {
+        started: started, over: over, current: started ? players[current].color : null,
+        dice: dice, rolled: rolled, movable: movable.slice(),
+        players: players.map(function (p) { return { color: p.color, computer: p.isComputer, tokens: p.tokens.slice() }; })
+      };
+    },
+    start: start,
+    roll: roll,
+    moveToken: moveToken,
+    debugSet: function (o) {
+      if (!started) start();
+      if (o.players) {
+        players = o.players.map(function (pc) {
+          return { color: pc.color, isComputer: !!pc.computer, tokens: pc.tokens.slice() };
+        });
+      }
+      if (o.current !== undefined) current = o.current;
+      if (o.dice !== undefined) { dice = o.dice; rolled = true; computeMovable(); }
+      render();
+    }
+  };
+  return { start: start };
+})();
+
+/* ================= FULLSCREEN (staging addition) ================= */
+(function () {
+  var stage = document.getElementById("stage");
+  var enterBtn = document.getElementById("fs-btn");
+  var exitBtn = document.getElementById("fs-exit");
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function request() {
+    if (stage.requestFullscreen) return stage.requestFullscreen();
+    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
+    return null;
+  }
+  function exit() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+    return null;
+  }
+  function sync() {
+    var on = !!fsElement();
+    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
+  }
+  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
+    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
+  }
+  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
+  exitBtn.addEventListener("click", function () { exit(); });
+  document.addEventListener("fullscreenchange", sync);
+  document.addEventListener("webkitfullscreenchange", sync);
+})();
+
+</script>
+</body>
+</html>
