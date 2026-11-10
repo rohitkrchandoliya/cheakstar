@@ -1389,6 +1389,17 @@ $("sol-undo").addEventListener("click", function () { solUndo(); });
 $("sol-hint").addEventListener("click", function () { solHint(); });
 $("sol-auto").addEventListener("click", function () { solAutoFinish(); });
 cgx.attachMuteToggle($("sol-sound"));
+  /* ================= FULLSCREEN (via the cgx shared layer) ================= */
+  (function () {
+  var stage = $("stage");
+    var enterBtn = $("fs-btn");
+    var exitBtn = $("fs-exit");
+    if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
+        enterBtn.style.display = "none"; /* browser has no Fullscreen API */
+    }
+    enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+    exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  })();
 document.addEventListener("keydown", function (ev) {
   if (solDialogOpen()) { return; }
   var tag = (ev.target && ev.target.tagName) || "";
