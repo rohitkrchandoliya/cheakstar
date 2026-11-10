@@ -12,111 +12,25 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Gem Smash */
-  #gem-board { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; max-width: 480px; margin-top: 1rem; }
-  .gem { aspect-ratio: 1; border: none; padding: 0; margin: 0; font-size: 1.05rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .gem.sel { outline: 3px solid var(--navy); outline-offset: -3px; }
-  .gem.hint { outline: 3px solid var(--gold); outline-offset: -3px; }
-
-  /* Memory Match */
-  #mem-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 480px; margin-top: 1rem; }
-  .mem-card { aspect-ratio: 1; border: 2px solid var(--navy); background: var(--navy); color: #fff; font-size: 0.8rem; font-weight: 700; cursor: pointer; padding: 0.25rem; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .mem-card.flipped { background: #fff; color: var(--navy); }
-  .mem-card.matched { background: #dcfce7; border-color: #16a34a; color: #166534; cursor: default; }
-
-  /* Number Merge 2048 */
-  #merge-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; max-width: 420px; margin-top: 1rem; background: #bbada0; padding: 6px; border-radius: 6px; }
-  .merge-cell { aspect-ratio: 1; background: #cdc1b4; color: #776e65; font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
-  .merge-cell.v2 { background: #eee4da; }
-  .merge-cell.v4 { background: #ede0c8; }
-  .merge-cell.v8 { background: #f2b179; color: #fff; }
-  .merge-cell.v16 { background: #f59563; color: #fff; }
-  .merge-cell.v32 { background: #f67c5f; color: #fff; }
-  .merge-cell.v64 { background: #f65e3b; color: #fff; }
-  .merge-cell.v128 { background: #edcf72; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v256 { background: #edcc61; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v512 { background: #edc850; color: #fff; font-size: 1.25rem; }
-  .merge-cell.v1024 { background: #edc53f; color: #fff; font-size: 1.1rem; }
-  .merge-cell.v2048 { background: #edc22e; color: #fff; font-size: 1.1rem; }
-  .merge-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .merge-keys button { margin: 0; padding: 0.6rem 0; }
-  .merge-keys .k-up { grid-column: 2; }
-  .merge-keys .k-left { grid-column: 1; grid-row: 2; }
-  .merge-keys .k-down { grid-column: 2; grid-row: 2; }
-  .merge-keys .k-right { grid-column: 3; grid-row: 2; }
-
-  /* BlockFit */
-  #bf-board { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; max-width: 480px; margin-top: 1rem; background: var(--navy); padding: 4px; }
-  .bf-cell { aspect-ratio: 1; background: #fff; border: none; padding: 0; margin: 0; cursor: pointer; }
-  .bf-cell.filled { background: var(--gold); }
-  .bf-cell.preview { background: #93c5fd; }
-  .bf-cell.bad { background: #fca5a5; }
-  #bf-tray { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
-  .bf-piece { border: 2px solid var(--line); padding: 6px; cursor: pointer; background: #fff; }
-  .bf-piece.sel { border-color: var(--navy); outline: 3px solid var(--gold); }
-  .bf-piece.used { opacity: 0.25; cursor: default; }
-  .bf-mini { display: grid; gap: 2px; }
-  .bf-mini div { width: 18px; height: 18px; background: #e5e7eb; }
-  .bf-mini div.on { background: var(--gold); }
-  #bf-ghost { position: fixed; z-index: 50; pointer-events: none; opacity: 0.75; display: none; }
-
-  /* Ludo */
-  #ludo-board { display: grid; grid-template-columns: repeat(15, 1fr); max-width: 540px; margin-top: 1rem; border: 2px solid var(--navy); }
-  .lu-cell { aspect-ratio: 1; background: #fff; border: 1px solid #d1d5db; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--navy); flex-wrap: wrap; padding: 0; }
-  .lu-cell.base-red { background: #dc2626; border-color: #991b1b; }
-  .lu-cell.base-green { background: #16a34a; border-color: #166534; }
-  .lu-cell.base-yellow { background: #eab308; border-color: #854d0e; }
-  .lu-cell.base-blue { background: #2563eb; border-color: #1e40af; }
-  .lu-cell.home-red { background: #fca5a5; }
-  .lu-cell.home-green { background: #86efac; }
-  .lu-cell.home-yellow { background: #fde047; }
-  .lu-cell.home-blue { background: #93c5fd; }
-  .lu-cell.start-red { background: #dc2626; color: #fff; }
-  .lu-cell.start-green { background: #16a34a; color: #fff; }
-  .lu-cell.start-yellow { background: #eab308; color: #fff; }
-  .lu-cell.start-blue { background: #2563eb; color: #fff; }
-  .lu-cell.center { grid-row: 7 / 10; grid-column: 7 / 10; background: conic-gradient(#dc2626 0 25%, #16a34a 0 50%, #eab308 0 75%, #2563eb 0); color: #fff; font-size: 0.6rem; }
-  .lu-token { width: 78%; height: 78%; min-width: 12px; min-height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #111827; color: #fff; font-size: 0.65rem; font-weight: 700; cursor: default; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; }
-  .lu-token.movable { cursor: pointer; outline: 3px solid var(--gold); outline-offset: 1px; animation: lu-pulse 0.8s infinite alternate; }
-  @keyframes lu-pulse { from { transform: scale(1); } to { transform: scale(1.18); } }
-  .lu-dice { display: inline-flex; width: 56px; height: 56px; border: 2px solid var(--navy); border-radius: 8px; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; color: var(--navy); margin-right: 0.75rem; vertical-align: middle; }
-  .lu-setup { margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; }
-  .lu-setup div { display: flex; flex-direction: column; gap: 0.25rem; }
-  @media (max-width: 560px) {
-    .gem { font-size: 0.9rem; }
-    .merge-cell { font-size: 1.2rem; }
-    .lu-token { font-size: 0.55rem; }
-    .lu-cell { font-size: 0.55rem; }
-  }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
@@ -128,28 +42,103 @@
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .merge-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #gem-board, .play-stage:fullscreen #mem-board { width: min(66vmin, 660px); max-width: 92vw; }
-  .play-stage:fullscreen #bf-board { width: min(57vmin, 620px); max-width: 92vw; }
-  .play-stage:fullscreen #merge-board { width: min(57vmin, 540px); max-width: 92vw; }
-  .play-stage:fullscreen #ludo-board { width: min(64vmin, 700px); max-width: 94vw; }
-  .play-stage:fullscreen #ludo-board + p { margin: 0.4rem 0; }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:fullscreen .lu-setup { display: none; }
-  .play-stage:fullscreen #bf-tray { margin-top: 0.5rem; }
-  .play-stage:fullscreen .bf-piece { padding: 3px; }
-  .play-stage:fullscreen .bf-mini div { width: 10px; height: 10px; }
-  .play-stage:fullscreen .lu-dice { width: 44px; height: 44px; font-size: 1.4rem; }
-  .play-stage:fullscreen .lu-dice { color: #fff; border-color: var(--gold); }
-  .play-stage:fullscreen #bf-ghost { z-index: 70; }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+  /* ---- Gem Smash ---- */
+  /* The board is a square navy panel; every gem is an absolutely
+     positioned button (left/top in eighths of the board width),
+     so swaps, falls and spawns are real CSS transitions on persistent
+     elements - the shipped build rebuilt all 64 buttons on every
+     render, which made any animation impossible. The panel clips
+     (overflow: hidden) so new gems can slide in from above the top
+     edge, and touch-action: none keeps a drag swap from scrolling. */
+  #gem-board { position: relative; width: min(480px, 92vw); aspect-ratio: 1; margin: 1rem auto 0; background: #0d2f52; border: 2px solid var(--navy); border-radius: 10px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; box-sizing: border-box; transition: box-shadow 0.15s ease; }
+  #gem-board.chain-flash { box-shadow: 0 0 0 3px var(--gold), 0 0 26px 6px rgba(201, 162, 39, 0.55); }
+  .cgx-fs:fullscreen #gem-board, .cgx-fs:-webkit-full-screen #gem-board { width: min(92vw, 72vmin, 640px); flex: none; /* the column stage scrolls instead of squashing the square board */ }
+  .gem { position: absolute; width: 12.5%; height: 12.5%; padding: 2px; margin: 0; box-sizing: border-box; background: none; border: none; cursor: pointer; transition: top 0.2s ease, left 0.2s ease, transform 0.18s ease, opacity 0.18s ease; }
+  .gem:focus-visible { outline: none; }
+  .gem .face { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; color: #fff; font-weight: 800; font-size: 1.15rem; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); box-shadow: inset 0 -4px 7px rgba(0, 0, 0, 0.28), inset 0 3px 4px rgba(255, 255, 255, 0.4), 0 1px 3px rgba(0, 0, 0, 0.35); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  /* Facet shine: a soft white highlight swept across the top-left of
+     every gem, on top of the colour gradient set inline per type. */
+  .gem .face::before { content: ""; position: absolute; top: 7%; left: 9%; width: 58%; height: 36%; border-radius: 50%; background: rgba(255, 255, 255, 0.5); transform: rotate(-18deg); pointer-events: none; }
+  .gem .glyph { position: relative; }
+  /* Selected: unmistakable - the gem lifts, grows and takes a gold
+     ring with a white edge (the shipped build had only a navy
+     outline on a navy-ish page). */
+  .gem.sel { z-index: 4; }
+  .gem.sel .face { transform: scale(1.13); box-shadow: 0 0 0 3px var(--gold), 0 0 0 5px #fff, 0 8px 16px rgba(0, 0, 0, 0.45), inset 0 -4px 7px rgba(0, 0, 0, 0.28); }
+  /* Keyboard cursor: a dashed gold inset ring on the focused cell. */
+  .gem.cursor { outline: 3px dashed var(--gold); outline-offset: -5px; z-index: 3; }
+  /* Hint pair: the base stylesheet shipped this class unused - now
+     wired to the Hint button, pulsing gold on both gems of a swap. */
+  .gem.hint { z-index: 4; }
+  .gem.hint .face { animation: gem-hint-pulse 0.5s ease-in-out infinite alternate; }
+  @keyframes gem-hint-pulse { from { box-shadow: 0 0 0 3px var(--gold), 0 0 6px 2px rgba(201, 162, 39, 0.5); } to { box-shadow: 0 0 0 3px var(--gold), 0 0 20px 8px rgba(201, 162, 39, 0.9); transform: scale(1.09); } }
+  /* Matched gems swell and fade before they are removed. */
+  .gem.pop { transform: scale(1.35); opacity: 0; z-index: 5; }
+  /* Frozen (blocker) gems: an ice sheet over the face with a small
+     ICE tag; the letter stays faintly readable underneath. */
+  .gem.blocked { cursor: not-allowed; }
+  .gem .frost { position: absolute; inset: 0; z-index: 2; display: flex; align-items: flex-end; justify-content: center; background: linear-gradient(155deg, rgba(224, 242, 254, 0.88), rgba(147, 197, 253, 0.6) 55%, rgba(224, 242, 254, 0.85)); }
+  .gem .frost i { font-style: normal; font-size: 0.5rem; font-weight: 800; letter-spacing: 0.14em; color: #075985; background: rgba(255, 255, 255, 0.7); padding: 0 0.2rem; border-radius: 3px 3px 0 0; }
+  /* Floating score text over a cleared match. */
+  .gem-float { position: absolute; z-index: 30; font-weight: 800; font-size: 1.05rem; color: #f3d67c; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85); pointer-events: none; transform: translate(-50%, -50%); animation: gem-float-up 0.85s ease-out forwards; }
+  @keyframes gem-float-up { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -44px; } }
+  /* Cascade callout in the scorebar, visible only mid-chain. */
+  #gem-cascade { color: #b45309; visibility: hidden; }
+  .play-stage:fullscreen #gem-cascade { color: #f3d67c; }
+  /* Target progress bar, same width as the board. */
+  .gem-progress { width: min(480px, 92vw); height: 14px; margin: 0.6rem auto 0; background: #e5e7eb; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; box-sizing: border-box; }
+  .cgx-fs:fullscreen .gem-progress { width: min(92vw, 72vmin, 640px); background: #123a5c; }
+  #gem-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #dbb63a, var(--gold)); transition: width 0.3s ease; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  /* Level map: one button per level with its earned stars; locked
+     levels are disabled and say so. */
+  .gem-levels-label { font-weight: 700; text-align: center; margin-top: 1.1rem; }
+  .play-stage:fullscreen .gem-levels-label { color: #e2e8f0; }
+  .gem-levels { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; width: min(480px, 92vw); margin: 0.5rem auto 0; }
+  .cgx-fs:fullscreen .gem-levels { width: min(92vw, 72vmin, 640px); }
+  .gem-levels button { margin: 0; flex: 1 1 21%; padding: 0.45rem 0.2rem; line-height: 1.25; }
+  .gem-levels button .lv-stars { display: block; font-size: 0.72rem; color: var(--gold); min-height: 1em; }
+  .gem-levels button.active { background: var(--gold); color: #111827; }
+  .gem-levels button.active .lv-stars { color: #111827; }
+  .gem-levels button.locked { background: #e5e7eb; color: var(--muted); border: 1px solid var(--line); cursor: not-allowed; }
+  @media (max-width: 560px) {
+    .gem .face { font-size: 0.95rem; }
+  }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Gem Smash</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -157,203 +146,1290 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="gem-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
-
   <h2>Gem Smash</h2>
-  <p class="fs-desc">Swap next to each other to line up 3 or more gems of the same kind in a row or a column. Matched gems clear and new ones drop in. Reach 500 points within 30 moves.</p>
-  <div class="scorebar"><span>Score: <span id="gem-score">0</span></span><span>Target: 500</span><span>Moves left: <span id="gem-moves">30</span></span></div>
+  <p class="fs-desc">Swap two neighbouring gems to line up 3 or more of the same kind in a row or a column. Matched gems clear, new ones drop in, and chains score cascade bonuses. Reach the level target before your moves run out to clear the level and unlock the next. From level 4 some gems are frozen in ice: they cannot be swapped and do not match, but matching gems next to a frozen one breaks the ice (worth 20 bonus points each) and frees it. Play by tapping two gems, dragging one gem into its neighbour, or with the arrow keys plus Enter or Space. Every gem kind has its own colour, shape and letter, so kinds stay apart even without colour vision.</p>
+  <div class="scorebar"><span>Level: <span id="gem-level">1</span></span><span>Score: <span id="gem-score">0</span></span><span>Target: <span id="gem-target">500</span></span><span>Moves left: <span id="gem-moves">30</span></span><span>Best: <span id="gem-best">0</span></span><span id="gem-cascade">Cascade x2!</span></div>
+  <div class="gem-progress" role="progressbar" aria-label="Progress to the level target" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="gem-progress"><div id="gem-progress-fill"></div></div>
   <div class="board" id="gem-board"></div>
   <p class="status" id="gem-status">Tap a gem, then tap a gem next to it to swap them.</p>
-  <button type="button" id="gem-new">New game</button>
-
+  <p class="stats-line" id="gem-stats"></p>
+  <div class="ctrl-row">
+    <button type="button" id="gem-new">New game</button>
+    <button type="button" id="gem-hint">Hint (3)</button>
+  </div>
+  <p class="gem-levels-label" id="gem-levels-label">Levels</p>
+  <div class="gem-levels" id="gem-levels" role="group" aria-labelledby="gem-levels-label"></div>
 </section>
+<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - the levels you have unlocked, the stars you earned on each level, your best score overall and per level, and the fewest moves you ever needed to clear a level - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Frozen gems appear from level 4: they are ordinary gems locked in ice, freed by matching beside them.</p>
+<script>
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G1 GEM SMASH ================= */
+/* ================= G1 GEM SMASH (polish pass) =================
+   The verified game core is kept: the 8x8 board, the 6 gem kinds
+   (each with its own colour, shape and letter - a colour-blindness
+   aid, kept exactly), the run-based match detection, the cascade
+   scoring (gems cleared x 10 x chain), one move per successful
+   swap, and the no-match swap-back. The polish adds everything the
+   shipped build lacked:
+
+   - LEVELS: 12 levels, each a target to reach inside a move budget
+     (table below); clearing one unlocks the next. From level 4,
+     frozen (blocker) gems appear - they cannot be swapped, do not
+     count in matches and act as walls for falling gems; a match
+     that clears a cell next to a frozen gem breaks its ice, worth
+     20 bonus points, and frees the gem.
+   - STARS: 1-3 per cleared level by moves to spare (see starsFor).
+   - ANIMATION: persistent gem elements positioned absolutely, so
+     swaps slide, matched gems swell and pop, gems fall into place
+     and new gems drop in from above the board; the shipped render()
+     rebuilt all 64 buttons per step, which made this impossible.
+   - CONTROLS: tap-tap (kept), drag/swipe-to-swap, and keyboard
+     (arrow-key cursor + Enter/Space), all through one swap routine.
+   - HINT button (3 per level attempt, free) wiring the .gem.hint
+     class the base stylesheet shipped unused, a target progress
+     bar, a cascade callout, and a shuffle whenever a settled board
+     has no legal move left.
+   - PERSISTENCE through cgx.store("gem-smash"), keys "best" and
+     "stars" (shapes in the persistence section below).
+   - End screens via cgx.showResult with stars and Next level /
+     Replay / Retry buttons; win confetti comes from the layer. */
 var GemSmash = (function () {
-  var ROWS = 8, COLS = 8, TYPES = 6, TARGET = 500, MAX_MOVES = 30;
+  var ROWS = 8, COLS = 8, TYPES = 6;
+  /* Kept from the verified base: colour, letter and silhouette per
+     kind, so kinds stay distinguishable without colour vision. */
   var COLORS = ["#e11d48", "#2563eb", "#16a34a", "#eab308", "#9333ea", "#ea580c"];
   var LETTERS = ["R", "B", "G", "Y", "P", "O"];
   var RADII = ["50%", "6px", "50% 6px", "6px 50%", "50% 50% 6px 6px", "6px 6px 50% 50%"];
-  var board = [], score = 0, movesLeft = MAX_MOVES, selected = null, busy = false, over = false;
+  /* Level table (exact): reach `target` points within `moves`
+     swaps. `blockers` frozen gems are dealt onto BLOCK_SPOTS. */
+  var LEVELS = [
+    { target: 500,  moves: 30, blockers: 0 },
+    { target: 650,  moves: 30, blockers: 0 },
+    { target: 800,  moves: 29, blockers: 0 },
+    { target: 1000, moves: 29, blockers: 3 },
+    { target: 1200, moves: 28, blockers: 4 },
+    { target: 1450, moves: 28, blockers: 5 },
+    { target: 1700, moves: 27, blockers: 6 },
+    { target: 2000, moves: 27, blockers: 7 },
+    { target: 2300, moves: 26, blockers: 8 },
+    { target: 2600, moves: 26, blockers: 9 },
+    { target: 2900, moves: 25, blockers: 10 },
+    { target: 3200, moves: 25, blockers: 11 }
+  ];
+  /* Frozen-gem cells, in deal order (level N takes the first N of
+     its blocker count). Spread out, never orthogonally adjacent. */
+  var BLOCK_SPOTS = [[2, 2], [5, 5], [2, 5], [5, 2], [0, 3], [7, 4], [3, 0], [4, 7], [1, 6], [6, 1], [3, 3]];
+  var HINTS_PER_LEVEL = 3;
+  var ICE_BONUS = 20; /* points per frozen gem freed */
+  /* Stars by moves to spare when the target is reached:
+     3 stars at 40% or more of the move budget left, 2 at 20%. */
 
-  function randomType(r, c) {
-    var tries = 0, t;
-    do {
-      t = Math.floor(Math.random() * TYPES);
-      tries++;
-    } while (tries < 20 && (
-      (c >= 2 && board[r][c - 1] === t && board[r][c - 2] === t) ||
-      (r >= 2 && board[r - 1][c] === t && board[r - 2][c] === t)));
-    return t;
-  }
-  function newGame() {
-    board = [];
-    for (var r = 0; r < ROWS; r++) {
-      board.push([]);
-      for (var c = 0; c < COLS; c++) board[r].push(randomType(r, c));
-    }
-    score = 0; movesLeft = MAX_MOVES; selected = null; busy = false; over = false;
-    render();
-    $("gem-status").textContent = "Tap a gem, then tap a gem next to it to swap them.";
-  }
-  function render() {
-    var el = $("gem-board");
-    el.innerHTML = "";
-    for (var r = 0; r < ROWS; r++) {
-      for (var c = 0; c < COLS; c++) {
-        (function (rr, cc) {
-          var b = document.createElement("button");
-          b.type = "button";
-          b.className = "gem" + (selected && selected.r === rr && selected.c === cc ? " sel" : "");
-          b.id = "gem-" + rr + "-" + cc;
-          b.style.background = COLORS[board[rr][cc]];
-          b.style.borderRadius = RADII[board[rr][cc]];
-          b.textContent = LETTERS[board[rr][cc]];
-          b.setAttribute("aria-label", "Gem row " + (rr + 1) + " column " + (cc + 1));
-          b.addEventListener("click", function () { onTile(rr, cc); });
-          el.appendChild(b);
-        })(r, c);
+  var boardEl = $("gem-board");
+
+  /* ---------------- persistence (cgx.store) ----------------
+     Key "best":  { overall: <best score on any level>,
+                    perLevel: { "<level>": <best score> },
+                    fewestMoves: <fewest moves used to clear any
+                    level, or null> }.
+     Key "stars": { levels: { "<level>": <1-3 stars, best kept> },
+                    unlocked: <highest level number open> }.
+     Both live at cheakstar.games.gem-smash.* in this browser only
+     and are written when a level ends (win or lose). */
+  var gemStore = cgx.store("gem-smash");
+  function loadBest() {
+    var d = gemStore.get("best", null), out = { overall: 0, perLevel: {}, fewestMoves: null };
+    if (d && typeof d === "object") {
+      if (typeof d.overall === "number" && d.overall > 0) out.overall = Math.floor(d.overall);
+      if (d.perLevel && typeof d.perLevel === "object") {
+        for (var k in d.perLevel) if (typeof d.perLevel[k] === "number" && d.perLevel[k] > 0) out.perLevel[k] = Math.floor(d.perLevel[k]);
       }
+      if (typeof d.fewestMoves === "number" && d.fewestMoves > 0) out.fewestMoves = Math.floor(d.fewestMoves);
     }
-    $("gem-score").textContent = String(score);
-    $("gem-moves").textContent = String(movesLeft);
+    return out;
   }
-  function findMatches() {
-    var found = {};
-    for (var r = 0; r < ROWS; r++) {
-      var run = 1;
-      for (var c = 1; c <= COLS; c++) {
-        if (c < COLS && board[r][c] === board[r][c - 1]) { run++; }
+  function loadStars() {
+    var d = gemStore.get("stars", null), out = { levels: {}, unlocked: 1 };
+    if (d && typeof d === "object") {
+      if (d.levels && typeof d.levels === "object") {
+        for (var k in d.levels) if (typeof d.levels[k] === "number" && d.levels[k] >= 1) out.levels[k] = Math.min(3, Math.floor(d.levels[k]));
+      }
+      if (typeof d.unlocked === "number" && d.unlocked >= 1) out.unlocked = Math.min(LEVELS.length, Math.floor(d.unlocked));
+    }
+    return out;
+  }
+  var best = loadBest();
+  var starsData = loadStars();
+  function saveProgress() {
+    gemStore.set("best", best);
+    gemStore.set("stars", starsData);
+  }
+
+  /* ---------------- game state ---------------- */
+  var level = 1, target = LEVELS[0].target, movesBudget = LEVELS[0].moves;
+  var types = [], blocked = [], nodes = [];
+  var score = 0, movesLeft = 0, hintsLeft = 0;
+  var selected = null, cursorPos = { r: 0, c: 0 };
+  var busy = false, over = false, wonGame = false;
+  var shuffles = 0, uidSeq = 1;
+  var lastPeakChain = 0, lastMoveGain = 0, lastFreed = 0;
+  var hintCells = null, hintTimer = 0, cascadeTimer = 0;
+
+  function sleep(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+  function setStatus(t) { $("gem-status").textContent = t; }
+  function dialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
+  function inBounds(r, c) { return r >= 0 && r < ROWS && c >= 0 && c < COLS; }
+
+  /* ---------------- pure board logic (on type/blocked grids) ---- */
+  /* A cell can only match when it holds a gem that is not frozen;
+     anything else returns a per-cell sentinel that never equals a
+     neighbour, which also makes frozen cells break runs. */
+  function matchType(g, b, r, c) {
+    if (b[r][c] || g[r][c] < 0) return -10 - (r * COLS + c);
+    return g[r][c];
+  }
+  function findMatches(g, b) {
+    var found = {}, r, c, k, run;
+    for (r = 0; r < ROWS; r++) {
+      run = 1;
+      for (c = 1; c <= COLS; c++) {
+        if (c < COLS && matchType(g, b, r, c) === matchType(g, b, r, c - 1)) { run++; }
         else {
-          if (run >= 3) for (var k = c - run; k < c; k++) found[r + "," + k] = true;
+          if (run >= 3) for (k = c - run; k < c; k++) found[r + "," + k] = true;
           run = 1;
         }
       }
     }
-    for (var c2 = 0; c2 < COLS; c2++) {
-      var run2 = 1;
-      for (var r2 = 1; r2 <= ROWS; r2++) {
-        if (r2 < ROWS && board[r2][c2] === board[r2 - 1][c2]) { run2++; }
+    for (c = 0; c < COLS; c++) {
+      run = 1;
+      for (r = 1; r <= ROWS; r++) {
+        if (r < ROWS && matchType(g, b, r, c) === matchType(g, b, r - 1, c)) { run++; }
         else {
-          if (run2 >= 3) for (var k2 = r2 - run2; k2 < r2; k2++) found[k2 + "," + c2] = true;
-          run2 = 1;
+          if (run >= 3) for (k = r - run; k < r; k++) found[k + "," + c] = true;
+          run = 1;
         }
       }
     }
     return found;
   }
-  function sleep(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+  function hasRawRun(g) {
+    var r, c;
+    for (r = 0; r < ROWS; r++) for (c = 0; c + 2 < COLS; c++) {
+      if (g[r][c] >= 0 && g[r][c] === g[r][c + 1] && g[r][c] === g[r][c + 2]) return true;
+    }
+    for (c = 0; c < COLS; c++) for (r = 0; r + 2 < ROWS; r++) {
+      if (g[r][c] >= 0 && g[r][c] === g[r + 1][c] && g[r][c] === g[r + 2][c]) return true;
+    }
+    return false;
+  }
+  /* Every legal swap: two orthogonally adjacent, unfrozen cells
+     whose exchange creates at least one match. */
+  function findMoves(g, b) {
+    var moves = [], r, c, tmp;
+    function tryPair(r1, c1, r2, c2) {
+      if (b[r1][c1] || b[r2][c2]) return;
+      if (g[r1][c1] === g[r2][c2]) return;
+      tmp = g[r1][c1]; g[r1][c1] = g[r2][c2]; g[r2][c2] = tmp;
+      var ok = Object.keys(findMatches(g, b)).length > 0;
+      tmp = g[r1][c1]; g[r1][c1] = g[r2][c2]; g[r2][c2] = tmp;
+      if (ok) moves.push({ a: { r: r1, c: c1 }, b: { r: r2, c: c2 } });
+    }
+    for (r = 0; r < ROWS; r++) for (c = 0; c < COLS; c++) {
+      if (c + 1 < COLS) tryPair(r, c, r, c + 1);
+      if (r + 1 < ROWS) tryPair(r, c, r + 1, c);
+    }
+    return moves;
+  }
+  /* Deal a fresh type grid with no runs anywhere (the base game's
+     construction: never complete a pair to the left or above). */
+  function dealTypes(g) {
+    var r, c, t, tries;
+    for (r = 0; r < ROWS; r++) {
+      g.push([]);
+      for (c = 0; c < COLS; c++) {
+        tries = 0;
+        do {
+          t = Math.floor(Math.random() * TYPES);
+          tries++;
+        } while (tries < 20 && (
+          (c >= 2 && g[r][c - 1] === t && g[r][c - 2] === t) ||
+          (r >= 2 && g[r - 1][c] === t && g[r - 2][c] === t)));
+        g[r].push(t);
+      }
+    }
+    return g;
+  }
+  function blankBlocked() {
+    var b = [], r, c;
+    for (r = 0; r < ROWS; r++) { b.push([]); for (c = 0; c < COLS; c++) b[r].push(false); }
+    return b;
+  }
+  /* Last-resort guarantee of a legal move: plant a 2x3 pattern
+     ([t t u] / [v w t] - swapping the lower-right t up completes
+     the row) into a fully unfrozen window, then prove with the
+     real detectors that the board has a move and no resting run. */
+  function plantMove(g, b) {
+    var pat = [[0, 0, 1], [2, 3, 0]], r, c, i, j, saved, ok;
+    for (r = 0; r + 1 < ROWS; r++) for (c = 0; c + 2 < COLS; c++) {
+      ok = true;
+      for (i = 0; i < 2 && ok; i++) for (j = 0; j < 3 && ok; j++) if (b[r + i][c + j]) ok = false;
+      if (!ok) continue;
+      saved = [];
+      for (i = 0; i < 2; i++) { saved.push([]); for (j = 0; j < 3; j++) { saved[i].push(g[r + i][c + j]); g[r + i][c + j] = pat[i][j]; } }
+      if (!hasRawRun(g) && findMoves(g, b).length > 0) return true;
+      for (i = 0; i < 2; i++) for (j = 0; j < 3; j++) g[r + i][c + j] = saved[i][j];
+    }
+    return false;
+  }
+  /* Fill g (for blocked layout b) with a run-free grid that has at
+     least one legal move. */
+  function genPlayable(g, b) {
+    for (var attempt = 0; attempt < 80; attempt++) {
+      g.length = 0;
+      dealTypes(g);
+      if (!hasRawRun(g) && findMoves(g, b).length > 0) return;
+    }
+    g.length = 0;
+    dealTypes(g);
+    plantMove(g, b);
+  }
+
+  /* ---------------- DOM layer (persistent gem nodes) ------------ */
+  function faceBackground(t) {
+    return "linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 48%), linear-gradient(160deg, " + COLORS[t] + ", " + COLORS[t] + ")";
+  }
+  function makeNode(t, r, c, isBlocked) {
+    var el = document.createElement("button");
+    el.type = "button";
+    el.className = "gem" + (isBlocked ? " blocked" : "");
+    el.id = "gem-" + r + "-" + c;
+    el.setAttribute("aria-label", "Gem row " + (r + 1) + " column " + (c + 1) + ", letter " + LETTERS[t] + (isBlocked ? ", frozen" : ""));
+    var face = document.createElement("span");
+    face.className = "face";
+    face.style.background = faceBackground(t);
+    face.style.borderRadius = RADII[t];
+    var glyph = document.createElement("span");
+    glyph.className = "glyph";
+    glyph.textContent = LETTERS[t];
+    face.appendChild(glyph);
+    el.appendChild(face);
+    if (isBlocked) {
+      var frost = document.createElement("span");
+      frost.className = "frost";
+      var tag = document.createElement("i");
+      tag.textContent = "ICE";
+      frost.appendChild(tag);
+      face.appendChild(frost);
+    }
+    var node = { uid: uidSeq++, type: t, r: r, c: c, el: el, face: face };
+    el.__node = node;
+    setNodePos(node, r, c);
+    return node;
+  }
+  function setNodePos(node, r, c) {
+    node.r = r;
+    node.c = c;
+    node.el.style.left = (c * 12.5) + "%";
+    node.el.style.top = (r * 12.5) + "%";
+    node.el.dataset.r = String(r);
+    node.el.dataset.c = String(c);
+  }
+  /* Rebuild every node (level start, shuffle, crafted test boards).
+     Element ids and aria labels settle here, at rest. */
+  function buildBoard() {
+    boardEl.innerHTML = "";
+    nodes = [];
+    for (var r = 0; r < ROWS; r++) {
+      nodes.push([]);
+      for (var c = 0; c < COLS; c++) {
+        var node = makeNode(types[r][c], r, c, blocked[r][c]);
+        nodes[r].push(node);
+        boardEl.appendChild(node.el);
+      }
+    }
+    paintSelection();
+    paintCursor();
+  }
+  function paintSelection() {
+    for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) {
+      var n = nodes[r] && nodes[r][c];
+      if (n) n.el.classList.toggle("sel", !!selected && selected.r === r && selected.c === c);
+    }
+  }
+  function paintCursor() {
+    for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) {
+      var n = nodes[r] && nodes[r][c];
+      if (n) n.el.classList.toggle("cursor", cursorPos.r === r && cursorPos.c === c);
+    }
+  }
+  function clearHint() {
+    if (hintTimer) { clearTimeout(hintTimer); hintTimer = 0; }
+    if (hintCells) {
+      hintCells.forEach(function (p) {
+        var n = nodes[p.r] && nodes[p.r][p.c];
+        if (n) n.el.classList.remove("hint");
+      });
+      hintCells = null;
+    }
+  }
+  /* Floating "+N" text over the centroid of a cleared match (or
+     over a freed frozen gem), animated by CSS, removed after. */
+  function floaterAt(cells, text) {
+    var sr = 0, sc = 0, i;
+    for (i = 0; i < cells.length; i++) { sr += cells[i][0]; sc += cells[i][1]; }
+    var f = document.createElement("div");
+    f.className = "gem-float";
+    f.textContent = text;
+    f.style.left = ((sc / cells.length + 0.5) * 12.5) + "%";
+    f.style.top = ((sr / cells.length + 0.5) * 12.5) + "%";
+    boardEl.appendChild(f);
+    setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 900);
+  }
+
+  /* ---------------- HUD + level map ---------------- */
+  function syncHud() {
+    $("gem-level").textContent = String(level);
+    $("gem-score").textContent = String(score);
+    $("gem-target").textContent = String(target);
+    $("gem-moves").textContent = String(movesLeft);
+    $("gem-best").textContent = String(best.overall);
+    var pct = Math.max(0, Math.min(100, Math.round(score / target * 100)));
+    $("gem-progress-fill").style.width = pct + "%";
+    $("gem-progress").setAttribute("aria-valuenow", String(pct));
+    $("gem-hint").textContent = "Hint (" + hintsLeft + ")";
+    var cleared = 0, starTotal = 0, k;
+    for (k in starsData.levels) { cleared++; starTotal += starsData.levels[k]; }
+    var stats = "Levels cleared: " + cleared + " of " + LEVELS.length + " · Stars earned: " + starTotal + " of " + (LEVELS.length * 3);
+    if (best.perLevel[level]) stats += " · Best on this level: " + best.perLevel[level];
+    if (best.fewestMoves !== null) stats += " · Fewest moves to clear a level: " + best.fewestMoves;
+    $("gem-stats").textContent = stats;
+  }
+  function starsText(n) {
+    var s = "";
+    for (var i = 0; i < 3; i++) s += i < n ? "\u2605" : "\u2606";
+    return s;
+  }
+  function renderLevels() {
+    var wrap = $("gem-levels");
+    wrap.innerHTML = "";
+    for (var n = 1; n <= LEVELS.length; n++) {
+      (function (lv) {
+        var b = document.createElement("button");
+        b.type = "button";
+        var locked = lv > starsData.unlocked;
+        b.className = (lv === level ? "active" : "") + (locked ? " locked" : "");
+        b.disabled = locked;
+        var label = document.createElement("span");
+        label.textContent = "Level " + lv;
+        var st = document.createElement("span");
+        st.className = "lv-stars";
+        st.textContent = locked ? "Locked" : (starsData.levels[lv] ? starsText(starsData.levels[lv]) : "Not cleared");
+        b.appendChild(label);
+        b.appendChild(st);
+        b.setAttribute("aria-label", "Level " + lv + (locked ? ", locked" : ""));
+        b.addEventListener("click", function (ev) {
+          ev.currentTarget.blur();
+          chooseLevel(lv);
+        });
+        wrap.appendChild(b);
+      })(n);
+    }
+  }
+  function starsFor(movesLeftAtWin) {
+    var frac = movesLeftAtWin / movesBudget;
+    if (frac >= 0.4) return 3;
+    if (frac >= 0.2) return 2;
+    return 1;
+  }
+
+  /* ---------------- level flow ---------------- */
+  function startLevel(n) {
+    level = n;
+    target = LEVELS[n - 1].target;
+    movesBudget = LEVELS[n - 1].moves;
+    blocked = blankBlocked();
+    for (var i = 0; i < LEVELS[n - 1].blockers; i++) {
+      blocked[BLOCK_SPOTS[i][0]][BLOCK_SPOTS[i][1]] = true;
+    }
+    types = [];
+    genPlayable(types, blocked);
+    score = 0;
+    movesLeft = movesBudget;
+    hintsLeft = HINTS_PER_LEVEL;
+    selected = null;
+    cursorPos = { r: 0, c: 0 };
+    busy = false;
+    over = false;
+    wonGame = false;
+    lastPeakChain = 0;
+    lastMoveGain = 0;
+    lastFreed = 0;
+    clearHint();
+    hideCascade();
+    buildBoard();
+    syncHud();
+    renderLevels();
+    setStatus("Level " + n + ": reach " + target + " points in " + movesBudget + " moves." +
+      (LEVELS[n - 1].blockers ? " Watch out for the frozen gems." : "") +
+      " Tap a gem, then tap a gem next to it to swap them.");
+  }
+  function chooseLevel(n) {
+    if (n > starsData.unlocked || busy) return;
+    var inProgress = !over && (score > 0 || movesLeft < movesBudget);
+    if (n === level) { startLevel(n); return; }
+    if (inProgress) {
+      cgx.confirm("Leave level " + level + "?", "Your current run will be lost.", function () { startLevel(n); });
+    } else {
+      startLevel(n);
+    }
+  }
+  function recordResult() {
+    if (score > best.overall) best.overall = score;
+    if (!best.perLevel[level] || score > best.perLevel[level]) best.perLevel[level] = score;
+    if (wonGame) {
+      var used = movesBudget - movesLeft;
+      if (best.fewestMoves === null || used < best.fewestMoves) best.fewestMoves = used;
+      var st = starsFor(movesLeft);
+      if (!starsData.levels[level] || st > starsData.levels[level]) starsData.levels[level] = st;
+      if (level < LEVELS.length && starsData.unlocked < level + 1) starsData.unlocked = level + 1;
+    }
+    saveProgress();
+  }
+  function winLevel() {
+    over = true;
+    wonGame = true;
+    var isNewBest = score > best.overall || !best.perLevel[level] || score > best.perLevel[level];
+    recordResult();
+    syncHud();
+    renderLevels();
+    var stars = starsFor(movesLeft);
+    setStatus("Level " + level + " cleared! " + score + " points with " + movesLeft + " moves to spare.");
+    cgx.showResult({
+      won: true,
+      title: "Level " + level + " complete!",
+      message: "You reached " + score + " points (target " + target + ") with " + movesLeft + " of " + movesBudget + " moves to spare.",
+      score: score, scoreLabel: "Score",
+      best: best.overall, bestLabel: "Best score",
+      newBest: isNewBest,
+      stars: stars,
+      playAgainLabel: level < LEVELS.length ? "Next level" : "Replay level",
+      onPlayAgain: function () { startLevel(level < LEVELS.length ? level + 1 : level); },
+      closeLabel: "Replay level",
+      onClose: function () { startLevel(level); }
+    });
+  }
+  function loseLevel() {
+    over = true;
+    wonGame = false;
+    recordResult();
+    syncHud();
+    renderLevels();
+    setStatus("Out of moves on level " + level + ". You scored " + score + " of " + target + " points.");
+    cgx.showResult({
+      won: false, confetti: false,
+      title: "Out of moves",
+      message: "Level " + level + ": you scored " + score + " of the " + target + " points needed. One more cascade could have done it - try again.",
+      score: score, scoreLabel: "Score",
+      best: best.overall, bestLabel: "Best score",
+      playAgainLabel: "Retry level",
+      onPlayAgain: function () { startLevel(level); },
+      closeLabel: "Close"
+    });
+  }
+  function doShuffle() {
+    genPlayable(types, blocked);
+    selected = null;
+    clearHint();
+    shuffles++;
+    buildBoard();
+    syncHud();
+    setStatus("No moves left - the board has been shuffled. Your score and moves are unchanged.");
+    cgx.dialog({
+      title: "No moves left",
+      bodyText: "There was no swap that makes a match, so the gems have been shuffled into a new arrangement. Your score and moves are unchanged.",
+      buttons: [{ label: "Keep playing", primary: true, value: "ok" }]
+    });
+  }
+  function finishMove() {
+    if (score >= target) { winLevel(); return; }
+    if (movesLeft <= 0) { loseLevel(); return; }
+    if (findMoves(types, blocked).length === 0) { doShuffle(); return; }
+    setStatus("Score " + score + " of " + target + ". " + movesLeft + " moves left.");
+  }
+
+  /* ---------------- cascades, ice, gravity ---------------- */
+  function showCascade(chain) {
+    if (chain >= 2) {
+      var el = $("gem-cascade");
+      el.textContent = "Cascade x" + chain + "!";
+      el.style.visibility = "visible";
+      boardEl.classList.add("chain-flash");
+      if (cascadeTimer) clearTimeout(cascadeTimer);
+      cascadeTimer = setTimeout(hideCascade, 1400);
+    }
+  }
+  function hideCascade() {
+    $("gem-cascade").style.visibility = "hidden";
+    boardEl.classList.remove("chain-flash");
+    if (cascadeTimer) { clearTimeout(cascadeTimer); cascadeTimer = 0; }
+  }
+  /* Break the ice on every frozen gem orthogonally next to a
+     cleared cell; the freed gem keeps its kind and plays on. */
+  function breakIceAround(clearedCells) {
+    var freed = 0, seen = {}, i, d;
+    var dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    for (i = 0; i < clearedCells.length; i++) {
+      for (d = 0; d < 4; d++) {
+        var r = clearedCells[i][0] + dirs[d][0], c = clearedCells[i][1] + dirs[d][1];
+        if (!inBounds(r, c) || !blocked[r][c] || seen[r + "," + c]) continue;
+        seen[r + "," + c] = true;
+        blocked[r][c] = false;
+        freed++;
+        var node = nodes[r][c];
+        if (node) {
+          node.el.classList.remove("blocked");
+          node.el.setAttribute("aria-label", "Gem row " + (r + 1) + " column " + (c + 1) + ", letter " + LETTERS[node.type]);
+          var frost = node.face.querySelector(".frost");
+          if (frost) frost.parentNode.removeChild(frost);
+        }
+        floaterAt([[r, c]], "+" + ICE_BONUS);
+      }
+    }
+    return freed;
+  }
+  /* Gravity per column, in segments split by frozen cells (a
+     frozen gem is a wall: gems above it cannot fall through).
+     Surviving gems keep their elements and slide; new gems are
+     created above their slot and drop in. */
+  function applyGravity() {
+    for (var c = 0; c < COLS; c++) {
+      var r = ROWS - 1;
+      while (r >= 0) {
+        if (blocked[r][c]) { r--; continue; }
+        var segBottom = r;
+        while (r >= 0 && !blocked[r][c]) r--;
+        var segTop = r + 1, write = segBottom, rr;
+        for (rr = segBottom; rr >= segTop; rr--) {
+          if (types[rr][c] >= 0) {
+            if (write !== rr) {
+              types[write][c] = types[rr][c];
+              types[rr][c] = -1;
+              var nd = nodes[rr][c];
+              nodes[write][c] = nd;
+              nodes[rr][c] = null;
+              setNodePos(nd, write, c);
+            }
+            write--;
+          }
+        }
+        var spawnCount = write - segTop + 1;
+        for (var r2 = write; r2 >= segTop; r2--) {
+          var t = Math.floor(Math.random() * TYPES);
+          types[r2][c] = t;
+          var node = makeNode(t, r2, c, false);
+          /* Start stacked above the slot, then drop into place. */
+          node.el.style.top = ((r2 - spawnCount) * 12.5) + "%";
+          boardEl.appendChild(node.el);
+          nodes[r2][c] = node;
+          void node.el.offsetWidth; /* settle the start pose so the drop animates */
+          setNodePos(node, r2, c);
+        }
+      }
+    }
+  }
+  /* Resolve matches and cascades until the board settles. Scoring
+     is the base rule: cleared gems x 10 x chain number. */
   async function resolveBoard() {
-    var chain = 1;
+    var chain = 0;
+    lastPeakChain = 0;
+    lastMoveGain = 0;
+    lastFreed = 0;
     while (true) {
-      var matches = findMatches();
+      var matches = findMatches(types, blocked);
       var keys = Object.keys(matches);
       if (keys.length === 0) break;
-      score += keys.length * 10 * chain;
-      for (var i = 0; i < keys.length; i++) {
-        var parts = keys[i].split(",");
-        board[+parts[0]][+parts[1]] = -1;
-      }
-      render();
-      await sleep(260);
-      for (var c = 0; c < COLS; c++) {
-        var write = ROWS - 1;
-        for (var r = ROWS - 1; r >= 0; r--) {
-          if (board[r][c] !== -1) { board[write][c] = board[r][c]; write--; }
-        }
-        for (var r2 = write; r2 >= 0; r2--) board[r2][c] = Math.floor(Math.random() * TYPES);
-      }
-      render();
-      await sleep(200);
       chain++;
+      if (chain > lastPeakChain) lastPeakChain = chain;
+      var gained = keys.length * 10 * chain;
+      score += gained;
+      lastMoveGain += gained;
+      showCascade(chain);
+      var cells = keys.map(function (k) { var p = k.split(","); return [+p[0], +p[1]]; });
+      floaterAt(cells, "+" + gained);
+      cgx.beep(500 + chain * 110, 110, { type: "triangle", gain: 0.1 });
+      cells.forEach(function (p) {
+        var n = nodes[p[0]][p[1]];
+        if (n) n.el.classList.add("pop");
+      });
+      syncHud();
+      await sleep(210);
+      cells.forEach(function (p) {
+        types[p[0]][p[1]] = -1;
+        var n = nodes[p[0]][p[1]];
+        if (n && n.el.parentNode) n.el.parentNode.removeChild(n.el);
+        nodes[p[0]][p[1]] = null;
+      });
+      var freed = breakIceAround(cells);
+      if (freed > 0) {
+        lastFreed += freed;
+        score += freed * ICE_BONUS;
+        lastMoveGain += freed * ICE_BONUS;
+        syncHud();
+      }
+      applyGravity();
+      await sleep(260);
     }
   }
-  async function onTile(r, c) {
-    if (busy || over) return;
-    if (!selected) { selected = { r: r, c: c }; render(); return; }
-    if (selected.r === r && selected.c === c) { selected = null; render(); return; }
-    var dr = Math.abs(selected.r - r), dc = Math.abs(selected.c - c);
-    if (dr + dc !== 1) { selected = { r: r, c: c }; render(); return; }
+
+  /* ---------------- the one swap routine ----------------
+     Tap-tap, drag and keyboard all land here. A swap that makes
+     no match slides back and costs nothing; a matching swap costs
+     exactly one move, then the board resolves. Input is locked
+     (busy) from the first slide until the board settles. */
+  async function trySwap(a, b) {
+    if (busy || over) return false;
+    if (blocked[a.r][a.c] || blocked[b.r][b.c]) {
+      setStatus("Frozen gems cannot be swapped. Match gems next to the ice to break it free.");
+      cgx.beep(150, 140, { type: "sawtooth", gain: 0.06 });
+      return false;
+    }
     busy = true;
-    var sr = selected.r, sc = selected.c;
+    clearHint();
+    hideCascade();
     selected = null;
-    var tmp = board[sr][sc]; board[sr][sc] = board[r][c]; board[r][c] = tmp;
-    render();
-    await sleep(220);
-    if (Object.keys(findMatches()).length === 0) {
-      var tmp2 = board[sr][sc]; board[sr][sc] = board[r][c]; board[r][c] = tmp2;
-      render();
-      $("gem-status").textContent = "No match there. Try another swap.";
+    paintSelection();
+    cursorPos = { r: b.r, c: b.c };
+    paintCursor();
+    swapCells(a, b);
+    cgx.sfx("click");
+    await sleep(200);
+    if (Object.keys(findMatches(types, blocked)).length === 0) {
+      swapCells(a, b);
+      cgx.sfx("bad");
+      setStatus("No match there. Try another swap.");
+      await sleep(200);
       busy = false;
-      return;
+      return false;
     }
     movesLeft--;
+    syncHud();
     await resolveBoard();
-    render();
-    if (score >= TARGET) {
-      over = true;
-      $("gem-status").textContent = "You win! " + score + " points in " + (MAX_MOVES - movesLeft) + " moves.";
-    } else if (movesLeft <= 0) {
-      over = true;
-      $("gem-status").textContent = "Out of moves. You scored " + score + " points. Target was " + TARGET + ".";
-    } else {
-      $("gem-status").textContent = "Good match. Score " + score + ". " + movesLeft + " moves left.";
-    }
     busy = false;
+    finishMove();
+    return true;
   }
-  $("gem-new").addEventListener("click", newGame);
-  newGame();
-  // Test hooks (used by the headless verification script only).
-  window.__gem = {
-    get board() { return board.map(function (row) { return row.slice(); }); },
-    get score() { return score; },
-    get movesLeft() { return movesLeft; },
-    setupMatch: function () {
-      for (var r = 0; r < ROWS; r++) for (var c = 0; c < COLS; c++) board[r][c] = (r + c) % TYPES;
-      board[0][0] = 0; board[0][1] = 0; board[0][2] = 1; board[0][3] = 0;
-      board[1][2] = 2; board[1][3] = 3;
-      selected = null; busy = false; over = false; movesLeft = MAX_MOVES;
-      render();
+  function swapCells(a, b) {
+    var tt = types[a.r][a.c];
+    types[a.r][a.c] = types[b.r][b.c];
+    types[b.r][b.c] = tt;
+    var na = nodes[a.r][a.c], nb = nodes[b.r][b.c];
+    nodes[a.r][a.c] = nb;
+    nodes[b.r][b.c] = na;
+    if (nb) setNodePos(nb, a.r, a.c);
+    if (na) setNodePos(na, b.r, b.c);
+  }
+
+  /* ---------------- input: tap / click selection ---------------- */
+  function onCellTap(r, c) {
+    if (busy || over || dialogOpen()) return;
+    cursorPos = { r: r, c: c };
+    paintCursor();
+    if (blocked[r][c]) {
+      setStatus("That gem is frozen in ice. Match gems next to it to break the ice and free it.");
+      cgx.beep(150, 120, { type: "sawtooth", gain: 0.05 });
+      return;
     }
-  };
-  return { newGame: newGame };
+    clearHint();
+    if (!selected) {
+      selected = { r: r, c: c };
+      paintSelection();
+      cgx.sfx("click");
+      return;
+    }
+    if (selected.r === r && selected.c === c) {
+      selected = null;
+      paintSelection();
+      return;
+    }
+    var dr = Math.abs(selected.r - r), dc = Math.abs(selected.c - c);
+    if (dr + dc === 1) {
+      var from = selected;
+      selected = null;
+      paintSelection();
+      trySwap(from, { r: r, c: c });
+    } else {
+      selected = { r: r, c: c };
+      paintSelection();
+      cgx.sfx("click");
+    }
+  }
+
+  /* ---------------- input: drag / swipe to swap ---------------- */
+  var drag = null;
+  boardEl.addEventListener("pointerdown", function (ev) {
+    var gemEl = ev.target && ev.target.closest ? ev.target.closest(".gem") : null;
+    if (!gemEl || busy || over || dialogOpen()) { drag = null; return; }
+    var r = +gemEl.dataset.r, c = +gemEl.dataset.c;
+    if (blocked[r][c]) { drag = null; return; }
+    drag = { r: r, c: c, x: ev.clientX, y: ev.clientY, active: true };
+    try { boardEl.setPointerCapture(ev.pointerId); } catch (e) { /* capture is a nicety */ }
+  });
+  boardEl.addEventListener("pointermove", function (ev) {
+    if (!drag || !drag.active) return;
+    var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+    var cellPx = boardEl.clientWidth / COLS;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < cellPx * 0.4) return;
+    drag.active = false;
+    var to;
+    if (Math.abs(dx) > Math.abs(dy)) to = { r: drag.r, c: drag.c + (dx > 0 ? 1 : -1) };
+    else to = { r: drag.r + (dy > 0 ? 1 : -1), c: drag.c };
+    if (!inBounds(to.r, to.c)) return;
+    trySwap({ r: drag.r, c: drag.c }, to);
+  });
+  function endDrag(ev, cancelled) {
+    if (!drag) return;
+    var wasActive = drag.active;
+    var start = drag;
+    drag = null;
+    if (!cancelled && wasActive && ev.type === "pointerup") {
+      /* A press that never became a drag is a tap. */
+      onCellTap(start.r, start.c);
+    }
+  }
+  boardEl.addEventListener("pointerup", function (ev) { endDrag(ev, false); });
+  boardEl.addEventListener("pointercancel", function (ev) { endDrag(ev, true); });
+
+  /* ---------------- input: keyboard ---------------- */
+  document.addEventListener("keydown", function (ev) {
+    var tag = ev.target && ev.target.tagName ? ev.target.tagName : "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (dialogOpen()) return;
+    var inBoard = !!(ev.target && ev.target.closest && ev.target.closest("#gem-board"));
+    var k = ev.key;
+    if ((k === "Enter" || k === " ") && tag === "BUTTON" && !inBoard) return; /* control buttons keep their keys */
+    if (k === "ArrowLeft" || k === "ArrowRight" || k === "ArrowUp" || k === "ArrowDown") {
+      if (busy || over) return;
+      if (k === "ArrowLeft") cursorPos.c = Math.max(0, cursorPos.c - 1);
+      if (k === "ArrowRight") cursorPos.c = Math.min(COLS - 1, cursorPos.c + 1);
+      if (k === "ArrowUp") cursorPos.r = Math.max(0, cursorPos.r - 1);
+      if (k === "ArrowDown") cursorPos.r = Math.min(ROWS - 1, cursorPos.r + 1);
+      paintCursor();
+      ev.preventDefault();
+      return;
+    }
+    if (k === "Enter" || k === " ") {
+      ev.preventDefault();
+      onCellTap(cursorPos.r, cursorPos.c);
+    }
+  });
+
+  /* ---------------- controls ---------------- */
+  $("gem-new").addEventListener("click", function (ev) {
+    ev.currentTarget.blur();
+    if (busy) return;
+    cgx.closeDialog();
+    startLevel(level);
+  });
+  $("gem-hint").addEventListener("click", function (ev) {
+    ev.currentTarget.blur();
+    if (busy || over || dialogOpen()) return;
+    if (hintsLeft <= 0) {
+      setStatus("No hints left on this level. You have got this.");
+      cgx.sfx("bad");
+      return;
+    }
+    var moves = findMoves(types, blocked);
+    if (moves.length === 0) {
+      setStatus("No swap makes a match right now.");
+      return;
+    }
+    clearHint();
+    var pick = moves[Math.floor(Math.random() * moves.length)];
+    hintCells = [pick.a, pick.b];
+    hintCells.forEach(function (p) {
+      var n = nodes[p.r] && nodes[p.r][p.c];
+      if (n) n.el.classList.add("hint");
+    });
+    hintsLeft--;
+    syncHud();
+    cgx.beep(880, 90, { type: "triangle", gain: 0.08 });
+    setStatus("Hint: swap the two glowing gems. " + hintsLeft + " hints left on this level.");
+    hintTimer = setTimeout(clearHint, 2600);
+  });
+
+  startLevel(1);
+
+  return { startLevel: startLevel };
 })();
 
-
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("gem-sound"));
 })();
-
 </script>
 </body>
 </html>
