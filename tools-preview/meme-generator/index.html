@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Meme Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#mg-canvas { max-width: 100%; height: auto; border-radius: 8px; }
+#mg-size { width: 100%; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Meme Generator</h1>
+<p class="tool-sub">Add captions to your own photo and download the meme.</p>
+<div class="tool-card">
+  <p>Upload a photo of your own, write a top and a bottom caption, and the classic meme look is drawn for you — bold white capital letters with a black outline. Change the text or the size and the picture updates at once; download the finished meme as a PNG when it looks right.</p>
+
+  <label for="mg-file">Choose your image</label>
+  <input id="mg-file" type="file" accept="image/*">
+  <div class="row2">
+    <div>
+      <label for="mg-top">Top text</label>
+      <input id="mg-top" type="text" placeholder="TOP TEXT" autocomplete="off">
+    </div>
+    <div>
+      <label for="mg-bottom">Bottom text</label>
+      <input id="mg-bottom" type="text" placeholder="BOTTOM TEXT" autocomplete="off">
+    </div>
+  </div>
+  <label for="mg-size">Caption size</label>
+  <input id="mg-size" type="range" min="20" max="120" value="48" step="1">
+  <div class="btn-row">
+    <button id="mg-run" class="btn" type="button">Update meme</button>
+  </div>
+  <p id="mg-status" class="status" role="status">Choose an image to begin.</p>
+  <div class="result" id="mg-result" hidden data-result>
+    <canvas id="mg-canvas" width="640" height="480"></canvas>
+    <p class="kv" id="mg-meta"></p>
+    <div class="btn-row">
+      <button id="mg-download" class="btn" type="button">Download PNG</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> only your own image is used, processed on your device in this browser tab — nothing is uploaded, and this tool has no hosted templates or stock pictures. The meme is drawn at your photo's full original size (very large photos are capped at 2048 pixels on the longest side so the download stays quick), and the captions are drawn in the classic style: capital letters, white fill, black outline. If a caption is wider than the picture, it shrinks automatically until it fits. Please only caption pictures you have the right to use and share.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var mgStatus = document.getElementById("mg-status");
+var mgResult = document.getElementById("mg-result");
+var mgCanvas = document.getElementById("mg-canvas");
+var mgMeta = document.getElementById("mg-meta");
+var mgImg = null;
+var mgFileName = "";
+
+function mgSetFont(ctx, px) {
+  ctx.font = "900 " + px + "px Impact, 'Arial Black', Arial, sans-serif";
+}
+
+/* Draws one caption in the classic meme style: white capitals with a thick
+   black outline, shrinking the font until the text fits the picture width. */
+function mgDrawCaption(ctx, text, centerX, baselineY, basePx, maxWidth, alignBottom) {
+  var mgClean = String(text || "").trim().toUpperCase();
+  if (!mgClean) { return; }
+  var mgPx = basePx;
+  mgSetFont(ctx, mgPx);
+  while (mgPx > 10 && ctx.measureText(mgClean).width > maxWidth) {
+    mgPx -= 2;
+    mgSetFont(ctx, mgPx);
+  }
+  ctx.lineWidth = Math.max(2, Math.round(mgPx / 7));
+  ctx.strokeStyle = "#000000";
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = alignBottom ? "bottom" : "top";
+  ctx.lineJoin = "round";
+  ctx.miterLimit = 2;
+  ctx.strokeText(mgClean, centerX, baselineY);
+  ctx.fillText(mgClean, centerX, baselineY);
+}
+function mgDraw() {
+  if (!mgImg) { return; }
+  var mgMaxSide = 2048;
+  var mgW = mgImg.naturalWidth;
+  var mgH = mgImg.naturalHeight;
+  var mgScale = Math.min(1, mgMaxSide / Math.max(mgW, mgH));
+  var mgCW = Math.max(1, Math.round(mgW * mgScale));
+  var mgCH = Math.max(1, Math.round(mgH * mgScale));
+  mgCanvas.width = mgCW;
+  mgCanvas.height = mgCH;
+  var mgCtx = mgCanvas.getContext("2d");
+  mgCtx.drawImage(mgImg, 0, 0, mgCW, mgCH);
+  var mgBasePx = Number(document.getElementById("mg-size").value) || 48;
+  /* The slider value is in "on a 640-wide picture" terms; scale it to the
+     real canvas size so the captions look the same at any photo size. */
+  var mgPx = Math.max(10, Math.round(mgBasePx * mgCW / 640));
+  var mgPad = Math.round(mgCH * 0.03);
+  var mgMaxTextWidth = mgCW * 0.94;
+  mgDrawCaption(mgCtx, document.getElementById("mg-top").value, mgCW / 2, mgPad, mgPx, mgMaxTextWidth, false);
+  mgDrawCaption(mgCtx, document.getElementById("mg-bottom").value, mgCW / 2, mgCH - mgPad, mgPx, mgMaxTextWidth, true);
+  mgMeta.textContent = "Meme size: " + mgCW + " × " + mgCH + " pixels · Source photo: " + mgFileName;
+  mgResult.hidden = false;
+  mgStatus.className = "status ok";
+  mgStatus.textContent = "Meme updated. Download the PNG when it looks right.";
+}
+
+function mgHandleFile() {
+  var mgFileInput = document.getElementById("mg-file");
+  var mgFile = mgFileInput.files && mgFileInput.files[0];
+  if (!mgFile) { return; }
+  if (mgFile.type.indexOf("image/") !== 0) {
+    mgStatus.className = "status error";
+    mgStatus.textContent = "That file is not an image. Choose a PNG, JPG, GIF, WebP or similar image file.";
+    return;
+  }
+  var mgReader = new FileReader();
+  mgReader.onload = function () {
+    var mgProbe = new Image();
+    mgProbe.onload = function () {
+      mgImg = mgProbe;
+      mgFileName = mgFile.name;
+      mgDraw();
+    };
+    mgProbe.onerror = function () {
+      mgStatus.className = "status error";
+      mgStatus.textContent = "The browser could not read that image file. It may be damaged or in a format this browser cannot display.";
+    };
+    mgProbe.src = String(mgReader.result || "");
+  };
+  mgReader.onerror = function () {
+    mgStatus.className = "status error";
+    mgStatus.textContent = "The file could not be read. Try again with another image.";
+  };
+  mgReader.readAsDataURL(mgFile);
+}
+function mgDownload() {
+  if (!mgImg) {
+    mgStatus.className = "status error";
+    mgStatus.textContent = "Choose an image first.";
+    return;
+  }
+  mgDraw();
+  mgCanvas.toBlob(function (mgBlob) {
+    if (!mgBlob) {
+      mgStatus.className = "status error";
+      mgStatus.textContent = "The PNG could not be created in this browser.";
+      return;
+    }
+    var mgUrl = URL.createObjectURL(mgBlob);
+    var mgLink = document.createElement("a");
+    mgLink.href = mgUrl;
+    mgLink.download = "meme.png";
+    document.body.appendChild(mgLink);
+    mgLink.click();
+    document.body.removeChild(mgLink);
+    setTimeout(function () { URL.revokeObjectURL(mgUrl); }, 2000);
+    mgStatus.className = "status ok";
+    mgStatus.textContent = "Meme downloaded as meme.png.";
+  }, "image/png");
+}
+
+document.getElementById("mg-file").addEventListener("change", mgHandleFile);
+document.getElementById("mg-run").addEventListener("click", mgDraw);
+document.getElementById("mg-download").addEventListener("click", mgDownload);
+document.getElementById("mg-top").addEventListener("input", mgDraw);
+document.getElementById("mg-bottom").addEventListener("input", mgDraw);
+document.getElementById("mg-size").addEventListener("input", mgDraw);
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="meme-generator"></script>
+</body>
+</html>
