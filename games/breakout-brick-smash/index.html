@@ -12,99 +12,93 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+  /* ---- Breakout Brick Smash ---- */
+  /* Canvas, 480x400 logical units (the shipped field). The cgx
+     layer sizes the backing store from the CSS box x
+     devicePixelRatio (cgx.watchFit), so the board stays crisp in
+     windowed and fullscreen states - the shipped build kept a
+     fixed 480x400 bitmap and merely CSS-stretched it, which
+     blurred in fullscreen (spec 0.2). The wrapper is 600px wide
+     on a laptop (the shipped 480px looked small, spec 0.1);
+     fullscreen grows it well past that and the stage scrolls if
+     the buttons fall below the fold. */
+  .board-wrap { position: relative; width: min(600px, 92vw); margin: 1rem auto 0; }
+  #brk-board { display: block; width: 100%; aspect-ratio: 6 / 5; margin: 0; background: #071a2e; border: 2px solid var(--navy); box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .cgx-fs:fullscreen .board-wrap, .cgx-fs:-webkit-full-screen .board-wrap { width: min(92vw, 96vmin, 720px); flex: none; margin-top: 0.5rem; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  /* On-screen left / right HOLD buttons for mobile (Traffic
+     style): the finger drags on the board work too, but a finger
+     on the board covers the paddle zone - these do not. They are
+     driven by pointer events: press and hold to move, release to
+     stop. */
+  .brk-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
+  .brk-keys button { margin: 0; padding: 0.7rem 2.2rem; font-size: 1.15rem; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .play-stage:fullscreen .brk-keys { margin-top: 0.5rem; }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Breakout Brick Smash</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -112,269 +106,1097 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="brk-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Breakout Brick Smash</h2>
-  <p class="fs-desc">Move the paddle with your mouse, your finger, or the left and right arrow keys. Bounce the ball to smash every brick. You have 3 lives, and each new level is faster.</p>
-  <div class="scorebar"><span>Score: <span id="brk-score">0</span></span><span>Level: <span id="brk-level">1</span></span><span>Lives: <span id="brk-lives">3</span></span><span>Bricks left: <span id="brk-bricks">40</span></span></div>
-  <canvas class="board game-canvas" id="brk-board" width="480" height="400"></canvas>
+  <p class="fs-desc">Move the paddle with your mouse, your finger, the left and right arrow keys (or A and D), or by holding the on-screen arrow buttons. Click the board or press Space to launch the ball, and P pauses. Smash every brick to clear the level - each new level brings a new wall and a faster ball. Catch the falling capsules: <strong>W</strong> widens the paddle for 12 seconds, <strong>M</strong> splits the ball into three, <strong>S</strong> slows the ball for 10 seconds. You have 3 lives.</p>
+  <div class="scorebar"><span>Score: <span id="brk-score">0</span></span><span>Level: <span id="brk-level">1</span></span><span>Lives: <span id="brk-lives">3</span></span><span>Bricks left: <span id="brk-bricks">40</span></span><span>Best: <span id="brk-best">0</span></span><span>Power: <span id="brk-fx">None</span></span></div>
+  <div class="board-wrap">
+    <canvas class="board" id="brk-board" width="480" height="400" aria-label="Breakout Brick Smash board"></canvas>
+  </div>
   <p class="status" id="brk-status">Press Start, then click the board or press Space to launch the ball.</p>
-  <div>
+  <p class="stats-line" id="brk-stats"></p>
+  <div class="ctrl-row">
     <button type="button" id="brk-start">Start</button>
     <button type="button" id="brk-new">New game</button>
   </div>
+  <div class="brk-keys">
+    <button type="button" id="brk-left" aria-label="Hold to move the paddle left">&#9664;</button>
+    <button type="button" id="brk-right" aria-label="Hold to move the paddle right">&#9654;</button>
+  </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Honest note: this is the classic brick-breaker arcade game, an original implementation built for this site.</p>
+<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - your best score and the highest level you have reached - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: this is the classic brick-breaker arcade game, an original implementation built for this site.</p>
+<script>
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G7 BREAKOUT BRICK SMASH ================= */
-var BreakoutBrickSmash = (function () {
-  var brkW = 480, brkH = 400;
-  var brkPaddle = { w: 78, h: 10, x: 201, targetX: 201 };
-  var brkBall = { x: 240, y: 340, vx: 0, vy: 0, r: 7 };
-  var brkBricks = [], brkRows = 5, brkCols = 8;
-  var brkRowColors = ["#e11d48", "#ea580c", "#eab308", "#16a34a", "#2563eb"];
-  var brkScore = 0, brkLives = 3, brkLevel = 1;
-  var brkPhase = "ready"; /* ready | playing | over */
-  var brkRunning = false, brkLastTs = 0, brkKeyL = false, brkKeyR = false;
-  var brkCtx = $("brk-board").getContext("2d");
+/* ================= G7 BREAKOUT BRICK SMASH (polish pass) =================
+   The verified game core is kept exactly: the 480x400 field, the
+   78x10 paddle at y 376 with its position-based angle rebound
+   (relative hit clamped to +/-0.92, speed restored to the level
+   speed), ball radius 7, ball speed 252 + 36 per level, the
+   launch (speed x 0.42 sideways, random sign), 10 points per
+   brick, 3 lives, the paddle lerp and the arrow-key speed, the
+   dt clamp of 0.033 s and an rAF loop gated on the running flag.
+   The polish adds everything around that core:
 
-  function brkSpeed() { return 252 + (brkLevel - 1) * 36; }
-  function brkBuildBricks() {
-    brkBricks = [];
-    var bw = 48, bh = 16, gapX = 6, gapY = 6, offX = 27, offY = 54;
-    for (var r = 0; r < brkRows; r++) {
-      for (var c = 0; c < brkCols; c++) {
-        brkBricks.push({ x: offX + c * (bw + gapX), y: offY + r * (bh + gapY), w: bw, h: bh, alive: true, color: brkRowColors[r] });
+   - POWER-UPS. A broken brick has an 18% chance to drop a
+     capsule (at most 2 falling at once). Capsules fall at
+     115 px/s and are caught by touching the paddle. Types, drawn
+     from a weighted roll (W 40% / M 35% / S 25%):
+       W - Wide paddle: 78 -> 117 px for 12 s.
+       M - Multi-ball: +2 balls at +/-0.45 rad from the first
+           ball, live total capped at 6 balls.
+       S - Slow ball: every ball's speed x 0.65 for 10 s.
+     Effect timers run on play time (they freeze while paused
+     and while the ball sits on the paddle). Losing a life
+     clears Wide and Slow, removes falling capsules and resets
+     to one ball on the paddle; a life is only lost when the
+     LAST ball falls. Effects survive a level change.
+   - LEVELS = LAYOUTS. Five named 5x8 walls cycle (see LAYOUTS):
+     Full Wall 40 bricks, Checkerboard 20, Fortress 24,
+     Diamond 18, Pillars 30; level 6 is the Full Wall again at
+     level-6 speed. Clearing a wall plays a fanfare: a canvas
+     banner ("Level cleared!" + the next wall's name), the win
+     jingle and a small confetti burst, then the next wall is
+     built with the ball on the paddle.
+   - FEEDBACK: bevelled bricks (light top edge, shaded base),
+     a white flash and 8 shatter particles per broken brick
+     (pool capped at 240 particles / 40 flashes, so the cost is
+     bounded), a fading trail behind each ball, a paddle squash
+     on every rebound, a screen shake when a life is lost, and a
+     gold glow on the paddle when a capsule is caught.
+   - CONTROLS: everything the shipped game had (mouse move,
+     touch drag, arrows / A / D, Space or click to launch,
+     Start/Pause button) plus on-screen left/right HOLD buttons
+     for mobile and a P pause key. Space is always
+     preventDefaulted here so it can never scroll the page.
+   - PERFORMANCE: sprites are plain canvas fills (no gradients,
+     no shadowBlur in the per-frame path except the brief catch
+     glow); particles and trails are fixed-cap arrays; the HUD
+     is rewritten on state changes plus a 0.2 s tick while an
+     effect timer runs; drawing runs through cgx.watchFit so
+     the backing store follows CSS size x devicePixelRatio.
+   - END SCREEN via cgx.showResult with score, level reached,
+     best and a New best badge; PERSISTENCE through
+     cgx.store("breakout-brick-smash"), keys "best" and "level"
+     (shape below). */
+var BreakoutBrickSmash = (function () {
+  var W = 480, H = 400, LOGICAL_W = 480, LOGICAL_H = 400;
+  var PADDLE_Y = H - 24;                 /* 376, as shipped */
+  var PADDLE_H = 10, PADDLE_W = 78, PADDLE_WIDE_W = 117;
+  var BALL_R = 7;
+  var ROWS = 5, COLS = 8, BW = 48, BH = 16, GAPX = 6, GAPY = 6, OFFX = 27, OFFY = 54;
+  var ROW_COLORS = ["#e11d48", "#ea580c", "#eab308", "#16a34a", "#2563eb"];
+  var LAYOUTS = [
+    { name: "Full Wall", rows: ["########", "########", "########", "########", "########"] },
+    { name: "Checkerboard", rows: ["#.#.#.#.", ".#.#.#.#", "#.#.#.#.", ".#.#.#.#", "#.#.#.#."] },
+    { name: "Fortress", rows: ["########", "#..##..#", "#..##..#", "#..##..#", "##....##"] },
+    { name: "Diamond", rows: ["...##...", "..####..", ".######.", "..####..", "...##..."] },
+    { name: "Pillars", rows: ["##.##.##", "##.##.##", "##.##.##", "##.##.##", "##.##.##"] }
+  ];
+  var DROP_CHANCE = 0.18, CAPSULE_FALL = 115, CAPSULE_W = 30, CAPSULE_H = 16, MAX_FALLING = 2;
+  var WIDE_SECS = 12, SLOW_SECS = 10, SLOW_SCALE = 0.65, MAX_BALLS = 6;
+  var CAPSULE_STYLE = {
+    W: { color: "#c9a227", label: "W" },
+    M: { color: "#9333ea", label: "M" },
+    S: { color: "#0d9488", label: "S" }
+  };
+  var MAX_PARTICLES = 240, MAX_FLASHES = 40, PARTICLES_PER_BRICK = 8, TRAIL_LEN = 9;
+
+  var board = $("brk-board");
+  var ctx = board.getContext("2d");
+  var startBtn = $("brk-start");
+
+  /* ---------------- persistence (cgx.store) ----------------
+     Two scalar keys, exactly as the spec names them:
+       "best"  -> cheakstar.games.breakout-brick-smash.best
+                  = a JSON number, the best final score.
+       "level" -> cheakstar.games.breakout-brick-smash.level
+                  = a JSON number, the highest level reached.
+     This browser only. "level" is written the moment a new
+     highest level is reached; "best" is written at game over. */
+  var brkStore = cgx.store("breakout-brick-smash");
+  function loadNum(key) {
+    var v = brkStore.get(key, 0);
+    return (typeof v === "number" && v > 0) ? Math.floor(v) : 0;
+  }
+  var best = loadNum("best");
+  var bestLevel = loadNum("level");
+
+  /* ---------------- game state ----------------
+     phase: "ready" (ball on the paddle) | "playing" |
+     "clear" (level-clear banner) | "over" (dialog shown).
+     running is the shipped flag: the rAF loop only turns while
+     it is set, and Start / P toggle it (pause). fxTime is play
+     time in seconds - it advances only in phase "playing", so
+     power-up timers freeze on pause and on the paddle. */
+  var bricks = [], balls = [], capsules = [], particles = [], flashes = [];
+  var paddle = { x: 201, targetX: 201 };
+  var score = 0, lives = 3, level = 1;
+  var phase = "ready", running = false, started = false;
+  var keyL = false, keyR = false, holdL = false, holdR = false;
+  var fxTime = 0, wideStart = -1e9, slowStart = -1e9, slowActive = false;
+  var clearT = 0, shakeT = 0, squashT = 0, glowT = 0, hudT = 0;
+  var lastTs = 0, rafId = 0;
+
+  function layoutFor(lv) { return LAYOUTS[(lv - 1) % LAYOUTS.length]; }
+  function levelSpeed() { return 252 + (level - 1) * 36; }
+  function slowLeft() { return slowActive ? Math.max(0, SLOW_SECS - (fxTime - slowStart)) : 0; }
+  function wideLeft() { return Math.max(0, WIDE_SECS - (fxTime - wideStart)); }
+  function speedScale() { return slowLeft() > 0 ? SLOW_SCALE : 1; }
+  function paddleW() { return wideLeft() > 0 ? PADDLE_WIDE_W : PADDLE_W; }
+  function bricksLeft() {
+    var n = 0, i;
+    for (i = 0; i < bricks.length; i++) if (bricks[i].alive) n++;
+    return n;
+  }
+  function setStatus(t) { $("brk-status").textContent = t; }
+  function dialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
+
+  /* ---------------- building ---------------- */
+  function buildBricks() {
+    var layout = layoutFor(level), r, c;
+    bricks = [];
+    for (r = 0; r < ROWS; r++) {
+      for (c = 0; c < COLS; c++) {
+        if (layout.rows[r].charAt(c) !== "#") continue;
+        bricks.push({ x: OFFX + c * (BW + GAPX), y: OFFY + r * (BH + GAPY), w: BW, h: BH, alive: true, color: ROW_COLORS[r] });
       }
     }
   }
-  function brkBricksLeft() {
-    var n = 0;
-    for (var i = 0; i < brkBricks.length; i++) if (brkBricks[i].alive) n++;
-    return n;
+  function ballOnPaddle() {
+    balls = [{ x: paddle.x + paddleW() / 2, y: PADDLE_Y - BALL_R - 1, vx: 0, vy: 0, trail: [] }];
   }
-  function brkSyncHud() {
-    $("brk-score").textContent = String(brkScore);
-    $("brk-level").textContent = String(brkLevel);
-    $("brk-lives").textContent = String(brkLives);
-    $("brk-bricks").textContent = String(brkBricksLeft());
+  function stickBall() {
+    if (balls.length) {
+      balls[0].x = paddle.x + paddleW() / 2;
+      balls[0].y = PADDLE_Y - BALL_R - 1;
+    }
   }
-  function brkBallOnPaddle() {
-    brkBall.x = brkPaddle.x + brkPaddle.w / 2;
-    brkBall.y = brkH - 24 - brkBall.r - 1;
-    brkBall.vx = 0; brkBall.vy = 0;
+  function resetGame(full) {
+    if (full) { score = 0; lives = 3; level = 1; }
+    buildBricks();
+    paddle.x = 201; paddle.targetX = 201;
+    wideStart = -1e9; slowStart = -1e9; slowActive = false;
+    capsules = []; particles = []; flashes = [];
+    fxTime = 0; clearT = 0; shakeT = 0; squashT = 0; glowT = 0;
+    phase = "ready";
+    ballOnPaddle();
+    syncHud();
+    draw();
   }
-  function brkReset(full) {
-    if (full) { brkScore = 0; brkLives = 3; brkLevel = 1; }
-    brkBuildBricks();
-    brkPaddle.x = 201; brkPaddle.targetX = 201;
-    brkPhase = "ready";
-    brkBallOnPaddle();
-    brkSyncHud();
-    brkDraw();
+
+  /* ---------------- HUD ---------------- */
+  function fxText() {
+    var parts = [];
+    if (wideLeft() > 0) parts.push("Wide " + Math.ceil(wideLeft()) + "s");
+    if (slowLeft() > 0) parts.push("Slow " + Math.ceil(slowLeft()) + "s");
+    return parts.length ? parts.join(" · ") : "None";
   }
-  function brkLaunch() {
-    if (brkPhase !== "ready") return;
-    var sp = brkSpeed();
+  function syncHud() {
+    $("brk-score").textContent = String(score);
+    $("brk-level").textContent = String(level);
+    $("brk-lives").textContent = String(lives);
+    $("brk-bricks").textContent = String(bricksLeft());
+    $("brk-best").textContent = String(Math.max(best, score));
+    $("brk-fx").textContent = fxText();
+    $("brk-stats").textContent =
+      "Level " + level + " wall: " + layoutFor(level).name +
+      " · Highest level reached: " + Math.max(bestLevel, level) +
+      " · Best score: " + Math.max(best, score);
+  }
+
+  /* ---------------- power-ups ---------------- */
+  function rollCapsuleType() {
+    var r = Math.random();
+    if (r < 0.40) return "W";
+    if (r < 0.75) return "M";
+    return "S";
+  }
+  function maybeDropCapsule(brick) {
+    if (capsules.length >= MAX_FALLING) return;
+    if (Math.random() >= DROP_CHANCE) return;
+    capsules.push({
+      x: brick.x + brick.w / 2 - CAPSULE_W / 2,
+      y: brick.y + brick.h / 2 - CAPSULE_H / 2,
+      type: rollCapsuleType()
+    });
+  }
+  function scaleBalls(f) {
+    var i;
+    for (i = 0; i < balls.length; i++) { balls[i].vx *= f; balls[i].vy *= f; }
+  }
+  function applyCapsule(type) {
+    glowT = 0.3;
+    cgx.sfx("good");
+    if (type === "W") {
+      wideStart = fxTime;
+      paddle.targetX = Math.max(0, Math.min(W - paddleW(), paddle.targetX));
+      setStatus("Power-up caught: Wide paddle for " + WIDE_SECS + " seconds!");
+    } else if (type === "S") {
+      if (!slowActive) { slowActive = true; scaleBalls(SLOW_SCALE); }
+      slowStart = fxTime;
+      setStatus("Power-up caught: Slow ball for " + SLOW_SECS + " seconds!");
+    } else if (type === "M") {
+      var src = balls[0], sp = Math.hypot(src.vx, src.vy), baseAng = Math.atan2(src.vy, src.vx), i, ang;
+      var added = 0;
+      for (i = -1; i <= 1 && balls.length < MAX_BALLS; i += 2) {
+        ang = baseAng + i * 0.45;
+        balls.push({ x: src.x, y: src.y, vx: sp * Math.cos(ang), vy: sp * Math.sin(ang), trail: [] });
+        added++;
+      }
+      setStatus(added ? "Power-up caught: Multi-ball! " + balls.length + " balls in play." :
+        "Power-up caught: Multi-ball - already at the " + MAX_BALLS + "-ball cap.");
+    }
+    syncHud();
+  }
+  function updateCapsules(dt) {
+    var pw = paddleW(), i, c;
+    for (i = capsules.length - 1; i >= 0; i--) {
+      c = capsules[i];
+      c.y += CAPSULE_FALL * dt;
+      if (c.x + CAPSULE_W >= paddle.x && c.x <= paddle.x + pw &&
+          c.y + CAPSULE_H >= PADDLE_Y && c.y <= PADDLE_Y + PADDLE_H) {
+        capsules.splice(i, 1);
+        applyCapsule(c.type);
+      } else if (c.y > H) {
+        capsules.splice(i, 1);
+      }
+    }
+  }
+
+  /* ---------------- feedback: particles, flashes ---------------- */
+  function spawnBreakFx(b) {
+    var i, a, sp;
+    if (flashes.length < MAX_FLASHES) flashes.push({ x: b.x, y: b.y, w: b.w, h: b.h, life: 0.08, max: 0.08 });
+    for (i = 0; i < PARTICLES_PER_BRICK && particles.length < MAX_PARTICLES; i++) {
+      a = Math.random() * Math.PI * 2;
+      sp = 40 + Math.random() * 130;
+      particles.push({
+        x: b.x + b.w / 2, y: b.y + b.h / 2,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30,
+        life: 0.45, max: 0.45, size: 2 + Math.random() * 3, color: b.color
+      });
+    }
+  }
+  function updateFx(dt) {
+    var i, p;
+    for (i = particles.length - 1; i >= 0; i--) {
+      p = particles[i];
+      p.life -= dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.vy += 320 * dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+    }
+    for (i = flashes.length - 1; i >= 0; i--) {
+      flashes[i].life -= dt;
+      if (flashes[i].life <= 0) flashes.splice(i, 1);
+    }
+    if (shakeT > 0) shakeT = Math.max(0, shakeT - dt);
+    if (squashT > 0) squashT = Math.max(0, squashT - dt * 5);
+    if (glowT > 0) glowT = Math.max(0, glowT - dt);
+  }
+
+  /* ---------------- flow ---------------- */
+  function launch() {
+    if (phase !== "ready" || !running) return;
+    var sp = levelSpeed() * speedScale();
     var vx = sp * 0.42 * (Math.random() < 0.5 ? -1 : 1);
-    brkBall.vx = vx;
-    brkBall.vy = -Math.sqrt(sp * sp - vx * vx);
-    brkPhase = "playing";
-    $("brk-status").textContent = "Level " + brkLevel + ". Smash every brick.";
+    balls[0].vx = vx;
+    balls[0].vy = -Math.sqrt(sp * sp - vx * vx);
+    phase = "playing";
+    setStatus("Level " + level + " - " + layoutFor(level).name + ". Smash every brick.");
   }
-  function brkDraw() {
-    var ctx = brkCtx;
-    ctx.fillStyle = "#071a2e";
-    ctx.fillRect(0, 0, brkW, brkH);
-    for (var i = 0; i < brkBricks.length; i++) {
-      var b = brkBricks[i];
-      if (!b.alive) continue;
-      ctx.fillStyle = b.color;
-      ctx.fillRect(b.x, b.y, b.w, b.h);
-    }
-    ctx.fillStyle = "#c9a227";
-    ctx.fillRect(brkPaddle.x, brkH - 24, brkPaddle.w, brkPaddle.h);
-    ctx.fillStyle = "#f8fafc";
-    ctx.beginPath();
-    ctx.arc(brkBall.x, brkBall.y, brkBall.r, 0, Math.PI * 2);
-    ctx.fill();
-    if (brkPhase === "over") {
-      ctx.fillStyle = "rgba(7,26,46,0.72)";
-      ctx.fillRect(0, 0, brkW, brkH);
-      ctx.fillStyle = "#fff";
-      ctx.font = "700 26px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Game over", brkW / 2, brkH / 2);
-    }
+  function loseLife() {
+    lives--;
+    cgx.sfx("bad");
+    shakeT = 0.35;
+    if (lives <= 0) { syncHud(); gameOver(); return; }
+    wideStart = -1e9;
+    slowStart = -1e9;
+    slowActive = false;
+    capsules = [];
+    phase = "ready";
+    ballOnPaddle();
+    syncHud();
+    setStatus("Ball lost. " + lives + (lives === 1 ? " life" : " lives") + " left. Click the board or press Space to launch.");
+    draw();
   }
-  function brkLoseBall() {
-    brkLives--;
-    brkSyncHud();
-    if (brkLives <= 0) {
-      brkPhase = "over";
-      brkSetRunning(false);
-      $("brk-status").textContent = "Game over. Final score: " + brkScore + " on level " + brkLevel + ". Press New game to play again.";
-      brkDraw();
-      return;
-    }
-    brkPhase = "ready";
-    brkBallOnPaddle();
-    $("brk-status").textContent = "Ball lost. " + brkLives + (brkLives === 1 ? " life" : " lives") + " left. Click the board or press Space to launch.";
-    brkDraw();
+  function gameOver() {
+    phase = "over";
+    setRunning(false);
+    var isNewBest = score > best;
+    if (isNewBest) { best = score; brkStore.set("best", best); }
+    if (level > bestLevel) { bestLevel = level; brkStore.set("level", bestLevel); }
+    syncHud();
+    draw();
+    cgx.showResult({
+      won: false,
+      title: "Game over",
+      message: "You reached level " + level + " (" + layoutFor(level).name + ") and smashed your way to " + score + " points.",
+      score: score, scoreLabel: "Score",
+      best: best, bestLabel: "Best score",
+      newBest: isNewBest,
+      playAgainLabel: "Play again",
+      onPlayAgain: function () { resetGame(true); setRunning(true); }
+    });
   }
-  function brkUpdate(dt) {
-    var paddleSpeed = 430;
-    if (brkKeyL) brkPaddle.targetX -= paddleSpeed * dt;
-    if (brkKeyR) brkPaddle.targetX += paddleSpeed * dt;
-    brkPaddle.targetX = Math.max(0, Math.min(brkW - brkPaddle.w, brkPaddle.targetX));
-    brkPaddle.x += (brkPaddle.targetX - brkPaddle.x) * Math.min(1, dt * 22);
-    if (brkPhase === "ready") { brkBallOnPaddle(); return; }
-    if (brkPhase !== "playing") return;
-    var prevX = brkBall.x, prevY = brkBall.y;
-    brkBall.x += brkBall.vx * dt;
-    brkBall.y += brkBall.vy * dt;
-    if (brkBall.x < brkBall.r) { brkBall.x = brkBall.r; brkBall.vx = Math.abs(brkBall.vx); }
-    if (brkBall.x > brkW - brkBall.r) { brkBall.x = brkW - brkBall.r; brkBall.vx = -Math.abs(brkBall.vx); }
-    if (brkBall.y < brkBall.r) { brkBall.y = brkBall.r; brkBall.vy = Math.abs(brkBall.vy); }
-    var paddleY = brkH - 24;
-    if (brkBall.vy > 0 && prevY + brkBall.r <= paddleY + 2 && brkBall.y + brkBall.r >= paddleY &&
-        brkBall.x >= brkPaddle.x - brkBall.r && brkBall.x <= brkPaddle.x + brkPaddle.w + brkBall.r) {
-      var rel = (brkBall.x - (brkPaddle.x + brkPaddle.w / 2)) / (brkPaddle.w / 2);
+  function clearLevel() {
+    phase = "clear";
+    clearT = 0;
+    cgx.sfx("win");
+    cgx.confetti({ count: 70, duration: 1500 });
+    setStatus("Level " + level + " cleared! The next wall is coming up.");
+    syncHud();
+    draw();
+  }
+  function advanceLevel() {
+    level++;
+    if (level > bestLevel) { bestLevel = level; brkStore.set("level", bestLevel); }
+    buildBricks();
+    capsules = [];
+    phase = "ready";
+    ballOnPaddle();
+    syncHud();
+    setStatus("Level " + level + " - " + layoutFor(level).name + ". The ball is faster now. Click the board or press Space to launch.");
+    draw();
+  }
+
+  /* ---------------- update ---------------- */
+  function updateBall(ball, dt) {
+    var prevX = ball.x, prevY = ball.y, i, b, rel, sp;
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+    if (ball.x < BALL_R) { ball.x = BALL_R; ball.vx = Math.abs(ball.vx); }
+    if (ball.x > W - BALL_R) { ball.x = W - BALL_R; ball.vx = -Math.abs(ball.vx); }
+    if (ball.y < BALL_R) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy); }
+    if (ball.vy > 0 && prevY + BALL_R <= PADDLE_Y + 2 && ball.y + BALL_R >= PADDLE_Y &&
+        ball.x >= paddle.x - BALL_R && ball.x <= paddle.x + paddleW() + BALL_R) {
+      rel = (ball.x - (paddle.x + paddleW() / 2)) / (paddleW() / 2);
       rel = Math.max(-0.92, Math.min(0.92, rel));
-      var sp = brkSpeed();
-      brkBall.vx = sp * rel;
-      brkBall.vy = -Math.sqrt(Math.max(900, sp * sp - brkBall.vx * brkBall.vx));
-      brkBall.y = paddleY - brkBall.r - 0.5;
+      sp = levelSpeed() * speedScale();
+      ball.vx = sp * rel;
+      ball.vy = -Math.sqrt(Math.max(900, sp * sp - ball.vx * ball.vx));
+      ball.y = PADDLE_Y - BALL_R - 0.5;
+      squashT = 1;
+      cgx.sfx("click");
     }
-    for (var i = 0; i < brkBricks.length; i++) {
-      var b = brkBricks[i];
+    for (i = 0; i < bricks.length; i++) {
+      b = bricks[i];
       if (!b.alive) continue;
-      if (brkBall.x + brkBall.r > b.x && brkBall.x - brkBall.r < b.x + b.w &&
-          brkBall.y + brkBall.r > b.y && brkBall.y - brkBall.r < b.y + b.h) {
+      if (ball.x + BALL_R > b.x && ball.x - BALL_R < b.x + b.w &&
+          ball.y + BALL_R > b.y && ball.y - BALL_R < b.y + b.h) {
         b.alive = false;
-        brkScore += 10;
-        if (prevY + brkBall.r <= b.y || prevY - brkBall.r >= b.y + b.h) brkBall.vy = -brkBall.vy;
-        else brkBall.vx = -brkBall.vx;
-        brkSyncHud();
+        score += 10;
+        spawnBreakFx(b);
+        maybeDropCapsule(b);
+        cgx.sfx("place");
+        if (prevY + BALL_R <= b.y || prevY - BALL_R >= b.y + b.h) ball.vy = -ball.vy;
+        else ball.vx = -ball.vx;
+        syncHud();
         break;
       }
     }
-    if (brkBricksLeft() === 0) {
-      brkLevel++;
-      $("brk-status").textContent = "Level cleared! Level " + brkLevel + " is faster. Click the board or press Space to launch.";
-      brkBuildBricks();
-      brkPhase = "ready";
-      brkBallOnPaddle();
-      brkSyncHud();
+    ball.trail.push({ x: ball.x, y: ball.y });
+    if (ball.trail.length > TRAIL_LEN) ball.trail.shift();
+  }
+  function update(dt) {
+    var paddleSpeed = 430, i;
+    if (keyL || holdL) paddle.targetX -= paddleSpeed * dt;
+    if (keyR || holdR) paddle.targetX += paddleSpeed * dt;
+    paddle.targetX = Math.max(0, Math.min(W - paddleW(), paddle.targetX));
+    paddle.x += (paddle.targetX - paddle.x) * Math.min(1, dt * 22);
+    updateFx(dt);
+    if (phase === "ready") { stickBall(); return; }
+    if (phase === "clear") {
+      clearT += dt;
+      if (clearT >= 1.6) advanceLevel();
       return;
     }
-    if (brkBall.y - brkBall.r > brkH) brkLoseBall();
-  }
-  function brkLoop(ts) {
-    if (!brkRunning) return;
-    if (!brkLastTs) brkLastTs = ts;
-    var dt = Math.min(0.033, (ts - brkLastTs) / 1000);
-    brkLastTs = ts;
-    brkUpdate(dt);
-    brkDraw();
-    if (brkRunning) requestAnimationFrame(brkLoop);
-  }
-  function brkSetRunning(on) {
-    if (brkPhase === "over") on = false;
-    brkRunning = on;
-    $("brk-start").textContent = on ? "Pause" : "Start";
-    if (on) {
-      brkLastTs = 0;
-      requestAnimationFrame(brkLoop);
-    } else if (brkPhase !== "over") {
-      $("brk-status").textContent = "Paused. Press Start to continue.";
+    if (phase !== "playing") return;
+    fxTime += dt;
+    if (slowActive && slowLeft() <= 0) { slowActive = false; scaleBalls(1 / SLOW_SCALE); syncHud(); }
+    if (wideLeft() <= 0) paddle.targetX = Math.max(0, Math.min(W - paddleW(), paddle.targetX));
+    updateCapsules(dt);
+    for (i = balls.length - 1; i >= 0; i--) {
+      updateBall(balls[i], dt);
+      if (balls[i].y - BALL_R > H) balls.splice(i, 1);
     }
-    if (!on) $("brk-start").textContent = "Start";
+    if (balls.length === 0) { loseLife(); return; }
+    if (bricksLeft() === 0) { clearLevel(); return; }
+    hudT -= dt;
+    if (hudT <= 0) { hudT = 0.2; syncHud(); }
   }
-  function brkPointerX(ev) {
-    var rect = $("brk-board").getBoundingClientRect();
+
+  /* ---------------- drawing ---------------- */
+  var lastFit = null;
+  function applyLogical() {
+    var w = lastFit ? lastFit.width : board.width;
+    var h = lastFit ? lastFit.height : board.height;
+    ctx.setTransform(w / LOGICAL_W, 0, 0, h / LOGICAL_H, 0, 0);
+  }
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function drawBrick(b) {
+    ctx.fillStyle = b.color;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.38)";
+    ctx.fillRect(b.x, b.y, b.w, 4);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
+    ctx.fillRect(b.x, b.y + 4, b.w, 2);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+    ctx.fillRect(b.x, b.y + b.h - 4, b.w, 4);
+    ctx.strokeStyle = "rgba(7, 26, 46, 0.45)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+  }
+  function draw() {
+    var i, j, b, ball, t, pw = paddleW(), ph = PADDLE_H * (1 - 0.35 * squashT), pwSquash = pw * (1 + 0.06 * squashT);
+    applyLogical();
+    ctx.save();
+    if (shakeT > 0) {
+      var mag = 6 * (shakeT / 0.35);
+      ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
+    }
+    ctx.fillStyle = "#071a2e";
+    ctx.fillRect(-8, -8, W + 16, H + 16);
+    for (i = 0; i < bricks.length; i++) if (bricks[i].alive) drawBrick(bricks[i]);
+    for (i = 0; i < flashes.length; i++) {
+      b = flashes[i];
+      ctx.fillStyle = "rgba(255, 255, 255, " + (0.75 * b.life / b.max).toFixed(3) + ")";
+      ctx.fillRect(b.x, b.y, b.w, b.h);
+    }
+    for (i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.globalAlpha = Math.max(0, p.life / p.max);
+      ctx.fillStyle = p.color;
+      var s = p.size * (p.life / p.max);
+      ctx.fillRect(p.x - s / 2, p.y - s / 2, s, s);
+    }
+    ctx.globalAlpha = 1;
+    for (i = 0; i < capsules.length; i++) {
+      var c = capsules[i], st = CAPSULE_STYLE[c.type];
+      ctx.fillStyle = st.color;
+      rr(c.x, c.y, CAPSULE_W, CAPSULE_H, 8);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      rr(c.x + 2, c.y + 2, CAPSULE_W - 4, 5, 3);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "700 11px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(st.label, c.x + CAPSULE_W / 2, c.y + CAPSULE_H / 2 + 0.5);
+    }
+    for (i = 0; i < balls.length; i++) {
+      ball = balls[i];
+      for (j = 0; j < ball.trail.length; j++) {
+        t = ball.trail[j];
+        ctx.fillStyle = "rgba(248, 250, 252, " + (0.05 + 0.16 * (j + 1) / TRAIL_LEN).toFixed(3) + ")";
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, BALL_R * (0.35 + 0.55 * (j + 1) / TRAIL_LEN), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = "#f8fafc";
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.beginPath();
+      ctx.arc(ball.x - 2.2, ball.y - 2.2, 2.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (glowT > 0) { ctx.shadowColor = "#f3d67c"; ctx.shadowBlur = 18; }
+    ctx.fillStyle = wideLeft() > 0 ? "#dbb63a" : "#c9a227";
+    ctx.fillRect(paddle.x - (pwSquash - pw) / 2, PADDLE_Y + (PADDLE_H - ph), pwSquash, ph);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.fillRect(paddle.x - (pwSquash - pw) / 2, PADDLE_Y + (PADDLE_H - ph), pwSquash, 3);
+    if (phase === "clear") {
+      ctx.fillStyle = "rgba(7, 26, 46, 0.78)";
+      rr(W / 2 - 168, H / 2 - 52, 336, 104, 12);
+      ctx.fill();
+      ctx.strokeStyle = "#c9a227";
+      ctx.lineWidth = 2;
+      rr(W / 2 - 168, H / 2 - 52, 336, 104, 12);
+      ctx.stroke();
+      ctx.fillStyle = "#f3d67c";
+      ctx.font = "700 27px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Level " + level + " cleared!", W / 2, H / 2 - 18);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "16px system-ui, sans-serif";
+      ctx.fillText("Next: Level " + (level + 1) + " - " + layoutFor(level + 1).name, W / 2, H / 2 + 16);
+    } else if (!running && started && (phase === "playing" || phase === "ready") && !dialogOpen()) {
+      ctx.fillStyle = "rgba(7, 26, 46, 0.72)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#c9a227";
+      ctx.font = "700 40px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Paused", W / 2, H / 2 - 14);
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "15px system-ui, sans-serif";
+      ctx.fillText("Press P or Start to continue", W / 2, H / 2 + 22);
+    }
+    ctx.restore();
+  }
+
+  /* ---------------- loop + run control ---------------- */
+  function loop(ts) {
+    if (!running) return;
+    rafId = requestAnimationFrame(loop);
+    if (!lastTs) lastTs = ts;
+    var dt = Math.min(0.033, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (dt > 0) { update(dt); draw(); }
+  }
+  function setRunning(on) {
+    if (phase === "over") on = false;
+    if (on) started = true;
+    running = on;
+    startBtn.textContent = on ? "Pause" : "Start";
+    if (on) {
+      lastTs = 0;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(loop);
+    } else {
+      cancelAnimationFrame(rafId);
+      if (started && phase !== "over") setStatus("Paused. Press Start to continue.");
+      draw();
+    }
+  }
+
+  /* ---------------- input: mouse, touch, hold buttons, keys ---------------- */
+  function pointerX(ev) {
+    var rect = board.getBoundingClientRect();
     var clientX = ev.touches && ev.touches.length ? ev.touches[0].clientX : ev.clientX;
-    return (clientX - rect.left) * (brkW / rect.width);
+    return (clientX - rect.left) * (W / rect.width);
   }
-  $("brk-board").addEventListener("mousemove", function (ev) { brkPaddle.targetX = brkPointerX(ev) - brkPaddle.w / 2; });
-  $("brk-board").addEventListener("touchmove", function (ev) { brkPaddle.targetX = brkPointerX(ev) - brkPaddle.w / 2; }, { passive: true });
-  $("brk-board").addEventListener("click", function () { if (brkRunning) brkLaunch(); });
+  board.addEventListener("mousemove", function (ev) { paddle.targetX = pointerX(ev) - paddleW() / 2; });
+  board.addEventListener("touchmove", function (ev) { paddle.targetX = pointerX(ev) - paddleW() / 2; }, { passive: true });
+  board.addEventListener("click", function () { if (running) launch(); });
+  function bindHold(id, set) {
+    var el = $(id);
+    function on(ev) { ev.preventDefault(); set(true); try { el.setPointerCapture(ev.pointerId); } catch (e) { /* capture is best-effort */ } }
+    function off(ev) { if (ev) ev.preventDefault(); set(false); }
+    el.addEventListener("pointerdown", on);
+    el.addEventListener("pointerup", off);
+    el.addEventListener("pointercancel", off);
+    el.addEventListener("lostpointercapture", function () { set(false); });
+    el.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+  }
+  bindHold("brk-left", function (v) { holdL = v; });
+  bindHold("brk-right", function (v) { holdR = v; });
   document.addEventListener("keydown", function (ev) {
-    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { brkKeyL = true; ev.preventDefault(); }
-    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { brkKeyR = true; ev.preventDefault(); }
-    else if (ev.key === " " && brkRunning) { brkLaunch(); ev.preventDefault(); }
+    var tag = ev.target && ev.target.tagName ? ev.target.tagName : "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (dialogOpen()) return;
+    var k = ev.key;
+    if (k === "ArrowLeft" || k === "a" || k === "A") { keyL = true; ev.preventDefault(); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { keyR = true; ev.preventDefault(); }
+    else if (k === " ") { ev.preventDefault(); if (running) launch(); }
+    else if (k === "p" || k === "P") { if (phase !== "over") setRunning(!running); }
   });
   document.addEventListener("keyup", function (ev) {
-    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") brkKeyL = false;
-    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") brkKeyR = false;
+    if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") keyL = false;
+    else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") keyR = false;
   });
-  $("brk-start").addEventListener("click", function (ev) { brkSetRunning(!brkRunning); ev.currentTarget.blur(); });
+  startBtn.addEventListener("click", function (ev) { setRunning(!running); ev.currentTarget.blur(); });
   $("brk-new").addEventListener("click", function (ev) {
-    brkSetRunning(false);
-    brkReset(true);
-    $("brk-status").textContent = "Press Start, then click the board or press Space to launch the ball.";
+    cgx.closeDialog();
+    setRunning(false);
+    started = false;
+    resetGame(true);
+    setStatus("Press Start, then click the board or press Space to launch the ball.");
     ev.currentTarget.blur();
   });
-  brkReset(true);
-  // Test hooks (used by the headless verification script only).
-  window.__brk = {
-    get state() {
-      return {
-        score: brkScore, lives: brkLives, level: brkLevel, bricksLeft: brkBricksLeft(),
-        phase: brkPhase, running: brkRunning,
-        ball: { x: Math.round(brkBall.x), y: Math.round(brkBall.y) },
-        paddleX: Math.round(brkPaddle.x)
-      };
-    },
-    debugAimBrick: function () {
-      for (var i = 0; i < brkBricks.length; i++) {
-        var b = brkBricks[i];
-        if (!b.alive) continue;
-        brkPhase = "playing";
-        if (!brkRunning) brkSetRunning(true);
-        brkBall.x = b.x + b.w / 2;
-        brkBall.y = b.y + b.h + brkBall.r + 14;
-        brkBall.vx = 0;
-        brkBall.vy = -brkSpeed();
-        return true;
-      }
-      return false;
-    }
-  };
-  return { reset: brkReset };
+
+  /* ---------------- boot ---------------- */
+  cgx.watchFit(board, { logicalW: LOGICAL_W, logicalH: LOGICAL_H }, function (info) {
+    lastFit = info;
+    draw();
+  });
+  resetGame(true);
+
+  return { reset: resetGame };
 })();
 
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("brk-sound"));
 })();
 </script>
 </body>
