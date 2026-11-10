@@ -663,14 +663,7 @@ var cgx = (function () {
     beep: beep, sfx: sfx,
     muted: soundMuted, setMuted: setMuted,
     toggleMuted: function () { return setMuted(!soundMuted()); },
-    attachMuteToggle: attachMuteToggle,
-    /* Test hooks for the headless verification only - strip before
-       publish, the same rule as the games' window.__ hooks. */
-    _test: {
-      makeMemoryStore: function (slug) { return makeStore(slug, memBackend); },
-      audioState: function () { return audioCtx ? audioCtx.state : "none"; },
-      storeAvailable: storeOk
-    }
+    attachMuteToggle: attachMuteToggle
   };
 })();
 
@@ -736,9 +729,8 @@ var Ludo = (function () {
   var CLUSTER = [[0, 0], [-0.28, -0.28], [0.28, -0.28], [-0.28, 0.28], [0.28, 0.28], [0, -0.34], [0, 0.34], [-0.34, 0], [0.34, 0]];
   var PIPS = { 0: [], 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
 
-  /* Animation timing (ms at scale 1). animScale exists only so the
-     headless play-through can run a full match quickly; it is part of
-     the window.__ludo test hooks and is stripped before publish. */
+  /* Animation timing (ms at scale 1); animScale scales every
+     animation duration uniformly. */
   var STEP_MS = 150, ROLL_TICK_MS = 65, ROLL_TICKS = 9;
   var AI_ROLL_MS = 850, AI_MOVE_MS = 500, AUTO_MOVE_MS = 700, PASS_MS = 1000, CAPTURE_MS = 400;
   var animScale = 1;
@@ -1464,61 +1456,6 @@ var Ludo = (function () {
     updateHud();
   }
 
-  /* Test hooks for the headless verification only - strip before
-     publish, the same rule as every other game's window.__ hooks. */
-  window.__ludo = {
-    get pathLength() { return PATH.length; },
-    get state() {
-      return {
-        started: started, over: over, phase: phase,
-        current: started ? players[current].color : null,
-        dice: dice, movable: movable.slice(),
-        difficulty: difficulty, theme: themeName, winner: winnerColor,
-        stats: { played: stats.played, won: stats.won, bestWinRolls: stats.bestWinRolls, captures: stats.captures },
-        players: players.map(function (p) { return { color: p.color, computer: p.isComputer, tokens: p.tokens.slice() }; })
-      };
-    },
-    start: start,
-    roll: doRoll,
-    moveToken: function (playerIdx, tokenIdx) {
-      if (!started || playerIdx !== current) return false;
-      return doMove(tokenIdx);
-    },
-    debugSet: function (o) {
-      if (!started) start();
-      clearTimers();
-      if (o.players) {
-        players = o.players.map(function (pc) {
-          return { color: pc.color, isComputer: !!pc.computer, tokens: pc.tokens.slice() };
-        });
-        buildCards();
-      }
-      if (o.current !== undefined) current = o.current;
-      if (o.dice !== undefined) {
-        dice = o.dice;
-        setDiceFace(dice, false);
-        computeMovable();
-        phase = "awaitMove";
-      } else {
-        phase = "awaitRoll";
-      }
-      placeAll(true);
-      updateHud();
-      saveMatch();
-    },
-    debugSpeed: function (f) { animScale = (typeof f === "number" && f > 0) ? f : 1; return animScale; },
-    debugPathIndex: function (color, pos) {
-      var p = playerByColor(color);
-      if (!p || pos < 0 || pos > 50) return -1;
-      return pathIndexOf(p, pos);
-    },
-    debugCellOf: function (color, pos, t) {
-      var p = playerByColor(color);
-      if (!p) return null;
-      var cell = tokenCellOf(p, pos, t || 0);
-      return cell ? [cell[0], cell[1]] : null;
-    }
-  };
   return { start: start };
 })();
 
