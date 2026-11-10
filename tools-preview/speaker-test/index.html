@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Speaker Test - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Speaker Test</h1>
+<p class="tool-sub">Play test sounds to check your speakers or headphones.</p>
+<div class="tool-card">
+  <p>Check that your speakers or headphones are working before a call or a class. Play a plain tone, test the left and right sides one at a time, or run a sweep that climbs from a low note to a high one — each sound is made in your browser at the moment you press the button.</p>
+
+  <div class="row2">
+    <div>
+      <label for="st-volume">Volume — <span id="st-volval">50%</span></label>
+      <input id="st-volume" type="range" min="0" max="100" value="50">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="st-tone" class="btn" type="button">Play 440 Hz tone (2 s)</button>
+    <button id="st-left" class="btn ghost" type="button">Left channel only</button>
+    <button id="st-right" class="btn ghost" type="button">Right channel only</button>
+    <button id="st-sweep" class="btn ghost" type="button">Sweep 100 Hz &rarr; 1000 Hz (3 s)</button>
+    <button id="st-stop" class="btn ghost" type="button">Stop</button>
+  </div>
+  <p id="st-status" class="status" role="status">Pick a test sound. Keep the volume modest the first time.</p>
+  <div class="result" id="st-result" hidden data-result>
+    <div id="st-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> every sound is generated in your browser with the Web Audio API — no audio files are downloaded and nothing leaves your device. If you hear the left-channel sound on your right side (or the other way round), your speakers or headphones are swapped or reversed, or a mono setting somewhere is mixing the two channels together.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var stStatus = document.getElementById("st-status");
+var stResult = document.getElementById("st-result");
+var stRows = document.getElementById("st-rows");
+var stVolume = document.getElementById("st-volume");
+var stVolVal = document.getElementById("st-volval");
+var stCtx = null;
+var stMaster = null;
+var stOsc = null;
+var stTimer = null;
+
+function stAddRow(stLabel, stValue) {
+  var stP = document.createElement("p");
+  stP.className = "kv";
+  var stB = document.createElement("b");
+  stB.textContent = stLabel + ":";
+  stP.appendChild(stB);
+  stP.appendChild(document.createTextNode(" " + stValue));
+  stRows.appendChild(stP);
+}
+
+function stEnsureCtx() {
+  if (!stCtx) {
+    var stAC = window.AudioContext || window.webkitAudioContext;
+    if (!stAC) { return false; }
+    stCtx = new stAC();
+    stMaster = stCtx.createGain();
+    stMaster.gain.value = Number(stVolume.value) / 100;
+    stMaster.connect(stCtx.destination);
+  }
+  if (stCtx.state === "suspended") { stCtx.resume(); }
+  return true;
+}
+
+function stStopSound() {
+  if (stTimer !== null) { clearTimeout(stTimer); stTimer = null; }
+  if (stOsc) {
+    try { stOsc.stop(); } catch (stErr1) { /* already stopped */ }
+    try { stOsc.disconnect(); } catch (stErr2) { /* already disconnected */ }
+    stOsc = null;
+  }
+}
+function stPlay(stLabel, stKind, stPanVal, stDur) {
+  if (!stEnsureCtx()) {
+    stStatus.className = "status error";
+    stStatus.textContent = "This browser does not support the Web Audio API, so no test sound can be played. Try a recent version of Chrome, Edge, Firefox or Safari.";
+    return;
+  }
+  stStopSound();
+  var stNow = stCtx.currentTime;
+  stOsc = stCtx.createOscillator();
+  stOsc.type = "sine";
+  var stFreqText;
+  if (stKind === "sweep") {
+    stOsc.frequency.setValueAtTime(100, stNow);
+    stOsc.frequency.exponentialRampToValueAtTime(1000, stNow + stDur);
+    stFreqText = "Sweep, 100 Hz to 1000 Hz";
+  } else {
+    stOsc.frequency.setValueAtTime(440, stNow);
+    stFreqText = "440 Hz";
+  }
+  if (typeof stCtx.createStereoPanner === "function") {
+    var stPanNode = stCtx.createStereoPanner();
+    stPanNode.pan.value = stPanVal;
+    stOsc.connect(stPanNode);
+    stPanNode.connect(stMaster);
+  } else {
+    stOsc.connect(stMaster);
+  }
+  var stPlayed = stOsc;
+  stOsc.start(stNow);
+  stOsc.stop(stNow + stDur + 0.05);
+  var stChannelText = "Both channels";
+  if (stPanVal < 0) { stChannelText = "Left channel only"; }
+  if (stPanVal > 0) { stChannelText = "Right channel only"; }
+  stRows.innerHTML = "";
+  stAddRow("Test", stLabel);
+  stAddRow("Sound", stFreqText + " sine wave");
+  stAddRow("Channel", stChannelText);
+  stAddRow("Volume", stVolume.value + "%");
+  stAddRow("Plays for", stDur + " seconds");
+  stResult.hidden = false;
+  stStatus.className = "status ok";
+  stStatus.textContent = "Playing: " + stLabel + "…";
+  stTimer = setTimeout(function () {
+    stTimer = null;
+    if (stOsc === stPlayed) { stOsc = null; }
+    stStatus.className = "status";
+    stStatus.textContent = "Finished: " + stLabel + ".";
+  }, stDur * 1000);
+}
+document.getElementById("st-tone").addEventListener("click", function () {
+  stPlay("440 Hz tone", "tone", 0, 2);
+});
+document.getElementById("st-left").addEventListener("click", function () {
+  stPlay("left channel tone", "tone", -1, 2);
+});
+document.getElementById("st-right").addEventListener("click", function () {
+  stPlay("right channel tone", "tone", 1, 2);
+});
+document.getElementById("st-sweep").addEventListener("click", function () {
+  stPlay("frequency sweep", "sweep", 0, 3);
+});
+document.getElementById("st-stop").addEventListener("click", function () {
+  stStopSound();
+  stResult.hidden = true;
+  stStatus.className = "status";
+  stStatus.textContent = "Stopped. No sound is playing.";
+});
+stVolume.addEventListener("input", function () {
+  stVolVal.textContent = stVolume.value + "%";
+  if (stMaster) { stMaster.gain.value = Number(stVolume.value) / 100; }
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="speaker-test"></script>
+</body>
+</html>
