@@ -12,164 +12,105 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
 
-
-  /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
-  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
+  /* ---- Hangman ----
+     Shipped look kept: cream canvas (#f8f5ec) with a navy
+     gallows, word in navy capitals with wide letter spacing,
+     A-Z key grid (9 columns, 7 on small screens), green keys
+     for hits and red keys for misses. The polish adds: word
+     letters as slots so a fresh reveal can pop (spec 18(b)),
+     a shake on the board for a wrong guess, a definition line
+     under the status, and a fullscreen canvas that genuinely
+     grows (spec 18(e)) with its backing store refit by cgx so
+     the line art stays crisp instead of stretching. */
+  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
   #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
+  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); width: min(260px, 100%); height: auto; box-sizing: border-box; }
   #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
+  .hang-slot { display: inline-block; min-width: 0.9em; text-align: center; }
+  @keyframes hang-pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .hang-slot.just { animation: hang-pop 0.3s ease-out; }
+  @keyframes hang-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+  #hang-board.shake { animation: hang-shake 0.45s ease-in-out; }
   #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
   .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
   .hang-key.ok { background: #166534; }
   .hang-key.bad { background: #b91c1c; }
   .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
-  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
-  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
-  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .hang-def { text-align: center; color: var(--muted); margin-top: 0.35rem; min-height: 1.4em; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  .keys-note { color: var(--muted); font-size: 0.9rem; text-align: center; margin-top: 0.6rem; }
+  .play-stage:fullscreen .keys-note { color: #cbd5e1; }
+  .play-stage:fullscreen #hang-word { color: #f3d67c; }
+  .play-stage:fullscreen .hang-def { color: #cbd5e1; }
+  .cgx-fs:fullscreen #hang-board, .cgx-fs:-webkit-full-screen #hang-board { width: min(74vmin, 640px); }
+  .cgx-fs:fullscreen #hang-canvas, .cgx-fs:-webkit-full-screen #hang-canvas { width: min(420px, 62vmin); }
   @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
     #hang-word { font-size: 1.15rem; }
     #hang-keys { grid-template-columns: repeat(7, 1fr); }
   }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
 
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Hangman: Tech Words</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -177,46 +118,704 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="hang-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Hangman: Tech Words</h2>
   <p class="fs-desc">Guess the hidden cybersecurity and tech word letter by letter before the gallows is complete.</p>
   <div class="scorebar"><span>Wrong guesses: <span id="hang-wrong">0</span>/6</span><span>Letters found: <span id="hang-found">0</span>/<span id="hang-total">0</span></span></div>
+  <div class="ctrl-row">
+    <label for="hang-cat">Category</label>
+    <select id="hang-cat"><option value="all" selected>All categories</option><option value="security">Security</option><option value="networking">Networking</option><option value="general">General Tech</option></select>
+    <label for="hang-diff">Difficulty</label>
+    <select id="hang-diff"><option value="all" selected>Any length</option><option value="easy">Easy (4-6 letters)</option><option value="medium">Medium (7-9 letters)</option><option value="hard">Hard (10+ letters)</option></select>
+  </div>
   <div class="board" id="hang-board">
     <canvas id="hang-canvas" width="260" height="200"></canvas>
     <div id="hang-word"></div>
   </div>
   <p class="status" id="hang-status">Tap a letter to make your first guess.</p>
+  <p class="hang-def" id="hang-def"></p>
   <div id="hang-keys"></div>
-  <div>
+  <div class="ctrl-row">
+    <button type="button" id="hang-hint">Hint (costs 1 wrong guess)</button>
     <button type="button" id="hang-new">New game</button>
   </div>
+  <p class="keys-note">Type A to Z on your keyboard to guess a letter. Press Enter for a new game when a round ends. A hint reveals one letter but costs one wrong guess, and it switches off when only one wrong guess remains.</p>
+  <p class="stats-line" id="hang-stats"></p>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Hangman picks each word from a fixed built-in list of everyday cybersecurity and tech terms, and your guesses are kept only in this page. The drawing is a simple line gallows on a canvas.</p>
+<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded or tracked anywhere. Your words solved, wins, streaks and your category and difficulty choices are saved only in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Hangman picks each word from a built-in list of cybersecurity, networking and everyday tech terms, and shows the word's meaning when the game ends.</p>
+<script>"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G18 HANGMAN: TECH WORDS ================= */
+/* ================= HANGMAN: TECH WORDS (polished) =================
+   Kept shipped core: 6 wrong guesses, the gallows drawing that
+   builds limb by limb on the 260x200 canvas (X-eyes face at 6),
+   the A-Z on-screen keyboard with green/red used keys, physical
+   keyboard A-Z, and every shipped status string. Polish adds
+   the 120-word pool with categories and length tiers, the Hint
+   button, draw-in / pop / shake animation, and cgx persistence
+   and end screens. */
 var HangmanTechWords = (function () {
-  var hangWords = ["FIREWALL", "MALWARE", "PHISHING", "CIPHER", "TROJAN", "SANDBOX", "BOTNET", "PATCH",
-    "VIRUS", "TOKEN", "PROXY", "AUDIT", "HACKER", "CRYPTO", "SPYWARE", "ROOTKIT", "BACKDOOR",
-    "EXPLOIT", "PAYLOAD", "SCANNER", "NETWORK", "BROWSER", "COOKIE", "KERNEL"];
+  var hangStore = cgx.store("hangman-tech-words");
   var hangMaxWrong = 6;
-  var hangWord = "", hangGuessed = {}, hangWrong = 0, hangPhase = "playing"; /* playing | won | lost */
-  var hangCtx = $("hang-canvas").getContext("2d");
+  var HANG_CATS = { security: "Security", networking: "Networking", general: "General Tech" };
+  /* The word pool: 120 tech words, each with a one-line meaning
+     shown when the game ends. c = category. Difficulty is the
+     word length: easy 4-6, medium 7-9, hard 10+. Every one of
+     the 24 shipped words is still here. */
+  var hangWords = [
+    /* Security - easy */
+    { w: "CIPHER", c: "security", h: "A method of scrambling a message so only the right key can read it." },
+    { w: "TROJAN", c: "security", h: "Malware disguised as a harmless or useful program." },
+    { w: "BOTNET", c: "security", h: "A network of hijacked computers controlled by one attacker." },
+    { w: "PATCH", c: "security", h: "A small update that fixes a bug or a security hole." },
+    { w: "VIRUS", c: "security", h: "Malware that copies itself by attaching to other files." },
+    { w: "TOKEN", c: "security", h: "A digital key that proves you are signed in or allowed in." },
+    { w: "AUDIT", c: "security", h: "A careful check of systems and records looking for problems." },
+    { w: "HACKER", c: "security", h: "Someone who explores, tests or breaks into computer systems." },
+    { w: "CRYPTO", c: "security", h: "Short for cryptography, the science of secret codes." },
+    { w: "SPAM", c: "security", h: "Unwanted junk messages sent out in bulk." },
+    { w: "WORM", c: "security", h: "Malware that spreads by itself from computer to computer." },
+    { w: "VAULT", c: "security", h: "A protected store for passwords and other secrets." },
+    { w: "SPOOF", c: "security", h: "To fake an identity or address in order to fool a system." },
+    { w: "BREACH", c: "security", h: "A break-in where data is exposed, changed or stolen." },
+    { w: "ADWARE", c: "security", h: "Software that floods you with ads and may track you." },
+    /* Security - medium */
+    { w: "FIREWALL", c: "security", h: "A barrier that filters network traffic by a set of rules." },
+    { w: "MALWARE", c: "security", h: "Any software written to harm, spy or steal." },
+    { w: "PHISHING", c: "security", h: "Fake messages that trick people into revealing secrets." },
+    { w: "SANDBOX", c: "security", h: "An isolated area where untrusted code can run safely." },
+    { w: "SPYWARE", c: "security", h: "Software that secretly watches and reports your activity." },
+    { w: "ROOTKIT", c: "security", h: "Tools that hide an intruder deep inside a system." },
+    { w: "BACKDOOR", c: "security", h: "A hidden way into a system that bypasses normal sign-in." },
+    { w: "EXPLOIT", c: "security", h: "Code or a trick that takes advantage of a weakness." },
+    { w: "PAYLOAD", c: "security", h: "The harmful part a piece of malware delivers." },
+    { w: "SCANNER", c: "security", h: "A tool that checks systems for known weaknesses." },
+    { w: "KEYLOGGER", c: "security", h: "Malware that secretly records everything you type." },
+    { w: "ANTIVIRUS", c: "security", h: "Software that detects and removes malicious programs." },
+    { w: "ENCRYPT", c: "security", h: "To scramble data so only a key holder can read it." },
+    { w: "PASSWORD", c: "security", h: "A secret word or phrase used to prove who you are." },
+    { w: "PASSKEY", c: "security", h: "A modern sign-in key kept on your device, replacing passwords." },
+    { w: "HONEYPOT", c: "security", h: "A decoy system set up to lure and study attackers." },
+    { w: "BLACKLIST", c: "security", h: "A list of blocked addresses, apps or users." },
+    { w: "WHITELIST", c: "security", h: "A list of approved addresses, apps or users." },
+    /* Security - hard */
+    { w: "RANSOMWARE", c: "security", h: "Malware that locks your files and demands payment to free them." },
+    { w: "ENCRYPTION", c: "security", h: "Scrambling data so that only the right key can read it." },
+    { w: "CREDENTIAL", c: "security", h: "A proof of identity, such as a password or certificate." },
+    { w: "QUARANTINE", c: "security", h: "Isolating a suspicious file so it cannot do any harm." },
+    { w: "VULNERABILITY", c: "security", h: "A weakness in software that attackers can take advantage of." },
+    { w: "AUTHENTICATION", c: "security", h: "Checking that a user really is who they claim to be." },
+    { w: "CRYPTOGRAPHY", c: "security", h: "The science of making and breaking secret codes." },
+    { w: "BRUTEFORCE", c: "security", h: "Trying every possible password until one finally works." },
+    { w: "SPEARPHISHING", c: "security", h: "A fake message crafted for one specific target person." },
+    { w: "CERTIFICATE", c: "security", h: "A digital ID card proving a site or signer is genuine." },
+    { w: "EXFILTRATION", c: "security", h: "Quietly stealing data out of a network." },
+    { w: "PERSISTENCE", c: "security", h: "Malware's ability to survive restarts and stay hidden." },
+    /* Networking - easy */
+    { w: "PROXY", c: "networking", h: "A middleman server that passes your requests on for you." },
+    { w: "ROUTER", c: "networking", h: "A box that directs traffic between your devices and the internet." },
+    { w: "MODEM", c: "networking", h: "The device that connects your network to your internet provider." },
+    { w: "SERVER", c: "networking", h: "A computer that provides services or data to others." },
+    { w: "CLIENT", c: "networking", h: "A program or device that requests services from a server." },
+    { w: "SWITCH", c: "networking", h: "A device that connects machines on the same local network." },
+    { w: "PACKET", c: "networking", h: "A small chunk of data travelling across a network." },
+    { w: "DOMAIN", c: "networking", h: "A human-readable name for a site, such as example.com." },
+    { w: "WIFI", c: "networking", h: "Wireless networking that connects devices by radio." },
+    { w: "CLOUD", c: "networking", h: "Computing services delivered to you over the internet." },
+    { w: "SIGNAL", c: "networking", h: "The radio or electrical waves that carry data." },
+    { w: "SUBNET", c: "networking", h: "A smaller division inside a larger network." },
+    { w: "UPTIME", c: "networking", h: "How long a system has been running without stopping." },
+    { w: "RELAY", c: "networking", h: "A point that passes messages onward toward their destination." },
+    /* Networking - medium */
+    { w: "NETWORK", c: "networking", h: "A set of connected computers that can share data." },
+    { w: "ETHERNET", c: "networking", h: "Wired networking over cables, steadier than wireless." },
+    { w: "GATEWAY", c: "networking", h: "The exit point where a local network meets the internet." },
+    { w: "BANDWIDTH", c: "networking", h: "How much data a connection can carry each second." },
+    { w: "LATENCY", c: "networking", h: "The delay before data starts moving; gamers call it ping." },
+    { w: "PROTOCOL", c: "networking", h: "An agreed set of rules for how computers talk to each other." },
+    { w: "HOTSPOT", c: "networking", h: "A device or place offering wireless internet access." },
+    { w: "BROADBAND", c: "networking", h: "A fast, always-on internet connection." },
+    { w: "WIRELESS", c: "networking", h: "Connecting devices by radio instead of cables." },
+    { w: "ROUTING", c: "networking", h: "Choosing the path data takes across networks." },
+    { w: "INTERNET", c: "networking", h: "The global network connecting billions of devices." },
+    { w: "TOPOLOGY", c: "networking", h: "The layout pattern of a network and its connections." },
+    { w: "BACKBONE", c: "networking", h: "The main high-capacity routes carrying a network's traffic." },
+    { w: "MULTICAST", c: "networking", h: "Sending one stream to a chosen group of receivers." },
+    { w: "BROADCAST", c: "networking", h: "Sending data to every device on a network at once." },
+    { w: "SATELLITE", c: "networking", h: "A relay in orbit that beams signals back down to Earth." },
+    /* Networking - hard */
+    { w: "THROUGHPUT", c: "networking", h: "The real amount of data moved in a given time." },
+    { w: "FIBEROPTIC", c: "networking", h: "Cables that carry data as pulses of light in glass." },
+    { w: "CONGESTION", c: "networking", h: "Slowdowns caused by too much traffic on a network." },
+    { w: "CONNECTIVITY", c: "networking", h: "The state of being able to reach a network or service." },
+    { w: "INFRASTRUCTURE", c: "networking", h: "The underlying systems and cables everything runs on." },
+    { w: "LOADBALANCER", c: "networking", h: "A system that spreads traffic across several servers." },
+    { w: "TRANSMISSION", c: "networking", h: "Sending data from one place to another." },
+    { w: "WAVELENGTH", c: "networking", h: "The length of a radio wave; different ones carry different channels." },
+    /* General Tech - easy */
+    { w: "COOKIE", c: "general", h: "A small file a website stores in your browser to remember you." },
+    { w: "KERNEL", c: "general", h: "The core of an operating system that runs the computer." },
+    { w: "MOUSE", c: "general", h: "A hand controller that moves the pointer on screen." },
+    { w: "SCREEN", c: "general", h: "The display where a computer shows its output." },
+    { w: "CURSOR", c: "general", h: "The marker showing where your pointer or typing is." },
+    { w: "PIXEL", c: "general", h: "One tiny dot of light that makes up a screen picture." },
+    { w: "FOLDER", c: "general", h: "A container used to organise files on a computer." },
+    { w: "BACKUP", c: "general", h: "An extra copy of data kept in case the original is lost." },
+    { w: "UPDATE", c: "general", h: "A newer version of software with fixes or features." },
+    { w: "LAPTOP", c: "general", h: "A portable computer with a built-in screen and keyboard." },
+    { w: "MEMORY", c: "general", h: "Where a computer holds the data it is actively using." },
+    { w: "DEBUG", c: "general", h: "To hunt down and fix errors in code." },
+    { w: "WEBCAM", c: "general", h: "A small camera built into or attached to a computer." },
+    { w: "UPLOAD", c: "general", h: "To send data from your device onto a network." },
+    /* General Tech - medium */
+    { w: "BROWSER", c: "general", h: "The app you use to visit websites, like Chrome or Firefox." },
+    { w: "KEYBOARD", c: "general", h: "The set of keys used to type into a computer." },
+    { w: "DESKTOP", c: "general", h: "The main screen area where windows and icons live." },
+    { w: "PRINTER", c: "general", h: "A machine that puts text and images onto paper." },
+    { w: "BATTERY", c: "general", h: "A stored-energy pack that powers a device." },
+    { w: "SOFTWARE", c: "general", h: "Programs and apps, as opposed to physical hardware." },
+    { w: "HARDWARE", c: "general", h: "The physical parts of a computer that you can touch." },
+    { w: "DATABASE", c: "general", h: "An organised collection of data a program can search." },
+    { w: "PROCESSOR", c: "general", h: "The chip that carries out a computer's instructions." },
+    { w: "STORAGE", c: "general", h: "Where files are kept while they are not in active use." },
+    { w: "MONITOR", c: "general", h: "A screen that displays a computer's output." },
+    { w: "ALGORITHM", c: "general", h: "A step-by-step recipe for solving a problem." },
+    { w: "COMPILER", c: "general", h: "A program that turns written code into machine instructions." },
+    { w: "DOWNLOAD", c: "general", h: "To copy data from a network onto your own device." },
+    /* General Tech - hard */
+    { w: "SPREADSHEET", c: "general", h: "A grid of rows and columns for numbers and formulas." },
+    { w: "HEADPHONES", c: "general", h: "Speakers worn over the ears for private listening." },
+    { w: "SMARTPHONE", c: "general", h: "A mobile phone that runs apps like a small computer." },
+    { w: "PROGRAMMING", c: "general", h: "Writing the instructions that make computers work." },
+    { w: "APPLICATION", c: "general", h: "A program designed for one particular kind of task." },
+    { w: "TOUCHSCREEN", c: "general", h: "A display that you control by touching it directly." },
+    { w: "PERIPHERAL", c: "general", h: "An add-on device such as a mouse, printer or drive." },
+    { w: "RESOLUTION", c: "general", h: "How many pixels an image has; a measure of sharpness." },
+    { w: "AUTOMATION", c: "general", h: "Making a system carry out tasks by itself." }
+  ];
 
-  function hangBuildKeys() {
-    var html = "";
-    for (var i = 0; i < 26; i++) {
-      var ch = String.fromCharCode(65 + i);
-      html += '<button type="button" class="hang-key" id="hang-key-' + ch + '" data-ch="' + ch + '">' + ch + "</button>";
+  var hangCategory = "all", hangDifficulty = "all";
+  var hangEntry = null, hangWord = "", hangGuessed = {}, hangHinted = {};
+  var hangWrong = 0, hangPhase = "playing"; /* playing | won | lost */
+  var hangLastWord = "";
+  var hangCtx = $("hang-canvas").getContext("2d");
+  /* Draw-in progress per gallows part (index 0 = head ... 5 =
+     second leg + face). A wrong guess animates its part from 0
+     to 1; every other render draws parts at their stored
+     progress, so a resize or fullscreen refit mid-animation
+     cannot lose a half-drawn limb. */
+  var hangPartProgress = [0, 0, 0, 0, 0, 0], hangAnim = null, hangEndTimer = null;
+
+  function hangTier(len) { return len <= 6 ? "easy" : (len <= 9 ? "medium" : "hard"); }
+  function hangPool(cat, diff) {
+    var out = [];
+    for (var i = 0; i < hangWords.length; i++) {
+      var e = hangWords[i];
+      if (cat && cat !== "all" && e.c !== cat) continue;
+      if (diff && diff !== "all" && hangTier(e.w.length) !== diff) continue;
+      out.push(e);
     }
-    $("hang-keys").innerHTML = html;
+    return out;
+  }
+  function hangPick() {
+    var pool = hangPool(hangCategory, hangDifficulty), cand = [], i;
+    for (i = 0; i < pool.length; i++) if (pool[i].w !== hangLastWord) cand.push(pool[i]);
+    if (!cand.length) cand = pool;
+    return cand[Math.floor(Math.random() * cand.length)];
+  }
+  function hangStats() {
+    var s = hangStore.get("best", null);
+    if (!s || typeof s !== "object") s = { solved: 0, wins: 0, games: 0, streak: 0, bestStreak: 0, fewestWrong: null };
+    return s;
+  }
+  function hangSyncStats() {
+    var s = hangStats();
+    var line = "Solved: " + s.solved + " \u00b7 Wins: " + s.wins + " of " + s.games + " games \u00b7 Streak: " + s.streak + " (best " + s.bestStreak + ")";
+    if (s.fewestWrong !== null && s.fewestWrong !== undefined) line += " \u00b7 Fewest wrong in a win: " + s.fewestWrong;
+    $("hang-stats").textContent = line;
+  }
+  function hangRevealedCount() {
+    var n = 0;
+    for (var i = 0; i < hangWord.length; i++) if (hangGuessed[hangWord[i]]) n++;
+    return n;
+  }
+  function hangUnguessedLetters() {
+    var seen = {}, n = 0, i, ch;
+    for (i = 0; i < hangWord.length; i++) {
+      ch = hangWord[i];
+      if (!hangGuessed[ch] && !seen[ch]) { seen[ch] = 1; n++; }
+    }
+    return n;
+  }
+  function hangSyncHintBtn() {
+    $("hang-hint").disabled = hangPhase !== "playing" || hangWrong >= hangMaxWrong - 1 || hangUnguessedLetters() === 0;
+  }
+
+  /* ---------------- gallows drawing ----------------
+     Geometry is the shipped drawing exactly: the gallows frame
+     always, then one red part per wrong guess. Parts now draw
+     progressively (progress 0..1) for the draw-in animation. */
+  function hangLineTo(x1, y1, x2, y2, p) {
+    hangCtx.beginPath();
+    hangCtx.moveTo(x1, y1);
+    hangCtx.lineTo(x1 + (x2 - x1) * p, y1 + (y2 - y1) * p);
+    hangCtx.stroke();
   }
   function hangDraw() {
-    var ctx = hangCtx;
+    var ctx = hangCtx, cv = $("hang-canvas");
+    var sc = cv.width / 260;
+    ctx.setTransform(sc, 0, 0, sc, 0, 0);
     ctx.clearRect(0, 0, 260, 200);
     ctx.strokeStyle = "#0a2540";
     ctx.lineWidth = 4;
@@ -228,47 +827,125 @@ var HangmanTechWords = (function () {
     ctx.stroke();
     ctx.strokeStyle = "#b91c1c";
     ctx.lineWidth = 3;
-    if (hangWrong >= 1) { ctx.beginPath(); ctx.arc(160, 56, 17, 0, Math.PI * 2); ctx.stroke(); }
-    if (hangWrong >= 2) { ctx.beginPath(); ctx.moveTo(160, 73); ctx.lineTo(160, 122); ctx.stroke(); }
-    if (hangWrong >= 3) { ctx.beginPath(); ctx.moveTo(160, 86); ctx.lineTo(132, 106); ctx.stroke(); }
-    if (hangWrong >= 4) { ctx.beginPath(); ctx.moveTo(160, 86); ctx.lineTo(188, 106); ctx.stroke(); }
-    if (hangWrong >= 5) { ctx.beginPath(); ctx.moveTo(160, 122); ctx.lineTo(138, 158); ctx.stroke(); }
-    if (hangWrong >= 6) {
-      ctx.beginPath(); ctx.moveTo(160, 122); ctx.lineTo(182, 158); ctx.stroke();
-      ctx.lineWidth = 2.4;
-      ctx.beginPath();
-      ctx.moveTo(152, 50); ctx.lineTo(158, 56); ctx.moveTo(158, 50); ctx.lineTo(152, 56);
-      ctx.moveTo(164, 50); ctx.lineTo(170, 56); ctx.moveTo(170, 50); ctx.lineTo(164, 56);
-      ctx.stroke();
+    var p = hangPartProgress;
+    if (p[0] > 0) { ctx.beginPath(); ctx.arc(160, 56, 17, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * p[0]); ctx.stroke(); }
+    if (p[1] > 0) hangLineTo(160, 73, 160, 122, p[1]);
+    if (p[2] > 0) hangLineTo(160, 86, 132, 106, p[2]);
+    if (p[3] > 0) hangLineTo(160, 86, 188, 106, p[3]);
+    if (p[4] > 0) hangLineTo(160, 122, 138, 158, p[4]);
+    if (p[5] > 0) {
+      hangLineTo(160, 122, 182, 158, p[5]);
+      if (p[5] > 0.55) {
+        var q = (p[5] - 0.55) / 0.45;
+        ctx.lineWidth = 2.4;
+        hangLineTo(152, 50, 158, 56, q); hangLineTo(158, 50, 152, 56, q);
+        hangLineTo(164, 50, 170, 56, q); hangLineTo(170, 50, 164, 56, q);
+        ctx.lineWidth = 3;
+      }
     }
   }
-  function hangRevealedCount() {
-    var n = 0;
-    for (var i = 0; i < hangWord.length; i++) if (hangGuessed[hangWord[i]]) n++;
-    return n;
+  function hangAnimateWrong() {
+    var n = hangWrong, i;
+    for (i = 0; i < n - 1; i++) hangPartProgress[i] = 1;
+    if (hangAnim) cancelAnimationFrame(hangAnim);
+    var t0 = null;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / 350);
+      hangPartProgress[n - 1] = p;
+      hangDraw();
+      if (p < 1) hangAnim = requestAnimationFrame(step);
+      else hangAnim = null;
+    }
+    hangAnim = requestAnimationFrame(step);
   }
-  function hangRender() {
+
+  function hangBuildKeys() {
+    var html = "";
+    for (var i = 0; i < 26; i++) {
+      var ch = String.fromCharCode(65 + i);
+      html += '<button type="button" class="hang-key" id="hang-key-' + ch + '" data-ch="' + ch + '">' + ch + "</button>";
+    }
+    $("hang-keys").innerHTML = html;
+  }
+  function hangRender(justLetter) {
     var out = [];
-    for (var i = 0; i < hangWord.length; i++) out.push(hangGuessed[hangWord[i]] ? hangWord[i] : "_");
-    $("hang-word").textContent = out.join(" ");
+    for (var i = 0; i < hangWord.length; i++) {
+      var ch = hangWord[i];
+      var shown = hangGuessed[ch] ? ch : "_";
+      out.push('<span class="hang-slot' + (justLetter && ch === justLetter ? " just" : "") + '">' + shown + "</span>");
+    }
+    $("hang-word").innerHTML = out.join(" ");
     $("hang-wrong").textContent = String(hangWrong);
     $("hang-found").textContent = String(hangRevealedCount());
     $("hang-total").textContent = String(hangWord.length);
     hangDraw();
+    hangSyncHintBtn();
   }
   function hangReset() {
-    hangWord = hangWords[Math.floor(Math.random() * hangWords.length)];
+    if (hangEndTimer) { clearTimeout(hangEndTimer); hangEndTimer = null; }
+    if (hangAnim) { cancelAnimationFrame(hangAnim); hangAnim = null; }
+    hangEntry = hangPick();
+    hangWord = hangEntry.w;
+    hangLastWord = hangWord;
     hangGuessed = {};
+    hangHinted = {};
     hangWrong = 0;
     hangPhase = "playing";
+    hangPartProgress = [0, 0, 0, 0, 0, 0];
     var keys = document.querySelectorAll(".hang-key");
     for (var i = 0; i < keys.length; i++) {
       keys[i].disabled = false;
       keys[i].classList.remove("ok");
       keys[i].classList.remove("bad");
     }
-    hangRender();
+    $("hang-def").textContent = "";
+    hangRender(null);
     $("hang-status").textContent = "Tap a letter to make your first guess. The word has " + hangWord.length + " letters.";
+    hangSyncStats();
+  }
+  function hangFinish(wonGame) {
+    var keys = document.querySelectorAll(".hang-key"), i;
+    for (i = 0; i < keys.length; i++) keys[i].disabled = true;
+    hangSyncHintBtn();
+    var s = hangStats();
+    s.games += 1;
+    var newBest = false;
+    if (wonGame) {
+      s.wins += 1;
+      s.solved += 1;
+      s.streak += 1;
+      if (s.streak > s.bestStreak) s.bestStreak = s.streak;
+      if (s.fewestWrong === null || s.fewestWrong === undefined || hangWrong < s.fewestWrong) { s.fewestWrong = hangWrong; newBest = true; }
+    } else {
+      s.streak = 0;
+    }
+    hangStore.set("best", s);
+    hangSyncStats();
+    $("hang-def").textContent = hangWord + " - " + hangEntry.h;
+    hangEndTimer = setTimeout(function () {
+      hangEndTimer = null;
+      if (wonGame) {
+        cgx.showResult({
+          title: "You got it!",
+          lines: [hangWord + " - " + hangEntry.h],
+          scoreLabel: "Wrong guesses", score: hangWrong + " of " + hangMaxWrong,
+          bestLabel: "Fewest wrong in a win", best: s.fewestWrong,
+          newBest: newBest,
+          onPlayAgain: function () { hangReset(); }
+        });
+      } else {
+        cgx.showResult({
+          won: false,
+          title: "The gallows is complete",
+          message: "The word was " + hangWord + ".",
+          lines: [hangWord + " - " + hangEntry.h],
+          scoreLabel: "Letters found", score: hangRevealedCount() + " of " + hangWord.length,
+          bestLabel: "Words solved", best: s.solved,
+          onPlayAgain: function () { hangReset(); }
+        });
+      }
+    }, 650);
   }
   function hangGuess(ch) {
     if (hangPhase !== "playing" || hangGuessed[ch]) return;
@@ -280,24 +957,70 @@ var HangmanTechWords = (function () {
       btn.classList.add(hit ? "ok" : "bad");
     }
     if (hit) {
-      hangRender();
+      cgx.sfx("good");
+      hangRender(ch);
       if (hangRevealedCount() === hangWord.length) {
         hangPhase = "won";
         $("hang-status").textContent = "You got it: " + hangWord + ", with " + hangWrong + " wrong guesses. Press New game for another word.";
+        hangFinish(true);
       } else {
         $("hang-status").textContent = "Good guess: " + ch + " is in the word.";
       }
     } else {
       hangWrong++;
-      hangRender();
+      cgx.sfx("bad");
+      hangRender(null);
+      hangAnimateWrong();
+      var board = $("hang-board");
+      board.classList.remove("shake");
+      void board.offsetWidth;
+      board.classList.add("shake");
+      setTimeout(function () { board.classList.remove("shake"); }, 600);
       if (hangWrong >= hangMaxWrong) {
         hangPhase = "lost";
         $("hang-status").textContent = "The gallows is complete. The word was " + hangWord + ". Press New game to try another.";
+        hangFinish(false);
       } else {
         $("hang-status").textContent = "No " + ch + " in the word. " + (hangMaxWrong - hangWrong) + " wrong guesses left.";
       }
     }
   }
+  /* Hint: reveal one unguessed letter of the word, at the cost
+     of one wrong guess (the gallows grows, exactly as a miss).
+     It can never end the game by itself: it switches off when
+     only one wrong guess remains, so a hint is never the blow
+     that completes the gallows. It can complete the word, and
+     that win is scored like any other, hint cost included. */
+  function hangUseHint() {
+    if (hangPhase !== "playing") return;
+    if (hangWrong >= hangMaxWrong - 1) return;
+    var letters = [], seen = {}, i, ch;
+    for (i = 0; i < hangWord.length; i++) {
+      ch = hangWord[i];
+      if (!hangGuessed[ch] && !seen[ch]) { seen[ch] = 1; letters.push(ch); }
+    }
+    if (!letters.length) return;
+    var pick = letters[Math.floor(Math.random() * letters.length)];
+    hangGuessed[pick] = true;
+    hangHinted[pick] = true;
+    var btn = $("hang-key-" + pick);
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add("ok");
+    }
+    hangWrong++;
+    cgx.sfx("place");
+    hangRender(pick);
+    hangAnimateWrong();
+    if (hangRevealedCount() === hangWord.length) {
+      hangPhase = "won";
+      $("hang-status").textContent = "You got it: " + hangWord + ", with " + hangWrong + " wrong guesses. Press New game for another word.";
+      hangFinish(true);
+    } else {
+      $("hang-status").textContent = "Hint used: the letter " + pick + " is in the word. It cost one wrong guess.";
+    }
+  }
+
   hangBuildKeys();
   $("hang-keys").addEventListener("click", function (ev) {
     var t = ev.target;
@@ -305,51 +1028,79 @@ var HangmanTechWords = (function () {
     hangGuess(t.dataset.ch);
   });
   document.addEventListener("keydown", function (ev) {
-    var ch = (ev.key || "").toUpperCase();
-    if (ch.length === 1 && ch >= "A" && ch <= "Z") hangGuess(ch);
-  });
-  $("hang-new").addEventListener("click", function (ev) { hangReset(); ev.currentTarget.blur(); });
-  hangReset();
-  // Test hooks (used by the headless verification script only).
-  window.__hang = {
-    get state() {
-      return {
-        phase: hangPhase, wrong: hangWrong, maxWrong: hangMaxWrong,
-        revealed: hangRevealedCount(), total: hangWord.length, word: hangWord
-      };
+    var target = ev.target;
+    var tag = target && target.tagName;
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (ev.key === "Enter") {
+      /* Enter starts a new game once a round has ended. While
+         the end-screen dialog is open its own buttons own the
+         keyboard; while a real game button has focus, Enter
+         clicks that button natively and must not deal twice. */
+      if (document.querySelector(".cgx-overlay.open")) return;
+      if (hangPhase === "playing") return;
+      if (tag === "BUTTON" && !(target.closest && target.closest(".cgx-overlay"))) return;
+      ev.preventDefault();
+      hangReset();
+      return;
     }
-  };
+    var ch = (ev.key || "").toUpperCase();
+    if (ch.length === 1 && ch >= "A" && ch <= "Z") {
+      if (document.querySelector(".cgx-overlay.open")) return;
+      hangGuess(ch);
+    }
+  });
+  $("hang-new").addEventListener("click", function (ev) { cgx.sfx("click"); hangReset(); ev.currentTarget.blur(); });
+  $("hang-hint").addEventListener("click", function (ev) { hangUseHint(); ev.currentTarget.blur(); });
+  $("hang-cat").addEventListener("change", function (ev) {
+    hangCategory = ev.target.value;
+    hangStore.set("category", hangCategory);
+    cgx.sfx("click");
+    hangReset();
+    ev.target.blur();
+  });
+  $("hang-diff").addEventListener("change", function (ev) {
+    hangDifficulty = ev.target.value;
+    hangStore.set("difficulty", hangDifficulty);
+    cgx.sfx("click");
+    hangReset();
+    ev.target.blur();
+  });
+  /* ---------------- boot ---------------- */
+  var savedCat = hangStore.get("category", "all");
+  if (savedCat === "all" || HANG_CATS[savedCat]) {
+    hangCategory = savedCat;
+    $("hang-cat").value = savedCat;
+  }
+  var savedDiff = hangStore.get("difficulty", "all");
+  if (savedDiff === "all" || savedDiff === "easy" || savedDiff === "medium" || savedDiff === "hard") {
+    hangDifficulty = savedDiff;
+    $("hang-diff").value = savedDiff;
+  }
+  hangReset();
+  /* Crisp canvas at every size: cgx refits the backing store
+     (CSS size x devicePixelRatio, logical 260x200 units) on
+     resize and fullscreen change; hangDraw repaints after it. */
+  cgx.watchFit($("hang-canvas"), { logicalW: 260, logicalH: 200 }, function () { hangDraw(); });
   return { reset: hangReset };
 })();
-
-/* ================= FULLSCREEN (staging addition) ================= */
-(function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
-  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
-    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
-  }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
-})();
 </script>
+  <script>
+  (function () {
+    "use strict";
+    var stage = document.getElementById("stage");
+    var soundBtn = document.getElementById("hang-sound");
+    var fsBtn = document.getElementById("fs-btn");
+    var exitBtn = stage ? stage.querySelector(".fs-exit") : null;
+    if (soundBtn) cgx.attachMuteToggle(soundBtn);
+    if (fsBtn) fsBtn.addEventListener("click", function () { cgx.sfx("click"); cgx.toggleFullscreen(stage); });
+    if (exitBtn) exitBtn.addEventListener("click", function () {
+      if (document.fullscreenElement === stage) document.exitFullscreen();
+    });
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement) return;
+      setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 150);
+    });
+  })();
+  </script>
 </body>
 </html>
