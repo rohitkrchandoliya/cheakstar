@@ -547,14 +547,7 @@ var cgx = (function () {
     beep: beep, sfx: sfx,
     muted: soundMuted, setMuted: setMuted,
     toggleMuted: function () { return setMuted(!soundMuted()); },
-    attachMuteToggle: attachMuteToggle,
-    /* Test hooks for the headless verification only - strip before
-       publish, the same rule as the games' window.__ hooks. */
-    _test: {
-      makeMemoryStore: function (slug) { return makeStore(slug, memBackend); },
-      audioState: function () { return audioCtx ? audioCtx.state : "none"; },
-      storeAvailable: storeOk
-    }
+    attachMuteToggle: attachMuteToggle
   };
 })();
 
@@ -586,9 +579,7 @@ var SpaceBlaster = (function () {
   var spaceBullets = [], spaceEBullets = [], spaceEnemies = [], spacePowerups = [], spaceStars = [];
   var spaceParticles = [], spacePopups = [];
   var spaceActiveEnemies = [], spaceActiveBullets = [];
-  /* FPS-harness instrumentation, read through window.__space and
-     stripped before publish together with the hooks (same rule as
-     every game's window.__* block). */
+  /* FPS instrumentation counters (frames and collision checks). */
   var spacePerfChecks = 0, spacePerfFrames = 0;
   var i;
   for (i = 0; i < 80; i++) spaceBullets.push({ active: false, x: 0, y: 0, vx: 0, vy: 0 });
@@ -1211,46 +1202,6 @@ var SpaceBlaster = (function () {
   spaceBindHold("space-left", function (v) { spaceKeyL = v; });
   spaceBindHold("space-right", function (v) { spaceKeyR = v; });
   spaceReset();
-  // Test hooks (used by the headless verification scripts only - strip before publish).
-  window.__space = {
-    get state() {
-      return {
-        phase: spacePhase, running: spaceRunning, score: spaceScore, wave: spaceWave,
-        lives: spaceLives, fireLevel: spaceFireLevel, shield: spaceShield,
-        enemies: spaceCountActive(spaceEnemies), bullets: spaceCountActive(spaceBullets),
-        bossHp: spaceBoss && spaceBoss.active ? spaceBoss.hp : -1,
-        playerX: Math.round(spacePlayer.x),
-        particles: spaceCountActive(spaceParticles),
-        bosses: spaceBosses,
-        best: spaceBest.score, bestWave: spaceBest.wave, games: spaceBest.games,
-        perfChecks: spacePerfChecks, perfFrames: spacePerfFrames
-      };
-    },
-    debugSpawnEnemyAt: function (x) { var e = spaceSpawnEnemy("grunt", x); return !!e; },
-    debugDropPowerup: function (type) { spaceDropPowerup(spacePlayer.x, spacePlayer.y - 150, type); return true; },
-    debugStartBoss: function () { var e = spaceSpawnEnemy("boss", 200); return !!e; },
-    debugHitPlayer: function () { spacePlayerHit(true); return spaceLives; },
-    debugFillField: function (n) {
-      var placed = 0, k, e;
-      for (k = 0; k < n; k++) {
-        e = spaceSpawnEnemy(["grunt", "weaver", "diver", "shooter"][k % 4], 30 + (k % 8) * 48);
-        if (!e) break;
-        e.y = 26 + Math.floor(k / 8) * 60;
-        e.baseX = e.x;
-        placed++;
-      }
-      spaceFireLevel = 3;
-      var bi2, bb2;
-      for (bi2 = 0; bi2 < 40; bi2++) {
-        bb2 = spaceGet(spaceBullets);
-        if (!bb2) break;
-        bb2.active = true; bb2.x = 20 + (bi2 % 10) * 40; bb2.y = 462 - Math.floor(bi2 / 10) * 92; bb2.vx = 0; bb2.vy = -560;
-      }
-      return placed;
-    },
-    debugSetInvincible: function (sec) { spaceInvincible = sec; return spaceInvincible; },
-    debugPerfReset: function () { spacePerfChecks = 0; spacePerfFrames = 0; return true; }
-  };
   return { reset: spaceReset, draw: spaceDraw };
 })();
 
