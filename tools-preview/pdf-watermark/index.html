@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>PDF Watermark - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">PDF Watermark</h1>
+<p class="tool-sub">Stamp text on every page of a PDF, on your device.</p>
+<div class="tool-card">
+  <p>Choose a PDF, type your watermark text, and this tool stamps it on every page — diagonally across the centre, as a header, or as a footer. A light, see-through stamp is the usual choice for drafts and confidential documents.</p>
+
+  <label for="pw-file">Choose a PDF file</label>
+  <input id="pw-file" type="file" accept="application/pdf,.pdf">
+  <div class="row2">
+    <div>
+      <label for="pw-text">Watermark text</label>
+      <input id="pw-text" type="text" value="CONFIDENTIAL" maxlength="60">
+    </div>
+    <div>
+      <label for="pw-position">Position</label>
+      <select id="pw-position">
+        <option value="diagonal" selected>Diagonal centre</option>
+        <option value="header">Top header</option>
+        <option value="footer">Bottom footer</option>
+      </select>
+    </div>
+    <div>
+      <label for="pw-size">Font size</label>
+      <select id="pw-size">
+        <option value="24">Small (24)</option>
+        <option value="36" selected>Medium (36)</option>
+        <option value="48">Large (48)</option>
+        <option value="60">Extra large (60)</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <label for="pw-opacity">Opacity: <span id="pw-opacity-val">0.30</span></label>
+    <input id="pw-opacity" type="range" min="0.1" max="0.9" step="0.05" value="0.3">
+  </div>
+  <div class="btn-row">
+    <button id="pw-run" class="btn" type="button">Add watermark</button>
+  </div>
+  <p id="pw-status" class="status" role="status"></p>
+  <div class="result" id="pw-result" hidden data-result>
+    <p class="kv" id="pw-meta"></p>
+    <div class="btn-row">
+      <a id="pw-download" class="btn" href="#" download="watermarked.pdf">Download watermarked PDF</a>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> your PDF is processed on your device only, using the open-source pdf-lib library (MIT licence) — the file is never uploaded or sent anywhere. The watermark is drawn onto every page of a new copy; your original file is not changed. Password-protected or damaged PDFs cannot be stamped, and the tool will say so plainly.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var pwStatus = document.getElementById("pw-status");
+var pwResult = document.getElementById("pw-result");
+var pwMeta = document.getElementById("pw-meta");
+var pwDownload = document.getElementById("pw-download");
+var pwBlobUrl = null;
+
+function pwSetStatus(pwText, pwKind) {
+  pwStatus.className = pwKind ? "status " + pwKind : "status";
+  pwStatus.textContent = pwText;
+}
+
+function pwFmtSize(pwBytes) {
+  if (pwBytes < 1024) { return pwBytes + " B"; }
+  if (pwBytes < 1024 * 1024) { return (pwBytes / 1024).toFixed(1) + " KB"; }
+  return (pwBytes / (1024 * 1024)).toFixed(2) + " MB";
+}
+function pwRun() {
+  if (typeof PDFLib === "undefined") {
+    pwSetStatus("The PDF library (pdf-lib) did not load. Check your connection and reload the page.", "error");
+    return;
+  }
+  var pwFileInput = document.getElementById("pw-file");
+  var pwFile = pwFileInput.files && pwFileInput.files[0];
+  if (!pwFile) {
+    pwSetStatus("Choose a PDF file first.", "error");
+    return;
+  }
+  var pwText = document.getElementById("pw-text").value.trim();
+  if (!pwText) {
+    pwSetStatus("Type the watermark text first.", "error");
+    return;
+  }
+  var pwPosition = document.getElementById("pw-position").value;
+  var pwSize = Number(document.getElementById("pw-size").value) || 36;
+  var pwOpacity = Number(document.getElementById("pw-opacity").value);
+  if (isNaN(pwOpacity)) { pwOpacity = 0.3; }
+  pwResult.hidden = true;
+  pwSetStatus("Reading your PDF...", "");
+  var pwReader = new FileReader();
+  pwReader.onload = function () {
+    PDFLib.PDFDocument.load(pwReader.result).then(function (pwDoc) {
+      pwSetStatus("Stamping every page...", "");
+      return pwDoc.embedFont(PDFLib.StandardFonts.HelveticaBold).then(function (pwFont) {
+        var pwPages = pwDoc.getPages();
+        var pwAngle = pwPosition === "diagonal" ? -30 : 0;
+        var pwRad = pwAngle * Math.PI / 180;
+        pwPages.forEach(function (pwPage) {
+          var pwDims = pwPage.getSize();
+          var pwTw = pwFont.widthOfTextAtSize(pwText, pwSize);
+          var pwX;
+          var pwY;
+          if (pwPosition === "diagonal") {
+            pwX = pwDims.width / 2 - (pwTw / 2) * Math.cos(pwRad);
+            pwY = pwDims.height / 2 - (pwTw / 2) * Math.sin(pwRad);
+          } else if (pwPosition === "header") {
+            pwX = (pwDims.width - pwTw) / 2;
+            pwY = pwDims.height - pwSize - 14;
+          } else {
+            pwX = (pwDims.width - pwTw) / 2;
+            pwY = 16;
+          }
+          pwPage.drawText(pwText, {
+            x: pwX,
+            y: pwY,
+            size: pwSize,
+            font: pwFont,
+            color: PDFLib.rgb(0.45, 0.45, 0.45),
+            opacity: pwOpacity,
+            rotate: PDFLib.degrees(pwAngle)
+          });
+        });
+        return pwDoc.save().then(function (pwBytes) {
+          return { bytes: pwBytes, pages: pwPages.length };
+        });
+      });
+    }).then(function (pwOut) {
+      var pwBlob = new Blob([pwOut.bytes], { type: "application/pdf" });
+      if (pwBlobUrl) { URL.revokeObjectURL(pwBlobUrl); }
+      pwBlobUrl = URL.createObjectURL(pwBlob);
+      var pwBase = pwFile.name.replace(/\.pdf$/i, "") || "document";
+      pwDownload.href = pwBlobUrl;
+      pwDownload.setAttribute("download", pwBase + "-watermarked.pdf");
+      pwMeta.textContent = "Watermarked PDF ready: " + pwOut.pages +
+        (pwOut.pages === 1 ? " page" : " pages") + " · " + pwFmtSize(pwBlob.size);
+      pwResult.hidden = false;
+      pwSetStatus("Done. Your watermarked copy is ready to download.", "ok");
+    }).catch(function () {
+      pwSetStatus("Could not stamp this file. It may not be a valid PDF, or it may be damaged or password-protected.", "error");
+    });
+  };
+  pwReader.onerror = function () {
+    pwSetStatus("Could not read the chosen file.", "error");
+  };
+  pwReader.readAsArrayBuffer(pwFile);
+}
+
+document.getElementById("pw-opacity").addEventListener("input", function () {
+  document.getElementById("pw-opacity-val").textContent = Number(this.value).toFixed(2);
+});
+document.getElementById("pw-run").addEventListener("click", pwRun);
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="pdf-watermark"></script>
+</body>
+</html>
