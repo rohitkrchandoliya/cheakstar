@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Gradient Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#gg-preview { height: 190px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; }
+#gg-stops .gg-stop { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+#gg-stops .gg-stop input[type="color"] { width: 54px; height: 40px; padding: 2px; flex: none; }
+#gg-stops .gg-stop input[type="text"] { flex: 1; min-width: 0; margin-top: 0; }
+#gg-stops .gg-stop .btn.small { margin-top: 0; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Gradient Generator</h1>
+<p class="tool-sub">Build CSS gradients visually and copy the code.</p>
+<div class="tool-card">
+  <p>Design a CSS gradient without guessing at the syntax. Pick a linear or radial gradient, set two to five colour stops, and the preview and the ready-to-paste CSS update as you work.</p>
+
+  <div class="radio-row" role="radiogroup" aria-label="Gradient type">
+    <label><input type="radio" name="gg-type" id="gg-type-linear" value="linear" checked> Linear</label>
+    <label><input type="radio" name="gg-type" id="gg-type-radial" value="radial"> Radial</label>
+  </div>
+  <div id="gg-angle-row">
+    <label for="gg-angle">Angle (degrees)</label>
+    <div class="row2">
+      <div><input id="gg-angle-range" type="range" min="0" max="360" step="1" value="90"></div>
+      <div><input id="gg-angle" type="number" min="0" max="360" step="1" value="90"></div>
+    </div>
+  </div>
+
+  <label>Colour stops</label>
+  <div id="gg-stops"></div>
+  <div class="btn-row">
+    <button id="gg-add" class="btn ghost" type="button">Add a colour stop</button>
+  </div>
+
+  <p id="gg-status" class="status" role="status"></p>
+  <div class="result" id="gg-result" hidden data-result>
+    <div id="gg-preview" aria-label="Gradient preview"></div>
+    <label for="gg-code">CSS code</label>
+    <textarea id="gg-code" class="compact mono" readonly rows="3"></textarea>
+    <div class="btn-row">
+      <button id="gg-copy" class="btn" type="button">Copy CSS</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> stops are spaced evenly from 0% to 100% — if you need uneven spacing or a specific radial size and position, adjust the percentages in the copied CSS by hand. Everything is worked out in your browser with plain colour maths; nothing you pick is sent anywhere, and no colour or setting is stored.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var ggStatus = document.getElementById("gg-status");
+var ggResult = document.getElementById("gg-result");
+var ggPreview = document.getElementById("gg-preview");
+var ggCode = document.getElementById("gg-code");
+var ggStopsBox = document.getElementById("gg-stops");
+var ggAngleRow = document.getElementById("gg-angle-row");
+var ggAngle = document.getElementById("gg-angle");
+var ggAngleRange = document.getElementById("gg-angle-range");
+var ggAdd = document.getElementById("gg-add");
+/* The stops are the single source of truth: an array of #rrggbb strings.
+   The row inputs are rebuilt only when a stop is added or removed, so
+   typing in a hex box never loses focus. */
+var ggStops = ["#3b82f6", "#f59e0b"];
+var GG_MIN_STOPS = 2;
+var GG_MAX_STOPS = 5;
+
+function ggIsHex(text) {
+  return /^#?[0-9a-fA-F]{6}$/.test(text) || /^#?[0-9a-fA-F]{3}$/.test(text);
+}
+
+function ggNormHex(text) {
+  var h = text.replace(/^#/, "").toLowerCase();
+  if (h.length === 3) {
+    h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
+  }
+  return "#" + h;
+}
+
+function ggType() {
+  return document.getElementById("gg-type-radial").checked ? "radial" : "linear";
+}
+
+function ggCss() {
+  var parts = [];
+  var n = ggStops.length;
+  for (var i = 0; i < n; i++) {
+    var pct = n === 1 ? 0 : Math.round((i / (n - 1)) * 100);
+    parts.push(ggStops[i] + " " + pct + "%");
+  }
+  if (ggType() === "radial") {
+    return "radial-gradient(circle, " + parts.join(", ") + ")";
+  }
+  var angle = Number(ggAngle.value);
+  if (isNaN(angle)) { angle = 90; }
+  angle = ((Math.round(angle) % 360) + 360) % 360;
+  return "linear-gradient(" + angle + "deg, " + parts.join(", ") + ")";
+}
+
+function ggUpdate() {
+  var css = ggCss();
+  ggPreview.style.background = css;
+  ggCode.value = "background: " + css + ";";
+  ggAngleRow.hidden = ggType() !== "linear";
+  ggAdd.disabled = ggStops.length >= GG_MAX_STOPS;
+  ggResult.hidden = false;
+  ggStatus.className = "status";
+  ggStatus.textContent = ggStops.length + " colour stops, evenly spaced. The CSS below is ready to paste.";
+}
+function ggBuildRows() {
+  ggStopsBox.innerHTML = "";
+  ggStops.forEach(function (hex, idx) {
+    var row = document.createElement("div");
+    row.className = "gg-stop";
+
+    var color = document.createElement("input");
+    color.type = "color";
+    color.value = hex;
+    color.setAttribute("aria-label", "Stop " + (idx + 1) + " colour");
+
+    var text = document.createElement("input");
+    text.type = "text";
+    text.value = hex;
+    text.spellcheck = false;
+    text.setAttribute("aria-label", "Stop " + (idx + 1) + " hex value");
+
+    color.addEventListener("input", function () {
+      ggStops[idx] = color.value;
+      text.value = color.value;
+      ggUpdate();
+    });
+    text.addEventListener("input", function () {
+      if (ggIsHex(text.value)) {
+        ggStops[idx] = ggNormHex(text.value);
+        color.value = ggStops[idx];
+        ggUpdate();
+      }
+    });
+    text.addEventListener("change", function () {
+      if (!ggIsHex(text.value)) {
+        text.value = ggStops[idx];
+        ggStatus.className = "status error";
+        ggStatus.textContent = "That is not a hex colour. Use 6 hex digits, like #3b82f6 — the stop was left unchanged.";
+      } else {
+        text.value = ggStops[idx];
+        ggUpdate();
+      }
+    });
+
+    row.appendChild(color);
+    row.appendChild(text);
+
+    if (ggStops.length > GG_MIN_STOPS) {
+      var rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "btn ghost small";
+      rm.textContent = "Remove";
+      rm.setAttribute("aria-label", "Remove stop " + (idx + 1));
+      rm.addEventListener("click", function () {
+        ggStops.splice(idx, 1);
+        ggBuildRows();
+        ggUpdate();
+      });
+      row.appendChild(rm);
+    }
+    ggStopsBox.appendChild(row);
+  });
+}
+ggAdd.addEventListener("click", function () {
+  if (ggStops.length >= GG_MAX_STOPS) { return; }
+  ggStops.push("#22c55e");
+  ggBuildRows();
+  ggUpdate();
+});
+document.getElementById("gg-type-linear").addEventListener("change", ggUpdate);
+document.getElementById("gg-type-radial").addEventListener("change", ggUpdate);
+ggAngle.addEventListener("input", function () {
+  var v = Number(ggAngle.value);
+  if (!isNaN(v)) { ggAngleRange.value = String(((Math.round(v) % 360) + 360) % 360); }
+  ggUpdate();
+});
+ggAngleRange.addEventListener("input", function () {
+  ggAngle.value = ggAngleRange.value;
+  ggUpdate();
+});
+document.getElementById("gg-copy").addEventListener("click", function () {
+  var done = function () {
+    ggStatus.className = "status ok";
+    ggStatus.textContent = "CSS copied to the clipboard.";
+  };
+  var fail = function () {
+    ggCode.select();
+    ggStatus.className = "status";
+    ggStatus.textContent = "Copy did not work automatically — the code is selected, so copy it with Ctrl+C (Cmd+C on a Mac).";
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ggCode.value).then(done, function () {
+      ggCode.select();
+      try { if (document.execCommand("copy")) { done(); } else { fail(); } } catch (e) { fail(); }
+    });
+  } else {
+    ggCode.select();
+    try { if (document.execCommand("copy")) { done(); } else { fail(); } } catch (e) { fail(); }
+  }
+});
+
+ggBuildRows();
+ggUpdate();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="gradient-generator"></script>
+</body>
+</html>
