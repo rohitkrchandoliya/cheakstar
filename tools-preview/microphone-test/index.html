@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Microphone Test - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#mt-meter { height: 18px; border-radius: 9px; overflow: hidden; background: rgba(128, 128, 128, 0.35); margin: 12px 0 4px; }
+#mt-bar { height: 100%; width: 0%; background: #2e9e5b; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Microphone Test</h1>
+<p class="tool-sub">Test your microphone with a live level meter and playback.</p>
+<div class="tool-card">
+  <p>Press Start test and speak — the green bar should move with your voice. Then record a few seconds and play it back to hear exactly what others will hear on a call.</p>
+
+  <div class="btn-row">
+    <button id="mt-start" class="btn" type="button">Start test</button>
+    <button id="mt-record" class="btn" type="button" disabled>Record (up to 10 seconds)</button>
+    <button id="mt-stop" class="btn ghost" type="button" disabled>Stop test</button>
+  </div>
+  <div id="mt-meter"><div id="mt-bar"></div></div>
+  <p class="kv" id="mt-peak"><b>Peak level:</b> 0%</p>
+  <p id="mt-status" class="status" role="status">Ready. Your browser will ask for microphone permission when you start the test.</p>
+  <div class="result" id="mt-result" hidden data-result>
+    <h3>Your test recording</h3>
+    <audio id="mt-player" controls style="width:100%"></audio>
+    <p class="status" id="mt-meta"></p>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> nothing is recorded by the site or uploaded anywhere. The microphone stream and the level meter run only in this browser tab, and the short test recording exists only in this page until you leave it or record again — it is gone for good after that. If the bar never moves while you speak, check that the right microphone is selected in your system settings and that no other app is holding it.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var mtStartBtn = document.getElementById("mt-start");
+var mtRecordBtn = document.getElementById("mt-record");
+var mtStopBtn = document.getElementById("mt-stop");
+var mtStatus = document.getElementById("mt-status");
+var mtBar = document.getElementById("mt-bar");
+var mtPeakEl = document.getElementById("mt-peak");
+var mtResult = document.getElementById("mt-result");
+var mtPlayer = document.getElementById("mt-player");
+var mtMeta = document.getElementById("mt-meta");
+var mtStream = null;
+var mtCtx = null;
+var mtAnalyser = null;
+var mtData = null;
+var mtRafId = null;
+var mtPeak = 0;
+var mtRecorder = null;
+var mtChunks = [];
+var mtRecTimer = null;
+var mtRecStartedAt = 0;
+var mtUrl = null;
+
+function mtSetStatus(text, kind) {
+  mtStatus.textContent = text;
+  mtStatus.className = kind ? "status " + kind : "status";
+}
+
+function mtFormatTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function mtMeterLoop() {
+  if (!mtAnalyser || !mtData) { return; }
+  mtAnalyser.getByteTimeDomainData(mtData);
+  var sum = 0;
+  var peakNow = 0;
+  for (var i = 0; i < mtData.length; i++) {
+    var v = (mtData[i] - 128) / 128;
+    sum += v * v;
+    var a = Math.abs(v);
+    if (a > peakNow) { peakNow = a; }
+  }
+  var rms = Math.sqrt(sum / mtData.length);
+  mtBar.style.width = Math.min(100, Math.round(rms * 250)) + "%";
+  if (peakNow > mtPeak) {
+    mtPeak = peakNow;
+    mtPeakEl.innerHTML = "";
+    var b = document.createElement("b");
+    b.textContent = "Peak level:";
+    mtPeakEl.appendChild(b);
+    mtPeakEl.appendChild(document.createTextNode(" " + Math.round(mtPeak * 100) + "%"));
+  }
+  mtRafId = requestAnimationFrame(mtMeterLoop);
+}
+function mtStopRecording(silent) {
+  if (mtRecTimer) { clearTimeout(mtRecTimer); mtRecTimer = null; }
+  if (mtRecorder && mtRecorder.state !== "inactive") {
+    mtRecorder.stop();
+  } else if (!silent) {
+    mtRecordBtn.disabled = false;
+    mtRecordBtn.textContent = "Record (up to 10 seconds)";
+  }
+}
+
+function mtOnRecorderStop() {
+  mtRecordBtn.disabled = false;
+  mtRecordBtn.textContent = "Record (up to 10 seconds)";
+  var type = (mtRecorder && mtRecorder.mimeType) || "audio/webm";
+  var blob = new Blob(mtChunks, { type: type });
+  if (blob.size === 0) {
+    mtSetStatus("The recording came back empty. Check the microphone and try again.", "error");
+    return;
+  }
+  if (mtUrl) { URL.revokeObjectURL(mtUrl); }
+  mtUrl = URL.createObjectURL(blob);
+  mtPlayer.src = mtUrl;
+  mtMeta.textContent = "Length about " + mtFormatTime((Date.now() - mtRecStartedAt) / 1000) +
+    ", size " + (blob.size / 1024).toFixed(1) + " KB. It exists only in this page — leaving the page deletes it.";
+  mtResult.hidden = false;
+  mtSetStatus("Recording finished. Press play above to hear yourself.", "ok");
+}
+
+mtStartBtn.addEventListener("click", function () {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    mtSetStatus("This browser cannot use a microphone here. Try Chrome, Edge, Firefox or Safari on a recent device.", "error");
+    return;
+  }
+  mtSetStatus("Asking for microphone permission...");
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+    mtStream = stream;
+    var AudioCtor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtor) {
+      mtSetStatus("This browser has no Web Audio support, so the level meter cannot run.", "error");
+      stream.getTracks().forEach(function (t) { t.stop(); });
+      mtStream = null;
+      return;
+    }
+    mtCtx = new AudioCtor();
+    if (mtCtx.state === "suspended") { mtCtx.resume(); }
+    var source = mtCtx.createMediaStreamSource(stream);
+    mtAnalyser = mtCtx.createAnalyser();
+    mtAnalyser.fftSize = 2048;
+    mtData = new Uint8Array(mtAnalyser.fftSize);
+    source.connect(mtAnalyser);
+    mtPeak = 0;
+    mtBar.style.width = "0%";
+    mtMeterLoop();
+    mtStartBtn.disabled = true;
+    mtRecordBtn.disabled = false;
+    mtStopBtn.disabled = false;
+    mtSetStatus("Microphone is live. Speak and watch the bar move.", "ok");
+  }).catch(function () {
+    mtSetStatus("Microphone permission was not given, or no microphone was found. Allow microphone access for this site in your browser settings and try again.", "error");
+  });
+});
+mtRecordBtn.addEventListener("click", function () {
+  if (!mtStream) { return; }
+  if (mtRecorder && mtRecorder.state === "recording") {
+    mtStopRecording(false);
+    return;
+  }
+  if (typeof MediaRecorder === "undefined") {
+    mtSetStatus("This browser cannot record audio, so playback is not available — the level meter above still works.", "error");
+    return;
+  }
+  mtChunks = [];
+  try {
+    mtRecorder = new MediaRecorder(mtStream);
+  } catch (e) {
+    mtSetStatus("Recording could not start in this browser. The level meter above still works.", "error");
+    return;
+  }
+  mtRecorder.addEventListener("dataavailable", function (evt) {
+    if (evt.data && evt.data.size > 0) { mtChunks.push(evt.data); }
+  });
+  mtRecorder.addEventListener("stop", mtOnRecorderStop);
+  mtResult.hidden = true;
+  mtRecorder.start(250);
+  mtRecStartedAt = Date.now();
+  mtRecordBtn.textContent = "Stop recording";
+  mtSetStatus("Recording... it stops on its own at 10 seconds, or press Stop recording.");
+  mtRecTimer = setTimeout(function () { mtStopRecording(false); }, 10000);
+});
+
+mtStopBtn.addEventListener("click", function () {
+  mtStopRecording(true);
+  if (mtRafId) { cancelAnimationFrame(mtRafId); mtRafId = null; }
+  if (mtCtx) { mtCtx.close(); mtCtx = null; }
+  mtAnalyser = null;
+  mtData = null;
+  if (mtStream) {
+    mtStream.getTracks().forEach(function (t) { t.stop(); });
+    mtStream = null;
+  }
+  mtBar.style.width = "0%";
+  mtStartBtn.disabled = false;
+  mtRecordBtn.disabled = true;
+  mtRecordBtn.textContent = "Record (up to 10 seconds)";
+  mtStopBtn.disabled = true;
+  mtSetStatus("Test stopped. The microphone is off.");
+});
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="microphone-test"></script>
+</body>
+</html>
