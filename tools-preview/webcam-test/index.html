@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Webcam Test - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#wt-video { width: 100%; max-width: 640px; background: #000; border-radius: 8px; display: block; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Webcam Test</h1>
+<p class="tool-sub">See your camera preview and check it before a call.</p>
+<div class="tool-card">
+  <p>Start your camera and see the live picture before you join a meeting or a class, so there are no surprises on the call. The page also reads back the real resolution and frame rate your camera is sending, which is what the other side actually sees.</p>
+
+  <div class="btn-row">
+    <button id="wt-run" class="btn" type="button">Start camera</button>
+    <button id="wt-snap" class="btn ghost" type="button">Snapshot</button>
+    <button id="wt-stop" class="btn ghost" type="button">Stop camera</button>
+  </div>
+  <p id="wt-status" class="status" role="status">Press Start camera to begin. The browser will ask for camera permission.</p>
+  <div class="result" id="wt-result" hidden data-result>
+    <video id="wt-video" autoplay playsinline muted></video>
+    <div id="wt-rows"></div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> the preview is local only — no image or video leaves this device, and nothing is recorded or uploaded. The only picture that ever exists is the PNG you choose to save with the Snapshot button. Resolution and frame rate are read from the camera itself; some cameras do not report a frame rate or facing mode, and the page says so instead of guessing.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var wtStatus = document.getElementById("wt-status");
+var wtResult = document.getElementById("wt-result");
+var wtVideo = document.getElementById("wt-video");
+var wtRows = document.getElementById("wt-rows");
+var wtStream = null;
+
+function wtAddRow(wtLabel, wtValue) {
+  var wtP = document.createElement("p");
+  wtP.className = "kv";
+  var wtB = document.createElement("b");
+  wtB.textContent = wtLabel + ":";
+  wtP.appendChild(wtB);
+  wtP.appendChild(document.createTextNode(" " + wtValue));
+  wtRows.appendChild(wtP);
+}
+
+function wtShowInfo() {
+  wtRows.innerHTML = "";
+  var wtTrack = wtStream ? wtStream.getVideoTracks()[0] : null;
+  var wtSettings = (wtTrack && typeof wtTrack.getSettings === "function") ? wtTrack.getSettings() : {};
+  var wtWidth = wtSettings.width || wtVideo.videoWidth || 0;
+  var wtHeight = wtSettings.height || wtVideo.videoHeight || 0;
+  if (wtWidth && wtHeight) {
+    wtAddRow("Resolution", wtWidth + " × " + wtHeight + " pixels");
+  } else {
+    wtAddRow("Resolution", "Not reported by the device");
+  }
+  if (wtSettings.frameRate) {
+    wtAddRow("Frame rate", wtSettings.frameRate + " frames per second");
+  } else {
+    wtAddRow("Frame rate", "Not reported by the device");
+  }
+  if (wtSettings.facingMode) {
+    var wtFacing = wtSettings.facingMode;
+    if (wtFacing === "user") { wtFacing = "Front camera (user)"; }
+    if (wtFacing === "environment") { wtFacing = "Rear camera (environment)"; }
+    wtAddRow("Facing mode", wtFacing);
+  }
+  if (wtTrack && wtTrack.label) {
+    wtAddRow("Camera", wtTrack.label);
+  }
+}
+function wtStart() {
+  if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function") {
+    wtStatus.className = "status error";
+    wtStatus.textContent = "This browser does not support camera access, so the test cannot run. Try a recent version of Chrome, Edge, Firefox or Safari.";
+    return;
+  }
+  wtStatus.className = "status";
+  wtStatus.textContent = "Asking the browser for camera permission…";
+  navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function (wtGot) {
+    wtStream = wtGot;
+    wtVideo.srcObject = wtGot;
+    wtResult.hidden = false;
+    wtShowInfo();
+    wtStatus.className = "status ok";
+    wtStatus.textContent = "Camera is on. The preview below is live and stays on this device.";
+  }).catch(function (wtErr) {
+    wtResult.hidden = true;
+    wtStatus.className = "status error";
+    if (wtErr && wtErr.name === "NotAllowedError") {
+      wtStatus.textContent = "Camera permission was denied. Allow camera access for this site in your browser settings, then press Start camera again.";
+    } else if (wtErr && (wtErr.name === "NotFoundError" || wtErr.name === "OverconstrainedError")) {
+      wtStatus.textContent = "No camera was found on this device. Connect a webcam and try again.";
+    } else {
+      var wtName = (wtErr && wtErr.name) ? wtErr.name : "unknown error";
+      wtStatus.textContent = "The camera could not be started (" + wtName + "). It may already be in use by another app — close that app and try again.";
+    }
+  });
+}
+
+function wtStop() {
+  if (wtStream) {
+    wtStream.getTracks().forEach(function (wtTrack2) { wtTrack2.stop(); });
+    wtStream = null;
+  }
+  wtVideo.srcObject = null;
+  wtRows.innerHTML = "";
+  wtResult.hidden = true;
+  wtStatus.className = "status";
+  wtStatus.textContent = "Camera stopped. Nothing was recorded.";
+}
+function wtSnapshot() {
+  if (!wtStream || !wtVideo.videoWidth || !wtVideo.videoHeight) {
+    wtStatus.className = "status error";
+    wtStatus.textContent = "Start the camera first — there is no picture to save yet.";
+    return;
+  }
+  var wtCanvas = document.createElement("canvas");
+  wtCanvas.width = wtVideo.videoWidth;
+  wtCanvas.height = wtVideo.videoHeight;
+  var wtCtx2d = wtCanvas.getContext("2d");
+  wtCtx2d.drawImage(wtVideo, 0, 0, wtCanvas.width, wtCanvas.height);
+  var wtLink = document.createElement("a");
+  wtLink.href = wtCanvas.toDataURL("image/png");
+  wtLink.download = "webcam-snapshot.png";
+  document.body.appendChild(wtLink);
+  wtLink.click();
+  document.body.removeChild(wtLink);
+  wtStatus.className = "status ok";
+  wtStatus.textContent = "Snapshot saved as webcam-snapshot.png (" + wtCanvas.width + " × " + wtCanvas.height + " pixels), straight from this device.";
+}
+
+document.getElementById("wt-run").addEventListener("click", wtStart);
+document.getElementById("wt-snap").addEventListener("click", wtSnapshot);
+document.getElementById("wt-stop").addEventListener("click", wtStop);
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="webcam-test"></script>
+</body>
+</html>
