@@ -552,7 +552,7 @@ var cgx = (function () {
       if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
       else confettiStop();
     }
-    state.raf = window.requestAnimationFrame(frame);
+state.raf = window.requestAnimationFrame(frame);
     return { stop: confettiStop, count: parts.length };
   }
   function confettiRunning() { return !!confettiState; }
@@ -585,7 +585,7 @@ var cgx = (function () {
   };
 })();
 </script>
-  
+
 <script>
 /* Parking Master - polished build.
    Kept verbatim from the shipped game: the driving physics (accelerate
@@ -1174,3 +1174,4 @@ var ParkingMaster = (function () {
 </script>
 </body>
 </html>
+
