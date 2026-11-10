@@ -101,7 +101,11 @@ body{ max-width:860px;}
 @keyframes lu-pulse{ from { box-shadow:0 0 0 2px var(--gold), inset 0 -3px 6px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.45);} to { box-shadow:0 0 0 5px var(--gold), inset 0 -3px 6px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.45);} }
 /* ---- fullscreen sizing: the board must cover the screen ---- */
 .cgx-fs:fullscreen .lu-main, .cgx-fs:-webkit-full-screen .lu-main{ flex-wrap:nowrap;width:100%;justify-content:center;}
-.cgx-fs:fullscreen #ludo-boardwrap, .cgx-fs:-webkit-full-screen #ludo-boardwrap{ width:min(94vh, 60vw, 860px);}
+.cgx-fs:fullscreen #ludo-boardwrap, .cgx-fs:-webkit-full-screen #ludo-boardwrap{ width:min(calc(100dvh - 145px), 94vw, 860px);}
+  .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2{ display:none;}
+  .cgx-fs:fullscreen .lu-setup, .cgx-fs:-webkit-full-screen .lu-setup{ padding:0.5rem 0.75rem;gap:0.6rem;align-items:center;margin-top:0.5rem;}
+  .cgx-fs:fullscreen .lu-setup div, .cgx-fs:-webkit-full-screen .lu-setup div{ flex-direction:row;align-items:center;gap:0.35rem;}
+  .cgx-fs:fullscreen .lu-main, .cgx-fs:-webkit-full-screen .lu-main{ margin-top:0.5rem;}
 .cgx-fs:fullscreen .lu-side, .cgx-fs:-webkit-full-screen .lu-side{ max-width:350px;}
 .cgx-fs:fullscreen .lu-card, .cgx-fs:-webkit-full-screen .lu-card{ background:#0a2540;color:#e2e8f0;border-color:#2c4a6b;}
 .cgx-fs:fullscreen .lu-card .lu-card-sub, .cgx-fs:-webkit-full-screen .lu-card .lu-card-sub{ color:#94a3b8;}
