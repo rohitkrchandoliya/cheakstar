@@ -1,8 +1,8 @@
 {
   "name": "Cheakstar Tools Catalogue",
   "description": "Machine-readable catalogue of the free tools on the Cheakstar website. Generated from the tools.js NAV catalogue and the tools hub page; do not edit by hand — rerun build-tools-json.py.",
-  "generated": "2026-11-09",
-  "toolCount": 97,
+  "generated": "2026-11-10",
+  "toolCount": 110,
   "categories": [
     {
       "id": "qr-video",
@@ -12,17 +12,17 @@
     {
       "id": "image",
       "name": "Image Tools",
-      "toolCount": 8
+      "toolCount": 12
     },
     {
       "id": "pdf",
       "name": "PDF Tools",
-      "toolCount": 8
+      "toolCount": 11
     },
     {
       "id": "audio-video",
       "name": "Audio & Video Tools",
-      "toolCount": 12
+      "toolCount": 15
     },
     {
       "id": "text",
@@ -32,12 +32,12 @@
     {
       "id": "web-dev",
       "name": "Web & Dev",
-      "toolCount": 8
+      "toolCount": 9
     },
     {
       "id": "security",
       "name": "Security & OSINT",
-      "toolCount": 10
+      "toolCount": 12
     },
     {
       "id": "files",
@@ -353,6 +353,112 @@
       ]
     },
     {
+      "name": "Barcode Generator",
+      "slug": "barcode-generator",
+      "category": "Image Tools",
+      "categoryId": "image",
+      "url": "tools-preview/barcode-generator/",
+      "description": "Create downloadable barcodes from your text or numbers.",
+      "keywords": [
+        "barcode",
+        "generator",
+        "create",
+        "downloadable",
+        "barcodes",
+        "from",
+        "your",
+        "text",
+        "or",
+        "numbers",
+        "ean",
+        "13",
+        "upc",
+        "code128",
+        "code39",
+        "label",
+        "maker",
+        "print",
+        "scan"
+      ]
+    },
+    {
+      "name": "Image to Base64 Converter",
+      "slug": "image-to-base64",
+      "category": "Image Tools",
+      "categoryId": "image",
+      "url": "tools-preview/image-to-base64/",
+      "description": "Convert an image to a Base64 string, and back, on your device.",
+      "keywords": [
+        "image",
+        "to",
+        "base64",
+        "converter",
+        "convert",
+        "an",
+        "a",
+        "string",
+        "and",
+        "back",
+        "on",
+        "your",
+        "device",
+        "data",
+        "url",
+        "encode",
+        "decode",
+        "developer"
+      ]
+    },
+    {
+      "name": "Meme Generator",
+      "slug": "meme-generator",
+      "category": "Image Tools",
+      "categoryId": "image",
+      "url": "tools-preview/meme-generator/",
+      "description": "Add captions to your own photo and download the meme.",
+      "keywords": [
+        "meme",
+        "generator",
+        "add",
+        "captions",
+        "to",
+        "your",
+        "own",
+        "photo",
+        "and",
+        "download",
+        "the",
+        "caption",
+        "funny",
+        "text",
+        "on",
+        "image",
+        "maker"
+      ]
+    },
+    {
+      "name": "Photo Collage Maker",
+      "slug": "collage-maker",
+      "category": "Image Tools",
+      "categoryId": "image",
+      "url": "tools-preview/collage-maker/",
+      "description": "Combine your photos into one grid collage.",
+      "keywords": [
+        "photo",
+        "collage",
+        "maker",
+        "combine",
+        "your",
+        "photos",
+        "into",
+        "one",
+        "grid",
+        "layout",
+        "pictures",
+        "together"
+      ]
+    },
+    {
       "name": "PDF Merge",
       "slug": "pdf-merge",
       "category": "PDF Tools",
@@ -529,6 +635,81 @@
         "as",
         "a",
         "clean"
+      ]
+    },
+    {
+      "name": "Add Watermark to PDF",
+      "slug": "pdf-watermark",
+      "category": "PDF Tools",
+      "categoryId": "pdf",
+      "url": "tools-preview/pdf-watermark/",
+      "description": "Stamp text on every page of a PDF, on your device.",
+      "keywords": [
+        "add",
+        "watermark",
+        "to",
+        "pdf",
+        "stamp",
+        "text",
+        "on",
+        "every",
+        "page",
+        "of",
+        "a",
+        "your",
+        "device",
+        "confidential",
+        "draft",
+        "mark",
+        "pages"
+      ]
+    },
+    {
+      "name": "Add Page Numbers to PDF",
+      "slug": "pdf-page-numbers",
+      "category": "PDF Tools",
+      "categoryId": "pdf",
+      "url": "tools-preview/pdf-page-numbers/",
+      "description": "Add page numbers to a PDF, on your device.",
+      "keywords": [
+        "add",
+        "page",
+        "numbers",
+        "to",
+        "pdf",
+        "a",
+        "on",
+        "your",
+        "device",
+        "numbering",
+        "x",
+        "of",
+        "y",
+        "insert"
+      ]
+    },
+    {
+      "name": "Delete Pages from PDF",
+      "slug": "pdf-delete-pages",
+      "category": "PDF Tools",
+      "categoryId": "pdf",
+      "url": "tools-preview/pdf-delete-pages/",
+      "description": "Remove pages from a PDF and download the trimmed file.",
+      "keywords": [
+        "delete",
+        "pages",
+        "from",
+        "pdf",
+        "remove",
+        "a",
+        "and",
+        "download",
+        "the",
+        "trimmed",
+        "file",
+        "trim",
+        "page",
+        "remover"
       ]
     },
     {
@@ -801,6 +982,83 @@
       ]
     },
     {
+      "name": "Microphone Test",
+      "slug": "microphone-test",
+      "category": "Audio & Video Tools",
+      "categoryId": "audio-video",
+      "url": "tools-preview/microphone-test/",
+      "description": "Test your microphone with a live level meter and playback.",
+      "keywords": [
+        "microphone",
+        "test",
+        "your",
+        "with",
+        "a",
+        "live",
+        "level",
+        "meter",
+        "and",
+        "playback",
+        "mic",
+        "check",
+        "record",
+        "zoom",
+        "meeting"
+      ]
+    },
+    {
+      "name": "Webcam Test",
+      "slug": "webcam-test",
+      "category": "Audio & Video Tools",
+      "categoryId": "audio-video",
+      "url": "tools-preview/webcam-test/",
+      "description": "See your camera preview and check it before a call.",
+      "keywords": [
+        "webcam",
+        "test",
+        "see",
+        "your",
+        "camera",
+        "preview",
+        "and",
+        "check",
+        "it",
+        "before",
+        "a",
+        "call",
+        "resolution",
+        "meeting",
+        "interview"
+      ]
+    },
+    {
+      "name": "Speaker / Headphone Test",
+      "slug": "speaker-test",
+      "category": "Audio & Video Tools",
+      "categoryId": "audio-video",
+      "url": "tools-preview/speaker-test/",
+      "description": "Play test sounds to check your speakers or headphones.",
+      "keywords": [
+        "speaker",
+        "headphone",
+        "test",
+        "play",
+        "sounds",
+        "to",
+        "check",
+        "your",
+        "speakers",
+        "or",
+        "headphones",
+        "left",
+        "right",
+        "channel",
+        "sound",
+        "stereo",
+        "tone"
+      ]
+    },
+    {
       "name": "Word & Character Counter",
       "slug": "word-counter",
       "category": "Text Tools",
@@ -952,7 +1210,7 @@
         "safely"
       ]
     },
-{
+    {
       "name": "Text Repeater",
       "slug": "text-repeater",
       "category": "Text Tools",
@@ -1024,7 +1282,7 @@
         "list"
       ]
     },
-{
+    {
       "name": "Lorem Ipsum Generator",
       "slug": "lorem-ipsum-generator",
       "category": "Text Tools",
@@ -1046,7 +1304,7 @@
         "text"
       ]
     },
-{
+    {
       "name": "Reverse Text Generator",
       "slug": "reverse-text",
       "category": "Text Tools",
@@ -1069,7 +1327,7 @@
         "backwards"
       ]
     },
-{
+    {
       "name": "Typing Speed Test",
       "slug": "typing-speed-test",
       "category": "Text Tools",
@@ -1093,7 +1351,7 @@
         "online"
       ]
     },
-{
+    {
       "name": "Slug Generator",
       "slug": "slug-generator",
       "category": "Web & Dev",
@@ -1114,7 +1372,7 @@
         "to"
       ]
     },
-{
+    {
       "name": "UUID Generator",
       "slug": "uuid-generator",
       "category": "Web & Dev",
@@ -1140,7 +1398,7 @@
         "v4"
       ]
     },
-{
+    {
       "name": "Markdown Preview",
       "slug": "markdown-preview",
       "category": "Web & Dev",
@@ -1163,7 +1421,7 @@
         "html"
       ]
     },
-{
+    {
       "name": "Code Formatter & Minifier",
       "slug": "code-formatter",
       "category": "Web & Dev",
@@ -1185,7 +1443,7 @@
         "js"
       ]
     },
-{
+    {
       "name": "Regex Tester",
       "slug": "regex-tester",
       "category": "Web & Dev",
@@ -1209,7 +1467,7 @@
         "checker"
       ]
     },
-{
+    {
       "name": "Unix Timestamp Converter",
       "slug": "timestamp-converter",
       "category": "Web & Dev",
@@ -1234,7 +1492,7 @@
         "current"
       ]
     },
-{
+    {
       "name": "JWT Decoder",
       "slug": "jwt-decoder",
       "category": "Web & Dev",
@@ -1259,7 +1517,7 @@
         "viewer"
       ]
     },
-{
+    {
       "name": "Color Palette Generator",
       "slug": "color-palette-generator",
       "category": "Web & Dev",
@@ -1280,6 +1538,30 @@
         "combinations",
         "website",
         "hex",
+        "maker"
+      ]
+    },
+    {
+      "name": "CSS Gradient Generator",
+      "slug": "gradient-generator",
+      "category": "Web & Dev",
+      "categoryId": "web-dev",
+      "url": "tools-preview/gradient-generator/",
+      "description": "Build CSS gradients visually and copy the code.",
+      "keywords": [
+        "css",
+        "gradient",
+        "generator",
+        "build",
+        "gradients",
+        "visually",
+        "and",
+        "copy",
+        "the",
+        "code",
+        "linear",
+        "radial",
+        "background",
         "maker"
       ]
     },
@@ -1516,6 +1798,56 @@
         "sending",
         "the",
         "anywhere"
+      ]
+    },
+    {
+      "name": "Password Generator",
+      "slug": "password-generator",
+      "category": "Security & OSINT",
+      "categoryId": "security",
+      "url": "tools-preview/password-generator/",
+      "description": "Generate strong random passwords on your device.",
+      "keywords": [
+        "password",
+        "generator",
+        "generate",
+        "strong",
+        "random",
+        "passwords",
+        "on",
+        "your",
+        "device",
+        "secure",
+        "maker",
+        "create"
+      ]
+    },
+    {
+      "name": "Password Strength Checker",
+      "slug": "password-strength-checker",
+      "category": "Security & OSINT",
+      "categoryId": "security",
+      "url": "tools-preview/password-strength-checker/",
+      "description": "Check how strong a password really is, privately on your device.",
+      "keywords": [
+        "password",
+        "strength",
+        "checker",
+        "check",
+        "how",
+        "strong",
+        "a",
+        "really",
+        "is",
+        "privately",
+        "on",
+        "your",
+        "device",
+        "my",
+        "zxcvbn",
+        "crack",
+        "time",
+        "test"
       ]
     },
     {
@@ -2012,7 +2344,7 @@
         "logarithm"
       ]
     },
-{
+    {
       "name": "Loan Amortization Calculator",
       "slug": "loan-amortization-calculator",
       "category": "Calculators",
@@ -2063,7 +2395,7 @@
         "timer",
         "online"
       ]
-},
+    },
     {
       "name": "Online Timer",
       "slug": "online-timer",
@@ -2281,7 +2613,7 @@
         "d20",
         "online"
       ]
-},
+    },
     {
       "name": "Currency Converter",
       "slug": "currency-converter",
