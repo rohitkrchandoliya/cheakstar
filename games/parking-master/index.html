@@ -552,7 +552,7 @@ var cgx = (function () {
       if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
       else confettiStop();
     }
-state.raf = window.requestAnimationFrame(frame);
+    state.raf = window.requestAnimationFrame(frame);
     return { stop: confettiStop, count: parts.length };
   }
   function confettiRunning() { return !!confettiState; }
@@ -576,7 +576,7 @@ state.raf = window.requestAnimationFrame(frame);
     dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
     confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
     beep: beep, sfx: sfx,
-        muted: soundMuted, setMuted: setMuted,
+    muted: soundMuted, setMuted: setMuted,
     toggleMuted: function () { return setMuted(!soundMuted()); },
     attachMuteToggle: attachMuteToggle
     /* Test hooks for the headless verification only - strip before
@@ -1174,4 +1174,3 @@ var ParkingMaster = (function () {
 </script>
 </body>
 </html>
-
