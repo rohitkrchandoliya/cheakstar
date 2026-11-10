@@ -12,164 +12,123 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
 
-
-  /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
-  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
-  #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
-  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
-  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
-  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
-  .hang-key.ok { background: #166534; }
-  .hang-key.bad { background: #b91c1c; }
-  .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
+  /* ---- Color Flood ----
+     DOM grid (no canvas), so the board scales crisply at every
+     size and fullscreen needs no backing-store work (spec 0.2
+     does not bite here). The windowed board keeps the shipped
+     width min(420px, 100%); fullscreen genuinely enlarges to
+     min(78vmin, 600px) - the shipped min(54vmin, 460px) rule
+     measured only ~414px on a 1366x768 screen, smaller than
+     the windowed board (spec 21(e)). The shipped cells were
+     flat colour squares; the polish adds the flood ripple
+     (spec 21(b)): freshly absorbed cells pop with a delay that
+     grows with their distance from the top-left corner, and a
+     win fires a full-board cascade.
+     The shipped floodRenderRegion() toggled an .in-region
+     class that had no CSS rule anywhere - dead code. The
+     polish gives it a real rule (a soft white inset ring), so
+     the flooded area reads as one body and the toggle finally
+     does what it was written to do. */
+  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
   #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
+  .cgx-fs:fullscreen #flood-board, .cgx-fs:-webkit-full-screen #flood-board { width: min(78vmin, 600px); }
+  .flood-cell { aspect-ratio: 1; position: relative; }
+  .flood-cell.in-region { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45); }
+  @keyframes fld-pop { 0% { transform: scale(0.6); } 55% { transform: scale(1.12); } 100% { transform: scale(1); } }
+  .flood-cell.pop-in { animation: fld-pop 0.28s ease-out both; z-index: 1; }
+  /* Flooded-% bar (spec 21(a)): a slim track under the board;
+     the gold fill is the flooded share of the board. */
+  .flood-progress { width: min(420px, 100%); margin: 0.6rem auto 0; background: #e5e7eb; border: 1px solid var(--line); border-radius: 999px; height: 12px; overflow: hidden; }
+  .cgx-fs:fullscreen .flood-progress, .cgx-fs:-webkit-full-screen .flood-progress { width: min(78vmin, 600px); }
+  #flood-progress-fill { height: 100%; width: 0%; background: var(--gold); transition: width 0.3s ease; }
+  .flood-progress-label { text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+  .play-stage:fullscreen .flood-progress-label { color: #cbd5e1; }
   #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
+  /* Colour buttons (spec 21(g)): the shipped swatches carried
+     only an aria-label, so sighted users had to guess the
+     mapping. The polish prints the key number and the colour
+     name on the button itself; the yellow button gets dark
+     text so its label stays readable. */
+  .flood-btn { min-width: 74px; height: 46px; margin: 0; border: 2px solid var(--navy); padding: 0.15rem 0.3rem; font-size: 0.78rem; font-weight: 700; line-height: 1.15; border-radius: 6px; transition: transform 0.08s ease; }
+  .flood-btn:active { transform: scale(0.92); }
   .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
-    #hang-word { font-size: 1.15rem; }
-    #hang-keys { grid-template-columns: repeat(7, 1fr); }
-  }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+  .flood-btn .fb-key { display: block; font-size: 0.68rem; font-weight: 600; opacity: 0.85; }
+  /* LCD scorebar (house pattern): the shipped Moves / Size
+     readouts, plus the new Flooded share, in a dark inset
+     panel with tabular gold digits. */
+  .scorebar { background: #071a2e; border: 2px solid var(--navy); border-radius: 8px; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.55); padding: 0.55rem 0.9rem; color: #e2e8f0; }
+  .scorebar > span > span { color: var(--gold); font-variant-numeric: tabular-nums; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  .keys-note { color: var(--muted); font-size: 0.9rem; text-align: center; margin-top: 0.6rem; }
+  .play-stage:fullscreen .keys-note { color: #cbd5e1; }
+  /* Best-moves table (spec 21(a)/(d)): one row per board size. */
+  .flood-records { margin: 1rem auto 0; border-collapse: collapse; font-size: 0.92rem; }
+  .flood-records th, .flood-records td { border: 1px solid var(--line); padding: 0.3rem 0.8rem; text-align: center; }
+  .flood-records th { background: var(--navy); color: #fff; }
+  .play-stage:fullscreen .flood-records td { color: #e2e8f0; border-color: #2c4a6b; }
 
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Color Flood</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -177,27 +136,532 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="flood-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Color Flood</h2>
   <p class="fs-desc">Flood the whole board to a single colour within the move limit, starting from the top-left corner.</p>
-  <div class="scorebar"><span>Moves: <span id="flood-moves">0</span>/<span id="flood-limit">25</span></span><span>Size: <span id="flood-size-label">Classic 14 x 14</span></span></div>
+  <div class="scorebar"><span>Moves: <span id="flood-moves">0</span>/<span id="flood-limit">25</span></span><span>Flooded: <span id="flood-pct">0</span>%</span><span>Size: <span id="flood-size-label">Classic 14 x 14</span></span></div>
   <div class="ctrl-row">
     <label for="flood-size">Board</label>
     <select id="flood-size"><option value="small">Small (10 x 10, 18 moves)</option><option value="classic" selected>Classic (14 x 14, 25 moves)</option><option value="large">Large (18 x 18, 32 moves)</option></select>
+    <button type="button" id="flood-undo" disabled>Undo move</button>
+    <button type="button" id="flood-restart">Restart board</button>
     <button type="button" id="flood-new">New game</button>
   </div>
   <div class="board" id="flood-board"></div>
+  <div class="flood-progress"><div id="flood-progress-fill"></div></div>
+  <p class="flood-progress-label" id="flood-progress-label">0 of 196 squares flooded</p>
   <div id="flood-controls"></div>
+  <p class="keys-note">Keys 1 to 6 pick a colour. U undoes the last move.</p>
   <p class="status" id="flood-status">Pick a colour to flood the board, starting from the top-left corner.</p>
+  <p class="stats-line" id="flood-stats"></p>
+  <table class="flood-records" id="flood-records">
+    <thead><tr><th>Board</th><th>Best moves</th><th>Solved</th><th>Win streak</th></tr></thead>
+    <tbody id="flood-records-body"></tbody>
+  </table>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Color Flood deals a fresh random board each game and counts your moves honestly against the limit shown. The moves you need depend on the board you are dealt, so some boards finish with room to spare and others are tight.</p>
+<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded or tracked anywhere. Your best moves, boards solved and win streak for each board size, and your board-size choice, are saved only in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Color Flood deals a fresh random board each game and counts your moves honestly against the limit shown. The moves you need depend on the board you are dealt, so some boards finish with room to spare and others are tight.</p>
+<script>"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G21 COLOR FLOOD ================= */
+/* ================= G21 COLOR FLOOD (polish pass) =================
+   The verified game core is kept, exactly as shipped: the three
+   board sizes (Small 10x10 / 18 moves, Classic 14x14 / 25,
+   Large 18x18 / 32), the six-colour palette, the region grown
+   from the top-left corner by flood fill, the same-colour
+   rejection, the moves counter against the limit, the
+   fresh-board guarantee that a dealt board is never already
+   uniform, and every shipped status string.
+   Everything else is the polish:
+
+   - FLOODED-% BAR (spec 21(a)): a progress track under the
+     board whose gold fill and label track the flooded share,
+     plus a Flooded readout in the scorebar.
+   - ANIMATION (spec 21(b)): freshly absorbed squares pop with
+     a delay growing with their distance from the top-left
+     corner; a win fires a full-board cascade; colour buttons
+     press-scale. The shipped .in-region toggle was dead code
+     (no CSS rule existed) - it now drives a soft white inset
+     ring on region squares.
+   - CONTROLS (spec 21(c)): number keys 1-6 pick a colour,
+     U or the Undo button takes back the last move (full grid
+     snapshot restored), Restart board replays the SAME dealt
+     board from move zero.
+   - LABELS (spec 21(g)): the colour buttons print their key
+     number and colour name; the aria-labels are kept.
+   - PERSISTENCE (spec 21(d)) through cgx.store("color-flood"):
+     key "best" -> cheakstar.games.color-flood.best = one
+     object with a record per board size { bestMoves, solves,
+     streak, bestStreak }, written the moment a game is won or
+     lost (a loss resets the streak, solves count wins only);
+     key "size" remembers the board selector. This browser
+     only. A stats line and a per-size records table show the
+     numbers back.
+   - END SCREENS via cgx.showResult: win - Moves used / Best
+     moves rows + New best badge + confetti; loss - the
+     flooded share against the 100% target, with a restart of
+     the same board on the second button.
+   - FULLSCREEN (spec 21(e)): the shipped fullscreen rule
+     shrank the board (~414px on 1366x768); the board now
+     grows to min(78vmin, 600px) and the progress track
+     follows it.
+   - SOUND via cgx, muted by default: place on a flood, click
+     on the controls, win/lose tones from the end screen.
+   - No pause: Color Flood is turn-based with no timer, so
+     there is nothing to pause (spec 21 never names one - the
+     same call as Minesweeper and Hangman).
+   - No loop or timers were added - the game stays
+     event-driven (spec 21(f): effectively zero lag risk). */
 var ColorFlood = (function () {
   var floodConfigs = {
     small: { size: 10, limit: 18, label: "Small 10 x 10" },
@@ -205,10 +669,62 @@ var ColorFlood = (function () {
     large: { size: 18, limit: 32, label: "Large 18 x 18" }
   };
   var floodPalette = ["#dc2626", "#f59e0b", "#facc15", "#16a34a", "#2563eb", "#7c3aed"];
+  var floodNames = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"];
+  var floodSizeKey = "classic";
   var floodCfg = floodConfigs.classic;
   var floodGrid = [], floodMoves = 0, floodPhase = "playing"; /* playing | won | lost */
+  var floodInitial = [], floodHistory = [], floodRound = 0;
   var floodBoardEl = $("flood-board");
   var floodControlsEl = $("flood-controls");
+
+  /* ---------------- persistence (cgx.store) ---------------- */
+  var floodStore = cgx.store("color-flood");
+  function floodDefaultStats() { return { bestMoves: null, solves: 0, streak: 0, bestStreak: 0 }; }
+  function floodLoadBest() {
+    var raw = floodStore.get("best", null), out = {}, k, s, d;
+    for (k in floodConfigs) {
+      d = floodDefaultStats();
+      s = (raw && typeof raw === "object") ? raw[k] : null;
+      if (s && typeof s === "object") {
+        if (typeof s.bestMoves === "number" && isFinite(s.bestMoves) && s.bestMoves > 0) d.bestMoves = Math.floor(s.bestMoves);
+        if (typeof s.solves === "number" && s.solves > 0) d.solves = Math.floor(s.solves);
+        if (typeof s.streak === "number" && s.streak > 0) d.streak = Math.floor(s.streak);
+        if (typeof s.bestStreak === "number" && s.bestStreak > 0) d.bestStreak = Math.floor(s.bestStreak);
+      }
+      out[k] = d;
+    }
+    return out;
+  }
+  var floodBest = floodLoadBest();
+  /* Records a finished game; returns true when a win also set
+     a new best (fewest) moves for the current board size. */
+  function floodRecordGame(won) {
+    var d = floodBest[floodSizeKey], newBest = false;
+    if (won) {
+      d.solves++;
+      d.streak++;
+      if (d.streak > d.bestStreak) d.bestStreak = d.streak;
+      if (d.bestMoves === null || floodMoves < d.bestMoves) { d.bestMoves = floodMoves; newBest = true; }
+    } else {
+      d.streak = 0;
+    }
+    floodStore.set("best", floodBest);
+    return newBest;
+  }
+  function floodSyncStats() {
+    var d = floodBest[floodSizeKey];
+    $("flood-stats").textContent =
+      floodCfg.label + " records - Best: " + (d.bestMoves === null ? "none yet" : d.bestMoves + " moves") +
+      " \u00b7 Solved " + d.solves +
+      " \u00b7 Win streak: " + d.streak + " (best " + d.bestStreak + ")";
+    var html = "", k, s;
+    for (k in floodConfigs) {
+      s = floodBest[k];
+      html += "<tr><td>" + floodConfigs[k].label + "</td><td>" + (s.bestMoves === null ? "-" : s.bestMoves) + "</td><td>" + s.solves + "</td><td>" + s.streak + "</td></tr>";
+    }
+    $("flood-records-body").innerHTML = html;
+  }
+  function dialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
 
   function floodRegionCells() {
     var size = floodCfg.size, target = floodGrid[0], seen = {}, stack = [0], out = [];
@@ -260,17 +776,89 @@ var ColorFlood = (function () {
     $("flood-moves").textContent = String(floodMoves);
     $("flood-limit").textContent = String(floodCfg.limit);
     $("flood-size-label").textContent = floodCfg.label;
+    /* Flooded-% bar + readout (spec 21(a)), synced from the
+       same region count the shipped status line reports. */
+    var pct = Math.round(100 * region.length / floodGrid.length);
+    $("flood-pct").textContent = String(pct);
+    $("flood-progress-fill").style.width = pct + "%";
+    $("flood-progress-label").textContent = region.length + " of " + floodGrid.length + " squares flooded";
+    $("flood-undo").disabled = !(floodPhase === "playing" && floodHistory.length > 0);
+    floodSyncCurrent();
+  }
+  /* Gold outline on the button of the region's current colour
+     (the shipped .current rule, which the shipped code never
+     applied - it is wired up here). */
+  function floodSyncCurrent() {
+    var kids = floodControlsEl.children;
+    for (var i = 0; i < kids.length; i++) {
+      kids[i].classList.toggle("current", +kids[i].dataset.c === floodGrid[0]);
+    }
+  }
+  /* Flood ripple (spec 21(b)): squares absorbed by this move
+     pop with a delay growing with their Chebyshev distance
+     from the top-left corner; on a win every square joins the
+     cascade. Round-guarded so a New game pressed mid-ripple
+     cannot strip classes off the fresh board. */
+  function floodAnimateAbsorb(cells, all) {
+    var size = floodCfg.size, maxD = 0, j, k, el, d, delay;
+    for (j = 0; j < cells.length; j++) {
+      k = cells[j];
+      el = document.getElementById("flood-cell-" + k);
+      if (!el) continue;
+      d = Math.max(Math.floor(k / size), k % size);
+      delay = Math.min(d * 26, 390);
+      if (delay > maxD) maxD = delay;
+      el.style.animationDelay = delay + "ms";
+      el.classList.add("pop-in");
+    }
+    var rd = floodRound, batch = cells.slice();
+    setTimeout(function () {
+      if (rd !== floodRound) return;
+      for (var j2 = 0; j2 < batch.length; j2++) {
+        var el2 = document.getElementById("flood-cell-" + batch[j2]);
+        if (el2) { el2.classList.remove("pop-in"); el2.style.animationDelay = ""; }
+      }
+    }, maxD + 350);
   }
   function floodReset() {
     var total = floodCfg.size * floodCfg.size;
     floodGrid = [];
     for (var i = 0; i < total; i++) floodGrid.push(Math.floor(Math.random() * 6));
     if (floodIsUniform()) { floodGrid[total - 1] = (floodGrid[0] + 1) % 6; }
+    floodInitial = floodGrid.slice();
+    floodHistory = [];
     floodMoves = 0;
     floodPhase = "playing";
+    floodRound++;
+    floodBuild();
+    floodRenderAll();
+    floodSyncStats();
+    $("flood-status").textContent = "Pick a colour to flood the board, starting from the top-left corner. " + floodCfg.limit + " moves available.";
+  }
+  /* Restart the SAME dealt board (spec 21(c)): the initial
+     grid is restored untouched and the move count resets. */
+  function floodRestart() {
+    floodGrid = floodInitial.slice();
+    floodHistory = [];
+    floodMoves = 0;
+    floodPhase = "playing";
+    floodRound++;
     floodBuild();
     floodRenderAll();
     $("flood-status").textContent = "Pick a colour to flood the board, starting from the top-left corner. " + floodCfg.limit + " moves available.";
+  }
+  /* Undo (spec 21(c)): restores the exact grid snapshot taken
+     before the last move, so the region, the flooded share
+     and the moves count all rewind together. */
+  function floodUndo() {
+    if (floodPhase !== "playing" || !floodHistory.length) return;
+    floodGrid = floodHistory.pop();
+    floodMoves--;
+    floodRound++;
+    floodRenderAll();
+    var grown = floodRegionCells();
+    $("flood-status").textContent = "Move undone. Flooded " + grown.length + " of " + floodGrid.length + " squares. " + (floodCfg.limit - floodMoves) + " moves left.";
+    cgx.sfx("click");
   }
   function floodApply(colorIdx) {
     if (floodPhase !== "playing") return;
@@ -279,21 +867,61 @@ var ColorFlood = (function () {
       $("flood-status").textContent = "The flooded area is already that colour. Pick a different colour.";
       return;
     }
+    floodHistory.push(floodGrid.slice());
     var region = floodRegionCells();
-    for (var i = 0; i < region.length; i++) floodGrid[region[i]] = colorIdx;
+    var wasInRegion = {};
+    for (var i = 0; i < region.length; i++) wasInRegion[region[i]] = true;
+    for (var i2 = 0; i2 < region.length; i2++) floodGrid[region[i2]] = colorIdx;
     floodMoves++;
     for (var j = 0; j < region.length; j++) floodPaintCell(region[j]);
     var grown = floodRegionCells();
-    for (var k = 0; k < grown.length; k++) floodPaintCell(grown[k]);
+    var absorbed = [];
+    for (var k = 0; k < grown.length; k++) if (!wasInRegion[grown[k]]) absorbed.push(grown[k]);
     floodRenderRegion();
+    cgx.sfx("place");
     if (floodIsUniform()) {
       floodPhase = "won";
+      floodRenderRegion();
+      var newBest = floodRecordGame(true);
+      floodSyncStats();
       $("flood-status").textContent = "The whole board is flooded in " + floodMoves + " moves! Press New game for another board.";
+      var allCells = [];
+      for (var a = 0; a < floodGrid.length; a++) allCells.push(a);
+      floodAnimateAbsorb(allCells, true);
+      cgx.showResult({
+        won: true,
+        title: "You win!",
+        message: "The whole " + floodCfg.label + " board is one colour.",
+        score: floodMoves,
+        scoreLabel: "Moves used",
+        best: floodBest[floodSizeKey].bestMoves,
+        bestLabel: "Best moves",
+        newBest: newBest,
+        onPlayAgain: function () { floodReset(); }
+      });
       return;
     }
+    floodAnimateAbsorb(absorbed, false);
     if (floodMoves >= floodCfg.limit) {
       floodPhase = "lost";
+      floodRenderRegion();
+      floodRecordGame(false);
+      floodSyncStats();
       $("flood-status").textContent = "Out of moves with the board not yet flooded. Press New game to try again.";
+      var pctLost = Math.round(100 * grown.length / floodGrid.length);
+      cgx.showResult({
+        won: false,
+        title: "Out of moves",
+        message: "The " + floodCfg.label + " board was not fully flooded.",
+        score: pctLost,
+        scoreLabel: "Board flooded (%)",
+        best: 100,
+        bestLabel: "Target (%)",
+        playAgainLabel: "New board",
+        onPlayAgain: function () { floodReset(); },
+        closeLabel: "Restart this board",
+        onClose: function () { floodRestart(); }
+      });
       return;
     }
     $("flood-status").textContent = "Flooded " + grown.length + " of " + floodGrid.length + " squares. " + (floodCfg.limit - floodMoves) + " moves left.";
@@ -301,73 +929,74 @@ var ColorFlood = (function () {
   function floodBuildControls() {
     var html = "";
     for (var i = 0; i < 6; i++) {
-      html += '<button type="button" class="flood-btn" id="flood-btn-' + i + '" data-c="' + i + '" style="background:' + floodPalette[i] + '" aria-label="Flood colour ' + (i + 1) + '"></button>';
+      html += '<button type="button" class="flood-btn" id="flood-btn-' + i + '" data-c="' + i + '" style="background:' + floodPalette[i] + (i === 2 ? ";color:#111827" : "") + '" aria-label="Flood colour ' + (i + 1) + ': ' + floodNames[i] + '"><span class="fb-key">Key ' + (i + 1) + '</span>' + floodNames[i] + '</button>';
     }
     floodControlsEl.innerHTML = html;
   }
   floodControlsEl.addEventListener("click", function (ev) {
     var t = ev.target;
-    if (!t || t.dataset.c === undefined) return;
-    floodApply(+t.dataset.c);
+    var btn = (t && t.closest) ? t.closest(".flood-btn") : null;
+    if (!btn || btn.dataset.c === undefined) return;
+    floodApply(+btn.dataset.c);
+    if (btn.blur) btn.blur(); /* keep the number keys for the game, not the last-clicked button */
   });
   $("flood-size").addEventListener("change", function (ev) {
-    floodCfg = floodConfigs[ev.target.value] || floodConfigs.classic;
+    var v = ev.target.value;
+    if (!floodConfigs[v]) v = "classic";
+    floodSizeKey = v;
+    floodCfg = floodConfigs[v];
+    floodStore.set("size", v);
+    cgx.sfx("click");
     floodReset();
   });
-  $("flood-new").addEventListener("click", function (ev) { floodReset(); ev.currentTarget.blur(); });
+  $("flood-new").addEventListener("click", function (ev) { cgx.sfx("click"); floodReset(); ev.currentTarget.blur(); });
+  $("flood-restart").addEventListener("click", function (ev) { cgx.sfx("click"); floodRestart(); ev.currentTarget.blur(); });
+  $("flood-undo").addEventListener("click", function (ev) { floodUndo(); ev.currentTarget.blur(); });
+  /* ---------------- keyboard play (spec 21(c)) ---------------- */
+  document.addEventListener("keydown", function (ev) {
+    if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    if (dialogOpen()) return;
+    var t = ev.target;
+    if (t && (t.tagName === "SELECT" || t.tagName === "TEXTAREA" || t.tagName === "INPUT")) return;
+    if (ev.repeat) return;
+    var k = ev.key;
+    if (k >= "1" && k <= "6") {
+      ev.preventDefault();
+      floodApply(+k - 1);
+    } else if (k === "u" || k === "U") {
+      ev.preventDefault();
+      floodUndo();
+    }
+  });
+  /* ---------------- boot ---------------- */
+  var savedSize = floodStore.get("size", "classic");
+  if (floodConfigs[savedSize]) {
+    floodSizeKey = savedSize;
+    floodCfg = floodConfigs[savedSize];
+    $("flood-size").value = savedSize;
+  }
   floodBuildControls();
   floodReset();
-  // Test hooks (used by the headless verification script only).
-  window.__flood = {
-    get state() {
-      return {
-        phase: floodPhase, moves: floodMoves, limit: floodCfg.limit, size: floodCfg.size,
-        regionSize: floodRegionCells().length, uniform: floodIsUniform(),
-        grid: floodGrid.slice(), current: floodGrid[0]
-      };
-    },
-    debugSetNearWin: function () {
-      for (var i = 0; i < floodGrid.length; i++) floodGrid[i] = 0;
-      floodGrid[floodGrid.length - 1] = 1;
-      floodGrid[floodGrid.length - 2] = 1;
-      floodMoves = 0;
-      floodPhase = "playing";
-      floodRenderAll();
-      return true;
-    },
-    debugSetMoves: function (n) { floodMoves = n; floodRenderRegion(); return floodMoves; }
-  };
   return { reset: floodReset };
 })();
-
-/* ================= FULLSCREEN (staging addition) ================= */
-(function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
-  if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
-    enterBtn.style.display = "none"; /* browser has no Fullscreen API */
-  }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
-})();
 </script>
+  <script>
+  (function () {
+    "use strict";
+    var stage = document.getElementById("stage");
+    var soundBtn = document.getElementById("flood-sound");
+    var fsBtn = document.getElementById("fs-btn");
+    var exitBtn = stage ? stage.querySelector(".fs-exit") : null;
+    if (soundBtn) cgx.attachMuteToggle(soundBtn);
+    if (fsBtn) fsBtn.addEventListener("click", function () { cgx.sfx("click"); cgx.toggleFullscreen(stage); });
+    if (exitBtn) exitBtn.addEventListener("click", function () {
+      if (document.fullscreenElement === stage) document.exitFullscreen();
+    });
+    document.addEventListener("fullscreenchange", function () {
+      if (!document.fullscreenElement) return;
+      setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 150);
+    });
+  })();
+  </script>
 </body>
 </html>
