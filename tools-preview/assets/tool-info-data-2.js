@@ -3925,5 +3925,291 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
     "name": "QR Code Generator",
     "description": "Create QR codes for links, text, Wi-Fi, UPI and contact cards."
    }
+ ],
+ "barcode-generator": [
+  {
+   "slug": "qr-code-generator",
+   "name": "QR Code Generator",
+   "description": "Create QR codes for links, text, Wi-Fi, UPI and contact cards."
+  },
+  {
+   "slug": "image-compressor",
+   "name": "Image Compressor",
+   "description": "Shrink a JPG, PNG or WebP image to a smaller file size."
+  },
+  {
+   "slug": "passport-photo-maker",
+   "name": "Passport Photo Maker",
+   "description": "Crop a photo to 35 x 45 mm and download it, plus a 4 x 6 inch sheet of 8 copies."
+  },
+  {
+   "slug": "text-to-pdf",
+   "name": "Text to PDF",
+   "description": "Type or paste text and download it as a clean PDF."
+  }
+ ],
+ "image-to-base64": [
+  {
+   "slug": "base64-encoder-decoder",
+   "name": "Base64 Encoder & Decoder",
+   "description": "Encode or decode Base64, for text and for files."
+  },
+  {
+   "slug": "image-information",
+   "name": "Image Information",
+   "description": "See an image's size, dimensions and the camera details (EXIF) stored inside it."
+  },
+  {
+   "slug": "image-converter",
+   "name": "Image Converter",
+   "description": "Convert an image between JPG, PNG and WebP."
+  },
+  {
+   "slug": "json-formatter",
+   "name": "JSON Formatter & Validator",
+   "description": "Pretty-print JSON and pinpoint the error when it is invalid."
+  }
+ ],
+ "meme-generator": [
+  {
+   "slug": "collage-maker",
+   "name": "Photo Collage Maker",
+   "description": "Combine your photos into one grid collage."
+  },
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "gif-maker",
+   "name": "GIF Maker",
+   "description": "Turn the first seconds of a video into an animated GIF."
+  },
+  {
+   "slug": "image-converter",
+   "name": "Image Converter",
+   "description": "Convert an image between JPG, PNG and WebP."
+  }
+ ],
+ "collage-maker": [
+  {
+   "slug": "meme-generator",
+   "name": "Meme Generator",
+   "description": "Add captions to your own photo and download the meme."
+  },
+  {
+   "slug": "image-compressor",
+   "name": "Image Compressor",
+   "description": "Shrink a JPG, PNG or WebP image to a smaller file size."
+  },
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "passport-photo-maker",
+   "name": "Passport Photo Maker",
+   "description": "Crop a photo to 35 x 45 mm and download it, plus a 4 x 6 inch sheet of 8 copies."
+  }
+ ],
+ "pdf-watermark": [
+  {
+   "slug": "pdf-page-numbers",
+   "name": "Add Page Numbers to PDF",
+   "description": "Add page numbers to a PDF, on your device."
+  },
+  {
+   "slug": "pdf-delete-pages",
+   "name": "Delete Pages from PDF",
+   "description": "Remove pages from a PDF and download the trimmed file."
+  },
+  {
+   "slug": "pdf-merge",
+   "name": "PDF Merge",
+   "description": "Combine several PDFs into one PDF, in your chosen order."
+  },
+  {
+   "slug": "text-to-pdf",
+   "name": "Text to PDF",
+   "description": "Type or paste text and download it as a clean PDF."
+  }
+ ],
+ "pdf-page-numbers": [
+  {
+   "slug": "pdf-watermark",
+   "name": "Add Watermark to PDF",
+   "description": "Stamp text on every page of a PDF, on your device."
+  },
+  {
+   "slug": "pdf-delete-pages",
+   "name": "Delete Pages from PDF",
+   "description": "Remove pages from a PDF and download the trimmed file."
+  },
+  {
+   "slug": "pdf-split",
+   "name": "PDF Split",
+   "description": "Extract chosen pages from a PDF, or delete pages from it."
+  },
+  {
+   "slug": "pdf-merge",
+   "name": "PDF Merge",
+   "description": "Combine several PDFs into one PDF, in your chosen order."
+  }
+ ],
+ "pdf-delete-pages": [
+  {
+   "slug": "pdf-watermark",
+   "name": "Add Watermark to PDF",
+   "description": "Stamp text on every page of a PDF, on your device."
+  },
+  {
+   "slug": "pdf-page-numbers",
+   "name": "Add Page Numbers to PDF",
+   "description": "Add page numbers to a PDF, on your device."
+  },
+  {
+   "slug": "pdf-split",
+   "name": "PDF Split",
+   "description": "Extract chosen pages from a PDF, or delete pages from it."
+  },
+  {
+   "slug": "pdf-compressor",
+   "name": "PDF Compressor",
+   "description": "Make a PDF smaller by re-rendering its pages as compressed images."
+  }
+ ],
+ "microphone-test": [
+  {
+   "slug": "webcam-test",
+   "name": "Webcam Test",
+   "description": "See your camera preview and check it before a call."
+  },
+  {
+   "slug": "speaker-test",
+   "name": "Speaker / Headphone Test",
+   "description": "Play test sounds to check your speakers or headphones."
+  },
+  {
+   "slug": "voice-recorder",
+   "name": "Voice Recorder",
+   "description": "Record from your microphone and download the recording."
+  },
+  {
+   "slug": "screen-recorder",
+   "name": "Screen Recorder",
+   "description": "Record your screen, with optional microphone sound, and download the video."
+  }
+ ],
+ "webcam-test": [
+  {
+   "slug": "microphone-test",
+   "name": "Microphone Test",
+   "description": "Test your microphone with a live level meter and playback."
+  },
+  {
+   "slug": "speaker-test",
+   "name": "Speaker / Headphone Test",
+   "description": "Play test sounds to check your speakers or headphones."
+  },
+  {
+   "slug": "screen-recorder",
+   "name": "Screen Recorder",
+   "description": "Record your screen, with optional microphone sound, and download the video."
+  },
+  {
+   "slug": "voice-recorder",
+   "name": "Voice Recorder",
+   "description": "Record from your microphone and download the recording."
+  }
+ ],
+ "speaker-test": [
+  {
+   "slug": "microphone-test",
+   "name": "Microphone Test",
+   "description": "Test your microphone with a live level meter and playback."
+  },
+  {
+   "slug": "webcam-test",
+   "name": "Webcam Test",
+   "description": "See your camera preview and check it before a call."
+  },
+  {
+   "slug": "audio-converter",
+   "name": "Audio Converter",
+   "description": "Convert audio between MP3, WAV, M4A and OGG, with trim, speed and loudness options."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  }
+ ],
+ "gradient-generator": [
+  {
+   "slug": "color-palette-generator",
+   "name": "Color Palette Generator",
+   "description": "Build harmonious colour palettes from one base colour."
+  },
+  {
+   "slug": "color-picker-from-image",
+   "name": "Color Picker from Image",
+   "description": "Click any point of an image to get the exact HEX and RGB colour there."
+  },
+  {
+   "slug": "favicon-generator",
+   "name": "Favicon Generator",
+   "description": "Turn an image into a favicon set: an ICO file plus PNG icons in common sizes."
+  },
+  {
+   "slug": "code-formatter",
+   "name": "Code Formatter & Minifier",
+   "description": "Format JavaScript, HTML or CSS, or minify JavaScript."
+  }
+ ],
+ "password-generator": [
+  {
+   "slug": "password-strength-checker",
+   "name": "Password Strength Checker",
+   "description": "Check how strong a password really is, privately on your device."
+  },
+  {
+   "slug": "password-breach-check",
+   "name": "Leaked Password Check",
+   "description": "Check a password against real breach data — without sending the password anywhere."
+  },
+  {
+   "slug": "uuid-generator",
+   "name": "UUID Generator",
+   "description": "Generate version 4 or version 7 UUIDs, one at a time or in bulk."
+  },
+  {
+   "slug": "file-hash-checker",
+   "name": "File Hash Checker",
+   "description": "Get the SHA-256 and MD5 hash of any file, for verifying downloads."
+  }
+ ],
+ "password-strength-checker": [
+  {
+   "slug": "password-generator",
+   "name": "Password Generator",
+   "description": "Generate strong random passwords on your device."
+  },
+  {
+   "slug": "password-breach-check",
+   "name": "Leaked Password Check",
+   "description": "Check a password against real breach data — without sending the password anywhere."
+  },
+  {
+   "slug": "email-breach-check",
+   "name": "Email Breach Check",
+   "description": "Check whether an email address has appeared in known data breaches."
+  },
+  {
+   "slug": "security-headers-check",
+   "name": "Website Security Headers Check",
+   "description": "Grade a website's security headers with the free MDN Observatory service."
+  }
  ]
 });
