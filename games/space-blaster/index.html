@@ -12,164 +12,68 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
-  button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:active { transform: translateY(1px); }
+  button:disabled { background: #9aa5b1; cursor: default; transform: none; }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
-  .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
-  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
-  .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
-  .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
-  .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
-  .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
-  .play-stage:fullscreen .board { margin-top: 0.5rem; }
-  .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
-  .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
-  @media (max-height: 640px) {
-    .play-stage:fullscreen h2 { display: none; }
-    .play-stage:fullscreen .status { min-height: 1.1em; }
-  }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+  .play-stage:fullscreen .fs-exit, .play-stage:-webkit-full-screen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
+  .play-stage:fullscreen .fs-desc, .play-stage:-webkit-full-screen .fs-desc { display: none; }
+  .play-stage:fullscreen .status, .play-stage:-webkit-full-screen .status, .play-stage:fullscreen .scorebar, .play-stage:-webkit-full-screen .scorebar { color: #e2e8f0; }
+  .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2 { color: #f3d67c; }
 
-
-  /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
+  /* ---- Space Blaster board ---- */
+  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
+  .board { user-select: none; -webkit-user-select: none; }
+  #space-board { width: min(420px, 100%); }
   .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
-  #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
-  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
-  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
-  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
-  .hang-key.ok { background: #166534; }
-  .hang-key.bad { background: #b91c1c; }
-  .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
-  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
-  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
-  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
-    #hang-word { font-size: 1.15rem; }
-    #hang-keys { grid-template-columns: repeat(7, 1fr); }
-  }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+  .ctrl-row button { margin-top: 0; min-width: 84px; touch-action: none; }
+  /* Fullscreen: the portrait board grows to cover the screen (spec 15e -
+     the old rule min(54vmin, 430px) left it at 414px on a 1366x768
+     laptop). The cgx layer re-fits the backing store to this box x DPR,
+     so the bigger board stays sharp. */
+  .cgx-fs:fullscreen #space-board, .cgx-fs:-webkit-full-screen #space-board { width: min(94vw, 62vh, 560px); }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Space Blaster</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -177,25 +81,497 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="space-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Space Blaster</h2>
-  <p class="fs-desc">A vertical scrolling space shooter: clear enemy waves, collect power-ups and beat the boss every fifth wave.</p>
-  <div class="scorebar"><span>Score: <span id="space-score">0</span></span><span>Wave: <span id="space-wave">1</span></span><span>Lives: <span id="space-lives">3</span></span><span>Cannon: <span id="space-fire">Level 1</span></span></div>
+  <p class="fs-desc">A vertical scrolling space shooter: clear enemy waves, collect power-ups and beat the boss every fifth wave. Move with the arrow keys or A/D, drag on the board, or hold the on-screen arrows; P pauses, and your cannon fires on its own. Power-ups: F upgrades your cannon, S is a shield that absorbs one hit, L is an extra life.</p>
+  <div class="scorebar"><span>Score: <span id="space-score">0</span></span><span>Wave: <span id="space-wave">1</span></span><span>Lives: <span id="space-lives">3</span></span><span>Cannon: <span id="space-fire">Level 1</span></span><span>Best: <span id="space-best">0</span></span></div>
   <canvas class="board game-canvas" id="space-board" width="400" height="500"></canvas>
+  <div class="ctrl-row">
+    <button type="button" id="space-left" aria-label="Move left">&#9664;</button>
+    <button type="button" id="space-right" aria-label="Move right">&#9654;</button>
+  </div>
   <p class="status" id="space-status">Press Start to launch. Your cannon fires on its own.</p>
   <div>
     <button type="button" id="space-start">Start</button>
     <button type="button" id="space-new">New game</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Space Blaster draws every ship and bullet on a canvas with plain shapes; enemies and bullets are reused from fixed pools so the action stays smooth. Your score, wave and lives are kept only in this page while you play.</p>
+<p class="note">Your privacy: Space Blaster runs fully on your device. Your best score, highest wave, most boss kills in one game and games played are saved in this browser, on this device only, so you can chase your own records. Nothing is uploaded, shared or tracked anywhere, and your browser's site-data controls can erase everything at any time. Space Blaster draws on a canvas with pre-rendered ship sprites; enemies and bullets are reused from fixed pools, and collisions run through a broad-phase grid, so the action stays smooth.</p>
+<script>
+
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle,
+    /* Test hooks for the headless verification only - strip before
+       publish, the same rule as the games' window.__ hooks. */
+    _test: {
+      makeMemoryStore: function (slug) { return makeStore(slug, memBackend); },
+      audioState: function () { return audioCtx ? audioCtx.state : "none"; },
+      storeAvailable: storeOk
+    }
+  };
+})();
+
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G15 SPACE BLASTER ================= */
+/* ================= G15 SPACE BLASTER (polish pass step 3b) =================
+   Performance + shared-layer rebuild on the verified staging build:
+   same waves, enemies, physics, scoring and controls. What changed is
+   how the frame is produced - pre-rendered sprites instead of per-frame
+   vector paths, a broad-phase bucket grid instead of the nested
+   enemies x bullets scan (up to 48 x 80 = 3,840 AABB tests per frame),
+   active-entity lists instead of repeated full-pool scans, DPR-aware
+   canvas sizing via the cgx layer, explosion particles and score
+   popups, best-score persistence via cgx.store, and the shared
+   game-over dialog. */
 var SpaceBlaster = (function () {
   var spaceW = 400, spaceH = 500;
   var spacePlayer = { x: 200, y: 446, w: 34, h: 30, targetX: null };
@@ -205,20 +581,131 @@ var SpaceBlaster = (function () {
   var spaceFireT = 0, spaceSpawnT = 0, spaceBannerT = 0, spaceLastTs = 0, spaceHudIn = 0;
   var spaceQueue = [], spaceBoss = null;
   var spaceKeyL = false, spaceKeyR = false;
+  var spaceShakeT = 0, spaceFlashT = 0;
   var spaceCtx = $("space-board").getContext("2d");
   var spaceBullets = [], spaceEBullets = [], spaceEnemies = [], spacePowerups = [], spaceStars = [];
+  var spaceParticles = [], spacePopups = [];
+  var spaceActiveEnemies = [], spaceActiveBullets = [];
+  /* FPS-harness instrumentation, read through window.__space and
+     stripped before publish together with the hooks (same rule as
+     every game's window.__* block). */
+  var spacePerfChecks = 0, spacePerfFrames = 0;
   var i;
   for (i = 0; i < 80; i++) spaceBullets.push({ active: false, x: 0, y: 0, vx: 0, vy: 0 });
   for (i = 0; i < 90; i++) spaceEBullets.push({ active: false, x: 0, y: 0, vx: 0, vy: 0 });
   for (i = 0; i < 48; i++) spaceEnemies.push({ active: false, x: 0, y: 0, baseX: 0, vy: 0, hp: 1, maxHp: 1, type: "grunt", age: 0, seed: 0, fireT: 0, isBoss: false, dir: 1 });
   for (i = 0; i < 6; i++) spacePowerups.push({ active: false, x: 0, y: 0, type: "F" });
   for (i = 0; i < 70; i++) spaceStars.push({ x: Math.random() * spaceW, y: Math.random() * spaceH, s: Math.random() < 0.3 ? 2 : 1, spd: 26 + Math.random() * 60 });
+  for (i = 0; i < 110; i++) spaceParticles.push({ active: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, color: "#fff", size: 2 });
+  for (i = 0; i < 8; i++) spacePopups.push({ active: false, x: 0, y: 0, life: 0, text: "" });
+
+  /* ---------------- persistence (cgx shared layer, spec 15d) ---------------- */
+  var spaceStore = cgx.store("space-blaster");
+  var spaceBest = spaceStore.get("best", null);
+  if (!spaceBest || typeof spaceBest.score !== "number") spaceBest = { score: 0, wave: 0, bosses: 0, games: 0 };
+  var spaceBosses = 0, spaceNewBest = false;
+  function spaceSaveBest(finished) {
+    var changed = false;
+    if (spaceScore > spaceBest.score) { spaceBest.score = spaceScore; spaceNewBest = true; changed = true; }
+    if (spaceWave > spaceBest.wave) { spaceBest.wave = spaceWave; changed = true; }
+    if (spaceBosses > spaceBest.bosses) { spaceBest.bosses = spaceBosses; changed = true; }
+    if (finished) { spaceBest.games++; changed = true; }
+    if (changed) spaceStore.set("best", spaceBest);
+  }
+
+  /* ---------------- pre-rendered sprites ----------------
+     Every ship shape is painted once, at 2x, onto an offscreen canvas;
+     the frame loop then only blits images. The painters use the exact
+     path geometry of the original per-frame vector drawing. */
+  function spaceMakeSprite(w, h, cx, cy, paint) {
+    var c = document.createElement("canvas");
+    c.width = Math.ceil(w * 2); c.height = Math.ceil(h * 2);
+    var g = c.getContext("2d");
+    g.scale(2, 2);
+    g.translate(cx, cy);
+    paint(g);
+    return { c: c, w: w, h: h, cx: cx, cy: cy };
+  }
+  function spacePaintShipBody(g, color) {
+    g.fillStyle = color;
+    g.beginPath();
+    g.moveTo(0, -16);
+    g.lineTo(6, -2); g.lineTo(17, 12); g.lineTo(17, 15);
+    g.lineTo(5, 11); g.lineTo(-5, 11); g.lineTo(-17, 15);
+    g.lineTo(-17, 12); g.lineTo(-6, -2);
+    g.closePath(); g.fill();
+    g.fillStyle = "#0b2036";
+    g.beginPath(); g.arc(0, -3, 3.6, 0, Math.PI * 2); g.fill();
+  }
+  function spacePaintEnemyBody(g, color) {
+    g.fillStyle = color;
+    g.beginPath();
+    g.moveTo(0, 13);
+    g.lineTo(5, 0); g.lineTo(15, -10); g.lineTo(15, -13);
+    g.lineTo(4, -8); g.lineTo(-4, -8); g.lineTo(-15, -13);
+    g.lineTo(-15, -10); g.lineTo(-5, 0);
+    g.closePath(); g.fill();
+    g.fillStyle = "#f8fafc";
+    g.beginPath(); g.arc(0, -2, 2.6, 0, Math.PI * 2); g.fill();
+  }
+  var spaceSprShip = spaceMakeSprite(38, 34, 19, 17, function (g) { spacePaintShipBody(g, "#c9a227"); });
+  var spaceSprEnemies = {
+    grunt: spaceMakeSprite(32, 28, 16, 14, function (g) { spacePaintEnemyBody(g, "#e11d48"); }),
+    weaver: spaceMakeSprite(32, 28, 16, 14, function (g) { spacePaintEnemyBody(g, "#9333ea"); }),
+    diver: spaceMakeSprite(32, 28, 16, 14, function (g) { spacePaintEnemyBody(g, "#ea580c"); }),
+    shooter: spaceMakeSprite(32, 28, 16, 14, function (g) { spacePaintEnemyBody(g, "#b45309"); })
+  };
+  var spaceSprBoss = spaceMakeSprite(106, 54, 53, 29, function (g) {
+    g.fillStyle = "#7f1d1d";
+    g.beginPath(); g.roundRect(-52, -20, 104, 40, 10); g.fill();
+    g.fillStyle = "#dc2626";
+    g.beginPath(); g.roundRect(-34, -28, 68, 18, 8); g.fill();
+    g.fillStyle = "#f8fafc";
+    g.fillRect(-30, 16, 10, 8); g.fillRect(-5, 16, 10, 8); g.fillRect(20, 16, 10, 8);
+  });
+  function spaceMakePowerSprite(color, letter) {
+    return spaceMakeSprite(24, 24, 12, 12, function (g) {
+      g.fillStyle = color;
+      g.beginPath(); g.roundRect(-11, -11, 22, 22, 5); g.fill();
+      g.fillStyle = "#fff";
+      g.font = "700 13px system-ui, sans-serif";
+      g.textAlign = "center";
+      g.fillText(letter, 0, 4.5);
+    });
+  }
+  var spaceSprPowers = {
+    F: spaceMakePowerSprite("#166534", "F"),
+    S: spaceMakePowerSprite("#1d4ed8", "S"),
+    L: spaceMakePowerSprite("#b91c1c", "L")
+  };
+  var spaceSprEBullet = spaceMakeSprite(10, 10, 5, 5, function (g) {
+    g.fillStyle = "#f472b6";
+    g.beginPath(); g.arc(0, 0, 3.4, 0, Math.PI * 2); g.fill();
+  });
+  var spaceEnemyColors = { grunt: "#e11d48", weaver: "#9333ea", diver: "#ea580c", shooter: "#b45309", boss: "#dc2626" };
+
+  /* ---------------- broad-phase collision grid ----------------
+     Bullets are bucketed into 40px horizontal bands each frame; an
+     enemy only tests the bullets in the bands its hitbox overlaps
+     (at most 2-3 bands), instead of the whole 80-bullet pool. Fits the
+     game because bullets travel vertically and enemy hitboxes are
+     short (15px, boss 26px) next to the 500px-tall field. */
+  var SPACE_BAND_H = 40;
+  var spaceBands = [];
+  for (i = 0; i < 15; i++) spaceBands.push([]);
+  function spaceBandOf(y) {
+    var b = Math.floor(y / SPACE_BAND_H) + 1;
+    if (b < 0) b = 0;
+    if (b > 14) b = 14;
+    return b;
+  }
 
   function spaceSyncHud() {
     $("space-score").textContent = String(spaceScore);
     $("space-wave").textContent = String(spaceWave);
     $("space-lives").textContent = String(spaceLives);
     $("space-fire").textContent = "Level " + spaceFireLevel + (spaceShield ? " + shield" : "");
+    $("space-best").textContent = String(spaceBest.score);
   }
   function spaceGet(pool) {
     for (var j = 0; j < pool.length; j++) if (!pool[j].active) return pool[j];
@@ -228,6 +715,25 @@ var SpaceBlaster = (function () {
     var n = 0;
     for (var j = 0; j < pool.length; j++) if (pool[j].active) n++;
     return n;
+  }
+  function spaceSpawnExplosion(x, y, big, baseColor) {
+    var n = big ? 34 : 13, k, p;
+    var colors = [baseColor || "#fbbf24", "#fbbf24", "#f97316", "#f8fafc"];
+    for (k = 0; k < n; k++) {
+      p = spaceGet(spaceParticles);
+      if (!p) return;
+      var a = Math.random() * 6.283, sp = 40 + Math.random() * (big ? 200 : 135);
+      p.active = true; p.x = x; p.y = y;
+      p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp - 30;
+      p.maxLife = p.life = 0.45 + Math.random() * 0.5;
+      p.color = colors[k % colors.length];
+      p.size = 1.6 + Math.random() * 2.4;
+    }
+  }
+  function spaceSpawnPopup(x, y, text) {
+    var p = spaceGet(spacePopups);
+    if (!p) return;
+    p.active = true; p.x = x; p.y = y; p.life = 0.9; p.text = text;
   }
   function spaceBuildWave() {
     spaceQueue = [];
@@ -279,6 +785,41 @@ var SpaceBlaster = (function () {
     if (!p) return;
     p.active = true; p.x = x; p.y = y; p.type = type || (Math.random() < 0.72 ? "F" : (Math.random() < 0.7 ? "S" : "L"));
   }
+  function spaceKillEnemy(e) {
+    e.active = false;
+    var pts = e.isBoss ? 1500 : e.type === "grunt" ? 50 : e.type === "weaver" ? 100 : e.type === "diver" ? 80 : 120;
+    spaceScore += pts;
+    spaceSpawnExplosion(e.x, e.y, e.isBoss, spaceEnemyColors[e.type]);
+    spaceSpawnPopup(e.x, e.y - 12, "+" + pts);
+    if (e.isBoss) {
+      spaceBoss = null;
+      spaceBosses++;
+      spaceShakeT = Math.max(spaceShakeT, 0.4);
+      spaceDropPowerup(e.x, e.y, "F");
+      $("space-status").textContent = "Boss down! +1500 points.";
+      spaceSaveBest(false);
+      cgx.sfx("good");
+    } else {
+      if (Math.random() < 0.12) spaceDropPowerup(e.x, e.y, null);
+      cgx.beep(150 + Math.random() * 60, 60, { type: "sawtooth", gain: 0.05 });
+    }
+    spaceSyncHud();
+  }
+  function spaceShowGameOver() {
+    window.setTimeout(function () {
+      if (spacePhase !== "over") return;
+      cgx.showResult({
+        won: false,
+        title: "Game over",
+        message: "Your ship was destroyed on wave " + spaceWave + ". Boss kills this game: " + spaceBosses + " - games played: " + spaceBest.games + ".",
+        score: spaceScore,
+        best: spaceBest.score,
+        bestLabel: "Best score",
+        newBest: spaceNewBest,
+        onPlayAgain: function () { spaceReset(); spaceSetRunning(true); }
+      });
+    }, 650);
+  }
   function spacePlayerHit(bypass) {
     if (spacePhase !== "playing") return;
     if (!bypass) {
@@ -286,6 +827,7 @@ var SpaceBlaster = (function () {
       if (spaceShield) {
         spaceShield = false;
         spaceInvincible = 1;
+        spaceFlashT = 0.18;
         $("space-status").textContent = "Shield down! Fly carefully.";
         spaceSyncHud();
         return;
@@ -293,10 +835,16 @@ var SpaceBlaster = (function () {
     }
     spaceLives--;
     spaceInvincible = 2;
+    spaceShakeT = Math.max(spaceShakeT, 0.35);
+    spaceFlashT = 0.25;
+    spaceSpawnExplosion(spacePlayer.x, spacePlayer.y, spaceLives <= 0, "#c9a227");
+    cgx.sfx("bad");
     spaceSyncHud();
     if (spaceLives <= 0) {
       spacePhase = "over";
+      spaceSaveBest(true);
       $("space-status").textContent = "Ship destroyed. Final score: " + spaceScore + " on wave " + spaceWave + ". Press New game to fly again.";
+      spaceShowGameOver();
     } else {
       $("space-status").textContent = "Hit! " + spaceLives + (spaceLives === 1 ? " life" : " lives") + " left.";
     }
@@ -307,53 +855,31 @@ var SpaceBlaster = (function () {
     for (j = 0; j < spaceEBullets.length; j++) spaceEBullets[j].active = false;
     for (j = 0; j < spaceEnemies.length; j++) spaceEnemies[j].active = false;
     for (j = 0; j < spacePowerups.length; j++) spacePowerups[j].active = false;
+    for (j = 0; j < spaceParticles.length; j++) spaceParticles[j].active = false;
+    for (j = 0; j < spacePopups.length; j++) spacePopups[j].active = false;
+    spaceActiveEnemies.length = 0;
+    spaceActiveBullets.length = 0;
     spaceBoss = null;
     spacePlayer.x = 200; spacePlayer.targetX = null;
     spaceScore = 0; spaceWave = 1; spaceLives = 3; spaceFireLevel = 1;
     spaceShield = false; spaceInvincible = 0; spaceFireT = 0; spaceSpawnT = 0; spaceBannerT = 0;
+    spaceBosses = 0; spaceNewBest = false;
+    spaceShakeT = 0; spaceFlashT = 0;
     spacePhase = "ready";
     spaceBuildWave();
     spaceSyncHud();
     spaceDraw();
   }
-  function spaceDrawShip(x, y, color) {
-    var ctx = spaceCtx;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(x, y - 16);
-    ctx.lineTo(x + 6, y - 2); ctx.lineTo(x + 17, y + 12); ctx.lineTo(x + 17, y + 15);
-    ctx.lineTo(x + 5, y + 11); ctx.lineTo(x - 5, y + 11); ctx.lineTo(x - 17, y + 15);
-    ctx.lineTo(x - 17, y + 12); ctx.lineTo(x - 6, y - 2);
-    ctx.closePath(); ctx.fill();
-    ctx.fillStyle = "#0b2036";
-    ctx.beginPath(); ctx.arc(x, y - 3, 3.6, 0, Math.PI * 2); ctx.fill();
-  }
   function spaceDrawEnemy(e) {
     var ctx = spaceCtx;
+    var spr = e.isBoss ? spaceSprBoss : spaceSprEnemies[e.type];
+    ctx.drawImage(spr.c, e.x - spr.cx, e.y - spr.cy, spr.w, spr.h);
     if (e.isBoss) {
-      ctx.fillStyle = "#7f1d1d";
-      ctx.beginPath(); ctx.roundRect(e.x - 52, e.y - 20, 104, 40, 10); ctx.fill();
-      ctx.fillStyle = "#dc2626";
-      ctx.beginPath(); ctx.roundRect(e.x - 34, e.y - 28, 68, 18, 8); ctx.fill();
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(e.x - 30, e.y + 16, 10, 8); ctx.fillRect(e.x - 5, e.y + 16, 10, 8); ctx.fillRect(e.x + 20, e.y + 16, 10, 8);
       ctx.fillStyle = "rgba(255,255,255,0.25)";
       ctx.fillRect(e.x - 52, e.y - 34, 104, 6);
       ctx.fillStyle = "#c9a227";
       ctx.fillRect(e.x - 52, e.y - 34, 104 * Math.max(0, e.hp / e.maxHp), 6);
-      return;
-    }
-    var color = e.type === "grunt" ? "#e11d48" : e.type === "weaver" ? "#9333ea" : e.type === "diver" ? "#ea580c" : "#b45309";
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(e.x, e.y + 13);
-    ctx.lineTo(e.x + 5, e.y); ctx.lineTo(e.x + 15, e.y - 10); ctx.lineTo(e.x + 15, e.y - 13);
-    ctx.lineTo(e.x + 4, e.y - 8); ctx.lineTo(e.x - 4, e.y - 8); ctx.lineTo(e.x - 15, e.y - 13);
-    ctx.lineTo(e.x - 15, e.y - 10); ctx.lineTo(e.x - 5, e.y);
-    ctx.closePath(); ctx.fill();
-    ctx.fillStyle = "#f8fafc";
-    ctx.beginPath(); ctx.arc(e.x, e.y - 2, 2.6, 0, Math.PI * 2); ctx.fill();
-    if (e.maxHp > 1) {
+    } else if (e.maxHp > 1) {
       ctx.fillStyle = "rgba(255,255,255,0.25)";
       ctx.fillRect(e.x - 13, e.y - 19, 26, 3);
       ctx.fillStyle = "#c9a227";
@@ -364,39 +890,47 @@ var SpaceBlaster = (function () {
     var ctx = spaceCtx, j;
     ctx.fillStyle = "#050d18";
     ctx.fillRect(0, 0, spaceW, spaceH);
-    ctx.fillStyle = "#e2e8f0";
-    for (j = 0; j < spaceStars.length; j++) {
-      var st = spaceStars[j];
-      ctx.globalAlpha = st.s === 2 ? 0.9 : 0.45;
-      ctx.fillRect(st.x, st.y, st.s, st.s);
+    ctx.save();
+    if (spaceShakeT > 0) {
+      var sh = spaceShakeT * 14;
+      ctx.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
     }
+    /* Stars: two batched passes (one alpha per size) instead of an
+       alpha change per star. */
+    ctx.fillStyle = "#e2e8f0";
+    ctx.globalAlpha = 0.9;
+    for (j = 0; j < spaceStars.length; j++) { var st2 = spaceStars[j]; if (st2.s === 2) ctx.fillRect(st2.x, st2.y, 2, 2); }
+    ctx.globalAlpha = 0.45;
+    for (j = 0; j < spaceStars.length; j++) { var st1 = spaceStars[j]; if (st1.s === 1) ctx.fillRect(st1.x, st1.y, 1, 1); }
     ctx.globalAlpha = 1;
     for (j = 0; j < spacePowerups.length; j++) {
       var p = spacePowerups[j];
       if (!p.active) continue;
-      ctx.fillStyle = p.type === "F" ? "#166534" : p.type === "S" ? "#1d4ed8" : "#b91c1c";
-      ctx.beginPath(); ctx.roundRect(p.x - 11, p.y - 11, 22, 22, 5); ctx.fill();
-      ctx.fillStyle = "#fff";
-      ctx.font = "700 13px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(p.type, p.x, p.y + 4.5);
+      var spr = spaceSprPowers[p.type];
+      ctx.drawImage(spr.c, p.x - spr.cx, p.y - spr.cy, spr.w, spr.h);
     }
-    for (j = 0; j < spaceEnemies.length; j++) if (spaceEnemies[j].active) spaceDrawEnemy(spaceEnemies[j]);
+    for (j = 0; j < spaceActiveEnemies.length; j++) if (spaceActiveEnemies[j].active) spaceDrawEnemy(spaceActiveEnemies[j]);
     ctx.fillStyle = "#fbbf24";
-    for (j = 0; j < spaceBullets.length; j++) {
-      var b = spaceBullets[j];
+    for (j = 0; j < spaceActiveBullets.length; j++) {
+      var b = spaceActiveBullets[j];
       if (b.active) ctx.fillRect(b.x - 2, b.y - 7, 4, 12);
     }
-    ctx.fillStyle = "#f472b6";
     for (j = 0; j < spaceEBullets.length; j++) {
       var eb = spaceEBullets[j];
       if (!eb.active) continue;
-      ctx.beginPath(); ctx.arc(eb.x, eb.y, 3.4, 0, Math.PI * 2); ctx.fill();
+      ctx.drawImage(spaceSprEBullet.c, eb.x - spaceSprEBullet.cx, eb.y - spaceSprEBullet.cy, spaceSprEBullet.w, spaceSprEBullet.h);
+    }
+    for (j = 0; j < spaceParticles.length; j++) {
+      var pt = spaceParticles[j];
+      if (!pt.active) continue;
+      ctx.fillStyle = pt.color;
+      var sz = pt.size * Math.max(0.2, pt.life / pt.maxLife);
+      ctx.fillRect(pt.x - sz / 2, pt.y - sz / 2, sz, sz);
     }
     if (spacePhase !== "over") {
       var blink = spaceInvincible > 0 && Math.floor(spaceInvincible * 9) % 2 === 0;
       if (!blink) {
-        spaceDrawShip(spacePlayer.x, spacePlayer.y, "#c9a227");
+        ctx.drawImage(spaceSprShip.c, spacePlayer.x - spaceSprShip.cx, spacePlayer.y - spaceSprShip.cy, spaceSprShip.w, spaceSprShip.h);
         ctx.fillStyle = "#f59e0b";
         ctx.beginPath();
         ctx.moveTo(spacePlayer.x - 4, spacePlayer.y + 15);
@@ -409,6 +943,21 @@ var SpaceBlaster = (function () {
           ctx.beginPath(); ctx.arc(spacePlayer.x, spacePlayer.y, 25, 0, Math.PI * 2); ctx.stroke();
         }
       }
+    }
+    ctx.font = "700 13px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    for (j = 0; j < spacePopups.length; j++) {
+      var pp = spacePopups[j];
+      if (!pp.active) continue;
+      ctx.globalAlpha = Math.min(1, pp.life / 0.4);
+      ctx.fillStyle = "#f3d67c";
+      ctx.fillText(pp.text, pp.x, pp.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    if (spaceFlashT > 0) {
+      ctx.fillStyle = "rgba(220, 38, 38, " + Math.min(0.35, spaceFlashT * 1.4).toFixed(3) + ")";
+      ctx.fillRect(0, 0, spaceW, spaceH);
     }
     if (spaceBannerT > 0 && spacePhase === "playing") {
       ctx.fillStyle = "#fff";
@@ -433,6 +982,48 @@ var SpaceBlaster = (function () {
       ctx.fillText("Score: " + spaceScore + " - Wave " + spaceWave, spaceW / 2, 250);
     }
   }
+  function spaceCollideBullets() {
+    var j, bi, band, e, b, list;
+    for (j = 0; j < spaceBands.length; j++) spaceBands[j].length = 0;
+    for (j = 0; j < spaceActiveBullets.length; j++) {
+      b = spaceActiveBullets[j];
+      spaceBands[spaceBandOf(b.y)].push(b);
+    }
+    for (j = 0; j < spaceActiveEnemies.length; j++) {
+      e = spaceActiveEnemies[j];
+      if (!e.active) continue;
+      var hw = e.isBoss ? 54 : 17, hh = e.isBoss ? 26 : 15;
+      var b0 = spaceBandOf(e.y - hh), b1 = spaceBandOf(e.y + hh);
+      for (band = b0; band <= b1 && e.active; band++) {
+        list = spaceBands[band];
+        for (bi = 0; bi < list.length; bi++) {
+          b = list[bi];
+          if (!b.active) continue;
+          spacePerfChecks++;
+          if (Math.abs(b.x - e.x) < hw && Math.abs(b.y - e.y) < hh) {
+            b.active = false;
+            e.hp--;
+            if (e.hp <= 0) spaceKillEnemy(e);
+            break;
+          }
+        }
+      }
+    }
+  }
+  function spaceCollidePlayer() {
+    for (var j = 0; j < spaceActiveEnemies.length; j++) {
+      var e = spaceActiveEnemies[j];
+      if (!e.active) continue;
+      var phw = e.isBoss ? 58 : 20;
+      if (Math.abs(e.x - spacePlayer.x) < phw && Math.abs(e.y - spacePlayer.y) < 26) {
+        e.active = false;
+        if (e.isBoss) spaceBoss = null;
+        spaceSpawnExplosion(e.x, e.y, false, spaceEnemyColors[e.type]);
+        spacePlayerHit(false);
+        if (spacePhase !== "playing") return;
+      }
+    }
+  }
   function spaceUpdate(dt) {
     var j, e, b;
     for (j = 0; j < spaceStars.length; j++) {
@@ -440,6 +1031,22 @@ var SpaceBlaster = (function () {
       st.y += st.spd * dt;
       if (st.y > spaceH + 2) { st.y = -2; st.x = Math.random() * spaceW; }
     }
+    for (j = 0; j < spaceParticles.length; j++) {
+      var pt = spaceParticles[j];
+      if (!pt.active) continue;
+      pt.life -= dt;
+      if (pt.life <= 0) { pt.active = false; continue; }
+      pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += 90 * dt;
+    }
+    for (j = 0; j < spacePopups.length; j++) {
+      var pp = spacePopups[j];
+      if (!pp.active) continue;
+      pp.life -= dt;
+      if (pp.life <= 0) { pp.active = false; continue; }
+      pp.y -= 36 * dt;
+    }
+    if (spaceShakeT > 0) spaceShakeT -= dt;
+    if (spaceFlashT > 0) spaceFlashT -= dt;
     if (spacePhase !== "playing") return;
     if (spaceInvincible > 0) spaceInvincible -= dt;
     if (spaceBannerT > 0) spaceBannerT -= dt;
@@ -470,14 +1077,17 @@ var SpaceBlaster = (function () {
       spaceWave++;
       spaceBannerT = 1.6;
       spaceBuildWave();
+      spaceSaveBest(false);
       $("space-status").textContent = spaceWave % 5 === 0 ? "Boss wave! Bring it down." : "Wave " + spaceWave + ". Stay sharp.";
       spaceSyncHud();
     }
+    spaceActiveBullets.length = 0;
     for (j = 0; j < spaceBullets.length; j++) {
       b = spaceBullets[j];
       if (!b.active) continue;
       b.x += b.vx * dt; b.y += b.vy * dt;
-      if (b.y < -14 || b.x < -8 || b.x > spaceW + 8) b.active = false;
+      if (b.y < -14 || b.x < -8 || b.x > spaceW + 8) { b.active = false; continue; }
+      spaceActiveBullets.push(b);
     }
     for (j = 0; j < spaceEBullets.length; j++) {
       b = spaceEBullets[j];
@@ -500,9 +1110,11 @@ var SpaceBlaster = (function () {
         if (p.type === "F") { spaceFireLevel = Math.min(3, spaceFireLevel + 1); $("space-status").textContent = "Cannon upgraded to level " + spaceFireLevel + "."; }
         else if (p.type === "S") { spaceShield = true; $("space-status").textContent = "Shield up! It will absorb one hit."; }
         else { spaceLives = Math.min(5, spaceLives + 1); $("space-status").textContent = "Extra life! " + spaceLives + " lives."; }
+        cgx.sfx("good");
         spaceSyncHud();
       }
     }
+    spaceActiveEnemies.length = 0;
     for (j = 0; j < spaceEnemies.length; j++) {
       e = spaceEnemies[j];
       if (!e.active) continue;
@@ -536,33 +1148,11 @@ var SpaceBlaster = (function () {
         }
         if (e.y > spaceH + 30) { e.active = false; continue; }
       }
-      for (var bi = 0; bi < spaceBullets.length; bi++) {
-        var bb = spaceBullets[bi];
-        if (!bb.active) continue;
-        var hw = e.isBoss ? 54 : 17, hh = e.isBoss ? 26 : 15;
-        if (Math.abs(bb.x - e.x) < hw && Math.abs(bb.y - e.y) < hh) {
-          bb.active = false;
-          e.hp--;
-          if (e.hp <= 0) {
-            e.active = false;
-            var pts = e.isBoss ? 1500 : e.type === "grunt" ? 50 : e.type === "weaver" ? 100 : e.type === "diver" ? 80 : 120;
-            spaceScore += pts;
-            if (e.isBoss) { spaceBoss = null; spaceDropPowerup(e.x, e.y, "F"); $("space-status").textContent = "Boss down! +1500 points."; }
-            else if (Math.random() < 0.12) spaceDropPowerup(e.x, e.y, null);
-            spaceSyncHud();
-          }
-          break;
-        }
-      }
-      if (!e.active) continue;
-      var phw = e.isBoss ? 58 : 20;
-      if (Math.abs(e.x - spacePlayer.x) < phw && Math.abs(e.y - spacePlayer.y) < 26) {
-        e.active = false;
-        if (e.isBoss) spaceBoss = null;
-        spacePlayerHit(false);
-        if (spacePhase !== "playing") return;
-      }
+      spaceActiveEnemies.push(e);
     }
+    spaceCollideBullets();
+    if (spacePhase !== "playing") return;
+    spaceCollidePlayer();
     spaceHudIn -= dt;
     if (spaceHudIn <= 0) { spaceHudIn = 0.15; spaceSyncHud(); }
   }
@@ -571,6 +1161,7 @@ var SpaceBlaster = (function () {
     if (!spaceLastTs) spaceLastTs = ts;
     var dt = Math.min(0.033, (ts - spaceLastTs) / 1000);
     spaceLastTs = ts;
+    spacePerfFrames++;
     spaceUpdate(dt);
     spaceDraw();
     if (spaceRunning) requestAnimationFrame(spaceLoop);
@@ -591,6 +1182,7 @@ var SpaceBlaster = (function () {
   document.addEventListener("keydown", function (ev) {
     if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { spaceKeyL = true; ev.preventDefault(); }
     else if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { spaceKeyR = true; ev.preventDefault(); }
+    else if ((ev.key === "p" || ev.key === "P") && spacePhase !== "over") spaceSetRunning(!spaceRunning);
   });
   document.addEventListener("keyup", function (ev) {
     if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") spaceKeyL = false;
@@ -609,8 +1201,17 @@ var SpaceBlaster = (function () {
     $("space-status").textContent = "Press Start to launch. Your cannon fires on its own.";
     ev.currentTarget.blur();
   });
+  function spaceBindHold(id, set) {
+    var el = $(id);
+    el.addEventListener("pointerdown", function (ev) { ev.preventDefault(); set(true); });
+    el.addEventListener("pointerup", function () { set(false); });
+    el.addEventListener("pointerleave", function () { set(false); });
+    el.addEventListener("pointercancel", function () { set(false); });
+  }
+  spaceBindHold("space-left", function (v) { spaceKeyL = v; });
+  spaceBindHold("space-right", function (v) { spaceKeyR = v; });
   spaceReset();
-  // Test hooks (used by the headless verification script only).
+  // Test hooks (used by the headless verification scripts only - strip before publish).
   window.__space = {
     get state() {
       return {
@@ -618,44 +1219,59 @@ var SpaceBlaster = (function () {
         lives: spaceLives, fireLevel: spaceFireLevel, shield: spaceShield,
         enemies: spaceCountActive(spaceEnemies), bullets: spaceCountActive(spaceBullets),
         bossHp: spaceBoss && spaceBoss.active ? spaceBoss.hp : -1,
-        playerX: Math.round(spacePlayer.x)
+        playerX: Math.round(spacePlayer.x),
+        particles: spaceCountActive(spaceParticles),
+        bosses: spaceBosses,
+        best: spaceBest.score, bestWave: spaceBest.wave, games: spaceBest.games,
+        perfChecks: spacePerfChecks, perfFrames: spacePerfFrames
       };
     },
     debugSpawnEnemyAt: function (x) { var e = spaceSpawnEnemy("grunt", x); return !!e; },
     debugDropPowerup: function (type) { spaceDropPowerup(spacePlayer.x, spacePlayer.y - 150, type); return true; },
     debugStartBoss: function () { var e = spaceSpawnEnemy("boss", 200); return !!e; },
-    debugHitPlayer: function () { spacePlayerHit(true); return spaceLives; }
+    debugHitPlayer: function () { spacePlayerHit(true); return spaceLives; },
+    debugFillField: function (n) {
+      var placed = 0, k, e;
+      for (k = 0; k < n; k++) {
+        e = spaceSpawnEnemy(["grunt", "weaver", "diver", "shooter"][k % 4], 30 + (k % 8) * 48);
+        if (!e) break;
+        e.y = 26 + Math.floor(k / 8) * 60;
+        e.baseX = e.x;
+        placed++;
+      }
+      spaceFireLevel = 3;
+      var bi2, bb2;
+      for (bi2 = 0; bi2 < 40; bi2++) {
+        bb2 = spaceGet(spaceBullets);
+        if (!bb2) break;
+        bb2.active = true; bb2.x = 20 + (bi2 % 10) * 40; bb2.y = 462 - Math.floor(bi2 / 10) * 92; bb2.vx = 0; bb2.vy = -560;
+      }
+      return placed;
+    },
+    debugSetInvincible: function (sec) { spaceInvincible = sec; return spaceInvincible; },
+    debugPerfReset: function () { spacePerfChecks = 0; spacePerfFrames = 0; return true; }
   };
-  return { reset: spaceReset };
+  return { reset: spaceReset, draw: spaceDraw };
 })();
 
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND + FIT (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("space-sound"));
+  /* DPR-aware sizing: the backing store follows the CSS box (windowed,
+     resized or fullscreen) and the game keeps drawing in 400x500
+     logical units - the spec 0.2 / 15e fix. */
+  cgx.watchFit($("space-board"), { logicalW: 400, logicalH: 500 }, function () { SpaceBlaster.draw(); });
 })();
 </script>
 </body>
