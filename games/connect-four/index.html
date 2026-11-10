@@ -12,164 +12,111 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
 
-
-  /* Wave 2 games (shared) */
-  #race-board { width: min(480px, 100%); }
-  #space-board { width: min(400px, 100%); }
-  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
-  .ctrl-row button { margin-top: 0; }
-  .ctrl-row select { margin-top: 0; }
-  #mine-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(360px, 100%); }
-  #mine-board.mine-int { width: min(520px, 100%); }
-  #mine-board.mine-exp { width: min(720px, 100%); }
-  .mine-cell { aspect-ratio: 1; border: 1px solid #9aa5b1; background: #dbe4ee; color: var(--navy); font-weight: 700; font-size: 0.95rem; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .mine-cell.open { background: #f4f7fb; border-color: #c3cedb; cursor: default; }
-  .mine-cell.mine-hit { background: #dc2626; color: #fff; }
-  .mine-cell.flag { background: #fde68a; }
-  #slide-board { display: grid; gap: 4px; margin: 1rem auto 0; width: min(400px, 100%); }
-  .slide-tile { aspect-ratio: 1; background: var(--navy); color: #fff; border: none; font-size: 1.3rem; font-weight: 700; cursor: pointer; padding: 0; margin: 0; }
-  .slide-tile.blank { background: transparent; border: 2px dashed var(--gold); cursor: default; }
-  .slide-tile.home { background: #166534; }
-  #hang-board { width: min(560px, 100%); margin: 0 auto; }
-  #hang-canvas { display: block; margin: 0.5rem auto 0; background: #f8f5ec; border: 2px solid var(--navy); max-width: 100%; height: auto; }
-  #hang-word { text-align: center; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.3em; margin-top: 0.75rem; color: var(--navy); min-height: 1.6em; }
-  #hang-keys { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; max-width: 560px; margin: 1rem auto 0; }
-  .hang-key { padding: 0.5rem 0; margin: 0; font-weight: 700; }
-  .hang-key.ok { background: #166534; }
-  .hang-key.bad { background: #b91c1c; }
-  .hang-key:disabled { opacity: 0.9; cursor: default; }
-  #word-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(440px, 100%); touch-action: none; }
-  .word-cell { aspect-ratio: 1; border: 1px solid #c3cedb; background: #fff; color: var(--navy); font-weight: 700; font-size: 1rem; padding: 0; margin: 0; cursor: pointer; line-height: 1; }
-  .word-cell.sel { background: #fde68a; }
-  .word-cell.found { background: #dcfce7; border-color: #16a34a; }
-  #word-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem auto 0; justify-content: center; max-width: 560px; }
-  #word-list li { border: 1px solid var(--line); padding: 0.25rem 0.6rem; font-weight: 600; color: var(--navy); background: #fff; }
-  #word-list li.done { text-decoration: line-through; background: #dcfce7; color: #166534; }
-  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(420px, 100%); margin: 1rem auto 0; }
-  .conn-colbtn { margin: 0; padding: 0.3rem 0; }
-  #conn-board { display: grid; gap: 4px; width: min(420px, 100%); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; }
-  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; }
-  .conn-cell.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
-  .conn-cell.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
-  #flood-board { display: grid; gap: 2px; margin: 1rem auto 0; width: min(420px, 100%); }
-  .flood-cell { aspect-ratio: 1; }
-  #flood-controls { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
-  .flood-btn { width: 52px; height: 44px; margin: 0; border: 2px solid var(--navy); padding: 0; }
-  .flood-btn.current { outline: 3px solid var(--gold); outline-offset: 2px; }
-  @media (max-width: 560px) {
-    .mine-cell { font-size: 0.65rem; }
-    .word-cell { font-size: 0.78rem; }
-    .slide-tile { font-size: 1rem; }
-    #hang-word { font-size: 1.15rem; }
-    #hang-keys { grid-template-columns: repeat(7, 1fr); }
+  /* ---- Connect Four ---- */
+  /* The board is a DOM grid of socket cells; each disc is an element
+     inside its cell, so a played disc can fall from above the board
+     into place through a transform transition. In fullscreen the
+     board is sized from the available height (the old build only
+     reached 445px on a 1366x768 screen); flex: none stops the
+     flex-column stage from shrinking it. z-index: 1 keeps the discs'
+     stacking local so the cgx dialog always paints above them. */
+  #conn-preview { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 92vw); margin: 0.75rem auto 0; padding: 0 6px; box-sizing: border-box; }
+  .conn-slot { aspect-ratio: 1; border-radius: 50%; }
+  .conn-slot.g { background: radial-gradient(circle at 35% 35%, rgba(243, 214, 124, 0.55), rgba(201, 162, 39, 0.55)); box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.85); }
+  .conn-slot.r { background: radial-gradient(circle at 35% 35%, rgba(248, 113, 113, 0.55), rgba(185, 28, 28, 0.55)); box-shadow: inset 0 0 0 2px rgba(185, 28, 28, 0.85); }
+  #conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 92vw); margin: 2px auto 0; padding: 0 6px; box-sizing: border-box; }
+  .conn-colbtn { margin: 0; padding: 0.3rem 0; border-radius: 6px; }
+  .conn-colbtn.cursor { outline: 3px solid var(--gold); outline-offset: 1px; }
+  .conn-colbtn:disabled { opacity: 0.45; }
+  #conn-board { display: grid; gap: 4px; width: min(460px, 92vw); margin: 4px auto 0; background: var(--navy); padding: 6px; border-radius: 8px; box-sizing: border-box; position: relative; z-index: 1; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; position: relative; }
+  .conn-disc { position: absolute; inset: 0; border-radius: 50%; }
+  .conn-disc.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
+  .conn-disc.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
+  .conn-disc.win { animation: conn-win-pulse 0.7s ease-in-out infinite; z-index: 2; }
+  @keyframes conn-win-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--gold), 0 0 4px rgba(201, 162, 39, 0.6); }
+    50% { box-shadow: 0 0 0 5px var(--gold), 0 0 18px rgba(201, 162, 39, 0.95); }
   }
-  .play-stage:fullscreen #race-board { width: min(80vmin, 680px); }
-  .play-stage:fullscreen #space-board { width: min(54vmin, 430px); }
-  .play-stage:fullscreen #mine-board { width: min(430px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-int { width: min(500px, 92vw); }
-  .play-stage:fullscreen #mine-board.mine-exp { width: min(760px, 94vw); }
-  .play-stage:fullscreen #slide-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #hang-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #hang-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #word-board { width: min(54vmin, 460px); }
-  .play-stage:fullscreen #word-list { margin-top: 0.4rem; }
-  .play-stage:fullscreen #conn-board { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #conn-grid { width: min(58vmin, 500px); }
-  .play-stage:fullscreen #flood-board { width: min(54vmin, 460px); }
+  .turn-ind { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; margin-top: 0.75rem; }
+  .turn-dot { width: 18px; height: 18px; border-radius: 50%; display: inline-block; background: #9aa5b1; flex: none; }
+  .turn-dot.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
+  .turn-dot.r { background: radial-gradient(circle at 35% 35%, #f87171, #b91c1c); }
+  .turn-dot.thinking { animation: conn-think 0.8s ease-in-out infinite; }
+  @keyframes conn-think { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.72); opacity: 0.6; } }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  .play-stage:fullscreen .turn-ind { color: #e2e8f0; }
+  .cgx-fs:fullscreen #conn-board, .cgx-fs:-webkit-full-screen #conn-board,
+  .cgx-fs:fullscreen #conn-grid, .cgx-fs:-webkit-full-screen #conn-grid,
+  .cgx-fs:fullscreen #conn-preview, .cgx-fs:-webkit-full-screen #conn-preview { flex: none; width: min(94vw, calc((100vh - 285px) * 7 / 6), 600px); }
+  @media (max-width: 560px) {
+    .conn-colbtn { font-size: 0.85rem; }
+  }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Connect Four</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -177,93 +124,553 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="conn-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Connect Four</h2>
-  <p class="fs-desc">Drop discs into the columns and be the first to line up four: against the computer or with a friend.</p>
+  <p class="fs-desc">Drop discs into the columns and be the first to line up four in a row: against the computer on three difficulty levels, or with a friend on the same device. Click a column button, click any cell in a column, or use the arrow keys and Enter, or the number keys 1 to 7. The disc you are about to drop is previewed above the board. Your tallies and win streak are saved on this device.</p>
   <div class="scorebar"><span>Gold wins: <span id="conn-gold">0</span></span><span>Red wins: <span id="conn-red">0</span></span><span>Draws: <span id="conn-draws">0</span></span></div>
+  <div class="turn-ind"><span class="turn-dot g" id="conn-turn-dot"></span><span id="conn-turn-text">Your turn, Gold</span></div>
   <div class="ctrl-row">
     <label for="conn-mode">Mode</label>
     <select id="conn-mode"><option value="cpu" selected>Against the computer (you are Gold)</option><option value="2p">Two players (pass and play)</option></select>
+    <span id="conn-diff-wrap"><label for="conn-diff">CPU level</label>
+    <select id="conn-diff"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></span>
     <button type="button" id="conn-new">New game</button>
   </div>
+  <div id="conn-preview" aria-hidden="true"></div>
   <div class="board" id="conn-grid"></div>
+  <div class="board" id="conn-board"></div>
   <p class="status" id="conn-status">Your turn, Gold. Click a column to drop a disc.</p>
+  <p class="stats-line" id="conn-stats"></p>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Connect Four's computer opponent is a simple casual player: it takes wins, blocks your wins and otherwise plays near the centre; it is not a perfect solver, so a careful player can beat it. In two-player mode both players share this device. Scores are kept only in this page.</p>
+<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your tallies against the computer and in two-player games, your win rate and your win streaks are saved only in this browser on this device, so they are still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. The computer opponent has three levels: Easy plays casually but still takes a win when it can and blocks yours, Medium is the classic casual player (it takes wins, blocks yours and otherwise favours the centre), and Hard looks a few moves ahead before choosing. None of them is a perfect solver, so a careful player can still win. In two-player mode both players share this device.</p>
+<script>
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G20 CONNECT FOUR ================= */
+/* ================= G20 CONNECT FOUR (polish pass) =================
+   The verified game core is kept: the 7x6 board model, the win
+   detection, the column-drop buttons, the vs CPU / two-player mode
+   select and the original casual CPU logic (it is the Medium level
+   below, unchanged). The polish adds a falling-disc animation, a
+   pulsing highlight on the winning discs, a turn indicator with a
+   CPU-thinking state, two more CPU levels (Easy and a lookahead
+   Hard), board-cell clicks, full keyboard play, a ghost preview of
+   the disc about to drop, and permanent tallies and win streaks
+   kept through cgx.store("connect-four"). Input is locked while a
+   disc is falling, so a fast second click can never corrupt the
+   board; the CPU timer starts only once the player's disc lands. */
 var ConnectFour = (function () {
-  var connCols = 7, connRows = 6;
-  var connGrid = [], connTurn = 1, connPhase = "playing", connWinner = 0, connMoves = 0;
-  var connWinsGold = 0, connWinsRed = 0, connDraws = 0, connCompTimer = null;
-  var connGridEl = $("conn-grid");
+  var COLS = 7, ROWS = 6, N = COLS * ROWS, GAP = 4;
+  var ORDER = [3, 2, 4, 1, 5, 0, 6]; /* centre-first scan order */
+  var grid = [], turn = 1, phase = "playing", winner = 0, moves = 0;
+  var winLine = [], cursor = 3, animating = false, compTimer = null;
+  var appliedMode = "cpu", difficulty = "medium";
+  var boardEl = $("conn-board"), btnGridEl = $("conn-grid"), previewEl = $("conn-preview");
+  var cellEls = [], slotEls = [], colBtns = [];
 
-  function connMode() { return $("conn-mode").value === "2p" ? "2p" : "cpu"; }
-  function connCell(r, c) { return connGrid[r * connCols + c]; }
-  function connBuildBoard() {
-    var html = "";
-    for (var c = 0; c < connCols; c++) {
-      html += '<button type="button" class="conn-colbtn" id="conn-col-' + c + '" data-col="' + c + '">\u25bc</button>';
-    }
-    connGridEl.innerHTML = html;
-    var grid = document.createElement("div");
-    grid.className = "board";
-    grid.id = "conn-board";
-    grid.style.gridTemplateColumns = "repeat(" + connCols + ", 1fr)";
-    for (var i = 0; i < connCols * connRows; i++) {
-      var d = document.createElement("div");
-      d.className = "conn-cell";
-      d.id = "conn-cell-" + i;
-      grid.appendChild(d);
-    }
-    connGridEl.parentNode.insertBefore(grid, $("conn-status"));
+  function mode() { return appliedMode; }
+  function dialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
+  function inProgress() { return phase === "playing" && moves > 0; }
+
+  /* ---------------- persistence (cgx.store) ----------------
+     Key "best": { vsCpu: { wins, losses, draws, bestStreak },
+     streak, twoP: { gold, red, draws } }. The scorebar shows the
+     tally of the mode being played; the stats line always reports
+     the vs-CPU record, the win rate and the current/best streak.
+     Only games against the computer touch the streak: a win grows
+     it, a loss or a draw ends it, and abandoning a started game
+     (confirmed New game, mode or CPU-level change) resets it too,
+     the same rule as the other polished games. */
+  var c4Store = cgx.store("connect-four");
+  function loadBest() {
+    var d = c4Store.get("best", null);
+    if (!d || typeof d !== "object") d = {};
+    if (!d.vsCpu || typeof d.vsCpu !== "object") d.vsCpu = {};
+    ["wins", "losses", "draws", "bestStreak"].forEach(function (k) { if (typeof d.vsCpu[k] !== "number") d.vsCpu[k] = 0; });
+    if (typeof d.streak !== "number") d.streak = 0;
+    if (!d.twoP || typeof d.twoP !== "object") d.twoP = {};
+    ["gold", "red", "draws"].forEach(function (k) { if (typeof d.twoP[k] !== "number") d.twoP[k] = 0; });
+    return d;
   }
-  function connRender() {
-    for (var i = 0; i < connGrid.length; i++) {
-      var el = document.getElementById("conn-cell-" + i);
-      if (!el) continue;
-      el.classList.toggle("g", connGrid[i] === 1);
-      el.classList.toggle("r", connGrid[i] === 2);
+  var best = loadBest();
+  function saveBest() { c4Store.set("best", best); }
+  function tally() {
+    return mode() === "cpu"
+      ? { gold: best.vsCpu.wins, red: best.vsCpu.losses, draws: best.vsCpu.draws }
+      : { gold: best.twoP.gold, red: best.twoP.red, draws: best.twoP.draws };
+  }
+  /* Giving up on a started game against the computer breaks the streak. */
+  function abandonIfInProgress() {
+    if (mode() === "cpu" && inProgress() && best.streak !== 0) {
+      best.streak = 0;
+      saveBest();
     }
-    $("conn-gold").textContent = String(connWinsGold);
-    $("conn-red").textContent = String(connWinsRed);
-    $("conn-draws").textContent = String(connDraws);
   }
-  function connReset() {
-    connGrid = [];
-    for (var i = 0; i < connCols * connRows; i++) connGrid.push(0);
-    connTurn = 1;
-    connPhase = "playing";
-    connWinner = 0;
-    connMoves = 0;
-    if (connCompTimer) { clearTimeout(connCompTimer); connCompTimer = null; }
-    connRender();
-    $("conn-status").textContent = connMode() === "cpu" ? "Your turn, Gold. Click a column to drop a disc." : "Gold to move. Click a column to drop a disc.";
-  }
-  function connDropRow(col) {
-    for (var r = connRows - 1; r >= 0; r--) if (connCell(r, col) === 0) return r;
+
+  /* ---------------- board logic on any grid array ---------------- */
+  function dropRowIn(g, col) {
+    for (var r = ROWS - 1; r >= 0; r--) if (g[r * COLS + col] === 0) return r;
     return -1;
   }
-  function connWouldWin(col, player) {
-    var r = connDropRow(col);
-    if (r < 0) return false;
-    connGrid[r * connCols + col] = player;
-    var win = connCheckWin(r, col, player);
-    connGrid[r * connCols + col] = 0;
-    return win;
-  }
-  function connCheckWin(r, c, player) {
+  function checkWinIn(g, r, c, player) {
     var dirs = [[0, 1], [1, 0], [1, 1], [1, -1]];
     for (var d = 0; d < 4; d++) {
       var n = 1;
       for (var s = -1; s <= 1; s += 2) {
         var rr = r + dirs[d][0] * s, cc = c + dirs[d][1] * s;
-        while (rr >= 0 && rr < connRows && cc >= 0 && cc < connCols && connCell(rr, cc) === player) {
+        while (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS && g[rr * COLS + cc] === player) {
           n++;
           rr += dirs[d][0] * s;
           cc += dirs[d][1] * s;
@@ -273,143 +680,516 @@ var ConnectFour = (function () {
     }
     return false;
   }
-  function connFinish(text) {
-    connPhase = "over";
-    $("conn-status").textContent = text;
+  /* The winning run through (r, c) - every disc of it, so a run of
+     five lights up all five - or null when there is no line. */
+  function winningLineIn(g, r, c, player) {
+    var dirs = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    for (var d = 0; d < 4; d++) {
+      var line = [r * COLS + c];
+      for (var s = -1; s <= 1; s += 2) {
+        var rr = r + dirs[d][0] * s, cc = c + dirs[d][1] * s;
+        while (rr >= 0 && rr < ROWS && cc >= 0 && cc < COLS && g[rr * COLS + cc] === player) {
+          line.push(rr * COLS + cc);
+          rr += dirs[d][0] * s;
+          cc += dirs[d][1] * s;
+        }
+      }
+      if (line.length >= 4) return line;
+    }
+    return null;
   }
-  function connPlay(col) {
-    if (connPhase !== "playing") return false;
-    var r = connDropRow(col);
+  function wouldWin(g, col, player) {
+    var r = dropRowIn(g, col);
     if (r < 0) return false;
-    connGrid[r * connCols + col] = connTurn;
-    connMoves++;
-    connRender();
-    if (connCheckWin(r, col, connTurn)) {
-      connWinner = connTurn;
-      if (connTurn === 1) connWinsGold++; else connWinsRed++;
-      connRender();
-      var connName = connTurn === 1 ? "Gold" : "Red";
-      connFinish(connMode() === "cpu"
-        ? (connTurn === 1 ? "You win! Four in a row for Gold. Press New game to play again." : "The computer wins this round. Press New game to try again.")
-        : connName + " wins! Press New game to play again.");
-      return true;
+    g[r * COLS + col] = player;
+    var win = checkWinIn(g, r, col, player);
+    g[r * COLS + col] = 0;
+    return win;
+  }
+  function openCols(g) {
+    var out = [];
+    for (var c = 0; c < COLS; c++) if (dropRowIn(g, c) >= 0) out.push(c);
+    return out;
+  }
+  function centreFirst(cols) {
+    return cols.slice().sort(function (a, b) { return ORDER.indexOf(a) - ORDER.indexOf(b); });
+  }
+
+  /* ---------------- CPU levels ---------------- */
+  function chooseEasy(g, open) {
+    var i;
+    for (i = 0; i < open.length; i++) if (wouldWin(g, open[i], 2)) return open[i];
+    for (i = 0; i < open.length; i++) if (wouldWin(g, open[i], 1)) return open[i];
+    return open[Math.floor(Math.random() * open.length)];
+  }
+  /* Medium is the original casual CPU, step for step: take a win in
+     centre-first order, block the player's win in the same order,
+     take the centre 60% of the time, otherwise a random open column. */
+  function chooseMedium(g, open) {
+    var i;
+    for (i = 0; i < ORDER.length; i++) if (wouldWin(g, ORDER[i], 2)) return ORDER[i];
+    for (i = 0; i < ORDER.length; i++) if (wouldWin(g, ORDER[i], 1)) return ORDER[i];
+    if (dropRowIn(g, 3) >= 0 && Math.random() < 0.6) return 3;
+    return open[Math.floor(Math.random() * open.length)];
+  }
+  /* Hard: alpha-beta minimax over the next four plies (its own move
+     plus three replies) on the real win rules, scored by every
+     four-cell window plus a centre bias. It is a lookahead player,
+     not a solver: an immediate double threat can still beat it,
+     but it always takes a win and never leaves a single threat
+     unblocked when a block exists. */
+  var WINDOWS = (function () {
+    var ws = [], r, c, idx;
+    for (r = 0; r < ROWS; r++) for (c = 0; c <= COLS - 4; c++) { idx = r * COLS + c; ws.push([idx, idx + 1, idx + 2, idx + 3]); }
+    for (r = 0; r <= ROWS - 4; r++) for (c = 0; c < COLS; c++) { idx = r * COLS + c; ws.push([idx, idx + COLS, idx + 2 * COLS, idx + 3 * COLS]); }
+    for (r = 0; r <= ROWS - 4; r++) for (c = 0; c <= COLS - 4; c++) { idx = r * COLS + c; ws.push([idx, idx + COLS + 1, idx + 2 * (COLS + 1), idx + 3 * (COLS + 1)]); }
+    for (r = 0; r <= ROWS - 4; r++) for (c = 3; c < COLS; c++) { idx = r * COLS + c; ws.push([idx, idx + COLS - 1, idx + 2 * (COLS - 1), idx + 3 * (COLS - 1)]); }
+    return ws;
+  })();
+  var COLW = [0, 1, 3, 6, 3, 1, 0];
+  function hasFour(g, player) {
+    for (var w = 0; w < WINDOWS.length; w++) {
+      var q = WINDOWS[w];
+      if (g[q[0]] === player && g[q[1]] === player && g[q[2]] === player && g[q[3]] === player) return true;
     }
-    if (connMoves === connCols * connRows) {
-      connWinner = 0;
-      connDraws++;
-      connRender();
-      connFinish("The board is full: a draw. Press New game to play again.");
-      return true;
+    return false;
+  }
+  function evaluate(g) {
+    var score = 0, w, q, cpu, pl, emp, i, v;
+    for (w = 0; w < WINDOWS.length; w++) {
+      q = WINDOWS[w]; cpu = 0; pl = 0;
+      for (i = 0; i < 4; i++) { v = g[q[i]]; if (v === 2) cpu++; else if (v === 1) pl++; }
+      emp = 4 - cpu - pl;
+      if (cpu === 4) score += 100000;
+      else if (pl === 4) score -= 100000;
+      else if (cpu === 3 && emp === 1) score += 140;
+      else if (cpu === 2 && emp === 2) score += 14;
+      else if (pl === 3 && emp === 1) score -= 170;
+      else if (pl === 2 && emp === 2) score -= 16;
     }
-    connTurn = connTurn === 1 ? 2 : 1;
-    if (connMode() === "cpu") {
-      $("conn-status").textContent = "The computer is thinking...";
-      connCompTimer = setTimeout(connComputerMove, 420);
+    for (i = 0; i < N; i++) { v = g[i]; if (v === 2) score += COLW[i % COLS]; else if (v === 1) score -= COLW[i % COLS]; }
+    return score;
+  }
+  function minimax(g, depth, alpha, beta, cpuTurn) {
+    /* A decided position also carries a whisper of the heuristic, so
+       between two lines that lose on the same ply the search still
+       prefers the one that blocks a threat over one that does not. */
+    if (hasFour(g, 2)) return 100000 + depth * 10 + evaluate(g) / 10000;
+    if (hasFour(g, 1)) return -100000 - depth * 10 + evaluate(g) / 10000;
+    var open = centreFirst(openCols(g)), i, col, r, val;
+    if (depth === 0 || open.length === 0) return evaluate(g);
+    if (cpuTurn) {
+      val = -Infinity;
+      for (i = 0; i < open.length; i++) {
+        col = open[i]; r = dropRowIn(g, col);
+        g[r * COLS + col] = 2;
+        val = Math.max(val, minimax(g, depth - 1, alpha, beta, false));
+        g[r * COLS + col] = 0;
+        alpha = Math.max(alpha, val);
+        if (alpha >= beta) break;
+      }
+      return val;
+    }
+    val = Infinity;
+    for (i = 0; i < open.length; i++) {
+      col = open[i]; r = dropRowIn(g, col);
+      g[r * COLS + col] = 1;
+      val = Math.min(val, minimax(g, depth - 1, alpha, beta, true));
+      g[r * COLS + col] = 0;
+      beta = Math.min(beta, val);
+      if (alpha >= beta) break;
+    }
+    return val;
+  }
+  function chooseHard(g, open) {
+    var ordered = centreFirst(open), bestVal = -Infinity, bestCol = ordered[0], i, col, r, v;
+    for (i = 0; i < ordered.length; i++) {
+      col = ordered[i];
+      r = dropRowIn(g, col);
+      g[r * COLS + col] = 2;
+      v = minimax(g, 3, -Infinity, Infinity, false);
+      g[r * COLS + col] = 0;
+      if (v > bestVal) { bestVal = v; bestCol = col; }
+    }
+    return bestCol;
+  }
+  function chooseCpuColumn() {
+    var open = openCols(grid);
+    if (!open.length) return -1;
+    if (difficulty === "easy") return chooseEasy(grid, open);
+    if (difficulty === "hard") return chooseHard(grid, open);
+    return chooseMedium(grid, open);
+  }
+
+  /* ---------------- rendering ---------------- */
+  function buildBoard() {
+    var i, d, b;
+    previewEl.innerHTML = ""; slotEls = [];
+    for (i = 0; i < COLS; i++) {
+      d = document.createElement("div");
+      d.className = "conn-slot";
+      previewEl.appendChild(d);
+      slotEls.push(d);
+    }
+    btnGridEl.innerHTML = ""; colBtns = [];
+    for (i = 0; i < COLS; i++) {
+      b = document.createElement("button");
+      b.type = "button";
+      b.className = "conn-colbtn";
+      b.id = "conn-col-" + i;
+      b.setAttribute("data-col", String(i));
+      b.setAttribute("aria-label", "Drop a disc in column " + (i + 1));
+      b.textContent = "\u25bc";
+      btnGridEl.appendChild(b);
+      colBtns.push(b);
+    }
+    boardEl.innerHTML = ""; cellEls = [];
+    boardEl.style.gridTemplateColumns = "repeat(" + COLS + ", 1fr)";
+    for (i = 0; i < N; i++) {
+      d = document.createElement("div");
+      d.className = "conn-cell";
+      d.id = "conn-cell-" + i;
+      boardEl.appendChild(d);
+      cellEls.push(d);
+    }
+  }
+  function discEl(player) {
+    var d = document.createElement("div");
+    d.className = "conn-disc " + (player === 1 ? "g" : "r");
+    return d;
+  }
+  function paintCell(i) {
+    var cell = cellEls[i], v = grid[i], disc = cell.firstChild;
+    if (!v) { if (disc) cell.removeChild(disc); return; }
+    if (!disc || disc.className !== "conn-disc " + (v === 1 ? "g" : "r")) {
+      cell.innerHTML = "";
+      cell.appendChild(discEl(v));
+    }
+  }
+  function paintWin() {
+    for (var i = 0; i < winLine.length; i++) {
+      var disc = cellEls[winLine[i]].firstChild;
+      if (disc) disc.classList.add("win");
+    }
+  }
+  function renderScores() {
+    var t = tally();
+    $("conn-gold").textContent = String(t.gold);
+    $("conn-red").textContent = String(t.red);
+    $("conn-draws").textContent = String(t.draws);
+    var games = best.vsCpu.wins + best.vsCpu.losses + best.vsCpu.draws;
+    var rate = games ? Math.round(best.vsCpu.wins / games * 100) : 0;
+    $("conn-stats").textContent = "Against the computer: " + best.vsCpu.wins + " wins, " + best.vsCpu.losses + " losses, " + best.vsCpu.draws + " draws · Win rate " + rate + "% · Win streak: " + best.streak + " (best " + best.vsCpu.bestStreak + ")";
+    $("conn-diff-wrap").style.display = mode() === "cpu" ? "" : "none";
+  }
+  function renderTurn() {
+    var dot = $("conn-turn-dot"), txt = $("conn-turn-text");
+    dot.className = "turn-dot";
+    if (phase !== "playing") {
+      if (winner) {
+        dot.classList.add(winner === 1 ? "g" : "r");
+        txt.textContent = (winner === 1 ? "Gold" : "Red") + " won this game";
+      } else {
+        txt.textContent = "Game drawn";
+      }
+      return;
+    }
+    dot.classList.add(turn === 1 ? "g" : "r");
+    if (mode() === "cpu" && turn === 2) {
+      dot.classList.add("thinking");
+      txt.textContent = "Computer is thinking...";
+    } else if (mode() === "cpu") {
+      txt.textContent = "Your turn, Gold";
     } else {
-      $("conn-status").textContent = (connTurn === 1 ? "Gold" : "Red") + " to move. Click a column to drop a disc.";
+      txt.textContent = (turn === 1 ? "Gold" : "Red") + " to move";
     }
+  }
+  function renderButtons() {
+    for (var i = 0; i < COLS; i++) colBtns[i].disabled = phase !== "playing" || dropRowIn(grid, i) < 0;
+  }
+  function paintCursor() {
+    var i;
+    for (i = 0; i < COLS; i++) colBtns[i].classList.toggle("cursor", i === cursor);
+    for (i = 0; i < COLS; i++) slotEls[i].className = "conn-slot";
+    var show = phase === "playing" && !animating && !(mode() === "cpu" && turn === 2);
+    if (show && dropRowIn(grid, cursor) >= 0) slotEls[cursor].classList.add(turn === 1 ? "g" : "r");
+    renderButtons();
+  }
+  function renderAll() {
+    for (var i = 0; i < N; i++) paintCell(i);
+    paintWin();
+    renderScores();
+    renderTurn();
+    paintCursor();
+  }
+
+  /* ---------------- the drop ---------------- */
+  /* The disc element starts one step above the board and falls to
+     its cell through a transform transition; the fall time grows
+     with the distance. Input stays locked until it lands, and the
+     win/turn logic runs at landing, so what the player sees is
+     always exactly what the board model holds. */
+  function animateDrop(r, col, player, done) {
+    var i = r * COLS + col, cell = cellEls[i];
+    cell.innerHTML = "";
+    var disc = discEl(player);
+    cell.appendChild(disc);
+    var h = cell.offsetHeight || 40;
+    var dist = (r + 1) * (h + GAP);
+    var dur = Math.min(560, Math.max(160, Math.round(dist * 0.85)));
+    disc.style.zIndex = "3";
+    disc.style.transform = "translateY(-" + dist + "px)";
+    void disc.offsetWidth; /* start the transition from the raised pose */
+    disc.style.transition = "transform " + dur + "ms cubic-bezier(.55,.06,.75,.9)";
+    disc.style.transform = "translateY(0px)";
+    var finished = false;
+    function land() {
+      if (finished) return;
+      finished = true;
+      disc.style.transition = "";
+      disc.style.transform = "";
+      disc.style.zIndex = "";
+      if (done) done();
+    }
+    disc.addEventListener("transitionend", function (ev) { if (ev.propertyName === "transform") land(); });
+    window.setTimeout(land, dur + 90); /* fallback if transitionend is missed */
+  }
+  function connDrop(col) {
+    if (phase !== "playing" || animating) return false;
+    var r = dropRowIn(grid, col);
+    if (r < 0) return false;
+    var player = turn;
+    grid[r * COLS + col] = player;
+    moves++;
+    cursor = col;
+    animating = true;
+    paintCursor();
+    animateDrop(r, col, player, function () {
+      animating = false;
+      cgx.sfx("place");
+      var line = winningLineIn(grid, r, col, player);
+      if (line) { winLine = line; paintWin(); finishWin(player); return; }
+      if (moves === N) { finishDraw(); return; }
+      turn = player === 1 ? 2 : 1;
+      renderTurn();
+      paintCursor();
+      if (mode() === "cpu" && turn === 2) {
+        $("conn-status").textContent = "The computer is thinking...";
+        compTimer = window.setTimeout(function () { compTimer = null; cpuMove(); }, 420);
+      } else {
+        $("conn-status").textContent = mode() === "cpu"
+          ? "Your turn, Gold. Click a column to drop a disc."
+          : (turn === 1 ? "Gold" : "Red") + " to move. Click a column to drop a disc.";
+      }
+    });
     return true;
   }
-  function connComputerMove() {
-    connCompTimer = null;
-    if (connPhase !== "playing" || connTurn !== 2) return;
-    var order = [3, 2, 4, 1, 5, 0, 6];
-    var col = -1, i;
-    for (i = 0; i < order.length; i++) if (connWouldWin(order[i], 2)) { col = order[i]; break; }
-    if (col < 0) for (i = 0; i < order.length; i++) if (connWouldWin(order[i], 1)) { col = order[i]; break; }
-    if (col < 0 && connDropRow(3) >= 0 && Math.random() < 0.6) col = 3;
-    if (col < 0) {
-      var connOpenCols = [];
-      for (i = 0; i < connCols; i++) if (connDropRow(i) >= 0) connOpenCols.push(i);
-      col = connOpenCols[Math.floor(Math.random() * connOpenCols.length)];
-    }
-    connTurn = 2;
-    connPlayComputer(col);
+  function humanDrop(col) {
+    if (mode() === "cpu" && turn !== 1) return false;
+    return connDrop(col);
   }
-  function connPlayComputer(col) {
-    var r = connDropRow(col);
-    if (r < 0) return;
-    connGrid[r * connCols + col] = 2;
-    connMoves++;
-    connRender();
-    if (connCheckWin(r, col, 2)) {
-      connWinner = 2;
-      connWinsRed++;
-      connRender();
-      connFinish("The computer wins this round. Press New game to try again.");
-      return;
-    }
-    if (connMoves === connCols * connRows) {
-      connWinner = 0;
-      connDraws++;
-      connRender();
-      connFinish("The board is full: a draw. Press New game to play again.");
-      return;
-    }
-    connTurn = 1;
-    $("conn-status").textContent = "Your turn, Gold. Click a column to drop a disc.";
+  function cpuMove() {
+    if (phase !== "playing" || turn !== 2 || mode() !== "cpu") return;
+    var col = chooseCpuColumn();
+    if (col >= 0) connDrop(col);
   }
-  connGridEl.addEventListener("click", function (ev) {
+
+  /* ---------------- game end ---------------- */
+  function finishWin(player) {
+    phase = "over";
+    winner = player;
+    var name = player === 1 ? "Gold" : "Red";
+    var newBestStreak = false;
+    if (mode() === "cpu") {
+      if (player === 1) {
+        best.vsCpu.wins++;
+        best.streak++;
+        if (best.streak > best.vsCpu.bestStreak) { best.vsCpu.bestStreak = best.streak; newBestStreak = true; }
+      } else {
+        best.vsCpu.losses++;
+        best.streak = 0;
+      }
+    } else if (player === 1) best.twoP.gold++;
+    else best.twoP.red++;
+    saveBest();
+    renderScores();
+    renderTurn();
+    paintCursor();
+    $("conn-status").textContent = mode() === "cpu"
+      ? (player === 1 ? "You win! Four in a row for Gold. Press New game to play again." : "The computer wins this round. Press New game to try again.")
+      : name + " wins! Press New game to play again.";
+    if (mode() === "cpu") {
+      cgx.showResult({
+        won: player === 1,
+        title: player === 1 ? "You win!" : "Computer wins",
+        message: (player === 1 ? "Four in a row for Gold." : "Red lines up four in a row.") + " Against the computer so far: " + best.vsCpu.wins + " wins, " + best.vsCpu.losses + " losses, " + best.vsCpu.draws + " draws. Win streak: " + best.streak + ".",
+        score: moves, scoreLabel: "Moves",
+        best: best.vsCpu.bestStreak, bestLabel: "Best win streak",
+        newBest: newBestStreak,
+        onPlayAgain: function () { reset(); }
+      });
+    } else {
+      cgx.showResult({
+        won: true,
+        title: name + " wins!",
+        message: "Four in a row for " + name + ". Two-player tally: Gold " + best.twoP.gold + ", Red " + best.twoP.red + ", draws " + best.twoP.draws + ".",
+        score: moves, scoreLabel: "Moves",
+        onPlayAgain: function () { reset(); }
+      });
+    }
+  }
+  function finishDraw() {
+    phase = "over";
+    winner = 0;
+    if (mode() === "cpu") { best.vsCpu.draws++; best.streak = 0; }
+    else best.twoP.draws++;
+    saveBest();
+    renderScores();
+    renderTurn();
+    paintCursor();
+    $("conn-status").textContent = "The board is full: a draw. Press New game to play again.";
+    cgx.showResult({
+      won: false, confetti: false, sound: false,
+      title: "A draw",
+      message: mode() === "cpu"
+        ? "The board is full with no line of four. Against the computer so far: " + best.vsCpu.wins + " wins, " + best.vsCpu.losses + " losses, " + best.vsCpu.draws + " draws."
+        : "The board is full with no line of four. Two-player tally: Gold " + best.twoP.gold + ", Red " + best.twoP.red + ", draws " + best.twoP.draws + ".",
+      score: moves, scoreLabel: "Moves",
+      best: best.vsCpu.bestStreak, bestLabel: "Best win streak",
+      onPlayAgain: function () { reset(); }
+    });
+  }
+
+  /* ---------------- setup ---------------- */
+  function reset() {
+    var i;
+    if (compTimer) { window.clearTimeout(compTimer); compTimer = null; }
+    grid = [];
+    for (i = 0; i < N; i++) grid.push(0);
+    turn = 1;
+    phase = "playing";
+    winner = 0;
+    moves = 0;
+    winLine = [];
+    animating = false;
+    cursor = 3;
+    renderAll();
+    $("conn-status").textContent = mode() === "cpu" ? "Your turn, Gold. Click a column to drop a disc." : "Gold to move. Click a column to drop a disc.";
+  }
+
+  /* ---------------- input ---------------- */
+  btnGridEl.addEventListener("click", function (ev) {
     var t = ev.target;
-    if (!t || t.dataset.col === undefined) return;
-    if (connMode() === "cpu" && connTurn !== 1) return;
-    connPlay(+t.dataset.col);
+    if (!t || !t.getAttribute || t.getAttribute("data-col") === null) return;
+    if (t.blur) t.blur();
+    cursor = +t.getAttribute("data-col");
+    humanDrop(cursor);
   });
-  $("conn-mode").addEventListener("change", function () { connReset(); });
-  $("conn-new").addEventListener("click", function (ev) { connReset(); ev.currentTarget.blur(); });
-  connBuildBoard();
-  connReset();
-  // Test hooks (used by the headless verification script only).
-  window.__conn = {
-    get state() {
-      return {
-        phase: connPhase, winner: connWinner, moves: connMoves, turn: connTurn,
-        mode: connMode(), grid: connGrid.slice()
-      };
-    },
-    debugSetBoard: function (arr, turn) {
-      if (!arr || arr.length !== 42) return false;
-      connGrid = arr.slice();
-      connMoves = 0;
-      for (var i = 0; i < 42; i++) if (connGrid[i]) connMoves++;
-      connTurn = turn === 2 ? 2 : 1;
-      connPhase = "playing";
-      connWinner = 0;
-      if (connCompTimer) { clearTimeout(connCompTimer); connCompTimer = null; }
-      connRender();
-      return true;
+  btnGridEl.addEventListener("mouseover", function (ev) {
+    var t = ev.target;
+    if (t && t.getAttribute && t.getAttribute("data-col") !== null) {
+      cursor = +t.getAttribute("data-col");
+      paintCursor();
     }
-  };
-  return { reset: connReset };
+  });
+  function cellIndexFromEvent(ev) {
+    var t = ev.target;
+    while (t && t !== boardEl && !/^conn-cell-\d+$/.test(t.id || "")) t = t.parentNode;
+    if (!t || t === boardEl) return -1;
+    return parseInt(t.id.slice(10), 10);
+  }
+  boardEl.addEventListener("click", function (ev) {
+    var idx = cellIndexFromEvent(ev);
+    if (idx >= 0) humanDrop(idx % COLS);
+  });
+  boardEl.addEventListener("mouseover", function (ev) {
+    var idx = cellIndexFromEvent(ev);
+    if (idx >= 0) { cursor = idx % COLS; paintCursor(); }
+  });
+  document.addEventListener("keydown", function (ev) {
+    var tag = ev.target && ev.target.tagName ? ev.target.tagName : "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (dialogOpen()) return;
+    var k = ev.key;
+    if (k >= "1" && k <= "7") {
+      cursor = +k - 1;
+      paintCursor();
+      humanDrop(cursor);
+      return;
+    }
+    if (k === "ArrowLeft") {
+      if (cursor > 0) cursor--;
+      paintCursor();
+      ev.preventDefault();
+      return;
+    }
+    if (k === "ArrowRight") {
+      if (cursor < COLS - 1) cursor++;
+      paintCursor();
+      ev.preventDefault();
+      return;
+    }
+    if (k === "Enter" || k === " ") {
+      if (tag === "BUTTON") return; /* a focused button keeps its own Enter/Space behaviour */
+      ev.preventDefault();
+      humanDrop(cursor);
+    }
+  });
+  $("conn-new").addEventListener("click", function (ev) {
+    ev.currentTarget.blur();
+    if (inProgress()) {
+      cgx.confirm("Start a new game?", "The current game will be lost." + (mode() === "cpu" ? " Your win streak will reset." : ""), function () {
+        abandonIfInProgress();
+        reset();
+      });
+    } else reset();
+  });
+  $("conn-mode").addEventListener("change", function (ev) {
+    var wanted = ev.target.value === "2p" ? "2p" : "cpu";
+    ev.target.value = appliedMode; /* snaps back until confirmed */
+    var apply = function () {
+      abandonIfInProgress();
+      appliedMode = wanted;
+      $("conn-mode").value = wanted;
+      reset();
+    };
+    if (inProgress()) cgx.confirm("Change mode?", "The current game will be lost." + (mode() === "cpu" ? " Your win streak will reset." : ""), apply);
+    else apply();
+  });
+  $("conn-diff").addEventListener("change", function (ev) {
+    var wanted = ev.target.value;
+    if (["easy", "medium", "hard"].indexOf(wanted) < 0) wanted = "medium";
+    ev.target.value = difficulty; /* snaps back until confirmed */
+    var apply = function () {
+      abandonIfInProgress();
+      difficulty = wanted;
+      $("conn-diff").value = wanted;
+      reset();
+    };
+    if (inProgress()) cgx.confirm("Change the CPU level?", "The current game will be lost. Your win streak will reset.", apply);
+    else { difficulty = wanted; ev.target.value = wanted; }
+  });
+
+  buildBoard();
+  reset();
+
+  return { reset: reset };
 })();
 
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("conn-sound"));
 })();
 </script>
 </body>
