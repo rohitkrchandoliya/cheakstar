@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Barcode Generator - Free Online Tool - Cheakstar Tools</title>
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<style>
+#bc-svgwrap { background: #ffffff; padding: 12px; border-radius: 8px; text-align: center; overflow-x: auto; }
+#bc-svgwrap svg { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Barcode Generator</h1>
+<p class="tool-sub">Create downloadable barcodes from your text or numbers.</p>
+<div class="tool-card">
+  <p>Type the text or number you want encoded, pick a barcode format, and generate a barcode you can download as a PNG or SVG file. EAN-13 and UPC barcodes follow the shop standard, including the check digit at the end, so the number under the bars always matches what a scanner reads.</p>
+
+  <div class="row2">
+    <div>
+      <label for="bc-format">Format</label>
+      <select id="bc-format">
+        <option value="CODE128" selected>CODE128 (any text)</option>
+        <option value="EAN13">EAN-13 (12 or 13 digits)</option>
+        <option value="UPC">UPC (11 or 12 digits)</option>
+        <option value="CODE39">CODE39 (letters, digits, - . $ / + % and space)</option>
+      </select>
+    </div>
+    <div>
+      <label for="bc-text">Text or number</label>
+      <input id="bc-text" type="text" value="Cheakstar 123" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="bc-run" class="btn" type="button">Generate barcode</button>
+  </div>
+  <p id="bc-status" class="status" role="status"></p>
+  <div class="result" id="bc-result" hidden data-result>
+    <div id="bc-svgwrap"><svg id="bc-svg" role="img" aria-label="Generated barcode"></svg></div>
+    <p class="kv" id="bc-meta"></p>
+    <div class="btn-row">
+      <button id="bc-png" class="btn" type="button">Download PNG</button>
+      <button id="bc-svgdl" class="btn ghost" type="button">Download SVG</button>
+    </div>
+  </div>
+</div>
+<div class="note"><strong>Good to know:</strong> barcodes are generated on your device, in this browser tab — your text is never sent to any server; only the small barcode library is loaded from a public CDN. For EAN-13 you may type the first 12 digits and the tool adds the correct check digit as the 13th; if you type all 13, the check digit is verified and a wrong one is reported instead of drawing a barcode a scanner would reject. UPC works the same way with 11 or 12 digits. Print size matters for real-world scanning: keep quiet (blank) space around the bars and print at a reasonable size.</div>
+</main>
+<footer class="site"><div class="wrap foot">
+<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
+<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
+</div></footer>
+<script src="../assets/tools.js"></script>
+<script>
+"use strict";
+var bcStatus = document.getElementById("bc-status");
+var bcResult = document.getElementById("bc-result");
+var bcSvg = document.getElementById("bc-svg");
+var bcMeta = document.getElementById("bc-meta");
+var bcFullValue = "";
+
+/* Check digit for EAN-13: digits in odd positions (1st, 3rd, ...) count
+   once, digits in even positions count three times, over the first 12. */
+function bcEan13CheckDigit(first12) {
+  var bcSum = 0;
+  var bcI;
+  for (bcI = 0; bcI < 12; bcI++) {
+    var bcD = first12.charCodeAt(bcI) - 48;
+    bcSum += (bcI % 2 === 0) ? bcD : bcD * 3;
+  }
+  return String((10 - (bcSum % 10)) % 10);
+}
+
+/* Check digit for UPC-A: odd positions count three times, even positions
+   count once, over the first 11 digits. */
+function bcUpcCheckDigit(first11) {
+  var bcSum = 0;
+  var bcI;
+  for (bcI = 0; bcI < 11; bcI++) {
+    var bcD = first11.charCodeAt(bcI) - 48;
+    bcSum += (bcI % 2 === 0) ? bcD * 3 : bcD;
+  }
+  return String((10 - (bcSum % 10)) % 10);
+}
+
+function bcFail(message) {
+  bcResult.hidden = true;
+  bcStatus.className = "status error";
+  bcStatus.textContent = message;
+}
+/* Returns { value, note } for a valid input, or null after showing an error. */
+function bcValidate(format, raw) {
+  if (format === "EAN13") {
+    if (!/^[0-9]+$/.test(raw)) {
+      bcFail("EAN-13 needs digits only. Remove any letters, spaces or dashes and try again.");
+      return null;
+    }
+    if (raw.length === 12) {
+      var bcFull13 = raw + bcEan13CheckDigit(raw);
+      return { value: bcFull13, note: "Check digit " + bcFull13.charAt(12) + " was added as the 13th digit." };
+    }
+    if (raw.length === 13) {
+      if (bcEan13CheckDigit(raw.slice(0, 12)) !== raw.charAt(12)) {
+        bcFail("The 13th digit is not the correct check digit for the first 12 digits. The correct check digit is " + bcEan13CheckDigit(raw.slice(0, 12)) + ", so this number would not scan as a valid EAN-13.");
+        return null;
+      }
+      return { value: raw, note: "Check digit verified." };
+    }
+    bcFail("EAN-13 needs 12 digits (the tool adds the check digit) or the full 13 digits. You entered " + raw.length + " digits.");
+    return null;
+  }
+  if (format === "UPC") {
+    if (!/^[0-9]+$/.test(raw)) {
+      bcFail("UPC needs digits only. Remove any letters, spaces or dashes and try again.");
+      return null;
+    }
+    if (raw.length === 11) {
+      var bcFull12 = raw + bcUpcCheckDigit(raw);
+      return { value: bcFull12, note: "Check digit " + bcFull12.charAt(11) + " was added as the 12th digit." };
+    }
+    if (raw.length === 12) {
+      if (bcUpcCheckDigit(raw.slice(0, 11)) !== raw.charAt(11)) {
+        bcFail("The 12th digit is not the correct check digit for the first 11 digits. The correct check digit is " + bcUpcCheckDigit(raw.slice(0, 11)) + ", so this number would not scan as a valid UPC.");
+        return null;
+      }
+      return { value: raw, note: "Check digit verified." };
+    }
+    bcFail("UPC needs 11 digits (the tool adds the check digit) or the full 12 digits. You entered " + raw.length + " digits.");
+    return null;
+  }
+  if (format === "CODE39") {
+    if (!/^[0-9A-Z \-.$/+%]+$/.test(raw.toUpperCase())) {
+      bcFail("CODE39 can only encode capital letters, digits, spaces and these symbols: - . $ / + %. Your text contains a character CODE39 cannot encode.");
+      return null;
+    }
+    return { value: raw.toUpperCase(), note: "CODE39 encodes capital letters, so the text was converted to capitals." };
+  }
+  return { value: raw, note: "" };
+}
+function bcGenerate() {
+  var bcFormat = document.getElementById("bc-format").value;
+  var bcRaw = document.getElementById("bc-text").value.trim();
+  bcResult.hidden = true;
+  if (typeof JsBarcode === "undefined") {
+    bcFail("The barcode library could not be loaded. Check your internet connection and reload the page.");
+    return;
+  }
+  if (!bcRaw) {
+    bcFail("Type the text or number to encode first.");
+    return;
+  }
+  var bcChecked = bcValidate(bcFormat, bcRaw);
+  if (!bcChecked) { return; }
+  try {
+    JsBarcode(bcSvg, bcChecked.value, {
+      format: bcFormat,
+      displayValue: true,
+      fontSize: 16,
+      margin: 10,
+      height: 70
+    });
+  } catch (bcErr) {
+    bcFail("That text could not be encoded in the selected format. Check the format rules and try again.");
+    return;
+  }
+  bcFullValue = bcChecked.value;
+  bcMeta.textContent = "Value encoded: " + bcChecked.value + (bcChecked.note ? " — " + bcChecked.note : "");
+  bcResult.hidden = false;
+  bcStatus.className = "status ok";
+  bcStatus.textContent = "Barcode ready. Download it as PNG or SVG below.";
+}
+
+function bcDownloadPng() {
+  var bcSerializer = new XMLSerializer();
+  var bcSvgText = bcSerializer.serializeToString(bcSvg);
+  var bcImg = new Image();
+  bcImg.onload = function () {
+    var bcScale = 3;
+    var bcCanvas = document.createElement("canvas");
+    bcCanvas.width = Math.max(1, Math.round(bcImg.width * bcScale));
+    bcCanvas.height = Math.max(1, Math.round(bcImg.height * bcScale));
+    var bcCtx = bcCanvas.getContext("2d");
+    bcCtx.fillStyle = "#ffffff";
+    bcCtx.fillRect(0, 0, bcCanvas.width, bcCanvas.height);
+    bcCtx.drawImage(bcImg, 0, 0, bcCanvas.width, bcCanvas.height);
+    bcCanvas.toBlob(function (bcBlob) {
+      if (!bcBlob) {
+        bcStatus.className = "status error";
+        bcStatus.textContent = "The PNG could not be created in this browser. The SVG download still works.";
+        return;
+      }
+      var bcUrl = URL.createObjectURL(bcBlob);
+      var bcLink = document.createElement("a");
+      bcLink.href = bcUrl;
+      bcLink.download = "barcode.png";
+      document.body.appendChild(bcLink);
+      bcLink.click();
+      document.body.removeChild(bcLink);
+      setTimeout(function () { URL.revokeObjectURL(bcUrl); }, 2000);
+      bcStatus.className = "status ok";
+      bcStatus.textContent = "PNG downloaded.";
+    }, "image/png");
+  };
+  bcImg.onerror = function () {
+    bcStatus.className = "status error";
+    bcStatus.textContent = "The PNG could not be created in this browser. The SVG download still works.";
+  };
+  bcImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(bcSvgText);
+}
+function bcDownloadSvg() {
+  var bcSerializer = new XMLSerializer();
+  var bcSvgText = bcSerializer.serializeToString(bcSvg);
+  var bcBlob = new Blob([bcSvgText], { type: "image/svg+xml" });
+  var bcUrl = URL.createObjectURL(bcBlob);
+  var bcLink = document.createElement("a");
+  bcLink.href = bcUrl;
+  bcLink.download = "barcode.svg";
+  document.body.appendChild(bcLink);
+  bcLink.click();
+  document.body.removeChild(bcLink);
+  setTimeout(function () { URL.revokeObjectURL(bcUrl); }, 2000);
+  bcStatus.className = "status ok";
+  bcStatus.textContent = "SVG downloaded.";
+}
+
+document.getElementById("bc-run").addEventListener("click", bcGenerate);
+document.getElementById("bc-png").addEventListener("click", bcDownloadPng);
+document.getElementById("bc-svgdl").addEventListener("click", bcDownloadSvg);
+document.getElementById("bc-format").addEventListener("change", function () {
+  var bcFormatNow = document.getElementById("bc-format").value;
+  var bcInput = document.getElementById("bc-text");
+  if (bcFormatNow === "EAN13") { bcInput.value = "590123412345"; }
+  else if (bcFormatNow === "UPC") { bcInput.value = "03600029145"; }
+  else if (bcFormatNow === "CODE39") { bcInput.value = "CHEAKSTAR-123"; }
+  else { bcInput.value = "Cheakstar 123"; }
+  bcGenerate();
+});
+bcGenerate();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="barcode-generator"></script>
+</body>
+</html>
