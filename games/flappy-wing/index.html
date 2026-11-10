@@ -12,99 +12,85 @@
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
   h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
-  h3 { color: var(--navy); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  .error { color: #b91c1c; }
-  .ok { color: #166534; }
-  .privacy { background: #f8f5ec; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits { background: #fef3c7; border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .limits ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .limits li { margin: 0.25rem 0; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; font-size: 1rem; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
-  button.small { padding: 0.35rem 0.7rem; font-size: 0.9rem; }
-  select, input[type="number"] { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); }
+  button:focus-visible, #flap-board:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
-  .tabs button { margin-top: 0; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); }
-  .tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-  .game { display: none; }
-  .game.active { display: block; }
-  .board { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+  .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+  .ctrl-row button { margin-top: 0; }
+  .ctrl-row select { margin-top: 0; }
 
-  /* Wave 1 games (shared) */
-  .game-canvas { display: block; margin: 1rem auto 0; background: #071a2e; max-width: 100%; height: auto; touch-action: none; border: 2px solid var(--navy); box-sizing: border-box; }
-  #snake-board { width: min(440px, 100%); }
-  #brk-board { width: min(480px, 100%); }
-  #flap-board { width: min(400px, 100%); }
-  #traf-board { width: min(320px, 100%); }
-  #tgt-board { width: min(480px, 100%); }
-  #stk-board { width: min(360px, 100%); }
-  .snake-keys { display: grid; grid-template-columns: repeat(3, 64px); gap: 4px; margin-top: 1rem; justify-content: center; }
-  .snake-keys button { margin: 0; padding: 0.6rem 0; }
-  .snake-keys .k-up { grid-column: 2; }
-  .snake-keys .k-left { grid-column: 1; grid-row: 2; }
-  .snake-keys .k-down { grid-column: 2; grid-row: 2; }
-  .snake-keys .k-right { grid-column: 3; grid-row: 2; }
-  .traf-keys { display: flex; gap: 0.6rem; justify-content: center; margin-top: 1rem; }
-  .traf-keys button { margin: 0; padding: 0.6rem 1.6rem; }
-
-  /* Whack-a-Bug */
-  #whk-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 420px; margin-top: 1rem; }
-  .whk-cell { aspect-ratio: 1.15; background: #0a2540; border: 2px solid #123a5c; padding: 0; margin: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .whk-cell::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: 10%; height: 6px; background: #123a5c; border-radius: 3px; }
-  .whk-bug { width: 62%; height: 62%; opacity: 0; transform: translateY(30%) scale(0.6); transition: opacity 0.12s, transform 0.12s; pointer-events: none; }
-  .whk-cell.up .whk-bug { opacity: 1; transform: translateY(0) scale(1); }
-  .whk-cell.hit .whk-bug { opacity: 0.35; transform: scale(0.8) rotate(-18deg); }
-
-  /* Simon Sequence */
-  #sim-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 360px; margin-top: 1rem; }
-  .sim-pad { aspect-ratio: 1; border: none; padding: 0; margin: 0; cursor: pointer; opacity: 0.5; border-radius: 10px; }
-  .sim-pad.p0 { background: #16a34a; }
-  .sim-pad.p1 { background: #dc2626; }
-  .sim-pad.p2 { background: #eab308; }
-  .sim-pad.p3 { background: #2563eb; }
-  .sim-pad.lit { opacity: 1; outline: 4px solid #111827; outline-offset: -4px; }
-  .sim-pad:disabled { cursor: default; }
-
-  /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
+  /* ---- toolbar / fullscreen stage (house pattern) ---- */
   body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
-  .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
+  .play-bar button { margin-top: 0; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: #d1d5db; }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
-  .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
   .play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
   .play-stage:fullscreen .board { margin-top: 0.5rem; }
   .play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
   .play-stage:fullscreen button { margin-top: 0.35rem; }
-  .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
-  .play-stage:fullscreen #snake-board { width: min(57vmin, 500px); }
-  .play-stage:fullscreen #brk-board { width: min(74vmin, 640px); }
-  .play-stage:fullscreen #flap-board { width: min(56vmin, 440px); }
-  .play-stage:fullscreen #traf-board { width: min(40vmin, 320px); }
-  .play-stage:fullscreen #tgt-board { width: min(78vmin, 660px); }
-  .play-stage:fullscreen #stk-board { width: min(50vmin, 400px); }
-  .play-stage:fullscreen #whk-board { width: min(60vmin, 540px); }
-  .play-stage:fullscreen #sim-board { width: min(56vmin, 480px); }
+  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
     .play-stage:fullscreen h2 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
-  .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+
+  /* ---- Flappy Wing ---- */
+  /* Portrait canvas (400x500 logical units). The cgx layer sizes the
+     backing store from this CSS box x devicePixelRatio, so the board
+     stays crisp in windowed and fullscreen states (the shipped build
+     kept a fixed 400x500 bitmap and merely CSS-stretched it). In
+     fullscreen the board is sized from the available height - the old
+     min(56vmin, 440px) rule left it squat on a laptop screen. */
+  #flap-board { display: block; width: min(400px, 92vw); aspect-ratio: 4 / 5; margin: 1rem auto 0; background: #071a2e; border: 2px solid var(--navy); box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
+  .cgx-fs:fullscreen #flap-board, .cgx-fs:-webkit-full-screen #flap-board { flex: none; width: min(94vw, 64vh, 500px); margin-top: 0.5rem; }
+  .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+  .play-stage:fullscreen .stats-line { color: #cbd5e1; }
+  /* The medal line on the game-over panel pops in (the class is added
+     to the dialog's medal paragraph when a medal was earned). */
+  .flap-medal-pop { font-weight: 800; color: var(--gold, #c9a227); font-size: 1.15rem; animation: flap-medal-pop 0.6s ease; }
+  @keyframes flap-medal-pop { 0% { transform: scale(0.4); opacity: 0; } 60% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+
+
+  /* ---- Cheakstar Games shared layer (cgx) ---- */
+  .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+  .cgx-overlay.open { display: flex; }
+  .cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+  .cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+  .cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+  .cgx-dialog-body p { margin: 0.3rem 0; }
+  .cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+  .cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+  .cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+  .cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+  .cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+  .cgx-stars .off { color: #475569; }
+  .cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  .cgx-btn:hover { background: #1a4a75; }
+  .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+  .cgx-btn-primary:hover { background: #dbb63a; }
+  .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+  body.cgx-wide { max-width: 1120px; }
+  .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+  .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
 </style>
 </head>
-<body>
+<body class="cgx-wide">
 <header>
   <h1>Flappy Wing</h1>
   <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
@@ -112,99 +98,699 @@
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
+  <button type="button" id="flap-sound">Sound: Off</button>
   <button type="button" id="fs-btn">Play fullscreen</button>
 </div>
-<section class="play-stage" id="stage">
+<section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
   <h2>Flappy Wing</h2>
-  <p class="fs-desc">Click, tap or press Space to flap. Fly through the gaps in the pipes — one point for every pipe you pass. Touch a pipe or the ground and the run ends.</p>
+  <p class="fs-desc">Click, tap or press Space to flap. Fly through the gaps in the pipes - one point for every pipe you pass. Earn a medal at 10, 20, 30 and 40 points; the pipes creep closer together and faster as your score climbs. Press P to pause. Touch a pipe or the ground and the run ends. Your best score and your medals are saved on this device.</p>
   <div class="scorebar"><span>Score: <span id="flap-score">0</span></span><span>Best: <span id="flap-best">0</span></span></div>
-  <canvas class="board game-canvas" id="flap-board" width="400" height="500"></canvas>
+  <canvas class="board" id="flap-board" width="400" height="500" tabindex="0" aria-label="Flappy Wing board. Click, tap or press Space to flap."></canvas>
   <p class="status" id="flap-status">Click the board or press Space to start flapping.</p>
-  <div>
+  <p class="stats-line" id="flap-stats"></p>
+  <div class="ctrl-row">
     <button type="button" id="flap-new">New game</button>
+    <button type="button" id="flap-pause">Pause</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded, stored, or tracked anywhere. Closing the page ends the game. Honest note: a one-button arcade game in the classic tap-to-flap style, an original implementation built for this site.</p>
+<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your best score and the medals you earn are saved only in this browser on this device, so they are still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Medals: Bronze at 10 points, Silver at 20, Gold at 30 and Platinum at 40. Honest note: a one-button arcade game in the classic tap-to-flap style, an original implementation built for this site.</p>
+<script>
+"use strict";
+/* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
+   Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
+   confetti and sound, shared by all 29 games. One global only: cgx. */
+var cgx = (function () {
+  var VERSION = "1.0.0";
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  /* Dialogs and confetti must live inside the fullscreen element while
+     fullscreen is active, or the browser will not paint them. */
+  function host() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.body;
+  }
+
+  /* ---------------- storage ----------------
+     Keys: cheakstar.games.<slug>.<key>, values are JSON. Falls back to
+     an in-memory store (session only) when localStorage is unavailable
+     or a write fails. Account-sync plug-in: after store.registerSync(fn),
+     every set/remove calls fn(fullKey, jsonOrNull); store.applyRemote()
+     writes a downloaded value WITHOUT notifying, so a pull cannot echo
+     back as a push. Game call sites never change when sync lands. */
+  var STORE_PREFIX = "cheakstar.games.";
+  var storeOk = false;
+  try {
+    window.localStorage.setItem("__cgx_probe__", "1");
+    window.localStorage.removeItem("__cgx_probe__");
+    storeOk = true;
+  } catch (e) { storeOk = false; }
+  var memData = {};
+  var memBackend = {
+    get: function (k) { return Object.prototype.hasOwnProperty.call(memData, k) ? memData[k] : null; },
+    set: function (k, v) { memData[k] = v; return true; },
+    remove: function (k) { if (Object.prototype.hasOwnProperty.call(memData, k)) delete memData[k]; },
+    keys: function () { var out = []; for (var k in memData) if (Object.prototype.hasOwnProperty.call(memData, k)) out.push(k); return out; }
+  };
+  var mainBackend = {
+    get: function (k) {
+      var v = null;
+      if (storeOk) { try { v = window.localStorage.getItem(k); } catch (e) { v = null; } }
+      return v !== null ? v : memBackend.get(k);
+    },
+    set: function (k, v) {
+      if (storeOk) { try { window.localStorage.setItem(k, v); return true; } catch (e) { /* fall through to memory */ } }
+      return memBackend.set(k, v);
+    },
+    remove: function (k) {
+      if (storeOk) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+      memBackend.remove(k);
+    },
+    keys: function () {
+      var out = memBackend.keys(), i, k;
+      if (storeOk) {
+        try {
+          for (i = 0; i < window.localStorage.length; i++) {
+            k = window.localStorage.key(i);
+            if (k && out.indexOf(k) === -1) out.push(k);
+          }
+        } catch (e) { /* ignore */ }
+      }
+      return out;
+    }
+  };
+  var syncFn = null;
+  function syncNotify(fullKey, jsonOrNull) {
+    if (!syncFn) return;
+    try { syncFn(fullKey, jsonOrNull); } catch (e) { /* an adapter error must never break a game */ }
+  }
+  function makeStore(slug, backend) {
+    var prefix = STORE_PREFIX + slug + ".";
+    return {
+      get: function (key, fallback) {
+        var raw = backend.get(prefix + key);
+        if (raw === null || raw === undefined) return fallback;
+        try { return JSON.parse(raw); } catch (e) { return fallback; }
+      },
+      set: function (key, value) {
+        var raw;
+        try { raw = JSON.stringify(value); } catch (e) { return false; }
+        if (raw === undefined) return false;
+        var done = backend.set(prefix + key, raw);
+        if (done) syncNotify(prefix + key, raw);
+        return done;
+      },
+      remove: function (key) { backend.remove(prefix + key); syncNotify(prefix + key, null); },
+      keys: function () {
+        var all = backend.keys(), out = [], i;
+        for (i = 0; i < all.length; i++) if (all[i].indexOf(prefix) === 0) out.push(all[i].slice(prefix.length));
+        return out;
+      }
+    };
+  }
+  function store(slug) { return makeStore(slug, mainBackend); }
+  store.available = storeOk;
+  store.PREFIX = STORE_PREFIX;
+  store.registerSync = function (fn) { syncFn = (typeof fn === "function") ? fn : null; };
+  store.applyRemote = function (fullKey, jsonOrNull) {
+    if (typeof fullKey !== "string" || fullKey.indexOf(STORE_PREFIX) !== 0) return false;
+    if (jsonOrNull === null) mainBackend.remove(fullKey);
+    else mainBackend.set(fullKey, String(jsonOrNull));
+    return true;
+  };
+
+  /* ---------------- sound (WebAudio beeps, muted by default) ---------------- */
+  var settingsStore = store("settings");
+  var audioCtx = null;
+  function soundMuted() { return settingsStore.get("soundMuted", true) !== false; }
+  function setMuted(m) { settingsStore.set("soundMuted", !!m); return !!m; }
+  function beep(freq, ms, opts) {
+    if (soundMuted()) return false;
+    opts = opts || {};
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
+      var dur = (ms || 120) / 1000, t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = opts.type || "sine";
+      osc.frequency.value = freq || 660;
+      gain.gain.setValueAtTime(opts.gain || 0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+      return true;
+    } catch (e) { return false; }
+  }
+  /* Named effects; sequences are [freq, ms, delayMs] triples. */
+  var SFX = {
+    click: [[620, 60, 0]], place: [[440, 70, 0]],
+    good: [[660, 90, 0], [880, 130, 85]], bad: [[150, 160, 0]],
+    win: [[523, 110, 0], [659, 110, 95], [784, 110, 190], [1047, 230, 285]],
+    lose: [[392, 140, 0], [330, 140, 130], [262, 250, 260]]
+  };
+  var SFX_OPTS = { click: { type: "square", gain: 0.05 }, bad: { type: "sawtooth", gain: 0.08 } };
+  function sfx(name) {
+    if (soundMuted()) return false;
+    var seq = SFX[name], i, note;
+    if (!seq) return beep(660, 100);
+    for (i = 0; i < seq.length; i++) {
+      note = seq[i];
+      if (note[2] === 0) beep(note[0], note[1], SFX_OPTS[name] || null);
+      else (function (f, m, d) { window.setTimeout(function () { beep(f, m); }, d); })(note[0], note[1], note[2]);
+    }
+    return true;
+  }
+  function attachMuteToggle(btn) {
+    if (!btn) return;
+    function sync() {
+      btn.textContent = soundMuted() ? "Sound: Off" : "Sound: On";
+      btn.setAttribute("aria-pressed", soundMuted() ? "false" : "true");
+    }
+    btn.addEventListener("click", function () {
+      setMuted(!soundMuted());
+      sync();
+      if (!soundMuted()) sfx("click");
+    });
+    sync();
+  }
+
+  /* ---------------- canvas fit + fullscreen ---------------- */
+  function dpr() { var d = window.devicePixelRatio || 1; return d > 2 ? 2 : d; }
+  /* Sizes the backing store to CSS box x devicePixelRatio and sets the
+     transform so drawing uses logical units (pass logicalW/logicalH, e.g.
+     480/360) or CSS pixels (omit them). Resizing clears the canvas, so
+     always redraw after a fit. Returns null when the canvas is unsized. */
+  function fit(canvas, logicalW, logicalH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.round(rect.width), cssH = Math.round(rect.height);
+    if (cssW < 1 || cssH < 1) return null;
+    var ratio = dpr();
+    var bw = Math.round(cssW * ratio), bh = Math.round(cssH * ratio);
+    if (canvas.width !== bw) canvas.width = bw;
+    if (canvas.height !== bh) canvas.height = bh;
+    var ctx = canvas.getContext("2d");
+    if (ctx) {
+      if (logicalW && logicalH) ctx.setTransform(bw / logicalW, 0, 0, bh / logicalH, 0, 0);
+      else ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return { cssW: cssW, cssH: cssH, dpr: ratio, width: bw, height: bh };
+  }
+  /* Fits now and re-fits on window resize and on fullscreen change - the
+     backing store follows the screen, which is the spec 0.2 fix.
+     onResize(info) must redraw. Returns { refit, destroy }. */
+  function watchFit(canvas, opts, onResize) {
+    if (typeof opts === "function") { onResize = opts; opts = null; }
+    opts = opts || {};
+    var destroyed = false, queued = false;
+    function refit() {
+      var info = fit(canvas, opts.logicalW, opts.logicalH);
+      if (info && onResize) onResize(info);
+      return info;
+    }
+    function schedule() {
+      if (destroyed || queued) return;
+      queued = true;
+      window.requestAnimationFrame(function () { queued = false; if (!destroyed) refit(); });
+    }
+    function onFsChange() {
+      schedule();
+      window.setTimeout(function () { if (!destroyed) refit(); }, 80); /* layout can settle a frame late */
+    }
+    window.addEventListener("resize", schedule);
+    document.addEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    refit();
+    return {
+      refit: refit,
+      destroy: function () {
+        destroyed = true;
+        window.removeEventListener("resize", schedule);
+        document.removeEventListener("fullscreenchange", onFsChange);
+        document.removeEventListener("webkitfullscreenchange", onFsChange);
+      }
+    };
+  }
+  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  function isFullscreen() { return !!fsElement(); }
+  function requestFullscreen(elm) {
+    if (!elm) return false;
+    if (elm.requestFullscreen) { elm.requestFullscreen(); return true; }
+    if (elm.webkitRequestFullscreen) { elm.webkitRequestFullscreen(); return true; }
+    return false;
+  }
+  function exitFullscreen() {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+  function toggleFullscreen(elm) {
+    if (isFullscreen()) { exitFullscreen(); return true; }
+    return requestFullscreen(elm);
+  }
+  function onFullscreenChange(fn) {
+    document.addEventListener("fullscreenchange", fn);
+    document.addEventListener("webkitfullscreenchange", fn);
+    return function () {
+      document.removeEventListener("fullscreenchange", fn);
+      document.removeEventListener("webkitfullscreenchange", fn);
+    };
+  }
+
+  /* ---------------- dialog ---------------- */
+  var dlg = null, dlgKeyHandler = null;
+  function ensureDialog() {
+    if (!dlg) {
+      var overlay = mk("div", "cgx-overlay");
+      overlay.id = "cgx-overlay";
+      overlay.innerHTML = '<div class="cgx-dialog" role="dialog" aria-modal="true"><h3></h3><div class="cgx-dialog-body"></div><div class="cgx-btn-row"></div></div>';
+      overlay.addEventListener("click", function (ev) {
+        if (ev.target === overlay && overlay.getAttribute("data-dismiss") === "1") closeDialog();
+      });
+      dlg = { overlay: overlay, title: overlay.querySelector("h3"), body: overlay.querySelector(".cgx-dialog-body"), btnRow: overlay.querySelector(".cgx-btn-row") };
+    }
+    if (dlg.overlay.parentNode !== host()) host().appendChild(dlg.overlay);
+    return dlg;
+  }
+  function closeDialog() {
+    if (!dlg) return;
+    dlg.overlay.className = "cgx-overlay";
+    if (dlgKeyHandler) { document.removeEventListener("keydown", dlgKeyHandler); dlgKeyHandler = null; }
+  }
+  /* dialog({ title, bodyText | lines | bodyHtml | buildBody(el),
+       buttons: [{ label, primary, value, onClick }], onAction(value),
+       dismissible }) -> close function. A button click closes the dialog
+     first, then runs its onClick and the dialog's onAction. */
+  function dialog(opts) {
+    opts = opts || {};
+    var d = ensureDialog(), i;
+    d.title.textContent = opts.title || "";
+    d.body.innerHTML = "";
+    if (typeof opts.buildBody === "function") opts.buildBody(d.body);
+    else if (opts.bodyHtml) d.body.innerHTML = opts.bodyHtml;
+    else if (opts.lines || opts.bodyText) {
+      var lines = opts.lines || [opts.bodyText];
+      for (i = 0; i < lines.length; i++) d.body.appendChild(mk("p", null, lines[i]));
+    }
+    d.btnRow.innerHTML = "";
+    var buttons = (opts.buttons && opts.buttons.length) ? opts.buttons : [{ label: "OK", primary: true, value: "ok" }];
+    var focusBtn = null;
+    for (i = 0; i < buttons.length; i++) {
+      (function (b) {
+        var btn = mk("button", "cgx-btn" + (b.primary ? " cgx-btn-primary" : ""), b.label || "OK");
+        btn.type = "button";
+        btn.addEventListener("click", function () {
+          closeDialog();
+          if (b.onClick) b.onClick();
+          if (opts.onAction) opts.onAction(b.value);
+        });
+        d.btnRow.appendChild(btn);
+        if (b.primary) focusBtn = btn;
+      })(buttons[i]);
+    }
+    d.overlay.setAttribute("data-dismiss", opts.dismissible === false ? "0" : "1");
+    d.overlay.className = "cgx-overlay open";
+    if (dlgKeyHandler) document.removeEventListener("keydown", dlgKeyHandler);
+    dlgKeyHandler = function (ev) { if (ev.key === "Escape" && opts.dismissible !== false) closeDialog(); };
+    document.addEventListener("keydown", dlgKeyHandler);
+    if (focusBtn && focusBtn.focus) focusBtn.focus();
+    return closeDialog;
+  }
+  function confirmDialog(title, message, onOk) {
+    return dialog({
+      title: title,
+      bodyText: message,
+      buttons: [
+        { label: "Cancel", value: "cancel" },
+        { label: "OK", primary: true, value: "ok", onClick: function () { if (onOk) onOk(); } }
+      ]
+    });
+  }
+  /* Win/lose end screen (spec 0.6): score + best rows, a "New best!"
+     badge, optional 0-3 stars and medal line, Play Again + Close.
+     Fires confetti and the win/lose sound unless told not to. */
+  function showResult(opts) {
+    opts = opts || {};
+    var won = opts.won !== false;
+    var close = dialog({
+      title: opts.title || (won ? "You win!" : "Game over"),
+      buildBody: function (body) {
+        var rows = [], i, row, stars, s;
+        if (opts.message) body.appendChild(mk("p", null, opts.message));
+        if (opts.score !== undefined && opts.score !== null) rows.push([opts.scoreLabel || "Score", opts.score]);
+        if (opts.best !== undefined && opts.best !== null) rows.push([opts.bestLabel || "Best", opts.best]);
+        if (rows.length) {
+          var table = mk("div", "cgx-score-table");
+          for (i = 0; i < rows.length; i++) {
+            row = mk("div", "cgx-score-row");
+            row.appendChild(mk("span", null, rows[i][0]));
+            row.appendChild(mk("span", null, String(rows[i][1])));
+            table.appendChild(row);
+          }
+          body.appendChild(table);
+        }
+        if (opts.newBest) body.appendChild(mk("span", "cgx-newbest", "New best!"));
+        if (typeof opts.stars === "number") {
+          stars = mk("div", "cgx-stars");
+          for (i = 0; i < 3; i++) {
+            s = mk("span", i >= opts.stars ? "off" : null, "\u2605");
+            stars.appendChild(s);
+          }
+          body.appendChild(stars);
+        }
+        if (opts.medal) body.appendChild(mk("p", null, opts.medal));
+      },
+      buttons: [
+        { label: opts.playAgainLabel || "Play again", primary: true, value: "again", onClick: function () { if (opts.onPlayAgain) opts.onPlayAgain(); } },
+        { label: opts.closeLabel || "Close", value: "close", onClick: function () { if (opts.onClose) opts.onClose(); } }
+      ]
+    });
+    if (won && opts.confetti !== false) confetti();
+    if (opts.sound !== false) sfx(won ? "win" : "lose");
+    return close;
+  }
+
+  /* ---------------- confetti ---------------- */
+  var confettiState = null;
+  function confettiStop() {
+    if (!confettiState) return;
+    confettiState.running = false;
+    if (confettiState.raf) window.cancelAnimationFrame(confettiState.raf);
+    if (confettiState.canvas.parentNode) confettiState.canvas.parentNode.removeChild(confettiState.canvas);
+    confettiState = null;
+  }
+  /* confetti({ count, duration, colors }) -> { stop, count }.
+     Lightweight canvas burst, no assets; removes itself when done. */
+  function confetti(opts) {
+    opts = opts || {};
+    confettiStop();
+    var colors = opts.colors || ["#c9a227", "#f3d67c", "#ffffff", "#38bdf8", "#f87171", "#4ade80"];
+    var count = opts.count || 130, duration = opts.duration || 2600;
+    var canvas = mk("canvas", "cgx-confetti-canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    host().appendChild(canvas);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) {
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+      return { stop: function () { /* nothing running */ }, count: 0 };
+    }
+    var parts = [], i;
+    for (i = 0; i < count; i++) {
+      parts.push({
+        x: Math.random() * canvas.width, y: -30 - Math.random() * canvas.height * 0.35,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7,
+        vx: -45 + Math.random() * 90, vy: 130 + Math.random() * 170,
+        rot: Math.random() * Math.PI, vr: -4 + Math.random() * 8,
+        color: colors[i % colors.length]
+      });
+    }
+    var state = { canvas: canvas, running: true, raf: 0, started: performance.now(), last: performance.now() };
+    confettiState = state;
+    function frame(now) {
+      if (!state.running) return;
+      var dt = Math.min(0.05, (now - state.last) / 1000), j, pt;
+      state.last = now;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (j = 0; j < parts.length; j++) {
+        pt = parts[j];
+        pt.vy += 60 * dt;
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+        pt.rot += pt.vr * dt;
+        ctx.save();
+        ctx.translate(pt.x, pt.y);
+        ctx.rotate(pt.rot);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(-pt.w / 2, -pt.h / 2, pt.w, pt.h);
+        ctx.restore();
+      }
+      if (now - state.started < duration) state.raf = window.requestAnimationFrame(frame);
+      else confettiStop();
+    }
+    state.raf = window.requestAnimationFrame(frame);
+    return { stop: confettiStop, count: parts.length };
+  }
+  function confettiRunning() { return !!confettiState; }
+
+  /* Keep an open dialog and running confetti inside the fullscreen
+     element when fullscreen starts or ends mid-display. */
+  function rehost() {
+    var h = host();
+    if (dlg && dlg.overlay.parentNode !== h) h.appendChild(dlg.overlay);
+    if (confettiState && confettiState.canvas.parentNode !== h) h.appendChild(confettiState.canvas);
+  }
+  document.addEventListener("fullscreenchange", rehost);
+  document.addEventListener("webkitfullscreenchange", rehost);
+
+  return {
+    version: VERSION,
+    store: store, fit: fit, watchFit: watchFit,
+    isFullscreen: isFullscreen, requestFullscreen: requestFullscreen,
+    exitFullscreen: exitFullscreen, toggleFullscreen: toggleFullscreen,
+    onFullscreenChange: onFullscreenChange,
+    dialog: dialog, confirm: confirmDialog, showResult: showResult, closeDialog: closeDialog,
+    confetti: confetti, confettiStop: confettiStop, confettiRunning: confettiRunning,
+    beep: beep, sfx: sfx,
+    muted: soundMuted, setMuted: setMuted,
+    toggleMuted: function () { return setMuted(!soundMuted()); },
+    attachMuteToggle: attachMuteToggle
+  };
+})();
+</script>
 <script>
 "use strict";
 function $(id) { return document.getElementById(id); }
-/* ================= G8 FLAPPY WING ================= */
+/* ================= G8 FLAPPY WING (polish pass) =================
+   The verified game core is kept: the flap physics (gravity 1500,
+   flap velocity -440, fall capped at 640), the pipe spawn distance
+   (235 px), the pass scoring and the collision test, the pointerdown
+   + Space/ArrowUp/W controls, and the ready/playing/over phases.
+   The polish adds medal tiers (Bronze 10 / Silver 20 / Gold 30 /
+   Platinum 40) with a permanent best score and medal tally kept
+   through cgx.store("flappy-wing"), velocity tilt on the bird, a
+   scrolling ground, a "+1" popup and a soft flash on every pass, a
+   death tumble with a screen shake, a slow day/night sky cycle
+   (gradient cached, rebuilt only when the cycle step or the canvas
+   size changes), a difficulty ramp (below), a P-key / button pause,
+   and a requestAnimationFrame loop that only runs while a run is
+   live - the ready, paused and game-over screens hold a static
+   frame. Drawing runs through cgx.watchFit, so the backing store
+   follows the CSS box x devicePixelRatio and the board stays crisp
+   in fullscreen.
+
+   Difficulty ramp (exact): the gap each pipe is dealt with is
+   gapFor(score at spawn) = max(132, 152 - score) px - one pixel
+   narrower per point, reaching 132 px at score 20 and staying
+   there; each pipe keeps the gap it was dealt with. The scroll
+   speed is speedNow() = min(168, 132 + 1.2 * score) px/s, rising
+   1.2 px/s per point and capping at 168 px/s at score 30. */
 var FlappyWing = (function () {
   var flapW = 400, flapH = 500, flapGroundH = 40, flapPlayH = flapH - flapGroundH;
-  var flapBird = { x: 88, y: 230, r: 13, vy: 0 };
-  var flapPipes = [], flapPipeW = 68, flapGap = 152, flapSpeed = 132, flapSincePipe = 0;
-  var flapScore = 0, flapBest = 0;
-  var flapPhase = "ready"; /* ready | playing | over */
-  var flapInvincible = false, flapLastTs = 0, flapBobT = 0;
+  var flapBird = { x: 88, y: 230, r: 13, vy: 0, rot: 0 };
+  var flapPipes = [], flapPipeW = 68, flapBaseGap = 152, flapBaseSpeed = 132, flapSincePipe = 0;
+  var flapScore = 0, flapBest = 0, flapNewBest = false;
+  var flapPhase = "ready"; /* ready | playing | paused | dying | over */
+  var flapInvincible = false, flapSlow = false;
+  var flapLastTs = 0, flapBobT = 0, flapTime = 0;
+  var flapGroundOff = 0, flapFlash = 0, flapShake = 0, flapPopups = [];
+  var flapRaf = 0, flapLoopOn = false, flapDraws = 0, flapPanelShown = false;
+  var flapGrad = null, flapGradStep = -1;
   var flapCtx = $("flap-board").getContext("2d");
+
+  /* ---------------- persistence (cgx.store) ----------------
+     Keys: "best" (the best score, a number) and "medals" (an object
+     { bronze, silver, gold, platinum } counting the runs that ENDED
+     at each tier - a 25-point run adds one Silver). Both live at
+     cheakstar.games.flappy-wing.* in this browser only. */
+  var flapStore = cgx.store("flappy-wing");
+  var MEDAL_TIERS = [
+    { key: "bronze", name: "Bronze", at: 10 },
+    { key: "silver", name: "Silver", at: 20 },
+    { key: "gold", name: "Gold", at: 30 },
+    { key: "platinum", name: "Platinum", at: 40 }
+  ];
+  function flapMedalFor(score) {
+    var found = null, i;
+    for (i = 0; i < MEDAL_TIERS.length; i++) if (score >= MEDAL_TIERS[i].at) found = MEDAL_TIERS[i];
+    return found;
+  }
+  function flapLoadBest() {
+    var v = flapStore.get("best", 0);
+    return (typeof v === "number" && v > 0) ? Math.floor(v) : 0;
+  }
+  function flapLoadMedals() {
+    var d = flapStore.get("medals", null), out = { bronze: 0, silver: 0, gold: 0, platinum: 0 }, i, k;
+    if (d && typeof d === "object") {
+      for (i = 0; i < MEDAL_TIERS.length; i++) {
+        k = MEDAL_TIERS[i].key;
+        if (typeof d[k] === "number" && d[k] > 0) out[k] = Math.floor(d[k]);
+      }
+    }
+    return out;
+  }
+  flapBest = flapLoadBest();
+  var flapMedals = flapLoadMedals();
+
+  /* ---------------- difficulty ramp ---------------- */
+  function flapGapFor(score) { return Math.max(132, flapBaseGap - score); }
+  function flapSpeedNow() {
+    var s = Math.min(168, flapBaseSpeed + flapScore * 1.2);
+    return flapSlow ? s * 0.55 : s;
+  }
 
   function flapSyncHud() {
     $("flap-score").textContent = String(flapScore);
     $("flap-best").textContent = String(flapBest);
+    var next = null, i;
+    for (i = 0; i < MEDAL_TIERS.length; i++) {
+      if (flapBest < MEDAL_TIERS[i].at) { next = MEDAL_TIERS[i]; break; }
+    }
+    $("flap-stats").textContent = "Medals - Bronze: " + flapMedals.bronze + " · Silver: " + flapMedals.silver +
+      " · Gold: " + flapMedals.gold + " · Platinum: " + flapMedals.platinum +
+      (next ? " · Next medal: " + next.name + " at " + next.at + " points" : " · Every medal earned");
   }
   function flapReset() {
-    flapBird.y = 230; flapBird.vy = 0;
+    flapStopLoop();
+    flapBird.y = 230; flapBird.vy = 0; flapBird.rot = 0;
     flapPipes = [];
     flapScore = 0;
+    flapNewBest = false;
     flapPhase = "ready";
     flapSincePipe = 140;
+    flapPopups = [];
+    flapFlash = 0; flapShake = 0;
+    flapPanelShown = false;
+    $("flap-pause").textContent = "Pause";
     flapSyncHud();
     $("flap-status").textContent = "Click the board or press Space to start flapping.";
+    flapDraw();
   }
   function flapSpawnPipe() {
     var margin = 46;
-    var gapY = margin + flapGap / 2 + Math.random() * (flapPlayH - 2 * margin - flapGap);
-    flapPipes.push({ x: flapW + 10, gapY: gapY, passed: false });
+    var gap = flapGapFor(flapScore);
+    var gapY = margin + gap / 2 + Math.random() * (flapPlayH - 2 * margin - gap);
+    flapPipes.push({ x: flapW + 10, gapY: gapY, gap: gap, passed: false });
   }
   function flapDoFlap() {
-    if (flapPhase === "over") return;
+    if (flapPhase === "over" || flapPhase === "dying" || flapPhase === "paused") return;
     if (flapPhase === "ready") {
       flapPhase = "playing";
       $("flap-status").textContent = "Fly through the gaps.";
+      flapStartLoop();
     }
     flapBird.vy = -440;
+    cgx.sfx("click");
+  }
+  function flapShowPanel(why, medal) {
+    if (flapPanelShown) return;
+    flapPanelShown = true;
+    cgx.showResult({
+      won: !!medal,
+      title: "Game over",
+      message: why + " You passed " + flapScore + (flapScore === 1 ? " pipe" : " pipes") + " on this run.",
+      score: flapScore, scoreLabel: "Score",
+      best: flapBest, bestLabel: "Best",
+      newBest: flapNewBest,
+      medal: medal ? medal.name + " medal" : null,
+      playAgainLabel: "Fly again",
+      onPlayAgain: function () { flapReset(); }
+    });
+    if (medal) {
+      /* Give the medal line its pop animation (the layer renders it
+         as a plain paragraph; find it by its exact text). */
+      var ps = document.querySelectorAll(".cgx-dialog-body p"), i;
+      for (i = 0; i < ps.length; i++) {
+        if (ps[i].textContent === medal.name + " medal") ps[i].className = "flap-medal-pop";
+      }
+    }
   }
   function flapGameOver(why) {
+    /* Storage is written exactly once, here: the best score, and
+       the medal tally when this run earned a tier. */
+    var medal = flapMedalFor(flapScore);
+    flapNewBest = flapScore > flapBest;
+    if (flapNewBest) { flapBest = flapScore; flapStore.set("best", flapBest); }
+    if (medal) { flapMedals[medal.key]++; flapStore.set("medals", flapMedals); }
     flapPhase = "over";
-    if (flapScore > flapBest) flapBest = flapScore;
     flapSyncHud();
     $("flap-status").textContent = "Game over. " + why + " Final score: " + flapScore + ". Press New game to fly again.";
+    window.setTimeout(function () { if (flapPhase === "over") flapShowPanel(why, medal); }, 550);
+  }
+  function flapHitGround() {
+    flapBird.y = flapPlayH - flapBird.r;
+    flapShake = Math.max(flapShake, 0.3);
+    cgx.sfx("bad");
+    flapGameOver("You hit the ground.");
   }
   function flapUpdate(dt) {
-    flapBobT += dt;
-    if (flapPhase === "ready") { flapBird.y = 230 + Math.sin(flapBobT * 3) * 7; return; }
+    if (flapPhase === "dying") {
+      flapBird.vy = Math.min(720, flapBird.vy + 1500 * dt);
+      flapBird.y += flapBird.vy * dt;
+      flapBird.rot += (1.5 - flapBird.rot) * Math.min(1, 7 * dt);
+      if (flapShake > 0) flapShake = Math.max(0, flapShake - dt);
+      if (flapBird.y + flapBird.r >= flapPlayH) flapHitGround();
+      return;
+    }
     if (flapPhase !== "playing") return;
     flapBird.vy = Math.min(640, flapBird.vy + 1500 * dt);
     flapBird.y += flapBird.vy * dt;
-    flapSincePipe += flapSpeed * dt;
+    /* Tilt by velocity: snap nose-up on a flap, ease into a dive. */
+    var target = flapBird.vy < 0 ? -0.32 : Math.min(1.3, Math.pow(flapBird.vy / 640, 1.4) * 1.3);
+    flapBird.rot += (target - flapBird.rot) * Math.min(1, (flapBird.vy < 0 ? 14 : 5.5) * dt);
+    var speed = flapSpeedNow();
+    flapSincePipe += speed * dt;
     if (flapSincePipe >= 235) { flapSincePipe = 0; flapSpawnPipe(); }
+    flapGroundOff = (flapGroundOff + speed * dt) % 24;
     for (var i = flapPipes.length - 1; i >= 0; i--) {
       var p = flapPipes[i];
-      p.x -= flapSpeed * dt;
+      p.x -= speed * dt;
       if (!p.passed && p.x + flapPipeW < flapBird.x - flapBird.r) {
         p.passed = true;
         flapScore++;
+        flapFlash = 0.22;
+        flapPopups.push({ x: flapBird.x + 20, y: flapBird.y - 20, t: 0 });
         flapSyncHud();
+        cgx.sfx("good");
         $("flap-status").textContent = "Score " + flapScore + ". Keep flying.";
       }
       if (p.x + flapPipeW < -12) flapPipes.splice(i, 1);
     }
+    if (flapFlash > 0) flapFlash = Math.max(0, flapFlash - dt);
+    for (var u = flapPopups.length - 1; u >= 0; u--) {
+      flapPopups[u].t += dt;
+      flapPopups[u].y -= 30 * dt;
+      if (flapPopups[u].t > 0.8) flapPopups.splice(u, 1);
+    }
+    if (flapShake > 0) flapShake = Math.max(0, flapShake - dt);
     if (flapBird.y < flapBird.r) { flapBird.y = flapBird.r; flapBird.vy = Math.max(0, flapBird.vy); }
     if (!flapInvincible) {
-      if (flapBird.y + flapBird.r >= flapPlayH) { flapBird.y = flapPlayH - flapBird.r; flapGameOver("You hit the ground."); return; }
+      if (flapBird.y + flapBird.r >= flapPlayH) { flapHitGround(); return; }
       var bx = flapBird.x, by = flapBird.y, rr = flapBird.r * 0.86;
       for (var j = 0; j < flapPipes.length; j++) {
         var q = flapPipes[j];
         if (bx + rr > q.x && bx - rr < q.x + flapPipeW) {
-          if (by - rr < q.gapY - flapGap / 2 || by + rr > q.gapY + flapGap / 2) { flapGameOver("You hit a pipe."); return; }
+          if (by - rr < q.gapY - q.gap / 2 || by + rr > q.gapY + q.gap / 2) {
+            /* Pipe hit in the air: tumble to the ground first. */
+            flapPhase = "dying";
+            flapBird.vy = Math.min(flapBird.vy, -260);
+            flapShake = 0.45;
+            cgx.sfx("bad");
+            return;
+          }
         }
       }
     }
   }
   function flapDrawPipe(p) {
     var ctx = flapCtx;
-    var topH = p.gapY - flapGap / 2, botY = p.gapY + flapGap / 2;
+    var topH = p.gapY - p.gap / 2, botY = p.gapY + p.gap / 2;
     ctx.fillStyle = "#178a4c";
     ctx.fillRect(p.x, 0, flapPipeW, topH);
     ctx.fillRect(p.x, botY, flapPipeW, flapPlayH - botY);
@@ -216,115 +802,204 @@ var FlappyWing = (function () {
     ctx.strokeRect(p.x - 3, topH - 22, flapPipeW + 6, 22);
     ctx.strokeRect(p.x - 3, botY, flapPipeW + 6, 22);
   }
+  /* Day/night cycle: one full swing per 60 s of accumulated run
+     time, starting at the shipped night navy. The gradient is
+     quantised to 24 steps and cached - it is rebuilt only when the
+     step changes (never per frame; spec 8f). */
+  function flapDayFactor() {
+    return 0.5 + 0.5 * Math.sin(flapTime * (Math.PI * 2 / 60) - Math.PI / 2);
+  }
+  function flapLerp(a, b, t) { return Math.round(a + (b - a) * t); }
+  function flapSky() {
+    var day = flapDayFactor();
+    var step = Math.round(day * 24);
+    if (flapGrad && flapGradStep === step) return { grad: flapGrad, day: day };
+    var g = flapCtx.createLinearGradient(0, 0, 0, flapH);
+    g.addColorStop(0, "rgb(" + flapLerp(13, 46, day) + "," + flapLerp(48, 111, day) + "," + flapLerp(84, 183, day) + ")");
+    g.addColorStop(1, "rgb(" + flapLerp(7, 13, day) + "," + flapLerp(26, 48, day) + "," + flapLerp(46, 84, day) + ")");
+    flapGrad = g;
+    flapGradStep = step;
+    return { grad: g, day: day };
+  }
   function flapDraw() {
+    flapDraws++;
     var ctx = flapCtx;
-    var grad = ctx.createLinearGradient(0, 0, 0, flapH);
-    grad.addColorStop(0, "#0d3054");
-    grad.addColorStop(1, "#071a2e");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, flapW, flapH);
+    ctx.save();
+    if (flapShake > 0) {
+      var m = 6 * (flapShake / 0.45);
+      ctx.translate((Math.random() * 2 - 1) * m, (Math.random() * 2 - 1) * m);
+    }
+    var sky = flapSky();
+    ctx.fillStyle = sky.grad;
+    ctx.fillRect(-8, -8, flapW + 16, flapH + 16);
+    /* Stars fade in at the night end of the cycle. */
+    if (sky.day < 0.55) {
+      ctx.fillStyle = "rgba(255,255,255," + (0.75 * (1 - sky.day)).toFixed(3) + ")";
+      for (var s = 0; s < 26; s++) {
+        ctx.fillRect((s * 67 + 23) % flapW, (s * 41 + 17) % 300, 2, 2);
+      }
+    }
+    /* Sun by day, moon by night (one body, colour lerps). */
+    ctx.fillStyle = "rgb(" + flapLerp(226, 246, sky.day) + "," + flapLerp(232, 196, sky.day) + "," + flapLerp(240, 83, sky.day) + ")";
+    ctx.beginPath(); ctx.arc(332, 58, 16, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "rgba(255,255,255,0.16)";
     ctx.beginPath(); ctx.arc(70, 84, 17, 0, Math.PI * 2); ctx.arc(96, 84, 13, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(300, 140, 15, 0, Math.PI * 2); ctx.arc(324, 140, 11, 0, Math.PI * 2); ctx.fill();
     for (var i = 0; i < flapPipes.length; i++) flapDrawPipe(flapPipes[i]);
+    if (flapFlash > 0) {
+      ctx.fillStyle = "rgba(255,255,255," + (0.16 * flapFlash / 0.22).toFixed(3) + ")";
+      ctx.fillRect(0, 0, flapW, flapPlayH);
+    }
+    /* Ground: the stripe pattern scrolls with the world in play. */
     ctx.fillStyle = "#14532d";
-    ctx.fillRect(0, flapPlayH, flapW, flapGroundH);
+    ctx.fillRect(-8, flapPlayH, flapW + 16, flapGroundH + 8);
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    for (var gx = -flapGroundOff; gx < flapW; gx += 24) ctx.fillRect(gx, flapPlayH + 20, 12, 5);
     ctx.fillStyle = "#c9a227";
-    ctx.fillRect(0, flapPlayH, flapW, 4);
-    /* Bird: gold body, wing, eye, beak. */
+    ctx.fillRect(-8, flapPlayH, flapW + 16, 4);
+    /* Score popups float up and fade. */
+    for (var pp = 0; pp < flapPopups.length; pp++) {
+      var pop = flapPopups[pp];
+      ctx.globalAlpha = Math.max(0, 1 - pop.t / 0.8);
+      ctx.fillStyle = "#f3d67c";
+      ctx.font = "800 17px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("+1", pop.x, pop.y);
+      ctx.globalAlpha = 1;
+    }
+    /* Bird: gold body, wing, eye, beak - rotated by its velocity. */
+    ctx.save();
+    ctx.translate(flapBird.x, flapBird.y);
+    ctx.rotate(flapBird.rot);
     ctx.fillStyle = "#e8c85a";
-    ctx.beginPath(); ctx.arc(flapBird.x, flapBird.y, flapBird.r, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, flapBird.r, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#c9a227";
     ctx.beginPath();
-    ctx.ellipse(flapBird.x - 3, flapBird.y + 3, 7, 4.5, -0.5 + Math.sin(flapBobT * 18) * 0.25, 0, Math.PI * 2);
+    ctx.ellipse(-3, 3, 7, 4.5, -0.5 + Math.sin(flapBobT * 18) * 0.25, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.arc(flapBird.x + 5, flapBird.y - 4, 3.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -4, 3.6, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#111827";
-    ctx.beginPath(); ctx.arc(flapBird.x + 6, flapBird.y - 4, 1.8, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -4, 1.8, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#ea580c";
     ctx.beginPath();
-    ctx.moveTo(flapBird.x + flapBird.r - 1, flapBird.y - 1);
-    ctx.lineTo(flapBird.x + flapBird.r + 7, flapBird.y + 2);
-    ctx.lineTo(flapBird.x + flapBird.r - 1, flapBird.y + 5);
+    ctx.moveTo(flapBird.r - 1, -1);
+    ctx.lineTo(flapBird.r + 7, 2);
+    ctx.lineTo(flapBird.r - 1, 5);
     ctx.closePath(); ctx.fill();
+    ctx.restore();
     if (flapPhase === "ready") {
       ctx.fillStyle = "#fff";
-      ctx.font = "700 19px system-ui, sans-serif";
+      ctx.font = "700 24px system-ui, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Click or press Space to flap", flapW / 2, 120);
+      ctx.fillText("Get Ready", flapW / 2, 108);
+      ctx.font = "700 17px system-ui, sans-serif";
+      ctx.fillText("Click or press Space to flap", flapW / 2, 138);
     }
-    if (flapPhase === "over") {
-      ctx.fillStyle = "rgba(7,26,46,0.66)";
+    if (flapPhase === "paused") {
+      ctx.fillStyle = "rgba(7,26,46,0.5)";
       ctx.fillRect(0, 0, flapW, flapPlayH);
       ctx.fillStyle = "#fff";
-      ctx.font = "700 26px system-ui, sans-serif";
+      ctx.font = "700 24px system-ui, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Game over", flapW / 2, 210);
-      ctx.font = "600 17px system-ui, sans-serif";
-      ctx.fillText("Score: " + flapScore, flapW / 2, 240);
+      ctx.fillText("Paused", flapW / 2, 220);
+      ctx.font = "600 15px system-ui, sans-serif";
+      ctx.fillText("Press P or the Resume button to keep flying", flapW / 2, 248);
     }
+    ctx.restore();
   }
-  function flapLoop(ts) {
+  /* The frame loop runs only while a run is live (playing, dying,
+     or the last shake frames of game over). Ready, paused and the
+     settled game-over screen hold the static frame drawn once -
+     that is the rAF gating the spec asks for (8f). */
+  function flapFrame(ts) {
+    if (!flapLoopOn) return;
     if (!flapLastTs) flapLastTs = ts;
     var dt = Math.min(0.033, (ts - flapLastTs) / 1000);
     flapLastTs = ts;
-    flapUpdate(dt);
+    flapTime += dt;
+    flapBobT += dt;
+    if (flapPhase === "playing" || flapPhase === "dying") flapUpdate(dt);
+    else if (flapPhase === "over" && flapShake > 0) flapShake = Math.max(0, flapShake - dt);
     flapDraw();
-    requestAnimationFrame(flapLoop);
+    if (flapPhase === "over" && flapShake <= 0) { flapStopLoop(); return; }
+    flapRaf = requestAnimationFrame(flapFrame);
   }
-  $("flap-board").addEventListener("pointerdown", function (ev) { ev.preventDefault(); flapDoFlap(); });
+  function flapStartLoop() {
+    if (flapLoopOn) return;
+    flapLoopOn = true;
+    flapLastTs = 0;
+    flapRaf = requestAnimationFrame(flapFrame);
+  }
+  function flapStopLoop() {
+    flapLoopOn = false;
+    if (flapRaf) cancelAnimationFrame(flapRaf);
+    flapRaf = 0;
+  }
+  function flapSetPaused(on) {
+    if (on && flapPhase === "playing") {
+      flapPhase = "paused";
+      flapStopLoop();
+      $("flap-pause").textContent = "Resume";
+      $("flap-status").textContent = "Paused. Press P or the Resume button to keep flying.";
+      flapDraw();
+    } else if (!on && flapPhase === "paused") {
+      flapPhase = "playing";
+      $("flap-pause").textContent = "Pause";
+      $("flap-status").textContent = "Fly through the gaps.";
+      flapStartLoop();
+    }
+  }
+  function flapDialogOpen() { return !!document.querySelector("#cgx-overlay.open"); }
+  $("flap-board").addEventListener("pointerdown", function (ev) {
+    ev.preventDefault();
+    if (flapDialogOpen()) return;
+    flapDoFlap();
+  });
   document.addEventListener("keydown", function (ev) {
-    if (ev.key === " " || ev.key === "ArrowUp" || ev.key === "w" || ev.key === "W") { flapDoFlap(); ev.preventDefault(); }
+    var tag = ev.target && ev.target.tagName ? ev.target.tagName : "";
+    if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+    if (flapDialogOpen()) return;
+    var k = ev.key;
+    if (k === "p" || k === "P") {
+      if (flapPhase === "playing" || flapPhase === "paused") { flapSetPaused(flapPhase === "playing"); ev.preventDefault(); }
+      return;
+    }
+    if (k === " " || k === "ArrowUp" || k === "w" || k === "W") {
+      /* Space stays with a focused button, as in Word Finder and
+         Connect Four - the page buttons all blur after a click, so
+         this only matters for keyboard tabbing. */
+      if (k === " " && tag === "BUTTON") return;
+      flapDoFlap();
+      ev.preventDefault();
+    }
   });
   $("flap-new").addEventListener("click", function (ev) { flapReset(); ev.currentTarget.blur(); });
+  $("flap-pause").addEventListener("click", function (ev) {
+    if (flapPhase === "playing" || flapPhase === "paused") flapSetPaused(flapPhase === "playing");
+    ev.currentTarget.blur();
+  });
   flapReset();
-  flapDraw();
-  requestAnimationFrame(flapLoop);
-  // Test hooks (used by the headless verification script only).
-  window.__flap = {
-    get state() {
-      var gapCenter = null;
-      for (var i = 0; i < flapPipes.length; i++) {
-        if (!flapPipes[i].passed) { gapCenter = flapPipes[i].gapY; break; }
-      }
-      return {
-        score: flapScore, birdY: Math.round(flapBird.y), phase: flapPhase,
-        playing: flapPhase === "playing", over: flapPhase === "over", gapCenter: gapCenter
-      };
-    },
-    debugSetInvincible: function (on) { flapInvincible = !!on; }
-  };
+  /* Crisp backing store at any size (spec 0.2): fit follows the CSS
+     box x devicePixelRatio and redraws the current frame. */
+  cgx.watchFit($("flap-board"), { logicalW: flapW, logicalH: flapH }, function () { flapDraw(); });
   return { reset: flapReset };
 })();
 
-/* ================= FULLSCREEN (staging addition) ================= */
+/* ================= FULLSCREEN + SOUND (via the cgx shared layer) ================= */
 (function () {
-  var stage = document.getElementById("stage");
-  var enterBtn = document.getElementById("fs-btn");
-  var exitBtn = document.getElementById("fs-exit");
-  function fsElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-  function request() {
-    if (stage.requestFullscreen) return stage.requestFullscreen();
-    if (stage.webkitRequestFullscreen) return stage.webkitRequestFullscreen();
-    return null;
-  }
-  function exit() {
-    if (document.exitFullscreen) return document.exitFullscreen();
-    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    return null;
-  }
-  function sync() {
-    var on = !!fsElement();
-    enterBtn.textContent = on ? "Exit fullscreen" : "Play fullscreen";
-  }
+  var stage = $("stage");
+  var enterBtn = $("fs-btn");
+  var exitBtn = $("fs-exit");
   if (!stage.requestFullscreen && !stage.webkitRequestFullscreen) {
     enterBtn.style.display = "none"; /* browser has no Fullscreen API */
   }
-  enterBtn.addEventListener("click", function () { if (fsElement()) { exit(); } else { request(); } });
-  exitBtn.addEventListener("click", function () { exit(); });
-  document.addEventListener("fullscreenchange", sync);
-  document.addEventListener("webkitfullscreenchange", sync);
+  enterBtn.addEventListener("click", function () { cgx.toggleFullscreen(stage); });
+  exitBtn.addEventListener("click", function () { cgx.exitFullscreen(); });
+  cgx.onFullscreenChange(function () {
+    enterBtn.textContent = cgx.isFullscreen() ? "Exit fullscreen" : "Play fullscreen";
+  });
+  cgx.attachMuteToggle($("flap-sound"));
 })();
 </script>
 </body>
