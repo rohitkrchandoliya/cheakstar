@@ -96,7 +96,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Target Range</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -123,7 +123,7 @@
     <button type="button" id="tgt-pause">Pause</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your best score and your best accuracy (counted from rounds with at least 10 shots) are saved only in this browser on this device, so they are still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: the targets are drawn shapes on a practice range - a reaction and accuracy game, an original implementation built for this site.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your best score and your best accuracy (counted from rounds with at least 10 shots) are saved in this browser on this device, so they are still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: the targets are drawn shapes on a practice range - a reaction and accuracy game, an original implementation built for this site.</p>
 <script>
 "use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
@@ -1051,5 +1051,6 @@ var TargetRange = (function () {
   cgx.attachMuteToggle($("tgt-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
