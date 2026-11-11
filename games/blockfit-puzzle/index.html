@@ -130,7 +130,7 @@
 <body class="cgx-wide">
 <header>
   <h1>BlockFit Puzzle</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -153,7 +153,7 @@
   </div>
   <div id="bf-ghost"></div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - your best score, the most lines you have cleared in one game, and how many games you have finished - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your progress - your best score, the most lines you have cleared in one game, and how many games you have finished - is saved in this browser on this device, so it is still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings.</p>
 <script>
 "use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
@@ -1189,5 +1189,6 @@ var BlockFit = (function () {
   cgx.attachMuteToggle($("bf-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
