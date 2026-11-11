@@ -140,7 +140,7 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
 <p>The goal is to move all 52 cards onto the four foundation piles, one pile per suit, in order from ace up to king. On the table, cards build downwards in alternating colours — a red 7 goes on a black 8 — and a sequence of face-up cards moves together as one stack. Only a king (or a stack headed by a king) can move into an empty column. Click the stock in the top-left corner to turn one card onto the waste; you may pass through the stock as many times as you like. Turning over the last face-down card in a column flips it face up. Double-click or double-tap a card that is on top of its pile to send it straight to its foundation. When every table card is face up and the stock is empty, the Auto-finish button appears and plays the cards home for you. Every deal here comes from a set of shuffles verified as winnable by a solver program before release — if you get stuck, the answer is in the cards, not in a trick deck.</p>
 
 <h2>Your privacy</h2>
-<p>Solitaire runs fully on your device. Your game in progress, your statistics (games played, wins, best time, fewest moves, winning streak) and your place in the deal set are saved in this browser, on this device only, so you can pick up where you left off. Nothing is uploaded, shared or tracked anywhere, and your browser's site-data controls can erase everything at any time.</p>
+<p>Solitaire runs fully on your device. Your game in progress, your statistics (games played, wins, best time, fewest moves, winning streak) and your place in the deal set are saved in this browser on this device, so you can pick up where you left off, and when you are signed in they also sync privately to your Cheakstar account, so they follow you across your devices. Your progress is never shared or used for tracking, and your browser's site-data controls can erase everything at any time.</p>
 </main>
 <script>
 
@@ -1439,5 +1439,6 @@ window.addEventListener("resize", function () { solRender(); });
 cgx.onFullscreenChange(function () { setTimeout(function () { solRender(); }, 60); });
 
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
