@@ -120,7 +120,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Connect Four</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -147,7 +147,7 @@
   <p class="status" id="conn-status">Your turn, Gold. Click a column to drop a disc.</p>
   <p class="stats-line" id="conn-stats"></p>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your tallies against the computer and in two-player games, your win rate and your win streaks are saved only in this browser on this device, so they are still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. The computer opponent has three levels: Easy plays casually but still takes a win when it can and blocks yours, Medium is the classic casual player (it takes wins, blocks yours and otherwise favours the centre), and Hard looks a few moves ahead before choosing. None of them is a perfect solver, so a careful player can still win. In two-player mode both players share this device.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your tallies against the computer and in two-player games, your win rate and your win streaks are saved in this browser on this device, so they are still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings. The computer opponent has three levels: Easy plays casually but still takes a win when it can and blocks yours, Medium is the classic casual player (it takes wins, blocks yours and otherwise favours the centre), and Hard looks a few moves ahead before choosing. None of them is a perfect solver, so a careful player can still win. In two-player mode both players share this device.</p>p>
 <script>
 "use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
@@ -1193,5 +1193,6 @@ var ConnectFour = (function () {
   cgx.attachMuteToggle($("conn-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
