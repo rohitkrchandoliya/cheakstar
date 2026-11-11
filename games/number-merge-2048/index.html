@@ -25,7 +25,7 @@
           }
     applyAppearance();
     if (mq && mq.addEventListener) {
-      mq.addEventListener("change") function () {
+      mq.addEventListener("change", function () {
         if (currentMode() === "system") applyAppearance();
       });
     }
