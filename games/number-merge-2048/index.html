@@ -134,7 +134,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Number Merge 2048</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -171,7 +171,7 @@
   </div>
   <p class="note" id="merge-stats">On this device: no games played yet.</p>
 </section>
-<p class="note">Your privacy: Number Merge 2048 runs fully on your device. Your current game, your best scores and your statistics are saved in this browser, on this device only, so you can pick up where you left off. Nothing is uploaded, stored on a server, or tracked anywhere. Starting a new game clears the saved game, and your browser's site-data controls can erase everything at any time.</p>
+<p class="note">Your privacy: Number Merge 2048 runs fully on your device. Your current game, your best scores and your statistics are saved in this browser on this device, so you can pick up where you left off, and when you are signed in they also sync privately to your Cheakstar account, so they follow you across your devices. Your progress is never shared or used for tracking. Starting a new game clears the saved game, and your browser's site-data controls can erase everything at any time.</p>
 <script>
 
 "use strict";
@@ -1079,5 +1079,6 @@ var Merge2048 = (function () {
   cgx.attachMuteToggle($("merge-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
