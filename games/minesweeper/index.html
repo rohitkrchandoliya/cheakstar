@@ -130,7 +130,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Minesweeper</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -158,7 +158,7 @@
     <tbody id="mine-records-body"></tbody>
   </table>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded or tracked anywhere. Your best time, wins and games played for each difficulty are saved only in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. The minefield is generated inside this page only when you make your first click, and that first click is always on a safe square.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your best time, wins and games played for each difficulty are saved in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. The minefield is generated inside this page only when you make your first click, and that first click is always on a safe square.</p>
 <script>"use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
    Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
@@ -1110,5 +1110,6 @@ var Minesweeper = (function () {
     });
   })();
   </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
