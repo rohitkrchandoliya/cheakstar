@@ -3,37 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solitaire — Play Free Online, No Sign-up | Cheakstar Games</title>
+<script>
+/* Appearance: apply the visitor's saved theme choices before first paint.
+   Mirrors the main site's script.js applyAppearance exactly: same
+   localStorage keys, same resolution, fail-soft throughout. */
+(function () {
+  try {
+        var mq = window.matchMedia ? window.matchMedia("prefers-color-scheme: light") : null;
+    function currentMode() {
+            try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
+    }
+    function applyAppearance() {
+            var mode = currentMode();
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark" : "light");
+      try {
+                root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
+        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
+      } catch(e) {}
+    }
+    applyAppearance();
+    if (mq && mq.addEventListener) {
+      mq.addEventListener("change", function () {
+                      if (currentMode() === "system") applyAppearance();
+      });
+    }
+  } catch (e) { /* appearance is cosmetic; never break the page */ }
+})();
+</script>
+title>Solitaire — Play Free Online, No Sign-up | Cheakstar Games</title>
 <meta name="description" content="Play Klondike Solitaire free in your browser. Drag or click to move cards, undo, hints and an auto-finish, with your game and best times saved on your device. No sign-up to try.">
 <link rel="icon" href="data:,">
 <style>
-:root { --navy:#0f2040; --gold:#f5b942; --bg:#f4f6fb; --ink:#1c2733; --muted:#5b6b7f; --line:#dbe3ef; }
+:root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; --zone:rgba(238,242,248,.07); color-scheme:dark; }
+  [data-theme"light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; --zone:rgba(248,250,252,.55); color-scheme:light; }
+  html[data-textsize="large"] { font-size:112.5%; }
+  html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); }
-header.site { background:var(--navy); color:#fff; padding:.8rem 1.2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+header.site { background:var(--navy); color:#fff; padding:.8rem 1.2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; border-bottom:1px solid var(--line); }
 header.site .brand { font-weight:800; font-size:1.25rem; color:#fff; text-decoration:none; letter-spacing:.5px; }
 header.site .brand span { color:var(--gold); }
 header.site nav { margin-left:auto; display:flex; gap:1rem; flex-wrap:wrap; }
 header.site nav a { color:#dce6f5; text-decoration:none; font-size:.95rem; }
 header.site nav a:hover { color:var(--gold); }
+  [data-theme="light"] header.site { color:var(--ink); }
+  [data-theme="light"] header.site .brand { color:var(--ink); }
+  [data-theme="light"] header.site nav a { color:var(--muted); }
 main { max-width:1120px; margin:0 auto; padding:1.2rem 1rem 3rem; }
 h1 { font-size:1.7rem; margin:.4rem 0 .3rem; }
 h2 { font-size:1.25rem; margin:1.6rem 0 .5rem; }
 h3 { font-size:1.05rem; margin:1.1rem 0 .4rem; }
 p, li { line-height:1.55; }
 .note { color:var(--muted); }
-button { font:inherit; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:.5rem .95rem; cursor:pointer; font-weight:600; }
+button { font:inherit; background:var(--btn); color:#fff; border:1px solid var(--line); border-radius:8px; padding:.5rem .95rem; cursor:pointer; font-weight:600; }
 button:active { transform:scale(.97); }
 button:disabled { opacity:.45; cursor:default; transform:none; }
 button:focus-visible, a:focus-visible, select:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
-select { font:inherit; padding:.45rem; border:1px solid var(--line); border-radius:8px; background:#fff; }
+select { font:inherit; padding:.45rem; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
 label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
 .status { font-weight:600; min-height:1.4em; margin:.5rem 0; }
 .scorebar { display:flex; gap:1.2rem; flex-wrap:wrap; font-weight:700; margin:.6rem 0; }
-.scorebar span b { color:var(--navy); }
+.scorebar span b { color:var(--gold); }
 /* ---- full screen play stages ---- */
 .play-bar { display:flex; gap:.5rem; flex-wrap:wrap; margin:.4rem 0 .2rem; }
-.btn-link { background:none; border:none; color:var(--navy); font-weight:600; cursor:pointer; padding:.55rem .4rem; text-decoration:underline; }
+.btn-link { background:none; border:none; color:var(--gold); font-weight:600; cursor:pointer; padding:.55rem .4rem; text-decoration:underline; }
+  [data-theme="light"] .btn-link { color:var(--gold2); }
 .fs-exit { display:none; margin:.4rem auto .2rem; background:#33415e; }
 
 .play-stage:fullscreen, .play-stage:-webkit-full-screen { background:#071a2e; color:#eef3fa; padding:16px; overflow:auto; display:flex; flex-direction:column; align-items:center; }
@@ -51,9 +87,9 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
 /* ---- Solitaire (persistent absolutely-positioned card elements) ---- */
 #sol-area { position:relative; z-index:1; width:min(920px,100%); margin:.75rem auto 0; touch-action:none; }
 .cgx-fs:fullscreen #sol-area, .cgx-fs:-webkit-full-screen #sol-area { width:min(1100px,96vw); flex:none; }
-.sol-zone { position:absolute; border:2px dashed #9aa5b1; border-radius:8px; background:rgba(248,250,252,.55); }
+.sol-zone { position:absolute; border:2px dashed #9aa5b1; border-radius:8px; background:var(--zone); }
 .sol-zone .sol-suitbg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:calc(var(--sol-w,64px) * .42); opacity:.35; pointer-events:none; }
-.sol-zone .sol-recycle { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:calc(var(--sol-w,64px) * .44); color:#64748b; pointer-events:none; }
+.sol-zone .sol-recycle { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:calc(var(--sol-w,64px) * .44); color:var(--muted); pointer-events:none; }
 #sol-stock { cursor:pointer; }
 .sol-card { position:absolute; border:1.5px solid #334155; border-radius:calc(var(--sol-w,64px) * .11); background:#fff; padding:calc(var(--sol-w,64px) * .05) calc(var(--sol-w,64px) * .08); font-weight:700; font-size:calc(var(--sol-w,64px) * .21); line-height:1.05; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:none; overflow:hidden; }
 .sol-card .sol-big { display:block; text-align:center; font-size:calc(var(--sol-w,64px) * .46); margin-top:calc(var(--sol-w,64px) * .06); }
@@ -66,7 +102,8 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
 .sol-card.flipping { animation:solflip .26s ease; }
 @keyframes solflip { 0% { transform:rotateY(90deg); } 100% { transform:rotateY(0deg); } }
 .sol-card.dragging { box-shadow:0 10px 24px rgba(2,6,23,.45); cursor:grabbing; }
-.sol-count { position:absolute; right:-9px; top:-9px; background:var(--navy); color:#fff; border-radius:999px; font-size:.72rem; font-weight:700; padding:.08rem .42rem; pointer-events:none; z-index:5; }
+.sol-count { position:absolute; right:-9px; top:-9px; background:var(--gold); color:#111827; border-radius:999px; font-size:.72rem; font-weight:700; padding:.08rem .42rem; pointer-events:none; z-index:5; }
+  [data-theme="light"] .sol-count { background:var(--ink); color:#fff; }
 .sol-controls { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:center; margin:.8rem 0 .2rem; }
 #sol-stats { text-align:center; margin:.5rem 0 0; }
 /*
@@ -88,6 +125,9 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
   .cgx-btn:hover { background: #1a4a75; }
   .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
   .cgx-btn-primary:hover { background: #dbb63a; }
+  [data-theme="light"] .cgx-dialog { background: var(--card); color: var(--ink); }
+  [data-theme="light"] .cgx-dialog-body { color: var(--muted); }
+  [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
   .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
   body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
