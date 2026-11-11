@@ -132,7 +132,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Color Flood</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -164,7 +164,7 @@
     <tbody id="flood-records-body"></tbody>
   </table>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded or tracked anywhere. Your best moves, boards solved and win streak for each board size, and your board-size choice, are saved only in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Color Flood deals a fresh random board each game and counts your moves honestly against the limit shown. The moves you need depend on the board you are dealt, so some boards finish with room to spare and others are tight.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your best moves, boards solved and win streak for each board size, and your board-size choice, are saved in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Color Flood deals a fresh random board each game and counts your moves honestly against the limit shown. The moves you need depend on the board you are dealt, so some boards finish with room to spare and others are tight.</p>p>
 <script>"use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
    Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
@@ -999,5 +999,6 @@ var ColorFlood = (function () {
     });
   })();
   </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
