@@ -159,7 +159,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
 </div>
 </section>
 
-<p class="note">Your progress - best reaction time, precision and gridshot bests, and your session history - is saved only in this browser on this device. Nothing is sent to a server. Honest note: reaction times include your screen and input lag, so treat them as a fun personal measure rather than a laboratory number.</p>
+<p class="note">Your progress - best reaction time, precision and gridshot bests, and your session history - is saved in this browser on this device, and when you are signed in it also syncs privately to your Cheakstar account, so it follows you across your devices. It is never shared or used for tracking. Honest note: reaction times include your screen and input lag, so treat them as a fun personal measure rather than a laboratory number.</p>
 
 <script>
 "use strict";
@@ -1470,5 +1470,6 @@ var AimTrainer = (function () {
   cgx.attachMuteToggle(document.getElementById("aim-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
