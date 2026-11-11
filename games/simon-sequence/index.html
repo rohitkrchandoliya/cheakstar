@@ -127,7 +127,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Simon Sequence</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -165,7 +165,7 @@
     <label><input type="checkbox" id="sim-strict" checked> Strict mode (one mistake ends the game)</label>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device. Nothing is uploaded or tracked anywhere. Your best round, your speed choice and your Strict setting are saved only in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Honest note: the classic four-colour memory game, an original implementation built for this site. Sound is generated on your device; the game also works muted - just watch the pads.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your best round, your speed choice and your Strict setting are saved in this browser on this device, so they are still here when you come back; you can erase everything at any time by clearing this site's data in your browser settings. Honest note: the classic four-colour memory game, an original implementation built for this site. Sound is generated on your device; the game also works muted - just watch the pads.</p>
 <script>"use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
    Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
@@ -1020,5 +1020,6 @@ var SimonSequence = (function () {
     });
   })();
   </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
