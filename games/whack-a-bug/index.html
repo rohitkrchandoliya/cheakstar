@@ -132,7 +132,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Whack-a-Bug</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -157,7 +157,7 @@
     <button type="button" id="whk-new">New round</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your best score and the most bugs you have caught in a single round are saved only in this browser on this device when a round ends, so they are still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: the bugs are cartoon software bugs popping out of server racks - no real systems are involved.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your best score and the most bugs you have caught in a single round are saved in this browser on this device when a round ends, so they are still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: the bugs are cartoon software bugs popping out of server racks - no real systems are involved.</p>
 <script>"use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
    Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
@@ -1053,5 +1053,6 @@ var WhackABug = (function () {
     });
   })();
   </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
