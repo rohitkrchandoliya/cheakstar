@@ -77,7 +77,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Space Blaster</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+    <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -101,7 +101,7 @@
     <button type="button" id="space-new">New game</button>
   </div>
 </section>
-<p class="note">Your privacy: Space Blaster runs fully on your device. Your best score, highest wave, most boss kills in one game and games played are saved in this browser, on this device only, so you can chase your own records. Nothing is uploaded, shared or tracked anywhere, and your browser's site-data controls can erase everything at any time. Space Blaster draws on a canvas with pre-rendered ship sprites; enemies and bullets are reused from fixed pools, and collisions run through a broad-phase grid, so the action stays smooth.</p>
+<p class="note">Your privacy: Space Blaster runs fully on your device. Your best score, highest wave, most boss kills in one game and games played are saved in this browser on this device, so you can chase your own records, and when you are signed in, your progress also syncs privately to your Cheakstar account, so they follow you across your devices. Your progress is never shared or used for tracking, and your browser's site-data controls can erase everything at any time. Space Blaster draws on a canvas with pre-rendered ship sprites; enemies and bullets are reused from fixed pools, and collisions run through a broad-phase grid, so the action stays smooth.</p>
 <script>
 
 "use strict";
@@ -1226,5 +1226,6 @@ var SpaceBlaster = (function () {
   cgx.watchFit($("space-board"), { logicalW: 400, logicalH: 500 }, function () { SpaceBlaster.draw(); });
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
