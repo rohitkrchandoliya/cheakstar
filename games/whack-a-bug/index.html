@@ -4,38 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
-  /* Appearance: apply the visitor's saved theme choices before first paint.
-     Mirrors the main site's script.js applyAppearance exactly: same
-        localStorage keys, same resolution, fail-soft throughout. */
-  (function () {
+/* Appearance: apply the visitor's saved theme choices before first paint.
+   Mirrors the main site's script.js applyAppearance exactly: same
+   localStorage keys, same resolution, fail-soft throughout. */
+(function () {
+  try {
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+    function currentMode() {
+      try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
+    }
+    function applyAppearance() {
+      var mode = currentMode();
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark" : "light");
       try {
-            var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
-            function currentMode() {
-                    try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
-            }
-            function applyAppearance() {
-                    var mode = currentMode();
-                    var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
-                    var root = document.documentElement;
-                    root.setAttribute("data-theme", dark ? "dark" : "light");
-                    try {
-                              root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
-                              root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
-                    } catch (e) {}
-            }
-            applyAppearance();
-            if (mq && mq.addEventListener) {
-                    mq.addEventListener("change", function () {
-                              if (currentMode() === "system") applyAppearance();
-                    });
-            }
-      } catch (e) { /* appearance is cosmetic; never break the page */ }
-  })();
+        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
+        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
+      } catch (e) {}
+    }
+    applyAppearance();
+    if (mq && mq.addEventListener) {
+      mq.addEventListener("change", function () {
+        if (currentMode() === "system") applyAppearance();
+      });
+    }
+  } catch (e) { /* appearance is cosmetic; never break the page */ }
+})();
 </script>
-  <link rel="icon" href="data:,">
+<link rel="icon" href="data:,">
 <title>Whack-a-Bug - Cheakstar Games</title>
 <style>
-    :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
+  :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
   [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
   html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
@@ -43,15 +43,15 @@
   header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-    [data-theme="light"] header { color: var(--ink); }
+  [data-theme="light"] header { color: var(--ink); }
   [data-theme="light"] header p { color: var(--muted); }
   h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-    button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
   button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-    select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
@@ -64,7 +64,7 @@
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
   .play-bar button { margin-top: 0; }
-    .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: var(--navy3); }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
