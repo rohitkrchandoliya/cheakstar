@@ -133,7 +133,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
 <p class="keys-note">Keys: arrows or WASD drive, Space handbrake, R back to the start, P pause. The on-screen buttons work with mouse and touch - hold them down to drive.</p>
 </section>
 
-<p class="note">Your progress - unlocked levels, stars, best scores and your car colour - is saved only in this browser on this device. Nothing is sent to a server. The driving here is a simple 2D simulation; real parking takes real practice.</p>
+<p class="note">Your progress - unlocked levels, stars, best scores and your car colour - is saved in this browser on this device, and when you are signed in it also syncs privately to your Cheakstar account, so it follows you across your devices. It is never shared or used for tracking. The driving here is a simple 2D simulation; real parking takes real practice.</p>
 
 <script>
 "use strict";
@@ -1174,5 +1174,6 @@ var ParkingMaster = (function () {
   cgx.attachMuteToggle(document.getElementById("park-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
