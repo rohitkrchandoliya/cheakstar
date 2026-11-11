@@ -97,7 +97,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Traffic Dodger</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -124,7 +124,7 @@
     <button type="button" id="traf-right" aria-label="Hold to steer right">&#9654;</button>
   </div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - your best score and the most near misses you have managed in a single run - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: a top-down 2D arcade driving game - you dodge traffic, it is not a driving simulator.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your progress - your best score and the most near misses you have managed in a single run - is saved in this browser on this device, so it is still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings. Honest note: a top-down 2D arcade driving game - you dodge traffic, it is not a driving simulator.</p>
 <script>"use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
    Polish pass step 1: storage, canvas fit + fullscreen, dialogs,
@@ -1273,5 +1273,6 @@ var TrafficDodger = (function () {
     });
   })();
   </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
