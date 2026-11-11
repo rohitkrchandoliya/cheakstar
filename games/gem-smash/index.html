@@ -141,7 +141,7 @@
 <body class="cgx-wide">
 <header>
   <h1>Gem Smash</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in. Your game data never leaves this device.</p>
+  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
 </header>
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
@@ -165,7 +165,7 @@
   <p class="gem-levels-label" id="gem-levels-label">Levels</p>
   <div class="gem-levels" id="gem-levels" role="group" aria-labelledby="gem-levels-label"></div>
 </section>
-<p class="note">Your privacy: this game runs fully on your device and nothing is uploaded or tracked. Your progress - the levels you have unlocked, the stars you earned on each level, your best score overall and per level, and the fewest moves you ever needed to clear a level - is saved only in this browser on this device, so it is still here when you come back; nothing is sent to Cheakstar or anyone else. You can erase everything at any time by clearing this site's data in your browser settings. Frozen gems appear from level 4: they are ordinary gems locked in ice, freed by matching beside them.</p>
+<p class="note">Your privacy: this game runs fully on your device. When you are signed in, your progress also syncs privately to your Cheakstar account, so it follows you across your devices; it is never shared or used for tracking. Your progress - the levels you have unlocked, the stars you earned on each level, your best score overall and per level, and the fewest moves you ever needed to clear a level - is saved in this browser on this device, so it is still here when you come back. You can erase everything at any time by clearing this site's data in your browser settings. Frozen gems appear from level 4: they are ordinary gems locked in ice, freed by matching beside them.</p>p>
 <script>
 "use strict";
 /* ============ CHEAKSTAR GAMES SHARED LAYER (cgx) ============
@@ -1431,5 +1431,6 @@ var GemSmash = (function () {
   cgx.attachMuteToggle($("gem-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
