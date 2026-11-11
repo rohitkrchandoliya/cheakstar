@@ -117,7 +117,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
 <p class="keys-note">Keys: hold Space, ArrowUp or W (or press and hold the sky) to climb, release to dive; ArrowDown or S dives faster, P pauses, R starts a new flight at once. The mouse and touch work by pressing and holding the sky.</p>
 </section>
 
-<p class="note">Your progress - best distance, best score, stars and badges - is saved only in this browser on this device. Nothing is sent to a server. Honest note: a tiny arcade glide model - real paper planes are at the mercy of far stranger physics than this.</p>
+<p class="note">Your progress - best distance, best score, stars and badges - is saved in this browser on this device, and when you are signed in it also syncs privately to your Cheakstar account, so it follows you across your devices. It is never shared or used for tracking. Honest note: a tiny arcade glide model - real paper planes are at the mercy of far stranger physics than this.</p>
 
 <script>
 "use strict";
@@ -1177,5 +1177,6 @@ var PaperPlanePilot = (function () {
   cgx.attachMuteToggle(document.getElementById("plane-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
