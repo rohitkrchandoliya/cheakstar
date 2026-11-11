@@ -132,7 +132,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
 </div>
 </section>
 
-<p class="note">Your progress - high scores with your initials, best score and games played - is saved only in this browser on this device. Nothing is sent to a server. Honest note: the physics here is a simplified home-grown model - circles, line segments and fixed-step integration - not a full pinball simulation, so the ball can occasionally behave unlike a real table.</p>
+<p class="note">Your progress - high scores with your initials, best score and games played - is saved in this browser on this device, and when you are signed in it also syncs privately to your Cheakstar account, so it follows you across your devices. It is never shared or used for tracking. Honest note: the physics here is a simplified home-grown model - circles, line segments and fixed-step integration - not a full pinball simulation, so the ball can occasionally behave unlike a real table.</p>
 
 <script>
 "use strict";
@@ -1332,5 +1332,6 @@ var PinballMini = (function () {
   cgx.attachMuteToggle(document.getElementById("pin-sound"));
 })();
 </script>
+<script src="../game-sync.js"></script>
 </body>
 </html>
