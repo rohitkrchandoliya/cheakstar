@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 /* Appearance: apply the visitor's saved theme choices before first paint.
-  Mirrors the main site's script.js applyAppearance exactly: same
-  localStorage keys, same resolution, fail-soft throughout. */
+   Mirrors the main site's script.js applyAppearance exactly: same
+   localStorage keys, same resolution, fail-soft throughout. */
 (function () {
   try {
-    var mq = window.matchMedia ? window.matchMedia("prefers-color-scheme: light") : null;
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
     function currentMode() {
       try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
     }
