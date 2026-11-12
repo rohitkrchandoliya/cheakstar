@@ -32,19 +32,19 @@
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
 </script>
-  <link rel="icon" href="data:,">
+<link rel="icon" href="data:,">
 <title>Classic Ludo - Cheakstar Games</title>
 <style>
 :root{ --navy:#0a1628;--navy2:#0e2142;--navy3:#12305c;--gold:#d4af37;--gold2:#b8912a;--bg:#0a1628;--ink:#eef2f8;--muted:#a9b8cf;--card:#10233f;--line:rgba(212,175,55,.35);--btn:#12305c;color-scheme:dark;}
-[data-theme"light"]{ --navy:#f2f5fa;--navy2:#ffffff;--navy3:#e2eaf5;--gold:#a8842a;--gold2:#8f6f1f;--bg:#f2f5fa;--ink:#152540;--muted:#51637e;--card:#ffffff;--line:rgba(21,37,64,.16);--btn:#152540;color-scheme:light;}
+[data-theme="light"]{ --navy:#f2f5fa;--navy2:#ffffff;--navy3:#e2eaf5;--gold:#a8842a;--gold2:#8f6f1f;--bg:#f2f5fa;--ink:#152540;--muted:#51637e;--card:#ffffff;--line:rgba(21,37,64,.16);--btn:#152540;color-scheme:light;}
 html[data-textsize="large"]{ font-size:112.5%;}
 html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after{ animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important;scroll-behavior:auto!important;}
 body{ font-family:system-ui, sans-serif;max-width:760px;margin:0 auto;padding:0 1rem 3rem;background:var(--bg);color:var(--ink);}
 header{ background:var(--navy);color:#fff;margin:0 -1rem;padding:1.5rem 1rem;border-bottom:4px solid var(--gold);}
 header h1{ margin:0;font-size:1.5rem;}
 header p{ margin:0.5rem 0 0;color:#cbd5e1;}
-[data-theme"light"] header{ color:var(--ink);}
-[data-theme"light"] header p{ color:var(--muted);}
+[data-theme="light"] header{ color:var(--ink);}
+[data-theme="light"] header p{ color:var(--muted);}
 h2{ color:var(--ink);border-bottom:2px solid var(--gold);padding-bottom:0.25rem;margin-top:2rem;}
 .note{ color:var(--muted);font-size:0.9rem;margin-top:1rem;}
 button{ margin-top:0.5rem;padding:0.6rem 1.2rem;cursor:pointer;background:var(--btn);color:#fff;border:1px solid var(--line);border-radius:6px;font-size:1rem;font-family:inherit;}
@@ -69,7 +69,7 @@ body{ max-width:860px;}
 .play-stage:fullscreen .lu-setup, .play-stage:-webkit-full-screen .lu-setup{ color:var(--ink);}
 .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2{ color:#f3d67c;}
 /* ---- Ludo layout ---- */
-.lu-setup{margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:end;background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:0.75rem 1rem 1rem;}
+.lu-setup{ margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:end;background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:0.75rem 1rem 1rem;}
 .lu-setup div{ display:flex;flex-direction:column;gap:0.25rem;}
 .lu-setup button{ margin-top:0;}
 .lu-main{ display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-top:1rem;}
@@ -83,7 +83,7 @@ body{ max-width:860px;}
 .lu-card.active{ box-shadow:0 0 0 2px #fff, 0 0 0 5px currentColor;}
 .lu-card.done{ opacity:0.65;}
 .lu-dicerow{ display:flex;gap:0.9rem;align-items:center;margin-top:0.9rem;}
-.lu-dice{width:68px;height:68px;flex:0 0 auto;background:#fff;border:3px solid #0a2540;border-radius:12px;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:repeat(3, 1fr);padding:10px;box-sizing:border-box;cursor:pointer;box-shadow:3px 8px rgba(0, 0, 0, 0.25);}
+.lu-dice{ width:68px;height:68px;flex:0 0 auto;background:#fff;border:3px solid #0a2540;border-radius:12px;display:grid;grid-template-columns:repeat(3, 1fr);grid-template-rows:repeat(3, 1fr);padding:10px;box-sizing:border-box;cursor:pointer;box-shadow:0 3px 8px rgba(0, 0, 0, 0.25);}
 .lu-dice .pip{ border-radius:50%;margin:1px;}
 .lu-dice .pip.on{ background:#111827;}
 .lu-dice.idle .pip.on{ background:#9aa5b1;}
@@ -96,7 +96,7 @@ body{ max-width:860px;}
 .lu-log{ list-style:none;padding:0;margin:0.75rem 0 0;font-size:0.86rem;color:var(--muted);}
 .lu-log li{ padding:0.22rem 0;border-bottom:1px dashed var(--line);}
 .lu-log li:first-child{ color:var(--ink);font-weight:600;}
-.lu-stats{margin-top:1rem;font-size:0.92rem;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:0.6rem 0.9rem;}
+.lu-stats{ margin-top:1rem;font-size:0.92rem;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:0.6rem 0.9rem;}
 .play-stage:fullscreen .lu-stats, .play-stage:-webkit-full-screen .lu-stats{ color:#f3d67c;background:#0a2540;}
 /* ---- Ludo board ---- */
 #ludo-boardwrap{ position:relative;width:min(94vw, 620px);margin:0 auto;flex:0 0 auto;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
