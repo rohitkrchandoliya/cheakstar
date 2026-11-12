@@ -15,7 +15,7 @@
     }
     function applyAppearance() {
       var mode = currentMode();
-      var dark = mode === "dark" || (mode !=== "light" && !(mq && mq.matches));
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
       var root = document.documentElement;
       root.setAttribute("data-theme", dark ? "dark" : "light");
       try {
