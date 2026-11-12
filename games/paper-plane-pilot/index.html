@@ -9,7 +9,7 @@
    localStorage keys, same resolution, fail-soft throughout. */
 (function () {
   try {
-    var mq = window.matchMedia ? window.matchMedia("prefers-color-scheme: light") : null;
+var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
     function currentMode() {
       try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
     }
@@ -17,10 +17,10 @@
       var mode = currentMode();
       var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
       var root = document.documentElement;
-      root.setAttribute("data-theme", dark ? "dark": "light");
+root.setAttribute("data-theme", dark ? "dark" : "light");
       try {
-        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion" === "1" ? "reduced" : "full");
-        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size" === "large" ? "large" : "comfortable");
+root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
+root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
       } catch (e) {}
     }
     applyAppearance();
