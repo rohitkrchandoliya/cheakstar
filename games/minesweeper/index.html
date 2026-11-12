@@ -43,11 +43,11 @@
   header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-[data-theme="light"] header { color: var(--ink); }
+  [data-theme="light"] header { color: var(--ink); }
   [data-theme="light"] header p { color: var(--muted); }
   h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
   button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
@@ -64,8 +64,8 @@ button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
   .play-bar button { margin-top: 0; }
-.btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
-.btn-link:hover { background: var(--navy3); }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
+  .btn-link:hover { background: var(--navy3); }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
@@ -124,7 +124,7 @@ button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background
   /* LCD counter bar (spec 16(a)): the shipped Mines left /
      Revealed / Time readouts in a dark inset panel with
      tabular gold digits. */
-.scorebar { background: #071a2e; border: 2px solid var(--gold2); border-radius: 8px; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.55); padding: 0.55rem 0.9rem; color: #e2e8f0; }
+  .scorebar { background: #071a2e; border: 2px solid var(--gold2); border-radius: 8px; box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.55); padding: 0.55rem 0.9rem; color: #e2e8f0; }
   .scorebar > span > span { color: var(--gold); font-variant-numeric: tabular-nums; }
   #mine-face { font-size: 1.15rem; }
   .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
@@ -134,7 +134,7 @@ button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background
   /* Best-times table (spec 16(a)/(d)): one row per difficulty. */
   .mine-records { margin: 1rem auto 0; border-collapse: collapse; font-size: 0.92rem; }
   .mine-records th, .mine-records td { border: 1px solid var(--line); padding: 0.3rem 0.8rem; text-align: center; }
-.mine-records th { background: var(--btn); color: #fff; }
+  .mine-records th { background: var(--btn); color: #fff; }
   .play-stage:fullscreen .mine-records td { color: #e2e8f0; border-color: #2c4a6b; }
 
   /* ---- Cheakstar Games shared layer (cgx) ---- */
