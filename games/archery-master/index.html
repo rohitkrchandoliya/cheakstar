@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
-  /* Appearance: apply the visitor's saved theme choices before first paint.
-     Mirrors the main site's script.js applyAppearance exactly: same
+/* Appearance: apply the visitor's saved theme choices before first paint.
+   Mirrors the main site's script.js applyAppearance exactly: same
    localStorage keys, same resolution, fail-soft throughout. */
 (function () {
   try {
@@ -32,14 +32,14 @@
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
 </script>
-  <title>Archery Master - Cheakstar</title>
+<title>Archery Master - Cheakstar</title>
 <meta name="description" content="Loose arrows at the rings: read the wind flag, hold to draw the bow and release to shoot. Three rounds - still, moving, then faster and farther - plus a 60-second Rush mode. Bullseyes score 50.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏹</text></svg>">
 <style>
 :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --gold-d:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
-  [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --gold-d:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
-  html[data-textsize="large"] { font-size:112.5%; }
-  html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
+[data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --gold-d:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
+html[data-textsize="large"] { font-size:112.5%; }
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); text-align:center; }
 header { background:var(--navy); color:#fff; padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
@@ -48,25 +48,25 @@ header .brand span { color:var(--gold); }
 header nav a { color:#fff; text-decoration:none; margin-left:1rem; }
 header nav a:hover { color:var(--gold); }
 [data-theme="light"] header { color: var(--ink); }
-  [data-theme="light"] header .brand { color: var(--ink); }
-  [data-theme="light"] header nav a { color: var(--muted); }
-  h2 { color:var(--ink); margin-bottom:0.2rem; }
-  .note { color:var(--muted); max-width:640px; margin:0.4rem auto 0; }
-  button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:#111827; font-weight:bold; cursor:pointer; font-size:1rem; }
+[data-theme="light"] header .brand { color: var(--ink); }
+[data-theme="light"] header nav a { color: var(--muted); }
+h2 { color:var(--ink); margin-bottom:0.2rem; }
+.note { color:var(--muted); max-width:640px; margin:0.4rem auto 0; }
+button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:#111827; font-weight:bold; cursor:pointer; font-size:1rem; }
 button:hover { background:var(--gold-d); color:#fff; }
 button:disabled { background:#9aa7b4; color:#e2e8f0; cursor:not-allowed; }
 label { font-weight:bold; color:var(--ink); margin-right:0.3rem; }
-  select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--card); color:var(--ink); }
-  .status { font-weight:bold; color:var(--ink); min-height:1.4em; margin:0.8rem auto 0; max-width:680px; }
+select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--card); color:var(--ink); }
+.status { font-weight:bold; color:var(--ink); min-height:1.4em; margin:0.8rem auto 0; max-width:680px; }
 .scorebar { display:flex; gap:0.6rem; justify-content:center; align-items:stretch; flex-wrap:wrap; margin-top:0.9rem; }
 .scorebar .cell { background:var(--card); border:1px solid var(--line); border-top:3px solid var(--gold); border-radius:8px; padding:0.45rem 0.85rem; min-width:86px; }
-  .scorebar .k { display:block; font-size:0.68rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+.scorebar .k { display:block; font-size:0.68rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
   .scorebar .v { display:block; font-size:1.25rem; font-weight:bold; color:var(--gold); line-height:1.15; }
 .ctrl-row { margin-top:0.35rem; }
 /* ===== house toolbar + fullscreen (same pattern as the sibling polish builds) ===== */
 .play-bar { display:flex; gap:0.5rem; justify-content:flex-end; max-width:1100px; margin:0.6rem auto 0; padding:0 0.6rem; }
 .tool-btn { background:var(--card); border:2px solid var(--gold2); color:var(--ink); border-radius:8px; padding:0.35rem 0.7rem; font-size:1.05rem; line-height:1; cursor:pointer; margin:0; }
-  .tool-btn:hover { background:var(--btn); color:#fff; }
+.tool-btn:hover { background:var(--btn); color:#fff; }
 .cgx-fs { position:relative; }
 .cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
 .fs-exit { display:none; }
@@ -74,15 +74,15 @@ label { font-weight:bold; color:var(--ink); margin-right:0.3rem; }
 .cgx-fs:fullscreen h2 { display:none; }
 .cgx-fs:fullscreen #fs-desc { display:none; }
 .stats-line { color:var(--muted); font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
-  .keys-note { color:var(--muted); font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
+.keys-note { color:var(--muted); font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
 /* ===== Archery Master ===== */
 .board-wrap { position:relative; width:min(600px, 100%); margin:1rem auto 0; }
 #arch-board { display:block; width:100%; aspect-ratio:480 / 360; margin:0; background:#7dd3fc; border:2px solid var(--gold2); box-sizing:border-box; touch-action:none; user-select:none; -webkit-user-select:none; }
 .cgx-fs:fullscreen .board-wrap { width:min(94vw, calc((100dvh - 170px) * 4 / 3), 920px); flex:none; margin-top:0.5rem; }
 .mode-row { display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:0.7rem; }
-.mode-row .mode-label { font-weight:bold; color:var(--ink); }
-  .mode-btn { margin:0; background:var(--card); border:2px solid var(--gold2); color:var(--ink); }
-  .mode-btn:hover { background:var(--navy3); color:var(--ink); }
+ode-row .mode-label { font-weight:bold; color:var(--ink); }
+.mode-btn { margin:0; background:var(--card); border:2px solid var(--gold2); color:var(--ink); }
+.mode-btn:hover { background:var(--navy3); color:var(--ink); }
   .mode-btn.active { background:var(--btn); color:#fff; }
 .mode-btn.active:hover { background:#123a5c; color:#fff; }
   /* ---- Cheakstar Games shared layer (cgx) ---- */
