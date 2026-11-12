@@ -3,21 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Appearance: apply the visitor's saved theme choices before first paint.
+   Mirrors the main site's script.js applyAppearance exactly: same
+   localStorage keys, same resolution, fail-soft throughout. */
+(function () {
+  try {
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
+    function currentMode() {
+      try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
+    }
+    function applyAppearance() {
+      var mode = currentMode();
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark" : "light");
+      try {
+        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
+        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
+      } catch (e) {}
+    }
+    applyAppearance();
+    if (mq && mq.addEventListener) {
+      mq.addEventListener("change", function () {
+        if (currentMode() === "system") applyAppearance();
+      });
+    }
+  } catch (e) { /* appearance is cosmetic; never break the page */ }
+})();
+</script>
 <link rel="icon" href="data:,">
 <title>Memory Match - Cheakstar Games</title>
 <style>
-  :root { --navy: #0a2540; --gold: #c9a227; --ink: #111827; --muted: #555; --line: #ddd; }
-  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; color: var(--ink); }
+  :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,.35); --btn:#12305c; color-scheme:dark; }
+  [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
+  html[data-textsize="large"] { font-size:112.5%; }
+  html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; background: var(--bg); color: var(--ink); }
   header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  h2 { color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  [data-theme="light"] header { color: var(--ink); }
+  [data-theme="light"] header p { color: var(--muted); }
+  h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
-  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--navy); color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+  button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
   button:disabled { background: #9aa5b1; cursor: default; }
   button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; }
+  select { padding: 0.5rem; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--ink); }
   label { font-weight: 600; }
   .status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
   .scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
@@ -30,8 +64,8 @@
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
   .play-bar button { margin-top: 0; }
-  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: #e5e7eb; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
-  .btn-link:hover { background: #d1d5db; }
+  .btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
+  .btn-link:hover { background: var(--navy3); }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
   .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
@@ -71,13 +105,13 @@
   /* Card back: deep navy with a faint gold diamond lattice and a
      gold shield carrying the Cheakstar C - a real design, replacing
      the shipped plain navy square with a "?" glyph. */
-  .mem-back { background: linear-gradient(150deg, #17456e, var(--navy) 55%, #071a2e); border: 2px solid var(--gold); box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.25), inset 0 -6px 12px rgba(0, 0, 0, 0.35); }
+  .mem-back { background: linear-gradient(150deg, #17456e, #0a2540 55%, #071a2e); border: 2px solid var(--gold); box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.25), inset 0 -6px 12px rgba(0, 0, 0, 0.35); }
   .mem-back::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(201, 162, 39, 0.10) 0 2px, transparent 2px 14px), repeating-linear-gradient(-45deg, rgba(201, 162, 39, 0.10) 0 2px, transparent 2px 14px); }
   .mem-shield { position: relative; width: 46%; height: 54%; background: linear-gradient(165deg, #e8c95a, var(--gold) 60%, #a8861d); clip-path: polygon(50% 0, 100% 14%, 100% 52%, 50% 100%, 0 52%, 0 14%); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
-  .mem-shield i { font-style: normal; font-weight: 800; color: var(--navy); font-size: 1.05rem; line-height: 1; transform: translateY(-8%); }
+  .mem-shield i { font-style: normal; font-weight: 800; color: #0a2540; font-size: 1.05rem; line-height: 1; transform: translateY(-8%); }
   /* Card front: the word face. White with a navy frame (shipped
      colours); a matched pair turns green and keeps a soft glow. */
-  .mem-front { transform: rotateY(180deg); background: #fff; color: var(--navy); border: 2px solid var(--navy); font-weight: 800; font-size: 0.95rem; padding: 0.2rem; line-height: 1.15; }
+  .mem-front { transform: rotateY(180deg); background: #fff; color: #0a2540; border: 2px solid #0a2540; font-weight: 800; font-size: 0.95rem; padding: 0.2rem; line-height: 1.15; }
   #mem-board.cols-6 .mem-front { font-size: 0.7rem; }
   #mem-board.cols-6 .mem-shield i { font-size: 0.8rem; }
   .mem-card.matched { cursor: default; }
@@ -127,6 +161,9 @@
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
+  [data-theme="light"] .cgx-dialog { background: var(--card); color: var(--ink); }
+  [data-theme="light"] .cgx-dialog-body { color: var(--muted); }
+  [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
 </style>
 </head>
 <body class="cgx-wide">
