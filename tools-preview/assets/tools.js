@@ -285,7 +285,7 @@
           toolLink("internet-speed-test", "Internet Speed Test")
         ]}
       ]},
-       { id: "games", name: "Games", links: [
+      { id: "games", name: "Games", links: [
         siteLink("games/", "All Games", "dice")
       ]}
     ];
