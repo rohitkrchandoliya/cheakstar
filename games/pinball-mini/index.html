@@ -39,8 +39,7 @@
 :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --gold-d:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
   [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --gold-d:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
-  
-html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
+  html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); text-align:center; }
 header { background:var(--navy); color:#fff; padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
@@ -68,7 +67,8 @@ label { font-weight:bold; color:var(--ink); margin-right:0.3rem; }
 .play-bar { display:flex; gap:0.5rem; justify-content:flex-end; max-width:1100px; margin:0.6rem auto 0; padding:0 0.6rem; }
 .tool-btn { background:var(--card); border:2px solid var(--gold2); color:var(--ink); border-radius:8px; padding:0.35rem 0.7rem; font-size:1.05rem; line-height:1; cursor:pointer; margin:0; }
   .tool-btn:hover { background:var(--btn); color:#fff; }
-.cgx-fs { position:relative; }.cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
+.cgx-fs { position:relative; }
+     .cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
 .fs-exit { display:none; }
 .cgx-fs:fullscreen .fs-exit { display:inline-block; position:absolute; top:0.6rem; right:0.6rem; z-index:5; }
 .cgx-fs:fullscreen h2 { display:none; }
