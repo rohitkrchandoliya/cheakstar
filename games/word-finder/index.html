@@ -9,7 +9,7 @@
    localStorage keys, same resolution, fail-soft throughout. */
 (function () {
   try {
-    var mq = window.matchMedia ? window.matchMedia("prefers-color-scheme: light") : null;
+    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
     function currentMode() {
       try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
     }
@@ -25,9 +25,9 @@
     }
     applyAppearance();
     if (mq && mq.addEventListener) {
-                    mq.addEventListener("change", function () {
+      mq.addEventListener("change", function () {
         if (currentMode() === "system") applyAppearance();
-                  });
+      });
     }
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
