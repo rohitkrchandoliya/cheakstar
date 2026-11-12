@@ -7,7 +7,7 @@
 /* Appearance: apply the visitor's saved theme choices before first paint.
    Mirrors the main site's script.js applyAppearance exactly: same
    localStorage keys, same resolution, fail-soft throughout. */
-(function ) {
+(function () {
   try {
     var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
     function currentMode() {
@@ -32,19 +32,19 @@
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
 </script>
-  <link rel="icon" href="data:,">
+<link rel="icon" href="data:,">
 <title>Turbo Lane Racer - Cheakstar Games</title>
 <style>
   :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
-  [data-theme"light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
+  [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
   html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
   body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; background: var(--bg); color: var(--ink); }
   header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
   header h1 { margin: 0; font-size: 1.5rem; }
   header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  [data-theme"light"] header { color: var(--ink); }
-  [data-theme"light"] header p { color: var(--muted); }
+  [data-theme="light"] header { color: var(--ink); }
+  [data-theme="light"] header p { color: var(--muted); }
   h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   h3 { color: var(--ink); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
