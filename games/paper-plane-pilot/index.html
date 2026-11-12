@@ -3,50 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Appearance: apply the visitor's saved theme choices before first paint.
+   Mirrors the main site's script.js applyAppearance exactly: same
+   localStorage keys, same resolution, fail-soft throughout. */
+(function () {
+  try {
+    var mq = window.matchMedia ? window.matchMedia("prefers-color-scheme: light") : null;
+    function currentMode() {
+      try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
+    }
+    function applyAppearance() {
+      var mode = currentMode();
+      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
+      var root = document.documentElement;
+      root.setAttribute("data-theme", dark ? "dark": "light");
+      try {
+        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion" === "1" ? "reduced" : "full");
+        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size" === "large" ? "large" : "comfortable");
+      } catch (e) {}
+    }
+    applyAppearance();
+    if (mq && mq.addEventListener) {
+      mq.addEventListener("change", function () {
+        if (currentMode() === "system") applyAppearance();
+      });
+    }
+  } catch (e) { /* appearance is cosmetic; never break the page */ }
+})();
+</script>
 <title>Paper Plane Pilot - Cheakstar</title>
 <meta name="description" content="Glide a paper plane as far as you can: hold to climb, dive for speed, ride gold thermals, collect stars worth 25 points, dodge the birds, and earn the 500 m, 1 km and 2 km distance badges.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
 <style>
-:root { --navy:#0a2540; --gold:#c9a227; --gold-d:#a8861c; --bg:#f4f6fb; }
+:root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --gold-d:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
+[data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --gold-d:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
+html[data-textsize="large"] { font-size:112.5%; }
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
-body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:#333; text-align:center; }
+body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); text-align:center; }
 header { background:var(--navy); color:#fff; padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
 header .brand { color:#fff; text-decoration:none; font-weight:bold; font-size:1.25rem; }
 header .brand span { color:var(--gold); }
 header nav a { color:#fff; text-decoration:none; margin-left:1rem; }
 header nav a:hover { color:var(--gold); }
-h2 { color:var(--navy); margin-bottom:0.2rem; }
-.note { color:#555; max-width:640px; margin:0.4rem auto 0; }
-button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:var(--navy); font-weight:bold; cursor:pointer; font-size:1rem; }
+[data-theme="light"] header { color: var(--ink); }
+[data-theme="light"] header .brand { color: var(--ink); }
+[data-theme="light"] header nav a { color: var(--muted); }
+h2 { color:var(--ink); margin-bottom:0.2rem; }
+.note { color:var(--muted); max-width:640px; margin:0.4rem auto 0; }
+button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:#111827; font-weight:bold; cursor:pointer; font-size:1rem; }
 button:hover { background:var(--gold-d); color:#fff; }
 button:disabled { background:#9aa7b4; color:#e2e8f0; cursor:not-allowed; }
-label { font-weight:bold; color:var(--navy); margin-right:0.3rem; }
-select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:1rem; }
-.status { font-weight:bold; color:var(--navy); min-height:1.4em; margin:0.8rem auto 0; max-width:680px; }
+label { font-weight:bold; color:var(--ink); margin-right:0.3rem; }
+select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-size:1rem; background:var(--card); color:var(--ink); }
+.status { font-weight:bold; color:var(--ink); min-height:1.4em; margin:0.8rem auto 0; max-width:680px; }
 .scorebar { display:flex; gap:0.6rem; justify-content:center; align-items:stretch; flex-wrap:wrap; margin-top:0.9rem; }
-.scorebar .cell { background:#fff; border:1px solid #dbe3ee; border-top:3px solid var(--gold); border-radius:8px; padding:0.45rem 0.85rem; min-width:86px; }
-.scorebar .k { display:block; font-size:0.68rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; color:#64748b; }
-.scorebar .v { display:block; font-size:1.25rem; font-weight:bold; color:var(--navy); line-height:1.15; }
+.scorebar .cell { background:var(--card); border:1px solid var(--line); border-top:3px solid var(--gold); border-radius:8px; padding:0.45rem 0.85rem; min-width:86px; }
+.scorebar .k { display:block; font-size:0.68rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+.scorebar .v { display:block; font-size:1.25rem; font-weight:bold; color:var(--gold); line-height:1.15; }
 .ctrl-row { margin-top:0.35rem; }
 /* ===== house toolbar + fullscreen (same pattern as the sibling polish builds) ===== */
 .play-bar { display:flex; gap:0.5rem; justify-content:flex-end; max-width:1100px; margin:0.6rem auto 0; padding:0 0.6rem; }
-.tool-btn { background:#fff; border:2px solid var(--navy); color:var(--navy); border-radius:8px; padding:0.35rem 0.7rem; font-size:1.05rem; line-height:1; cursor:pointer; margin:0; }
-.tool-btn:hover { background:var(--navy); color:#fff; }
+.tool-btn { background:var(--card); border:2px solid var(--gold2); color:var(--ink); border-radius:8px; padding:0.35rem 0.7rem; font-size:1.05rem; line-height:1; cursor:pointer; margin:0; }
+.tool-btn:hover { background:var(--btn); color:#fff; }
 .cgx-fs { position:relative; }
 .cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
 .fs-exit { display:none; }
 .cgx-fs:fullscreen .fs-exit { display:inline-block; position:absolute; top:0.6rem; right:0.6rem; z-index:5; }
 .cgx-fs:fullscreen h2 { display:none; }
 .cgx-fs:fullscreen #fs-desc { display:none; }
-.stats-line { color:#555; font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
-.keys-note { color:#555; font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
+.stats-line { color:var(--muted); font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
+.keys-note { color:var(--muted); font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
 /* ===== Paper Plane Pilot ===== */
 .board-wrap { position:relative; width:min(600px, 100%); margin:1rem auto 0; }
-#plane-board { display:block; width:100%; aspect-ratio:480 / 360; margin:0; background:#7dd3fc; border:2px solid var(--navy); box-sizing:border-box; touch-action:none; user-select:none; -webkit-user-select:none; }
+#plane-board { display:block; width:100%; aspect-ratio:480 / 360; margin:0; background:#7dd3fc; border:2px solid var(--gold2); box-sizing:border-box; touch-action:none; user-select:none; -webkit-user-select:none; }
 .cgx-fs:fullscreen .board-wrap { width:min(94vw, calc((100dvh - 160px) * 4 / 3), 920px); flex:none; margin-top:0.5rem; }
 .plane-prog { max-width:640px; margin:0.7rem auto 0; padding:0 0.4rem; }
-.plane-prog-row { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; font-size:0.88rem; color:#555; font-weight:600; }
-.plane-prog-track { height:10px; background:#dbe3ee; border:1px solid #cbd5e1; border-radius:999px; overflow:hidden; margin-top:0.3rem; }
+.plane-prog-row { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; font-size:0.88rem; color:var(--muted); font-weight:600; }
+.plane-prog-track { height:10px; background:var(--navy3); border:1px solid var(--line); border-radius:999px; overflow:hidden; margin-top:0.3rem; }
 #plane-prog-fill { height:100%; width:0%; background:var(--gold); border-radius:999px; }
   /* ---- Cheakstar Games shared layer (cgx) ---- */
   .cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
@@ -70,6 +105,9 @@ select { padding:0.4rem; border-radius:6px; border:1px solid #cbd5e1; font-size:
   body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
+  [data-theme="light"] .cgx-dialog { background: var(--card); color: var(--ink); }
+  [data-theme="light"] .cgx-dialog-body { color: var(--muted); }
+  [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
 </style>
 </head>
 <body>
