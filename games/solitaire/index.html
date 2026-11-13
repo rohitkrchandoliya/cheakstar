@@ -35,6 +35,7 @@
 <title>Solitaire — Play Free Online, No Sign-up | Cheakstar Games</title>
 <meta name="description" content="Play Klondike Solitaire free in your browser. Drag or click to move cards, undo, hints and an auto-finish, with your game and best times saved on your device. No sign-up to try.">
 <link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/site.css">
 <style>
 :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; --zone:rgba(238,242,248,.07); color-scheme:dark; }
 [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; --zone:rgba(248,250,252,.55); color-scheme:light; }
@@ -1479,6 +1480,8 @@ window.addEventListener("resize", function () { solRender(); });
 cgx.onFullscreenChange(function () { setTimeout(function () { solRender(); }, 60); });
 
 </script>
+<script src="../assets/games-nav.js"></script>
 <script src="../game-sync.js"></script>
+<script src="../../theme.js?v=20261106a"></script>
 </body>
 </html>
