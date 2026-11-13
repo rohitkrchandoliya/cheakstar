@@ -242,7 +242,7 @@
           toolLink("color-palette-generator", "Color Palette Generator"),
           toolLink("gradient-generator", "CSS Gradient Generator")
         ]},
-        { id: "security", name: "Security & OSINT", icon: "shield", links: [
+         { id: "security", name: "Security & OSINT", icon: "shield", links: [
           toolLink("dns-lookup", "DNS Lookup"),
           toolLink("rdap-whois-lookup", "Domain Info (WHOIS / RDAP)"),
           toolLink("ip-lookup", "IP Address Lookup"),
