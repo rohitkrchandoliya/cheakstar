@@ -485,7 +485,7 @@
   }
   function siteRootPrefix() {
     // Tools pages live one folder deeper (tools-preview/...).
-    return (window.location.pathname.indexOf("/tools-preview/") > -1) ? "../../" : "";
+    return (window.location.pathname.indexOf("/tools-preview/") > -1 || /\/games\/[^\/]+\//.test(window.location.pathname)) ? "../../" : (/(^|\/)games\/?$/.test(window.location.pathname)) ? "../" : "";
   }
   function fmtDuration(sec) {
     var s = Math.max(0, Math.floor(sec || 0));
