@@ -1187,3 +1187,4 @@ document.addEventListener("DOMContentLoaded", function () {
     initHubSearch();
   }
 })();
+
