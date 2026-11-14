@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Auto Subtitle - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/auto-subtitle/">
+<meta property="og:title" content="Auto Subtitle - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/auto-subtitle/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.asu-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.asu-drop.asu-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.asu-bar { height: 12px; background: var(--line); border-radius: 6px; overflow: hidden; }
+.asu-bar > div { height: 100%; width: 0%; background: var(--gold, #c9a227); transition: width .2s; }
+.asu-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px; font-size: .95rem; }
+.asu-meta strong { color: var(--navy, #0a2540); }
+.asu-cues { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .92rem; }
+.asu-cues th { text-align: left; padding: 6px 8px; border-bottom: 2px solid var(--line); color: var(--navy, #0a2540); }
+.asu-cues td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.asu-cues td.asu-t { font-family: ui-monospace, monospace; white-space: nowrap; font-size: .85rem; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Auto Subtitle</h1>
+<p class="tool-sub">Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device.</p>
+<div class="tool-card">
+  <p>Drop an audio or video file, pick a model and a language, and get a subtitle file (SRT and WebVTT) made by Whisper, transcribed on this device. Nothing is uploaded to any server.</p>
+  <p><strong>Please read before the first run:</strong> the model you pick is downloaded <strong>once</strong> from Hugging Face (the runtime library, ~24 MB, comes from the jsDelivr CDN at the same time) and then cached by your browser, so later visits can work offline. <strong>Tiny</strong> is about 43 MB and fast but rough; <strong>Base</strong> is about 77 MB, slower, and noticeably more accurate. Honest expectations: clear speech in quiet conditions transcribes well; background music, heavy noise, overlapping speakers and strong accents will produce mistakes, and names are often misheard. Transcription runs on your CPU, so it is <strong>not fast</strong> — expect it to take a good fraction of the recording's length, and several times longer than the recording on a slow machine. Short clips are the sweet spot.</p>
+
+  <div class="asu-drop" id="asu-drop">
+    <label for="asu-file"><strong>Choose an audio or video file</strong>, or drop it here</label>
+    <input id="asu-file" type="file" accept="audio/*,video/*">
+  </div>
+
+  <div data-result>
+    <div id="asu-editor" hidden>
+      <div class="asu-meta">
+        <span>File: <strong id="asu-m-name">–</strong></span>
+        <span>Duration: <strong id="asu-m-dur">–</strong></span>
+        <span>Audio: <strong id="asu-m-audio">–</strong></span>
+      </div>
+
+      <div class="row2" style="margin-top:12px">
+        <div>
+          <label for="asu-model">Whisper model (downloaded once, then cached)</label>
+          <select id="asu-model">
+            <option value="tiny" selected>Tiny — about 43 MB, fastest, roughest</option>
+            <option value="base">Base — about 77 MB, slower, more accurate</option>
+          </select>
+        </div>
+        <div>
+          <label for="asu-lang">Spoken language</label>
+          <select id="asu-lang">
+            <option value="" selected>Auto-detect</option>
+            <option value="english">English</option>
+            <option value="hindi">Hindi</option>
+            <option value="bengali">Bengali</option>
+            <option value="tamil">Tamil</option>
+            <option value="telugu">Telugu</option>
+            <option value="marathi">Marathi</option>
+            <option value="punjabi">Punjabi</option>
+            <option value="urdu">Urdu</option>
+            <option value="spanish">Spanish</option>
+            <option value="french">French</option>
+            <option value="german">German</option>
+            <option value="italian">Italian</option>
+            <option value="portuguese">Portuguese</option>
+            <option value="russian">Russian</option>
+            <option value="arabic">Arabic</option>
+            <option value="japanese">Japanese</option>
+            <option value="korean">Korean</option>
+            <option value="chinese">Chinese</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="asu-run">Transcribe</button>
+        <button type="button" class="btn ghost" id="asu-dl-srt" disabled>Download SRT</button>
+        <button type="button" class="btn ghost" id="asu-dl-vtt" disabled>Download WebVTT</button>
+      </div>
+
+      <div id="asu-prog" hidden>
+        <p style="margin:12px 0 6px" id="asu-dl-label">Downloading the model (one-time)…</p>
+        <div class="asu-bar"><div id="asu-dl-fill"></div></div>
+        <p style="margin:6px 0 0;font-size:.9rem" id="asu-dl-detail"></p>
+        <p style="margin:10px 0 0" id="asu-tr-label"></p>
+      </div>
+
+      <div style="overflow-x:auto">
+      <table class="asu-cues" id="asu-table" hidden>
+        <thead><tr><th>#</th><th>Start</th><th>End</th><th>Text</th></tr></thead>
+        <tbody id="asu-tbody"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+  <p id="asu-status" class="status" role="status">Choose or drop an audio or video file to begin.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> the one-time model download described above is the only network traffic this page creates; your recording is decoded and transcribed on this device and never sent anywhere. Models: <strong>OpenAI Whisper</strong> (Tiny and Base, quantized builds published by Xenova on Hugging Face, Apache-2.0), run with <strong>transformers.js 3.8.1</strong>. Timestamps are per speech segment, not per word. Very long files can run out of memory in a tab — trimming the recording first (our Audio Trimmer, or Video Trimmer for clips) makes this tool much happier. Nothing is uploaded.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var ASU_TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
+var ASU_MODELS = { tiny: "Xenova/whisper-tiny", base: "Xenova/whisper-base" };
+var asu_file = document.getElementById("asu-file");
+var asu_drop = document.getElementById("asu-drop");
+var asu_status = document.getElementById("asu-status");
+var asu_editor = document.getElementById("asu-editor");
+var asu_audio = null;          /* Float32Array, 16 kHz mono */
+var asu_duration = 0;
+var asu_cues = [];             /* { start, end, text } seconds */
+var asu_pipe = null;
+var asu_pipeModel = null;
+var asu_phase = "idle";        /* idle | ready | loading-model | transcribing | done | error */
+var asu_downloads = {};
+var asu_base = "audio";
+
+function asu_setStatus(text, kind) {
+  asu_status.className = "status" + (kind ? " " + kind : "");
+  asu_status.textContent = text;
+}
+function asu_fmtBytes(b) {
+  if (b > 1048576) { return (b / 1048576).toFixed(2) + " MB"; }
+  if (b > 1024) { return (b / 1024).toFixed(1) + " KB"; }
+  return b + " B";
+}
+function asu_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function asu_pad(n, w) { var s = String(n); while (s.length < w) { s = "0" + s; } return s; }
+function asu_fmtTime(sec, comma) {
+  if (!isFinite(sec) || sec < 0) { sec = 0; }
+  var ms = Math.round(sec * 1000);
+  var h = Math.floor(ms / 3600000); ms -= h * 3600000;
+  var m = Math.floor(ms / 60000); ms -= m * 60000;
+  var s = Math.floor(ms / 1000); ms -= s * 1000;
+  return asu_pad(h, 2) + ":" + asu_pad(m, 2) + ":" + asu_pad(s, 2) + (comma ? "," : ".") + asu_pad(ms, 3);
+}
+/* Whisper chunks [{text, timestamp:[start, end|null]}] -> cue list */
+function asu_chunksToCues(chunks, duration) {
+  var cues = [];
+  (chunks || []).forEach(function (ch) {
+    var text = String(ch.text || "").trim();
+    if (!text) { return; }
+    var ts = ch.timestamp || [0, 0];
+    var start = +ts[0] || 0;
+    var end = (ts[1] === null || ts[1] === undefined) ? (duration || start + 1) : +ts[1];
+    if (!(end > start)) { end = start + 0.5; }
+    cues.push({ start: Math.round(start * 1000) / 1000, end: Math.round(end * 1000) / 1000, text: text });
+  });
+  return cues;
+}
+function asu_formatSRT(cues) {
+  var out = [];
+  for (var i = 0; i < cues.length; i++) {
+    out.push(String(i + 1));
+    out.push(asu_fmtTime(cues[i].start, true) + " --> " + asu_fmtTime(cues[i].end, true));
+    out.push(cues[i].text);
+    out.push("");
+  }
+  return out.join("\n");
+}
+function asu_formatVTT(cues) {
+  var out = ["WEBVTT", ""];
+  for (var i = 0; i < cues.length; i++) {
+    out.push(asu_fmtTime(cues[i].start, false) + " --> " + asu_fmtTime(cues[i].end, false));
+    out.push(cues[i].text);
+    out.push("");
+  }
+  return out.join("\n");
+}
+function asu_renderCues() {
+  var tbody = document.getElementById("asu-tbody");
+  tbody.innerHTML = "";
+  asu_cues.forEach(function (cue, i) {
+    var tr = document.createElement("tr");
+    var tdN = document.createElement("td"); tdN.textContent = String(i + 1);
+    var tdS = document.createElement("td"); tdS.className = "asu-t"; tdS.textContent = asu_fmtTime(cue.start, false);
+    var tdE = document.createElement("td"); tdE.className = "asu-t"; tdE.textContent = asu_fmtTime(cue.end, false);
+    var tdT = document.createElement("td"); tdT.textContent = cue.text;
+    tr.appendChild(tdN); tr.appendChild(tdS); tr.appendChild(tdE); tr.appendChild(tdT);
+    tbody.appendChild(tr);
+  });
+  document.getElementById("asu-table").hidden = !asu_cues.length;
+  document.getElementById("asu-dl-srt").disabled = !asu_cues.length;
+  document.getElementById("asu-dl-vtt").disabled = !asu_cues.length;
+}
+function asu_setResult(chunks, duration) {
+  asu_cues = asu_chunksToCues(chunks, duration);
+  asu_renderCues();
+  return asu_cues;
+}
+function asu_progress(ev) {
+  if (!ev) { return; }
+  if (ev.status === "progress" && ev.file) {
+    asu_downloads[ev.file] = { loaded: ev.loaded || 0, total: ev.total || 0 };
+  }
+  var loaded = 0, total = 0, files = 0;
+  for (var k in asu_downloads) {
+    if (Object.prototype.hasOwnProperty.call(asu_downloads, k)) {
+      loaded += asu_downloads[k].loaded; total += asu_downloads[k].total; files++;
+    }
+  }
+  var pct = total > 0 ? Math.round(loaded / total * 100) : 0;
+  document.getElementById("asu-dl-fill").style.width = pct + "%";
+  document.getElementById("asu-dl-label").textContent = "Downloading the model (one-time)… " + pct + "%";
+  document.getElementById("asu-dl-detail").textContent =
+    asu_fmtBytes(loaded) + (total ? " of " + asu_fmtBytes(total) : "") + " across " + files + " file(s). It is cached after this.";
+}
+async function asu_loadPipeline(modelKey) {
+  if (asu_pipe && asu_pipeModel === modelKey) { return asu_pipe; }
+  var mod;
+  try {
+    mod = await import(ASU_TF_URL);
+  } catch (e) {
+    throw new Error("The AI library could not be downloaded from the CDN. Check your internet connection and try again — nothing about your recording was sent anywhere.");
+  }
+  try { mod.env.allowLocalModels = false; } catch (e) {}
+  asu_pipe = await mod.pipeline("automatic-speech-recognition", ASU_MODELS[modelKey], {
+    dtype: "q8",
+    device: "wasm",
+    progress_callback: asu_progress
+  });
+  asu_pipeModel = modelKey;
+  return asu_pipe;
+}
+async function asu_decode(file) {
+  var buf = await file.arrayBuffer();
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ctx = new AC();
+  var decoded;
+  try {
+    decoded = await ctx.decodeAudioData(buf);
+  } finally {
+    if (ctx.close) { ctx.close(); }
+  }
+  var dur = decoded.duration;
+  var off = new OfflineAudioContext(1, Math.max(1, Math.ceil(dur * 16000)), 16000);
+  var src = off.createBufferSource();
+  src.buffer = decoded;
+  src.connect(off.destination);
+  src.start(0);
+  var rendered = await off.startRendering();
+  return { samples: rendered.getChannelData(0), duration: dur, channels: decoded.numberOfChannels, rate: decoded.sampleRate };
+}
+async function asu_run() {
+  if (!asu_audio) { asu_setStatus("Choose an audio or video file first.", "error"); return; }
+  var btn = document.getElementById("asu-run");
+  btn.disabled = true;
+  var prog = document.getElementById("asu-prog");
+  prog.hidden = false;
+  var t0 = Date.now();
+  var tick = null;
+  try {
+    asu_phase = "loading-model";
+    document.getElementById("asu-dl-label").textContent = "Downloading the model library…";
+    var pipe = await asu_loadPipeline(document.getElementById("asu-model").value);
+    asu_phase = "transcribing";
+    document.getElementById("asu-dl-label").textContent = "Model ready (cached for next time).";
+    document.getElementById("asu-dl-fill").style.width = "100%";
+    var trLabel = document.getElementById("asu-tr-label");
+    tick = setInterval(function () {
+      trLabel.textContent = "Transcribing on this device… " + Math.round((Date.now() - t0) / 1000) + " s elapsed. CPU transcription is slow — please keep this tab open.";
+    }, 500);
+    var lang = document.getElementById("asu-lang").value;
+    var opts = { chunk_length_s: 30, stride_length_s: 5, return_timestamps: true, task: "transcribe" };
+    if (lang) { opts.language = lang; }
+    var out = await pipe(asu_audio, opts);
+    clearInterval(tick);
+    var chunks = out && out.chunks ? out.chunks : (out && out.text ? [{ text: out.text, timestamp: [0, asu_duration] }] : []);
+    asu_setResult(chunks, asu_duration);
+    asu_phase = "done";
+    prog.hidden = true;
+    asu_setStatus("Transcription finished in " + ((Date.now() - t0) / 1000).toFixed(1) + " s — " + asu_cues.length + " subtitle cues. Read through them before publishing: Whisper makes mistakes, especially with names and noisy audio.", "ok");
+  } catch (e) {
+    if (tick) { clearInterval(tick); }
+    asu_phase = "error";
+    prog.hidden = true;
+    asu_setStatus("Transcription failed: " + (e && e.message ? e.message : e), "error");
+  } finally {
+    btn.disabled = false;
+  }
+}
+document.getElementById("asu-run").addEventListener("click", asu_run);
+function asu_download(kind) {
+  if (!asu_cues.length) { return; }
+  var text = kind === "srt" ? asu_formatSRT(asu_cues) : asu_formatVTT(asu_cues);
+  var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.setAttribute("download", asu_base + (kind === "srt" ? ".srt" : ".vtt"));
+  a.id = "asu-dl-link";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 4000);
+  asu_setStatus("Downloaded " + asu_base + (kind === "srt" ? ".srt" : ".vtt") + " (" + asu_cues.length + " cues).", "ok");
+}
+document.getElementById("asu-dl-srt").addEventListener("click", function () { asu_download("srt"); });
+document.getElementById("asu-dl-vtt").addEventListener("click", function () { asu_download("vtt"); });
+function asu_load(file) {
+  if (!file) { return; }
+  asu_base = asu_baseName(file.name || "audio");
+  asu_phase = "idle";
+  asu_setStatus("Reading the audio from “" + file.name + "”…", "");
+  asu_decode(file).then(function (res) {
+    asu_audio = res.samples;
+    asu_duration = res.duration;
+    asu_cues = [];
+    asu_renderCues();
+    document.getElementById("asu-m-name").textContent = file.name;
+    document.getElementById("asu-m-dur").textContent = res.duration.toFixed(2) + " s";
+    document.getElementById("asu-m-audio").textContent = res.channels + " ch, " + res.rate + " Hz → 16 kHz mono";
+    asu_editor.hidden = false;
+    asu_phase = "ready";
+    asu_setStatus("Audio ready (" + res.duration.toFixed(1) + " s). Pick a model and language, then press Transcribe — the first run downloads the model once.", "ok");
+  }).catch(function (e) {
+    asu_phase = "error";
+    asu_setStatus("The audio could not be read from that file: " + (e && e.message ? e.message : "the browser cannot decode this format") + ". Try an MP3, WAV, MP4 or WebM file.", "error");
+  });
+}
+asu_file.addEventListener("change", function () { asu_load(asu_file.files && asu_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) { asu_drop.addEventListener(ev, function (e) { e.preventDefault(); asu_drop.classList.add("asu-over"); }); });
+["dragleave", "drop"].forEach(function (ev) { asu_drop.addEventListener(ev, function (e) { e.preventDefault(); asu_drop.classList.remove("asu-over"); }); });
+asu_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { asu_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.asu_api = {
+  chunksToCues: asu_chunksToCues,
+  formatSRT: asu_formatSRT,
+  formatVTT: asu_formatVTT,
+  fmtTime: asu_fmtTime,
+  setResult: asu_setResult,
+  decode: asu_decode
+};
+window.asu_state = function () {
+  return {
+    phase: asu_phase,
+    hasAudio: !!asu_audio,
+    duration: Math.round(asu_duration * 1000) / 1000,
+    samples: asu_audio ? asu_audio.length : 0,
+    cues: asu_cues.map(function (c) { return { start: c.start, end: c.end, text: c.text }; }),
+    srt: asu_formatSRT(asu_cues),
+    vtt: asu_formatVTT(asu_cues),
+    model: asu_pipeModel,
+    status: asu_status.textContent
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="auto-subtitle"></script>
+</body>
+</html>
