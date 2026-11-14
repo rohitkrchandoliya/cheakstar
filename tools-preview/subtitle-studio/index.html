@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Subtitle Studio - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/subtitle-studio/">
+<meta property="og:title" content="Subtitle Studio - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/subtitle-studio/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.sst-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 18px 16px; text-align: center; margin-top: 12px; }
+.sst-drop.sst-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.sst-video { width: 100%; height: auto; display: block; background: #000; border-radius: 10px; margin-top: 12px; }
+.sst-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .92rem; }
+.sst-table th { text-align: left; padding: 6px 8px; border-bottom: 2px solid var(--line); color: var(--navy, #0a2540); }
+.sst-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sst-table tr.sst-active td { background: rgba(201,162,39,.10); }
+.sst-table tr.sst-bad td { background: rgba(200,40,40,.06); }
+.sst-table input[type="text"] { width: 108px; font-family: ui-monospace, monospace; font-size: .88rem; }
+.sst-table textarea { width: 100%; min-width: 180px; min-height: 38px; font-size: .92rem; resize: vertical; }
+.sst-err { display: block; color: #b3261e; font-size: .8rem; margin-top: 4px; }
+.sst-ok { color: #2e7d32; font-size: .8rem; }
+.sst-rowbtns { white-space: nowrap; }
+.sst-summary { margin-top: 10px; font-size: .95rem; }
+.sst-summary strong { color: var(--navy, #0a2540); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Subtitle Studio</h1>
+<p class="tool-sub">Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files.</p>
+<div class="tool-card">
+  <p>Load a subtitle file (SRT or WebVTT) — or start from an empty list — and edit every cue's start, end and text in the table. Optionally load the video too: clicking a cue jumps the video to that moment. Problems such as overlapping cues, an end before the start, or empty text are flagged on the row as you type, before they can break a player. Everything happens on this device — your video and subtitles never leave this browser tab.</p>
+
+  <div class="row2">
+    <div class="sst-drop" id="sst-drop-sub">
+      <label for="sst-sub-file"><strong>Choose a subtitle file</strong> (.srt or .vtt), or drop it here</label>
+      <input id="sst-sub-file" type="file" accept=".srt,.vtt,text/plain">
+    </div>
+    <div class="sst-drop" id="sst-drop-vid">
+      <label for="sst-vid-file"><strong>Choose a video file</strong> (optional, for preview), or drop it here</label>
+      <input id="sst-vid-file" type="file" accept="video/*">
+    </div>
+  </div>
+
+  <div data-result>
+    <div id="sst-editor" hidden>
+      <video id="sst-video" class="sst-video" controls playsinline preload="auto" hidden></video>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button type="button" class="btn" id="sst-add">Add cue at playhead</button>
+        <button type="button" class="btn ghost" id="sst-add-end">Add cue at end</button>
+        <button type="button" class="btn ghost" id="sst-sort">Sort by start time</button>
+        <button type="button" class="btn ghost" id="sst-clear">Clear all cues</button>
+      </div>
+
+      <div style="overflow-x:auto">
+      <table class="sst-table" id="sst-table">
+        <thead><tr><th>#</th><th>Start</th><th>End</th><th>Text</th><th>Check</th><th></th></tr></thead>
+        <tbody id="sst-tbody"></tbody>
+      </table>
+      </div>
+
+      <p class="sst-summary" id="sst-summary"></p>
+
+      <div class="row2" style="margin-top:10px">
+        <div>
+          <label for="sst-shift">Shift all cues by (seconds, can be negative)</label>
+          <input id="sst-shift" type="number" step="0.1" value="0">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="btn-row" style="margin-top:0">
+            <button type="button" class="btn ghost" id="sst-shift-btn">Apply shift</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="sst-dl-srt">Download SRT</button>
+        <button type="button" class="btn" id="sst-dl-vtt">Download WebVTT</button>
+      </div>
+    </div>
+  </div>
+  <p id="sst-status" class="status" role="status">Load a subtitle file, or press “Start with an empty cue list” below.</p>
+  <div class="btn-row">
+    <button type="button" class="btn ghost" id="sst-start-empty">Start with an empty cue list</button>
+  </div>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> times are edited as <em>HH:MM:SS.mmm</em>; when you load a file, SRT comma decimals are understood and converted. On export, cues are written in start-time order and numbered from 1 — if a cue still has a timing problem the export is blocked and the row tells you what to fix, rather than quietly writing a broken file. Splitting a cue divides it at its midpoint and puts the second half of the text in the new cue when the text has more than one word. Styling tags inside subtitle text are kept as plain text. Nothing is uploaded.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var sst_subFile = document.getElementById("sst-sub-file");
+var sst_vidFile = document.getElementById("sst-vid-file");
+var sst_status = document.getElementById("sst-status");
+var sst_editor = document.getElementById("sst-editor");
+var sst_video = document.getElementById("sst-video");
+var sst_tbody = document.getElementById("sst-tbody");
+var sst_summary = document.getElementById("sst-summary");
+var sst_cues = [];          /* { start, end, text } in seconds */
+var sst_active = -1;
+var sst_videoUrl = null;
+var sst_base = "subtitles";
+
+function sst_setStatus(text, kind) {
+  sst_status.className = "status" + (kind ? " " + kind : "");
+  sst_status.textContent = text;
+}
+function sst_pad(n, w) { var s = String(n); while (s.length < w) { s = "0" + s; } return s; }
+/* seconds -> "HH:MM:SS.mmm" (dot) or "HH:MM:SS,mmm" (comma, SRT) */
+function sst_fmtTime(sec, comma) {
+  if (!isFinite(sec) || sec < 0) { sec = 0; }
+  var ms = Math.round(sec * 1000);
+  var h = Math.floor(ms / 3600000); ms -= h * 3600000;
+  var m = Math.floor(ms / 60000); ms -= m * 60000;
+  var s = Math.floor(ms / 1000); ms -= s * 1000;
+  return sst_pad(h, 2) + ":" + sst_pad(m, 2) + ":" + sst_pad(s, 2) + (comma ? "," : ".") + sst_pad(ms, 3);
+}
+/* "HH:MM:SS.mmm" / "MM:SS,mmm" / plain seconds -> seconds (NaN if unreadable) */
+function sst_parseTime(str) {
+  if (typeof str !== "string") { return NaN; }
+  var t = str.trim().replace(",", ".");
+  if (/^\d+(\.\d+)?$/.test(t)) { return parseFloat(t); }
+  var m = t.match(/^(?:(\d+):)?([0-5]?\d):([0-5]?\d)(?:\.(\d{1,3}))?$/);
+  if (!m) { return NaN; }
+  var h = m[1] ? parseInt(m[1], 10) : 0;
+  var frac = m[4] ? parseFloat("0." + (m[4] + "00").slice(0, 3)) : 0;
+  return h * 3600 + parseInt(m[2], 10) * 60 + parseInt(m[3], 10) + frac;
+}
+function sst_parseCues(text) {
+  var cues = [];
+  var norm = String(text).replace(/\r\n/g, "\n").replace(/\r/g, "\n").replace(/^﻿/, "");
+  var blocks = norm.split(/\n\s*\n/);
+  var arrow = /(-->)/;
+  for (var i = 0; i < blocks.length; i++) {
+    var lines = blocks[i].split("\n").filter(function (l) { return l.trim() !== "" || true; });
+    var ti = -1;
+    for (var j = 0; j < lines.length; j++) { if (arrow.test(lines[j])) { ti = j; break; } }
+    if (ti < 0) { continue; }
+    var parts = lines[ti].split("-->");
+    var start = sst_parseTime(parts[0].trim().split(/\s+/)[0]);
+    var end = sst_parseTime(parts[1].trim().split(/\s+/)[0]);
+    if (!isFinite(start) || !isFinite(end)) { continue; }
+    var body = lines.slice(ti + 1).join("\n").trim();
+    cues.push({ start: start, end: end, text: body });
+  }
+  cues.sort(function (a, b) { return a.start - b.start; });
+  return cues;
+}
+function sst_validate(cues) {
+  var errs = [];
+  for (var i = 0; i < cues.length; i++) {
+    var e = [];
+    var c = cues[i];
+    if (!isFinite(c.start) || !isFinite(c.end)) { e.push("Unreadable time"); }
+    else {
+      if (c.end <= c.start) { e.push("End is not after start"); }
+      if (i > 0 && isFinite(cues[i - 1].end) && c.start < cues[i - 1].end) { e.push("Overlaps the cue above"); }
+    }
+    if (!c.text || !String(c.text).trim()) { e.push("Empty text"); }
+    errs.push(e);
+  }
+  return errs;
+}
+function sst_formatSRT(cues) {
+  var out = [];
+  for (var i = 0; i < cues.length; i++) {
+    out.push(String(i + 1));
+    out.push(sst_fmtTime(cues[i].start, true) + " --> " + sst_fmtTime(cues[i].end, true));
+    out.push(String(cues[i].text).trim());
+    out.push("");
+  }
+  return out.join("\n");
+}
+function sst_formatVTT(cues) {
+  var out = ["WEBVTT", ""];
+  for (var i = 0; i < cues.length; i++) {
+    out.push(sst_fmtTime(cues[i].start, false) + " --> " + sst_fmtTime(cues[i].end, false));
+    out.push(String(cues[i].text).trim());
+    out.push("");
+  }
+  return out.join("\n");
+}
+function sst_render() {
+  var errs = sst_validate(sst_cues);
+  sst_tbody.innerHTML = "";
+  sst_cues.forEach(function (cue, i) {
+    var tr = document.createElement("tr");
+    if (i === sst_active) { tr.className = "sst-active"; }
+    if (errs[i].length) { tr.className = (tr.className + " sst-bad").trim(); }
+    var tdN = document.createElement("td"); tdN.textContent = String(i + 1);
+    var tdS = document.createElement("td");
+    var inS = document.createElement("input");
+    inS.type = "text"; inS.value = sst_fmtTime(cue.start, false); inS.dataset.idx = i; inS.dataset.field = "start";
+    inS.setAttribute("aria-label", "Cue " + (i + 1) + " start");
+    tdS.appendChild(inS);
+    var tdE = document.createElement("td");
+    var inE = document.createElement("input");
+    inE.type = "text"; inE.value = sst_fmtTime(cue.end, false); inE.dataset.idx = i; inE.dataset.field = "end";
+    inE.setAttribute("aria-label", "Cue " + (i + 1) + " end");
+    tdE.appendChild(inE);
+    var tdT = document.createElement("td");
+    var ta = document.createElement("textarea");
+    ta.value = cue.text; ta.dataset.idx = i; ta.dataset.field = "text";
+    ta.setAttribute("aria-label", "Cue " + (i + 1) + " text");
+    tdT.appendChild(ta);
+    var tdC = document.createElement("td");
+    if (errs[i].length) {
+      errs[i].forEach(function (msg) {
+        var sp = document.createElement("span"); sp.className = "sst-err"; sp.textContent = msg; tdC.appendChild(sp);
+      });
+    } else {
+      var ok = document.createElement("span"); ok.className = "sst-ok"; ok.textContent = "OK"; tdC.appendChild(ok);
+    }
+    var tdB = document.createElement("td"); tdB.className = "sst-rowbtns";
+    var bSeek = document.createElement("button"); bSeek.type = "button"; bSeek.className = "btn ghost small"; bSeek.textContent = "Seek";
+    bSeek.dataset.act = "seek"; bSeek.dataset.idx = i;
+    var bSplit = document.createElement("button"); bSplit.type = "button"; bSplit.className = "btn ghost small"; bSplit.textContent = "Split";
+    bSplit.dataset.act = "split"; bSplit.dataset.idx = i;
+    var bDel = document.createElement("button"); bDel.type = "button"; bDel.className = "btn ghost small"; bDel.textContent = "Delete";
+    bDel.dataset.act = "del"; bDel.dataset.idx = i;
+    tdB.appendChild(bSeek); tdB.appendChild(document.createTextNode(" "));
+    tdB.appendChild(bSplit); tdB.appendChild(document.createTextNode(" "));
+    tdB.appendChild(bDel);
+    tr.appendChild(tdN); tr.appendChild(tdS); tr.appendChild(tdE); tr.appendChild(tdT); tr.appendChild(tdC); tr.appendChild(tdB);
+    tr.addEventListener("click", function (ev) {
+      if (ev.target === tr || ev.target === tdN) { sst_seek(i, false); }
+    });
+    sst_tbody.appendChild(tr);
+  });
+  var bad = errs.filter(function (e) { return e.length; }).length;
+  sst_summary.innerHTML = "";
+  sst_summary.appendChild(document.createTextNode("Cues: "));
+  var st = document.createElement("strong"); st.textContent = String(sst_cues.length); sst_summary.appendChild(st);
+  sst_summary.appendChild(document.createTextNode(" · Cues with problems: "));
+  var st2 = document.createElement("strong"); st2.textContent = String(bad); sst_summary.appendChild(st2);
+  if (bad) { sst_summary.appendChild(document.createTextNode(" — fix the rows marked in red before exporting.")); }
+}
+function sst_seek(i, play) {
+  var cue = sst_cues[i];
+  if (!cue) { return; }
+  sst_active = i;
+  if (sst_videoUrl && isFinite(cue.start)) {
+    try { sst_video.currentTime = Math.max(0, cue.start); } catch (e) {}
+    if (play) { var p = sst_video.play(); if (p && p.catch) { p.catch(function () {}); } }
+  }
+  sst_render();
+}
+function sst_readRow(input) {
+  var i = parseInt(input.dataset.idx, 10);
+  var field = input.dataset.field;
+  if (!sst_cues[i]) { return; }
+  if (field === "text") { sst_cues[i].text = input.value; }
+  else { var v = sst_parseTime(input.value); sst_cues[i][field] = v; }
+}
+sst_tbody.addEventListener("input", function (ev) {
+  var t = ev.target;
+  if (t.dataset && t.dataset.idx !== undefined) { sst_readRow(t); sst_renderSoft(t); }
+});
+sst_tbody.addEventListener("change", function (ev) {
+  var t = ev.target;
+  if (t.dataset && t.dataset.idx !== undefined) { sst_render(); }
+});
+/* live validation without stealing focus: only the Check cell + row class update */
+function sst_renderSoft(focusEl) {
+  var errs = sst_validate(sst_cues);
+  var rows = sst_tbody.querySelectorAll("tr");
+  rows.forEach(function (tr, i) {
+    if (!errs[i]) { return; }
+    tr.classList.toggle("sst-bad", !!errs[i].length);
+    var cell = tr.children[4];
+    cell.innerHTML = "";
+    if (errs[i].length) {
+      errs[i].forEach(function (msg) {
+        var sp = document.createElement("span"); sp.className = "sst-err"; sp.textContent = msg; cell.appendChild(sp);
+      });
+    } else {
+      var ok = document.createElement("span"); ok.className = "sst-ok"; ok.textContent = "OK"; cell.appendChild(ok);
+    }
+  });
+  var bad = errs.filter(function (e) { return e.length; }).length;
+  sst_summary.textContent = "Cues: " + sst_cues.length + " · Cues with problems: " + bad + (bad ? " — fix the rows marked in red before exporting." : "");
+}
+sst_tbody.addEventListener("click", function (ev) {
+  var b = ev.target.closest ? ev.target.closest("button[data-act]") : null;
+  if (!b) { return; }
+  var i = parseInt(b.dataset.idx, 10);
+  var act = b.dataset.act;
+  if (act === "seek") { sst_seek(i, true); }
+  else if (act === "del") { sst_cues.splice(i, 1); if (sst_active >= sst_cues.length) { sst_active = sst_cues.length - 1; } sst_render(); }
+  else if (act === "split") {
+    var c = sst_cues[i];
+    if (!c || !isFinite(c.start) || !isFinite(c.end) || c.end <= c.start) { sst_setStatus("That cue cannot be split until its times are valid.", "error"); return; }
+    var mid = (c.start + c.end) / 2;
+    var words = String(c.text || "").trim().split(/\s+/).filter(Boolean);
+    var first = c.text, second = "";
+    if (words.length > 1) {
+      var half = Math.ceil(words.length / 2);
+      first = words.slice(0, half).join(" ");
+      second = words.slice(half).join(" ");
+    }
+    sst_cues.splice(i, 1, { start: c.start, end: mid, text: first }, { start: mid, end: c.end, text: second });
+    sst_render();
+    sst_setStatus("Cue " + (i + 1) + " split at " + sst_fmtTime(mid, false) + ".", "ok");
+  }
+});
+document.getElementById("sst-add").addEventListener("click", function () {
+  var t = sst_videoUrl && isFinite(sst_video.currentTime) ? sst_video.currentTime : (sst_cues.length ? sst_cues[sst_cues.length - 1].end : 0);
+  sst_cues.push({ start: Math.round(t * 1000) / 1000, end: Math.round((t + 2) * 1000) / 1000, text: "" });
+  sst_cues.sort(function (a, b) { return a.start - b.start; });
+  sst_render();
+});
+document.getElementById("sst-add-end").addEventListener("click", function () {
+  var t = sst_cues.length ? Math.max.apply(null, sst_cues.map(function (c) { return isFinite(c.end) ? c.end : 0; })) : 0;
+  sst_cues.push({ start: t, end: t + 2, text: "" });
+  sst_render();
+});
+document.getElementById("sst-sort").addEventListener("click", function () {
+  sst_cues.sort(function (a, b) { return a.start - b.start; });
+  sst_render();
+  sst_setStatus("Cues sorted by start time.", "ok");
+});
+document.getElementById("sst-clear").addEventListener("click", function () {
+  sst_cues = [];
+  sst_active = -1;
+  sst_render();
+  sst_setStatus("All cues cleared. Add cues with the buttons above.", "");
+});
+document.getElementById("sst-shift-btn").addEventListener("click", function () {
+  var by = parseFloat(document.getElementById("sst-shift").value);
+  if (!isFinite(by)) { sst_setStatus("Enter a shift in seconds first.", "error"); return; }
+  var clamped = 0;
+  sst_cues.forEach(function (c) {
+    c.start = Math.round((c.start + by) * 1000) / 1000;
+    c.end = Math.round((c.end + by) * 1000) / 1000;
+    if (c.start < 0) { c.start = 0; clamped++; }
+    if (c.end < 0) { c.end = 0; clamped++; }
+  });
+  sst_render();
+  sst_setStatus("Shifted all cues by " + by + " s." + (clamped ? " " + clamped + " time(s) were clamped at 0." : ""), "ok");
+});
+function sst_download(kind) {
+  if (!sst_cues.length) { sst_setStatus("There are no cues to export yet.", "error"); return; }
+  var sorted = sst_cues.slice().sort(function (a, b) { return a.start - b.start; });
+  var errs = sst_validate(sorted);
+  var bad = errs.filter(function (e) { return e.length; }).length;
+  if (bad) { sst_setStatus("Export blocked: " + bad + " cue(s) still have problems (see the red rows). Fix them first so the file is valid.", "error"); return; }
+  var text = kind === "srt" ? sst_formatSRT(sorted) : sst_formatVTT(sorted);
+  var blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.setAttribute("download", sst_base + (kind === "srt" ? ".srt" : ".vtt"));
+  a.id = "sst-dl-link";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 4000);
+  sst_setStatus("Downloaded " + sst_base + (kind === "srt" ? ".srt" : ".vtt") + " (" + sst_cues.length + " cues).", "ok");
+}
+document.getElementById("sst-dl-srt").addEventListener("click", function () { sst_download("srt"); });
+document.getElementById("sst-dl-vtt").addEventListener("click", function () { sst_download("vtt"); });
+function sst_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function sst_loadSub(file) {
+  if (!file) { return; }
+  sst_base = sst_baseName(file.name || "subtitles");
+  var reader = new FileReader();
+  reader.onload = function () {
+    var cues = sst_parseCues(String(reader.result || ""));
+    if (!cues.length) { sst_setStatus("No readable cues were found in that file. It needs SRT or WebVTT timing lines (00:00:01.000 --> 00:00:03.000).", "error"); return; }
+    sst_cues = cues;
+    sst_active = -1;
+    sst_editor.hidden = false;
+    sst_render();
+    sst_setStatus("Loaded " + cues.length + " cues from " + file.name + ". Click a cue's Seek button to jump the video to it.", "ok");
+  };
+  reader.onerror = function () { sst_setStatus("That file could not be read.", "error"); };
+  reader.readAsText(file);
+}
+function sst_loadVideo(file) {
+  if (!file) { return; }
+  if (sst_videoUrl) { URL.revokeObjectURL(sst_videoUrl); }
+  sst_videoUrl = URL.createObjectURL(file);
+  sst_video.src = sst_videoUrl;
+  sst_video.hidden = false;
+  sst_editor.hidden = false;
+  if (!sst_cues.length) { sst_render(); }
+  sst_setStatus("Video loaded for preview. Cue Seek buttons and “Add cue at playhead” now use it.", "ok");
+}
+sst_subFile.addEventListener("change", function () { sst_loadSub(sst_subFile.files && sst_subFile.files[0]); });
+sst_vidFile.addEventListener("change", function () { sst_loadVideo(sst_vidFile.files && sst_vidFile.files[0]); });
+[["sst-drop-sub", sst_loadSub], ["sst-drop-vid", sst_loadVideo]].forEach(function (pair) {
+  var zone = document.getElementById(pair[0]);
+  ["dragenter", "dragover"].forEach(function (ev) { zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.add("sst-over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.remove("sst-over"); }); });
+  zone.addEventListener("drop", function (e) {
+    var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) { pair[1](f); }
+  });
+});
+document.getElementById("sst-start-empty").addEventListener("click", function () {
+  sst_cues = [];
+  sst_editor.hidden = false;
+  sst_render();
+  sst_setStatus("Empty cue list ready. Use “Add cue at end” to write your first cue.", "ok");
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.sst_api = {
+  parseCues: sst_parseCues,
+  parseTime: sst_parseTime,
+  fmtTime: sst_fmtTime,
+  formatSRT: sst_formatSRT,
+  formatVTT: sst_formatVTT,
+  validate: sst_validate,
+  setCues: function (cues) { sst_cues = cues.map(function (c) { return { start: c.start, end: c.end, text: c.text }; }); sst_editor.hidden = false; sst_render(); },
+  getCues: function () { return sst_cues.map(function (c) { return { start: c.start, end: c.end, text: c.text }; }); },
+  exportText: function (kind) {
+    var sorted = sst_cues.slice().sort(function (a, b) { return a.start - b.start; });
+    return kind === "srt" ? sst_formatSRT(sorted) : sst_formatVTT(sorted);
+  }
+};
+window.sst_state = function () {
+  return {
+    cues: sst_cues.map(function (c) { return { start: Math.round(c.start * 1000) / 1000, end: Math.round(c.end * 1000) / 1000, text: c.text }; }),
+    errors: sst_validate(sst_cues),
+    videoLoaded: !!sst_videoUrl,
+    active: sst_active,
+    summary: sst_summary.textContent
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="subtitle-studio"></script>
+</body>
+</html>
