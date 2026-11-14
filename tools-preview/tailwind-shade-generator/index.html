@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Tailwind Shade Generator - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/tailwind-shade-generator/">
+<meta property="og:title" content="Tailwind Shade Generator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/tailwind-shade-generator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.tws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+@media (min-width: 720px) { .tws-grid { grid-template-columns: repeat(4, 1fr); } }
+.tws-cell { border: 1px solid var(--line); border-radius: 8px; padding: 0; overflow: hidden; cursor: pointer; background: var(--card); text-align: left; font: inherit; color: var(--ink); }
+.tws-cell .tws-sw { height: 54px; }
+.tws-cell .tws-lb { padding: 6px 8px; font-size: .85rem; display: flex; justify-content: space-between; gap: 6px; }
+.tws-cell .tws-step { font-weight: 700; }
+textarea.tws-out { width: 100%; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Tailwind Shade Generator</h1>
+<p class="tool-sub">Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports.</p>
+<div class="tool-card">
+  <p>Pick a base colour and name your palette. The scale is built in OKLCH, the perceptual colour space Tailwind v4 uses, so the steps look evenly spaced instead of bunching up at one end. Click any swatch to copy its HEX code.</p>
+
+  <div class="row2">
+    <div>
+      <label for="tws-color">Base colour</label>
+      <input id="tws-color" type="color" value="#3b82f6" style="height:44px; width:100%; padding:2px">
+    </div>
+    <div>
+      <label for="tws-hex">Or type a HEX code</label>
+      <input id="tws-hex" type="text" value="#3B82F6" autocomplete="off" spellcheck="false">
+    </div>
+    <div>
+      <label for="tws-name">Palette name</label>
+      <input id="tws-name" type="text" value="primary" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <div data-result>
+    <div class="tws-grid" id="tws-grid"></div>
+
+    <label for="tws-css-hex" style="margin-top:18px">CSS variables (HEX)</label>
+    <textarea id="tws-css-hex" class="tws-out mono" readonly rows="13"></textarea>
+    <div class="btn-row"><button id="tws-copy-hex" class="btn ghost small" type="button">Copy CSS variables (HEX)</button></div>
+
+    <label for="tws-css-oklch" style="margin-top:18px">CSS variables (OKLCH)</label>
+    <textarea id="tws-css-oklch" class="tws-out mono" readonly rows="13"></textarea>
+    <div class="btn-row"><button id="tws-copy-oklch" class="btn ghost small" type="button">Copy CSS variables (OKLCH)</button></div>
+
+    <label for="tws-config" style="margin-top:18px">Tailwind config (JS object)</label>
+    <textarea id="tws-config" class="tws-out mono" readonly rows="13"></textarea>
+    <div class="btn-row"><button id="tws-copy-config" class="btn ghost small" type="button">Copy Tailwind config</button></div>
+  </div>
+  <p id="tws-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> step 500 is your base colour exactly. Lighter steps move the OKLCH lightness toward 0.985 and darker steps toward 0.16, with chroma gently tapered at both ends (real pigments get less vivid near white and black); the hue never changes. If a step would fall outside the sRGB gamut, its chroma is reduced just enough to fit, so every value here is a real displayable colour. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var twsColor = document.getElementById("tws-color");
+var twsHex = document.getElementById("tws-hex");
+var twsName = document.getElementById("tws-name");
+var twsGrid = document.getElementById("tws-grid");
+var twsStatus = document.getElementById("tws-status");
+
+var TWS_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+/* Fraction of the way from the base lightness toward 0.985 (light end)
+   or 0.16 (dark end), and the chroma multiplier, for each step. */
+var TWS_RAMP = {
+  50:  { f: 0.96, c: 0.32 }, 100: { f: 0.88, c: 0.45 }, 200: { f: 0.75, c: 0.62 },
+  300: { f: 0.55, c: 0.80 }, 400: { f: 0.30, c: 0.93 }, 500: { f: 0, c: 1 },
+  600: { f: 0.24, c: 0.97 }, 700: { f: 0.45, c: 0.90 }, 800: { f: 0.63, c: 0.80 },
+  900: { f: 0.78, c: 0.68 }, 950: { f: 0.88, c: 0.58 }
+};
+function twsHexToRgb(hex) {
+  var h = String(hex).replace("#", "");
+  if (h.length === 3) { h = h.split("").map(function (c) { return c + c; }).join(""); }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) { return null; }
+  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+function twsTwo(n) { return ("0" + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
+function twsRgbToHex(r, g, b) { return ("#" + twsTwo(r) + twsTwo(g) + twsTwo(b)).toUpperCase(); }
+function twsLin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function twsLinOut(c) { var v = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055; return v * 255; }
+function twsRgbToOklch(r, g, b) {
+  var R = twsLin(r), G = twsLin(g), B = twsLin(b);
+  var l = 0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B;
+  var m = 0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B;
+  var s = 0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B;
+  var lr = Math.cbrt(l), mr = Math.cbrt(m), sr = Math.cbrt(s);
+  var L = 0.2104542553 * lr + 0.7936177850 * mr - 0.0040720468 * sr;
+  var A = 1.9779984951 * lr - 2.4285922050 * mr + 0.4505937099 * sr;
+  var Bb = 0.0259040371 * lr + 0.7827717662 * mr - 0.8086757660 * sr;
+  var C = Math.sqrt(A * A + Bb * Bb);
+  var H = Math.atan2(Bb, A) * 180 / Math.PI;
+  if (H < 0) { H += 360; }
+  return { L: L, C: C, H: H };
+}
+function twsOklchRaw(L, C, H) {
+  var hr = H * Math.PI / 180;
+  var a = C * Math.cos(hr), b = C * Math.sin(hr);
+  var lr = L + 0.3963377774 * a + 0.2158037573 * b;
+  var mr = L - 0.1055613458 * a - 0.0638541728 * b;
+  var sr = L - 0.0894841775 * a - 1.2914855480 * b;
+  var l = lr * lr * lr, m = mr * mr * mr, s = sr * sr * sr;
+  return {
+    r: twsLinOut(+4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+    g: twsLinOut(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+    b: twsLinOut(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)
+  };
+}
+function twsInGamut(rgb) {
+  return rgb.r >= -0.01 && rgb.r <= 255.01 && rgb.g >= -0.01 && rgb.g <= 255.01 && rgb.b >= -0.01 && rgb.b <= 255.01;
+}
+/* Convert OKLCH to sRGB, reducing chroma (binary search) until it fits. */
+function twsOklchToRgb(L, C, H) {
+  var rgb = twsOklchRaw(L, C, H);
+  if (twsInGamut(rgb)) { return { r: Math.round(Math.max(0, Math.min(255, rgb.r))), g: Math.round(Math.max(0, Math.min(255, rgb.g))), b: Math.round(Math.max(0, Math.min(255, rgb.b))) }; }
+  var lo = 0, hi = C;
+  for (var i = 0; i < 22; i++) {
+    var mid = (lo + hi) / 2;
+    if (twsInGamut(twsOklchRaw(L, mid, H))) { lo = mid; } else { hi = mid; }
+  }
+  rgb = twsOklchRaw(L, lo, H);
+  return { r: Math.round(Math.max(0, Math.min(255, rgb.r))), g: Math.round(Math.max(0, Math.min(255, rgb.g))), b: Math.round(Math.max(0, Math.min(255, rgb.b))) };
+}
+function twsCopyText(text, what) {
+  function done() { twsStatus.className = "status ok"; twsStatus.textContent = "Copied: " + what; }
+  function fail() { twsStatus.className = "status error"; twsStatus.textContent = "Copy was blocked by the browser."; }
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, fail); } else { fail(); }
+}
+function twsCleanName(raw) {
+  var n = String(raw).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return n || "primary";
+}
+function twsRender() {
+  var rgb = twsHexToRgb(twsHex.value.trim());
+  if (!rgb) {
+    twsStatus.className = "status error";
+    twsStatus.textContent = "Enter a valid HEX code, for example #3B82F6 (three or six hex digits).";
+    return;
+  }
+  twsColor.value = twsRgbToHex(rgb.r, rgb.g, rgb.b);
+  var base = twsRgbToOklch(rgb.r, rgb.g, rgb.b);
+  var name = twsCleanName(twsName.value);
+  var scale = TWS_STEPS.map(function (step) {
+    if (step === 500) { return { step: step, rgb: rgb, oklch: base }; }
+    var ramp = TWS_RAMP[step];
+    var L = step < 500 ? base.L + (0.985 - base.L) * ramp.f : base.L + (0.16 - base.L) * ramp.f;
+    var C = base.C * ramp.c;
+    var out = twsOklchToRgb(L, C, base.H);
+    return { step: step, rgb: out, oklch: twsRgbToOklch(out.r, out.g, out.b) };
+  });
+  twsGrid.innerHTML = "";
+  scale.forEach(function (item) {
+    var hex = twsRgbToHex(item.rgb.r, item.rgb.g, item.rgb.b);
+    var cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "tws-cell";
+    cell.setAttribute("aria-label", name + " " + item.step + ", " + hex + ". Activate to copy.");
+    cell.innerHTML = "<div class=\"tws-sw\" style=\"background:" + hex + "\"></div><div class=\"tws-lb\"><span class=\"tws-step\">" + item.step + "</span><span class=\"mono\">" + hex + "</span></div>";
+    cell.addEventListener("click", function () { twsCopyText(hex, hex); });
+    twsGrid.appendChild(cell);
+  });
+  var hexLines = scale.map(function (item) { return "  --" + name + "-" + item.step + ": " + twsRgbToHex(item.rgb.r, item.rgb.g, item.rgb.b) + ";"; });
+  document.getElementById("tws-css-hex").value = ":root {\n" + hexLines.join("\n") + "\n}";
+  var oklchLines = scale.map(function (item) {
+    var o = item.oklch;
+    return "  --" + name + "-" + item.step + ": oklch(" + (Math.round(o.L * 1000) / 10) + "% " + (Math.round(o.C * 1000) / 1000) + " " + (Math.round(o.H * 10) / 10) + ");";
+  });
+  document.getElementById("tws-css-oklch").value = ":root {\n" + oklchLines.join("\n") + "\n}";
+  var cfgLines = scale.map(function (item) { return "    " + item.step + ": '" + twsRgbToHex(item.rgb.r, item.rgb.g, item.rgb.b) + "',"; });
+  document.getElementById("tws-config").value = name + ": {\n" + cfgLines.join("\n").replace(/,$/, "") + "\n  }";
+  twsStatus.className = "status";
+  twsStatus.textContent = "Scale ready for " + name + " — base " + twsRgbToHex(rgb.r, rgb.g, rgb.b) + " sits at step 500.";
+}
+document.getElementById("tws-copy-hex").addEventListener("click", function () { twsCopyText(document.getElementById("tws-css-hex").value, "CSS variables (HEX)"); });
+document.getElementById("tws-copy-oklch").addEventListener("click", function () { twsCopyText(document.getElementById("tws-css-oklch").value, "CSS variables (OKLCH)"); });
+document.getElementById("tws-copy-config").addEventListener("click", function () { twsCopyText(document.getElementById("tws-config").value, "Tailwind config"); });
+twsColor.addEventListener("input", function () { twsHex.value = twsColor.value.toUpperCase(); twsRender(); });
+twsHex.addEventListener("input", twsRender);
+twsName.addEventListener("input", twsRender);
+twsRender();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="tailwind-shade-generator"></script>
+</body>
+</html>
