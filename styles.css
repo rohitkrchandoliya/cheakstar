@@ -618,3 +618,78 @@ body.cs-shell.cs-rail .ck-guide-panel{left:80px}
 .cs-act-legend .cs-act-cell{display:inline-block;flex:none}
 .btn.danger{background:#b3261e;color:#fff}
 .btn.danger:hover{background:#8f1d17}
+
+/* ==== 2026-11-14 deep-audit fixes (main site) ====
+   Equal-height card rows: grid rows stretch and each card fills its row;
+   the .card flex-column + .go margin-top:auto rules above pin the action
+   link to the bottom. Blog excerpts clamp cleanly with an ellipsis. */
+.grid{align-items:stretch}
+.grid>.card{height:100%}
+.excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* Books page: two-link cards keep link + separator + link on one row,
+   pinned to the card bottom like a single .go link. */
+.card .go-row{margin-top:auto;display:flex;align-items:center;gap:8px;padding:12px 0 9px}
+.card .go-row .go{margin-top:0;padding:0}
+/* Books page: full-catalogue rows as two columns - title/metadata left,
+   store link in a fixed right column. */
+ul.catalogue li{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+ul.catalogue li .go{flex:none;white-space:nowrap}
+/* Home: "Browse by Category" sized like the other section headings. */
+.cat-head{font-size:1.9rem}
+
+/* ===== Unified base additions (2026-11-14 unification) =====
+   This is the ONE base stylesheet for the whole site: the root
+   styles.css above, plus the block below, which used to live only
+   in the games section's site.css copy. The tools section's site.css
+   copy held no rule that is not already above, except .wrap.wide,
+   which is in this block. Tool-specific rules stay in
+   tools-preview/assets/tools.css and tool-info.css, as before.
+   The rules below are the games section's own:
+   - .wrap.wide and the light-theme points-card badge rule are carried over
+     from the previous games snapshot because the root sheet does not carry
+     them (wide layouts; the points card is injected on games pages and its
+     badge needs the light-theme filter).
+   - .ck-main mirrors the tools section container (tools.css), so games
+     pages use the same centred 1060px content column as tool pages.
+   - .games-grid mirrors the tools hub card grid: 4 across on wide
+     desktop, stepping down at 1250px, 900px and 560px. */
+.wrap.wide{max-width:1440px}
+[data-theme="light"] .cs-pc-badge{filter:brightness(.5) saturate(1.4)}
+.ck-main{width:auto;max-width:1060px;margin-left:auto;margin-right:auto}
+.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media (max-width:1250px){.games-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:900px){.games-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.games-grid{grid-template-columns:1fr}}
+
+/* ===== Mobile audit fixes (2026-11-14, AUDIT-G) =====
+   G3: the open points card is capped on phones -- narrower, at most
+   38% of the viewport tall with internal scroll, lifted above the
+   floating pill row so it never swallows a third of the screen.
+   Desktop sizing above is unchanged.
+   G4: pages get bottom safe space at phone widths so the floating
+   Guide / points pills and the back-to-top button never hide the
+   last content of a page.
+   G7: the top-bar logo link gets a full 44px touch target.
+   G9: game page titles match the site-wide H1 size.
+   G2 (partial, CSS-only): the game stage's title spacing tightens
+   on phones so the board starts higher; no game DOM was moved.
+   G8: the tools hub search hint shrinks at phone widths so it is
+   not clipped mid-word.
+   G5: the tools hub category shortcut bar (built by shell.js). */
+main.ck-main h1{font-size:1.9rem}
+.cat-block{scroll-margin-top:118px}
+.cs-catbar{position:sticky;top:50px;z-index:70;display:flex;gap:8px;overflow-x:auto;padding:10px 2px;background:var(--navy2,#10233f);scrollbar-width:none}
+.cs-catbar::-webkit-scrollbar{display:none}
+.cs-catbar a{flex:none;padding:7px 13px;border:1px solid var(--line,rgba(212,175,55,.35));border-radius:999px;color:var(--ink,#eef2f8);font-size:.86rem;font-weight:600;text-decoration:none}
+.cs-catbar a:hover{border-color:var(--gold,#d4af37);color:var(--gold,#d4af37)}
+@media (max-width:768px){
+  body{padding-bottom:88px}
+  .cs-topbar .cs-logo{display:inline-flex;align-items:center;min-height:44px}
+  .play-stage h1{margin-top:.5rem}
+}
+@media (max-width:640px){
+  .cs-pc-card{left:auto;right:12px;width:min(272px,78vw);max-height:38vh;overflow-y:auto;bottom:calc(64px + env(safe-area-inset-bottom))}
+}
+@media (max-width:480px){
+  #tool-search::placeholder{font-size:.72rem;letter-spacing:-.2px}
+}
