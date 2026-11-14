@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Frame Extractor - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Pull still images out of a video — one moment, every few seconds, or a whole range — plus a contact sheet.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/frame-extractor/">
+<meta property="og:title" content="Frame Extractor - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Pull still images out of a video — one moment, every few seconds, or a whole range — plus a contact sheet.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/frame-extractor/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.fex-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.fex-drop.fex-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.fex-video { width: 100%; height: auto; display: block; background: #000; border-radius: 10px; margin-top: 12px; }
+.fex-strip { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; padding-bottom: 4px; }
+.fex-strip canvas { width: 96px; height: 72px; object-fit: cover; border: 2px solid var(--line); border-radius: 6px; cursor: pointer; flex: 0 0 auto; background: #000; }
+.fex-strip canvas:hover { border-color: var(--gold, #c9a227); }
+.fex-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px; font-size: .95rem; }
+.fex-meta strong { color: var(--navy, #0a2540); }
+.fex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+.fex-item { border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: var(--card); text-align: center; }
+.fex-item img { max-width: 100%; height: auto; border-radius: 6px; background: #000; }
+.fex-item .fex-cap { font-size: .85rem; margin: 6px 0; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Frame Extractor</h1>
+<p class="tool-sub">Pull still images out of a video — one moment, every few seconds, or a whole range — plus a contact sheet.</p>
+<div class="tool-card">
+  <p>Drop a video, then click a moment on the timeline strip or choose a mode below: a single time, every N seconds, or a range. Frames come out at the video's full size as PNG or JPEG, individually or zipped. Everything happens on this device — your video never leaves this browser tab.</p>
+
+  <div class="fex-drop" id="fex-drop">
+    <label for="fex-file"><strong>Choose a video file</strong>, or drop it here</label>
+    <input id="fex-file" type="file" accept="video/*">
+  </div>
+
+  <div data-result>
+    <div id="fex-editor" hidden>
+      <video id="fex-video" class="fex-video" controls playsinline preload="auto"></video>
+      <div class="fex-meta">
+        <span>Duration: <strong id="fex-m-dur">–</strong></span>
+        <span>Picture: <strong id="fex-m-dim">–</strong></span>
+        <span>File size: <strong id="fex-m-size">–</strong></span>
+      </div>
+      <div class="fex-strip" id="fex-strip" aria-label="Timeline — click a thumbnail to extract that moment"></div>
+
+      <div class="row2" style="margin-top:12px">
+        <div>
+          <label for="fex-mode">Extraction mode</label>
+          <select id="fex-mode">
+            <option value="single" selected>Single frame at one time</option>
+            <option value="every">Every N seconds</option>
+            <option value="range">A range, every N seconds</option>
+          </select>
+        </div>
+        <div>
+          <label for="fex-format">Image format</label>
+          <select id="fex-format">
+            <option value="png" selected>PNG (lossless)</option>
+            <option value="jpeg">JPEG (smaller)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="fex-single">
+        <div class="row2">
+          <div>
+            <label for="fex-time">Time (seconds)</label>
+            <input id="fex-time" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div>
+            <label for="fex-slider">Scrub</label>
+            <input id="fex-slider" type="range" min="0" max="0" step="0.01" value="0" style="width:100%">
+          </div>
+        </div>
+      </div>
+      <div id="fex-every" hidden>
+        <div class="row2">
+          <div>
+            <label for="fex-interval">Every (seconds)</label>
+            <input id="fex-interval" type="number" min="0.1" step="0.1" value="1">
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <p style="margin:6px 0 0">Frames are taken at 0, N, 2N, … up to the end of the video.</p>
+          </div>
+        </div>
+      </div>
+      <div id="fex-range" hidden>
+        <div class="row2">
+          <div>
+            <label for="fex-from">From (seconds)</label>
+            <input id="fex-from" type="number" min="0" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="fex-to">To (seconds)</label>
+            <input id="fex-to" type="number" min="0" step="0.1" value="0">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="fex-rstep">Every (seconds)</label>
+            <input id="fex-rstep" type="number" min="0.1" step="0.1" value="1">
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="fex-extract">Extract frame(s)</button>
+        <button type="button" class="btn ghost" id="fex-clear">Clear frames</button>
+        <button type="button" class="btn ghost" id="fex-zip" disabled>Download all as ZIP</button>
+        <button type="button" class="btn ghost" id="fex-sheet" disabled>Make contact sheet</button>
+        <a id="fex-sheet-dl" class="btn" href="#" download="contact-sheet.png" hidden>Download contact sheet</a>
+      </div>
+
+      <div class="fex-grid" id="fex-grid"></div>
+    </div>
+  </div>
+  <p id="fex-status" class="status" role="status">Choose or drop a video file to extract its frames.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> frames are the pictures your browser decodes from the video, saved at the video's full size — if the source is blurry, the stills will be too. A batch is capped at 200 frames so the tab does not run out of memory, and the status line says so if your settings would have made more. The ZIP download uses the JSZip library loaded from a CDN; if it cannot load (for example offline), the ZIP button stays disabled and each frame can still be downloaded on its own. Nothing is uploaded.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+"use strict";
+var fex_file = document.getElementById("fex-file");
+var fex_drop = document.getElementById("fex-drop");
+var fex_status = document.getElementById("fex-status");
+var fex_editor = document.getElementById("fex-editor");
+var fex_video = document.getElementById("fex-video");
+var fex_grid = document.getElementById("fex-grid");
+var fex_mode = document.getElementById("fex-mode");
+var fex_format = document.getElementById("fex-format");
+var fex_srcUrl = null;
+var fex_base = "video";
+var fex_frames = [];        /* { t, blob, url, name, w, h, canvas } */
+var fex_busy = false;
+var fex_sheetUrl = null;
+var FEX_MAX = 200;
+
+function fex_setStatus(text, kind) {
+  fex_status.className = "status" + (kind ? " " + kind : "");
+  fex_status.textContent = text;
+}
+function fex_fmtBytes(b) {
+  if (b > 1048576) { return (b / 1048576).toFixed(2) + " MB"; }
+  if (b > 1024) { return (b / 1024).toFixed(1) + " KB"; }
+  return b + " B";
+}
+function fex_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function fex_pad(n, w) { var s = String(n); while (s.length < w) { s = "0" + s; } return s; }
+/* Seek (if needed) and draw the current frame at full size. */
+function fex_grab(t) {
+  return new Promise(function (resolve, reject) {
+    var v = fex_video;
+    var dur = v.duration;
+    var target = Math.max(0, Math.min(t, dur > 0 ? dur - 0.02 : t));
+    var done = false;
+    function finish() {
+      if (done) { return; }
+      done = true;
+      v.removeEventListener("seeked", onSeeked);
+      try {
+        var c = document.createElement("canvas");
+        c.width = v.videoWidth;
+        c.height = v.videoHeight;
+        c.getContext("2d").drawImage(v, 0, 0);
+        var mime = fex_format.value === "jpeg" ? "image/jpeg" : "image/png";
+        c.toBlob(function (blob) {
+          if (!blob) { reject(new Error("The frame could not be encoded.")); return; }
+          resolve({ t: target, blob: blob, w: c.width, h: c.height, canvas: c });
+        }, mime, 0.92);
+      } catch (e) { reject(e); }
+    }
+    function onSeeked() { finish(); }
+    if (v.readyState >= 2 && Math.abs(v.currentTime - target) < 0.001) {
+      finish();
+    } else {
+      v.addEventListener("seeked", onSeeked);
+      v.currentTime = target;
+      setTimeout(finish, 2500); /* never hang on an edge seek */
+    }
+  });
+}
+function fex_addFrame(fr) {
+  var isJpeg = fex_format.value === "jpeg";
+  var ext = isJpeg ? "jpg" : "png";
+  var name = fex_base + "-frame-" + fex_pad(fex_frames.length + 1, 3) + "-" + fr.t.toFixed(2) + "s." + ext;
+  var url = URL.createObjectURL(fr.blob);
+  var rec = { t: fr.t, blob: fr.blob, url: url, name: name, w: fr.w, h: fr.h, canvas: fr.canvas };
+  fex_frames.push(rec);
+  var item = document.createElement("div");
+  item.className = "fex-item";
+  var img = document.createElement("img");
+  img.src = url;
+  img.alt = "Frame at " + fr.t.toFixed(2) + " seconds";
+  var cap = document.createElement("div");
+  cap.className = "fex-cap";
+  cap.textContent = fr.t.toFixed(2) + " s · " + fr.w + "×" + fr.h + " · " + fex_fmtBytes(fr.blob.size);
+  var a = document.createElement("a");
+  a.className = "btn ghost small fex-dl";
+  a.href = url;
+  a.setAttribute("download", name);
+  a.textContent = "Download";
+  item.appendChild(img);
+  item.appendChild(cap);
+  item.appendChild(a);
+  fex_grid.appendChild(item);
+  fex_syncButtons();
+  return rec;
+}
+function fex_syncButtons() {
+  document.getElementById("fex-zip").disabled = !fex_frames.length || typeof window.JSZip === "undefined";
+  document.getElementById("fex-sheet").disabled = !fex_frames.length;
+}
+function fex_times() {
+  var dur = fex_video.duration || 0;
+  var mode = fex_mode.value;
+  var times = [];
+  if (mode === "single") {
+    var t = parseFloat(document.getElementById("fex-time").value);
+    if (isFinite(t)) { times.push(Math.max(0, Math.min(t, dur))); }
+  } else if (mode === "every") {
+    var step = parseFloat(document.getElementById("fex-interval").value);
+    if (isFinite(step) && step > 0) {
+      for (var x = 0; x < dur - 0.001 && times.length <= FEX_MAX; x += step) { times.push(x); }
+    }
+  } else {
+    var from = parseFloat(document.getElementById("fex-from").value) || 0;
+    var to = parseFloat(document.getElementById("fex-to").value);
+    var rstep = parseFloat(document.getElementById("fex-rstep").value);
+    if (!isFinite(to)) { to = dur; }
+    if (isFinite(rstep) && rstep > 0) {
+      for (var y = Math.max(0, from); y <= Math.min(to, dur) && times.length <= FEX_MAX; y += rstep) { times.push(y); }
+    }
+  }
+  return times;
+}
+document.getElementById("fex-extract").addEventListener("click", function () {
+  if (fex_busy || !fex_srcUrl) { return; }
+  var times = fex_times();
+  if (!times.length) { fex_setStatus("No times to extract — check the mode settings.", "error"); return; }
+  var truncated = times.length > FEX_MAX;
+  if (truncated) { times = times.slice(0, FEX_MAX); }
+  fex_busy = true;
+  fex_setStatus("Extracting " + times.length + " frame(s)…", "");
+  var chain = Promise.resolve();
+  var made = 0;
+  times.forEach(function (t) {
+    chain = chain.then(function () {
+      return fex_grab(t).then(function (fr) { fex_addFrame(fr); made++; });
+    });
+  });
+  chain.then(function () {
+    fex_busy = false;
+    fex_setStatus("Extracted " + made + " frame(s). Total frames ready: " + fex_frames.length + "." + (truncated ? " The batch was capped at " + FEX_MAX + " frames." : ""), "ok");
+  }).catch(function (err) {
+    fex_busy = false;
+    fex_setStatus("Extraction stopped: " + (err && err.message ? err.message : err), "error");
+  });
+});
+document.getElementById("fex-clear").addEventListener("click", function () {
+  fex_frames.forEach(function (fr) { URL.revokeObjectURL(fr.url); });
+  fex_frames = [];
+  fex_grid.innerHTML = "";
+  document.getElementById("fex-sheet-dl").hidden = true;
+  fex_syncButtons();
+  fex_setStatus("Frames cleared.", "");
+});
+document.getElementById("fex-zip").addEventListener("click", function () {
+  if (!fex_frames.length || typeof window.JSZip === "undefined") { return; }
+  fex_setStatus("Building the ZIP…", "");
+  var zip = new window.JSZip();
+  fex_frames.forEach(function (fr) { zip.file(fr.name, fr.blob); });
+  zip.generateAsync({ type: "blob" }).then(function (blob) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.setAttribute("download", fex_base + "-frames.zip");
+    a.id = "fex-zip-dl";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 4000);
+    fex_setStatus("ZIP ready (" + fex_fmtBytes(blob.size) + ", " + fex_frames.length + " frames). Your browser should be downloading it now.", "ok");
+  }).catch(function (err) {
+    fex_setStatus("The ZIP could not be built: " + (err && err.message ? err.message : err), "error");
+  });
+});
+document.getElementById("fex-sheet").addEventListener("click", function () {
+  if (!fex_frames.length) { return; }
+  var n = fex_frames.length;
+  var cols = Math.ceil(Math.sqrt(n));
+  var rows = Math.ceil(n / cols);
+  var cw = fex_frames[0].w, chh = fex_frames[0].h;
+  var sheet = document.createElement("canvas");
+  sheet.width = cols * cw;
+  sheet.height = rows * chh;
+  var ctx = sheet.getContext("2d");
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, sheet.width, sheet.height);
+  fex_frames.forEach(function (fr, i) {
+    var x = (i % cols) * cw, y = Math.floor(i / cols) * chh;
+    ctx.drawImage(fr.canvas, x, y, cw, chh);
+  });
+  sheet.toBlob(function (blob) {
+    if (!blob) { return; }
+    if (fex_sheetUrl) { URL.revokeObjectURL(fex_sheetUrl); }
+    fex_sheetUrl = URL.createObjectURL(blob);
+    var a = document.getElementById("fex-sheet-dl");
+    a.href = fex_sheetUrl;
+    a.hidden = false;
+    fex_setStatus("Contact sheet ready: " + sheet.width + " × " + sheet.height + " px, " + n + " frames in a " + cols + " × " + rows + " grid.", "ok");
+  }, "image/png");
+});
+/* mode switching */
+function fex_syncMode() {
+  document.getElementById("fex-single").hidden = fex_mode.value !== "single";
+  document.getElementById("fex-every").hidden = fex_mode.value !== "every";
+  document.getElementById("fex-range").hidden = fex_mode.value !== "range";
+}
+fex_mode.addEventListener("change", fex_syncMode);
+var fex_slider = document.getElementById("fex-slider");
+var fex_time = document.getElementById("fex-time");
+fex_slider.addEventListener("input", function () {
+  fex_time.value = parseFloat(fex_slider.value).toFixed(2);
+  if (fex_video.readyState >= 1 && isFinite(fex_video.duration)) {
+    fex_video.currentTime = parseFloat(fex_slider.value);
+  }
+});
+fex_time.addEventListener("input", function () { fex_slider.value = fex_time.value; });
+/* timeline strip: 10 thumbnails, click extracts that moment in single mode */
+function fex_buildStrip() {
+  var strip = document.getElementById("fex-strip");
+  strip.innerHTML = "";
+  var dur = fex_video.duration;
+  if (!isFinite(dur) || dur <= 0) { return; }
+  var thumbs = [];
+  for (var i = 0; i < 10; i++) {
+    (function (idx) {
+      var c = document.createElement("canvas");
+      c.width = 96; c.height = 72;
+      c.title = "Extract the frame at " + ((idx + 0.5) * dur / 10).toFixed(2) + " s";
+      c.addEventListener("click", function () {
+        var t = (idx + 0.5) * dur / 10;
+        fex_mode.value = "single";
+        fex_syncMode();
+        fex_time.value = t.toFixed(2);
+        fex_slider.value = t;
+        document.getElementById("fex-extract").click();
+      });
+      strip.appendChild(c);
+      thumbs.push({ t: (idx + 0.5) * dur / 10, canvas: c });
+    })(i);
+  }
+  var savedTime = fex_video.currentTime;
+  var chain = Promise.resolve();
+  thumbs.forEach(function (th) {
+    chain = chain.then(function () {
+      return new Promise(function (resolve) {
+        function draw() {
+          th.canvas.getContext("2d").drawImage(fex_video, 0, 0, 96, 72);
+          resolve();
+        }
+        if (Math.abs(fex_video.currentTime - th.t) < 0.001 && fex_video.readyState >= 2) { draw(); return; }
+        var to = setTimeout(function () { fex_video.removeEventListener("seeked", h); draw(); }, 2000);
+        function h() { clearTimeout(to); fex_video.removeEventListener("seeked", h); draw(); }
+        fex_video.addEventListener("seeked", h);
+        fex_video.currentTime = th.t;
+      });
+    });
+  });
+  chain.then(function () {
+    try { fex_video.currentTime = savedTime; } catch (e) {}
+  });
+}
+fex_video.addEventListener("loadedmetadata", function () {
+  document.getElementById("fex-m-dur").textContent = isFinite(fex_video.duration) ? fex_video.duration.toFixed(2) + " s" : "unknown";
+  document.getElementById("fex-m-dim").textContent = fex_video.videoWidth + " × " + fex_video.videoHeight;
+  fex_slider.max = isFinite(fex_video.duration) ? String(fex_video.duration) : "0";
+  document.getElementById("fex-to").value = isFinite(fex_video.duration) ? fex_video.duration.toFixed(1) : "0";
+  fex_buildStrip();
+});
+function fex_load(file) {
+  if (!file) { return; }
+  fex_base = fex_baseName(file.name || "video");
+  if (fex_srcUrl) { URL.revokeObjectURL(fex_srcUrl); }
+  fex_srcUrl = URL.createObjectURL(file);
+  document.getElementById("fex-m-size").textContent = fex_fmtBytes(file.size);
+  fex_frames.forEach(function (fr) { URL.revokeObjectURL(fr.url); });
+  fex_frames = [];
+  fex_grid.innerHTML = "";
+  fex_video.src = fex_srcUrl;
+  fex_editor.hidden = false;
+  fex_syncButtons();
+  fex_setStatus("Video loaded. Click a timeline thumbnail, or choose a mode and extract.", "ok");
+}
+fex_file.addEventListener("change", function () { fex_load(fex_file.files && fex_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  fex_drop.addEventListener(ev, function (e) { e.preventDefault(); fex_drop.classList.add("fex-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  fex_drop.addEventListener(ev, function (e) { e.preventDefault(); fex_drop.classList.remove("fex-over"); });
+});
+fex_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { fex_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.fex_state = function () {
+  return {
+    hasVideo: !!fex_srcUrl,
+    duration: fex_srcUrl ? fex_video.duration : 0,
+    width: fex_video.videoWidth || 0,
+    height: fex_video.videoHeight || 0,
+    frames: fex_frames.length,
+    times: fex_frames.map(function (f) { return Math.round(f.t * 100) / 100; }),
+    sizes: fex_frames.map(function (f) { return f.blob.size; }),
+    zipReady: typeof window.JSZip !== "undefined"
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="frame-extractor"></script>
+</body>
+</html>
