@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Contrast Checker - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/contrast-checker/">
+<meta property="og:title" content="Contrast Checker - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/contrast-checker/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#cck-ratio { font-size: 2.4rem; font-weight: 700; line-height: 1.1; }
+.cck-badges { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+@media (min-width: 640px) { .cck-badges { grid-template-columns: repeat(4, 1fr); } }
+.cck-badge { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.cck-badge .cck-badge-name { font-weight: 600; display: block; margin-bottom: 2px; }
+.cck-sample { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+.cck-sample .cck-big { font-size: 24px; font-weight: 700; margin: 0 0 6px; }
+.cck-sample p { margin: 0; }
+.cck-fix { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 8px; flex-wrap: wrap; }
+.cck-fix .cck-fix-sw { width: 44px; height: 44px; border-radius: 6px; border: 1px solid var(--line); flex: none; }
+.cck-fix .btn { margin-top: 0; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Contrast Checker</h1>
+<p class="tool-sub">Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes.</p>
+<div class="tool-card">
+  <p>Choose a text colour and a background colour. The ratio and the WCAG pass/fail badges update live, and if the pair fails AA for normal text, the tool works out the smallest change to the text colour that passes.</p>
+
+  <div class="row2">
+    <div>
+      <label for="cck-fg">Text colour</label>
+      <input id="cck-fg" type="color" value="#000000" style="height:44px; width:100%; padding:2px">
+      <input id="cck-fg-hex" type="text" value="#000000" autocomplete="off" spellcheck="false" aria-label="Text colour HEX code" style="margin-top:8px">
+    </div>
+    <div>
+      <label for="cck-bg">Background colour</label>
+      <input id="cck-bg" type="color" value="#ffffff" style="height:44px; width:100%; padding:2px">
+      <input id="cck-bg-hex" type="text" value="#FFFFFF" autocomplete="off" spellcheck="false" aria-label="Background colour HEX code" style="margin-top:8px">
+    </div>
+  </div>
+  <div class="btn-row">
+    <button id="cck-swap" class="btn ghost" type="button">Swap colours</button>
+  </div>
+
+  <div data-result>
+    <p style="margin-top:16px">Contrast ratio</p>
+    <div><span id="cck-ratio" class="mono">21.00</span> <span id="cck-verdict" class="status" style="display:inline"></span></div>
+    <div class="cck-badges">
+      <div class="cck-badge"><span class="cck-badge-name">AA · normal text</span><span id="cck-b-aa-n">—</span><br><span class="status">needs 4.5 : 1</span></div>
+      <div class="cck-badge"><span class="cck-badge-name">AA · large text</span><span id="cck-b-aa-l">—</span><br><span class="status">needs 3.0 : 1</span></div>
+      <div class="cck-badge"><span class="cck-badge-name">AAA · normal text</span><span id="cck-b-aaa-n">—</span><br><span class="status">needs 7.0 : 1</span></div>
+      <div class="cck-badge"><span class="cck-badge-name">AAA · large text</span><span id="cck-b-aaa-l">—</span><br><span class="status">needs 4.5 : 1</span></div>
+    </div>
+
+    <div class="cck-sample" id="cck-sample">
+      <p class="cck-big">Large text — headings at 24px bold</p>
+      <p>Normal text — body copy at 16px. The quick brown fox jumps over the lazy dog. Readable text is not a luxury: visitors with low vision depend on contrast like this.</p>
+    </div>
+
+    <div id="cck-fixes"></div>
+  </div>
+  <p id="cck-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> ratios follow the WCAG 2.1 formula, (L1 + 0.05) / (L2 + 0.05) from relative luminance. "Large text" means at least 24px, or 18.66px and bold. The fixes adjust only the text colour, mixing it toward black or white in sRGB until AA normal (4.5 : 1) is just reached — always re-check the fixed pair in your real design, because font weight and size change how much contrast you truly need. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var cckFg = document.getElementById("cck-fg");
+var cckFgHex = document.getElementById("cck-fg-hex");
+var cckBg = document.getElementById("cck-bg");
+var cckBgHex = document.getElementById("cck-bg-hex");
+var cckStatus = document.getElementById("cck-status");
+var cckFixes = document.getElementById("cck-fixes");
+
+function cckHexToRgb(hex) {
+  var h = String(hex).replace("#", "");
+  if (h.length === 3) { h = h.split("").map(function (c) { return c + c; }).join(""); }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) { return null; }
+  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+function cckTwo(n) { return ("0" + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
+function cckRgbToHex(r, g, b) { return ("#" + cckTwo(r) + cckTwo(g) + cckTwo(b)).toUpperCase(); }
+function cckLin(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function cckLuminance(rgb) {
+  return 0.2126 * cckLin(rgb.r) + 0.7152 * cckLin(rgb.g) + 0.0722 * cckLin(rgb.b);
+}
+function cckRatio(fg, bg) {
+  var l1 = cckLuminance(fg), l2 = cckLuminance(bg);
+  if (l1 < l2) { var t = l1; l1 = l2; l2 = t; }
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+function cckBadge(id, pass) {
+  var el = document.getElementById(id);
+  el.className = pass ? "pass" : "fail";
+  el.textContent = pass ? "PASS" : "FAIL";
+}
+/* Mix rgb toward a target (0 = black, 255 = white) by t in [0,1]; find the
+   smallest t whose mix reaches the target ratio against bg. */
+function cckFindFix(fg, bg, target, dir) {
+  var goal = dir === "darken" ? 0 : 255;
+  function mix(t) {
+    return { r: fg.r + (goal - fg.r) * t, g: fg.g + (goal - fg.g) * t, b: fg.b + (goal - fg.b) * t };
+  }
+  if (cckRatio(mix(1), bg) < target) { return null; }
+  var lo = 0, hi = 1;
+  for (var i = 0; i < 24; i++) {
+    var mid = (lo + hi) / 2;
+    if (cckRatio(mix(mid), bg) >= target) { hi = mid; } else { lo = mid; }
+  }
+  var fixed = mix(hi);
+  var out = { r: Math.round(fixed.r), g: Math.round(fixed.g), b: Math.round(fixed.b) };
+  /* Rounding can drop the ratio a hair under target; nudge one step further if so. */
+  var guard = 0;
+  while (cckRatio(out, bg) < target && guard < 255) {
+    out = { r: Math.max(0, Math.min(255, out.r + (dir === "darken" ? -1 : 1))), g: Math.max(0, Math.min(255, out.g + (dir === "darken" ? -1 : 1))), b: Math.max(0, Math.min(255, out.b + (dir === "darken" ? -1 : 1))) };
+    guard++;
+  }
+  return out;
+}
+function cckCopy(text) {
+  function done() { cckStatus.className = "status ok"; cckStatus.textContent = "Copied: " + text; }
+  function fail() { cckStatus.className = "status error"; cckStatus.textContent = "Copy was blocked by the browser."; }
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, fail); } else { fail(); }
+}
+function cckRender() {
+  var fg = cckHexToRgb(cckFgHex.value.trim());
+  var bg = cckHexToRgb(cckBgHex.value.trim());
+  if (!fg || !bg) {
+    cckStatus.className = "status error";
+    cckStatus.textContent = "Enter valid HEX codes for both colours (three or six hex digits).";
+    return;
+  }
+  cckFg.value = cckRgbToHex(fg.r, fg.g, fg.b);
+  cckBg.value = cckRgbToHex(bg.r, bg.g, bg.b);
+  var ratio = cckRatio(fg, bg);
+  document.getElementById("cck-ratio").textContent = ratio.toFixed(2) + " : 1";
+  var verdict = document.getElementById("cck-verdict");
+  verdict.textContent = ratio >= 7 ? "— excellent, passes AAA" : ratio >= 4.5 ? "— good, passes AA" : ratio >= 3 ? "— only large text passes" : "— too low, text will be hard to read";
+  cckBadge("cck-b-aa-n", ratio >= 4.5);
+  cckBadge("cck-b-aa-l", ratio >= 3);
+  cckBadge("cck-b-aaa-n", ratio >= 7);
+  cckBadge("cck-b-aaa-l", ratio >= 4.5);
+  var sample = document.getElementById("cck-sample");
+  sample.style.background = cckRgbToHex(bg.r, bg.g, bg.b);
+  sample.style.color = cckRgbToHex(fg.r, fg.g, fg.b);
+  cckFixes.innerHTML = "";
+  if (ratio < 4.5) {
+    var head = document.createElement("p");
+    head.style.marginTop = "16px";
+    head.innerHTML = "<strong>Fix it:</strong> the smallest change to the text colour that passes AA for normal text (4.5 : 1):";
+    cckFixes.appendChild(head);
+    [["darken", "Darken text"], ["lighten", "Lighten text"]].forEach(function (pair) {
+      var fixed = cckFindFix(fg, bg, 4.5, pair[0]);
+      if (!fixed) { return; }
+      var hex = cckRgbToHex(fixed.r, fixed.g, fixed.b);
+      var row = document.createElement("div");
+      row.className = "cck-fix";
+      var sw = document.createElement("span");
+      sw.className = "cck-fix-sw";
+      sw.style.background = hex;
+      var label = document.createElement("span");
+      label.innerHTML = pair[1] + " to <span class=\"mono\">" + hex + "</span> — new ratio <span class=\"mono\">" + cckRatio(fixed, bg).toFixed(2) + " : 1</span>";
+      var apply = document.createElement("button");
+      apply.type = "button";
+      apply.className = "btn small";
+      apply.textContent = "Apply";
+      apply.addEventListener("click", function () {
+        cckFgHex.value = hex;
+        cckRender();
+        cckStatus.className = "status ok";
+        cckStatus.textContent = "Text colour set to " + hex + ".";
+      });
+      var copy = document.createElement("button");
+      copy.type = "button";
+      copy.className = "btn ghost small";
+      copy.textContent = "Copy";
+      copy.addEventListener("click", function () { cckCopy(hex); });
+      row.appendChild(sw);
+      row.appendChild(label);
+      row.appendChild(apply);
+      row.appendChild(copy);
+      cckFixes.appendChild(row);
+    });
+  }
+  cckStatus.className = "status";
+  cckStatus.textContent = "Text " + cckRgbToHex(fg.r, fg.g, fg.b) + " on background " + cckRgbToHex(bg.r, bg.g, bg.b) + ".";
+}
+cckFg.addEventListener("input", function () { cckFgHex.value = cckFg.value.toUpperCase(); cckRender(); });
+cckBg.addEventListener("input", function () { cckBgHex.value = cckBg.value.toUpperCase(); cckRender(); });
+cckFgHex.addEventListener("input", cckRender);
+cckBgHex.addEventListener("input", cckRender);
+document.getElementById("cck-swap").addEventListener("click", function () {
+  var t = cckFgHex.value;
+  cckFgHex.value = cckBgHex.value;
+  cckBgHex.value = t;
+  cckRender();
+});
+cckRender();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="contrast-checker"></script>
+</body>
+</html>
