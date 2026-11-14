@@ -27,13 +27,15 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">CSS Gradient Generator</h1>
-<p class="tool-sub">Build CSS gradients visually and copy the code.</p>
+<p class="tool-sub">Build CSS gradients visually — linear, radial, corner and freeform mesh — copy the code, or export a PNG at any size.</p>
 <div class="tool-card">
-  <p>Design a CSS gradient without guessing at the syntax. Pick a linear or radial gradient, set two to five colour stops, and the preview and the ready-to-paste CSS update as you work.</p>
+  <p>Design a CSS gradient without guessing at the syntax. Pick a linear, radial, corner or freeform (mesh) gradient, set two to five colour stops, choose how colours blend, and the preview and the ready-to-paste CSS update as you work. You can also export the gradient as a PNG image at a custom size.</p>
 
   <div class="radio-row" role="radiogroup" aria-label="Gradient type">
     <label><input type="radio" name="gg-type" id="gg-type-linear" value="linear" checked> Linear</label>
     <label><input type="radio" name="gg-type" id="gg-type-radial" value="radial"> Radial</label>
+    <label><input type="radio" name="gg-type" id="gg-type-corner" value="corner"> Corner</label>
+    <label><input type="radio" name="gg-type" id="gg-type-mesh" value="mesh"> Freeform (mesh)</label>
   </div>
   <div id="gg-angle-row">
     <label for="gg-angle">Angle (degrees)</label>
@@ -42,6 +44,27 @@
       <div><input id="gg-angle" type="number" min="0" max="360" step="1" value="90"></div>
     </div>
   </div>
+  <div id="gg-corner-row" hidden>
+    <label for="gg-corner">Point the gradient at a corner</label>
+    <select id="gg-corner">
+      <option value="top right" selected>Top right</option>
+      <option value="top left">Top left</option>
+      <option value="bottom right">Bottom right</option>
+      <option value="bottom left">Bottom left</option>
+    </select>
+  </div>
+  <div>
+    <label for="gg-interp">Colour interpolation (how stops blend in the CSS)</label>
+    <select id="gg-interp">
+      <option value="" selected>Default (sRGB)</option>
+      <option value="oklch">OKLCH (even, modern)</option>
+      <option value="oklab">OKLab</option>
+      <option value="hsl">HSL</option>
+      <option value="hsl longer hue">HSL, longer hue path</option>
+      <option value="lch">LCH</option>
+    </select>
+  </div>
+  <p id="gg-mesh-note" class="status" hidden>Freeform mode places each stop as a soft colour point — the first stops sit at the corners, a fifth at the centre — layered over the last stop as the base colour. It is a layered-gradient take on a mesh gradient, the closest plain CSS can get.</p>
 
   <label>Colour stops</label>
   <div id="gg-stops"></div>
@@ -57,9 +80,20 @@
     <div class="btn-row">
       <button id="gg-copy" class="btn" type="button">Copy CSS</button>
     </div>
+    <h3>Export as a PNG image</h3>
+    <div class="row2">
+      <div><label for="gg-pw">Width (px)</label><input id="gg-pw" type="number" min="16" max="4000" step="1" value="1200"></div>
+      <div><label for="gg-ph">Height (px)</label><input id="gg-ph" type="number" min="16" max="4000" step="1" value="800"></div>
+    </div>
+    <label class="check-line"><input id="gg-noise" type="checkbox" checked> Add fine noise to prevent banding (recommended for large soft gradients)</label>
+    <div class="btn-row">
+      <button id="gg-png" class="btn" type="button">Download PNG</button>
+    </div>
+    <p id="gg-png-status" class="status" role="status"></p>
+    <p class="status">PNG export is drawn with the browser canvas, which blends colours in sRGB and draws radial gradients as circles, so a PNG can look slightly different from the CSS preview when you pick another interpolation mode. The noise is a light random dither added per pixel to break up banding steps.</p>
   </div>
 </div>
-<div class="note"><strong>Good to know:</strong> stops are spaced evenly from 0% to 100% — if you need uneven spacing or a specific radial size and position, adjust the percentages in the copied CSS by hand. Everything is worked out in your browser with plain colour maths; nothing you pick is sent anywhere, and no colour or setting is stored.</div>
+<div class="note"><strong>Good to know:</strong> stops are spaced evenly from 0% to 100% — if you need uneven spacing or a specific radial size and position, adjust the percentages in the copied CSS by hand. A browser canvas cannot blend in OKLCH or HSL, so PNG exports are rendered in sRGB; the interpolation choice applies to the CSS. The freeform (mesh) style is built from layered radial gradients, the closest plain CSS gets to a true mesh gradient. Everything is worked out in your browser; nothing you pick is sent anywhere, and no colour or setting is stored.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
@@ -74,6 +108,16 @@ var ggAngleRow = document.getElementById("gg-angle-row");
 var ggAngle = document.getElementById("gg-angle");
 var ggAngleRange = document.getElementById("gg-angle-range");
 var ggAdd = document.getElementById("gg-add");
+var ggCornerRow = document.getElementById("gg-corner-row");
+var ggCorner = document.getElementById("gg-corner");
+var ggInterp = document.getElementById("gg-interp");
+var ggMeshNote = document.getElementById("gg-mesh-note");
+var ggPw = document.getElementById("gg-pw");
+var ggPh = document.getElementById("gg-ph");
+var ggNoise = document.getElementById("gg-noise");
+var ggPngStatus = document.getElementById("gg-png-status");
+/* Freeform (mesh) colour points, in percent of the box: corners first, centre last. */
+var GG_MESH_POINTS = [[12, 14], [88, 10], [86, 84], [12, 86], [50, 46]];
 /* The stops are the single source of truth: an array of #rrggbb strings.
    The row inputs are rebuilt only when a stop is added or removed, so
    typing in a hex box never loses focus. */
@@ -94,30 +138,146 @@ function ggNormHex(text) {
 }
 
 function ggType() {
-  return document.getElementById("gg-type-radial").checked ? "radial" : "linear";
+  if (document.getElementById("gg-type-mesh").checked) { return "mesh"; }
+  if (document.getElementById("gg-type-corner").checked) { return "corner"; }
+  if (document.getElementById("gg-type-radial").checked) { return "radial"; }
+  return "linear";
 }
 
-function ggCss() {
+function ggInterpPart() {
+  return ggInterp.value ? " in " + ggInterp.value : "";
+}
+
+function ggStopParts() {
   var parts = [];
   var n = ggStops.length;
   for (var i = 0; i < n; i++) {
     var pct = n === 1 ? 0 : Math.round((i / (n - 1)) * 100);
     parts.push(ggStops[i] + " " + pct + "%");
   }
-  if (ggType() === "radial") {
-    return "radial-gradient(circle, " + parts.join(", ") + ")";
+  return parts;
+}
+
+function ggMeshImage() {
+  var layers = [];
+  var n = Math.min(GG_MESH_POINTS.length, ggStops.length);
+  for (var i = 0; i < n; i++) {
+    layers.push("radial-gradient(circle at " + GG_MESH_POINTS[i][0] + "% " + GG_MESH_POINTS[i][1] + "%, " + ggStops[i] + " 0%, transparent 72%)");
+  }
+  return layers.join(", ");
+}
+
+function ggCss() {
+  var parts = ggStopParts();
+  var type = ggType();
+  if (type === "radial") {
+    return "radial-gradient(circle" + ggInterpPart() + ", " + parts.join(", ") + ")";
+  }
+  if (type === "corner") {
+    return "linear-gradient(to " + ggCorner.value + ggInterpPart() + ", " + parts.join(", ") + ")";
   }
   var angle = Number(ggAngle.value);
   if (isNaN(angle)) { angle = 90; }
   angle = ((Math.round(angle) % 360) + 360) % 360;
-  return "linear-gradient(" + angle + "deg, " + parts.join(", ") + ")";
+  return "linear-gradient(" + angle + "deg" + ggInterpPart() + ", " + parts.join(", ") + ")";
+}
+
+function ggHexRgb(hex) {
+  return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+}
+
+/* Endpoints of a CSS linear gradient line: direction d through the centre,
+   with the line stretched so the box corners project exactly onto 0%..100%. */
+function ggGradientLine(w, h, dx, dy) {
+  var len = Math.sqrt(dx * dx + dy * dy);
+  dx /= len; dy /= len;
+  var cx = w / 2, cy = h / 2;
+  var corners = [[0, 0], [w, 0], [0, h], [w, h]];
+  var minS = Infinity, maxS = -Infinity;
+  for (var i = 0; i < 4; i++) {
+    var s = (corners[i][0] - cx) * dx + (corners[i][1] - cy) * dy;
+    if (s < minS) { minS = s; }
+    if (s > maxS) { maxS = s; }
+  }
+  return { x0: cx + dx * minS, y0: cy + dy * minS, x1: cx + dx * maxS, y1: cy + dy * maxS };
+}
+
+function ggAddStops(grad) {
+  var n = ggStops.length;
+  for (var i = 0; i < n; i++) {
+    grad.addColorStop(n === 1 ? 0 : i / (n - 1), ggStops[i]);
+  }
+}
+
+function ggDrawPng(canvas) {
+  var w = canvas.width, h = canvas.height;
+  var ctx = canvas.getContext("2d");
+  var type = ggType();
+  var i, line, grad;
+  if (type === "mesh") {
+    ctx.fillStyle = ggStops[ggStops.length - 1];
+    ctx.fillRect(0, 0, w, h);
+    var n = Math.min(GG_MESH_POINTS.length, ggStops.length);
+    for (i = n - 1; i >= 0; i--) {
+      var px = (GG_MESH_POINTS[i][0] / 100) * w;
+      var py = (GG_MESH_POINTS[i][1] / 100) * h;
+      var rgb = ggHexRgb(ggStops[i]);
+      var radius = Math.max(
+        Math.sqrt(px * px + py * py),
+        Math.sqrt(Math.pow(w - px, 2) + py * py),
+        Math.sqrt(px * px + Math.pow(h - py, 2)),
+        Math.sqrt(Math.pow(w - px, 2) + Math.pow(h - py, 2)));
+      grad = ctx.createRadialGradient(px, py, 0, px, py, radius);
+      grad.addColorStop(0, "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ",1)");
+      grad.addColorStop(0.72, "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ",0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+    }
+    return;
+  }
+  if (type === "radial") {
+    var r = Math.sqrt(Math.pow(w / 2, 2) + Math.pow(h / 2, 2));
+    grad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, r);
+    ggAddStops(grad);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+    return;
+  }
+  if (type === "corner") {
+    var dx, dy;
+    if (ggCorner.value === "top right") { dx = h; dy = -w; }
+    else if (ggCorner.value === "top left") { dx = -h; dy = -w; }
+    else if (ggCorner.value === "bottom right") { dx = h; dy = w; }
+    else { dx = -h; dy = w; }
+    line = ggGradientLine(w, h, dx, dy);
+  } else {
+    var angle = Number(ggAngle.value);
+    if (isNaN(angle)) { angle = 90; }
+    var rad = (((angle % 360) + 360) % 360) * Math.PI / 180;
+    line = ggGradientLine(w, h, Math.sin(rad), -Math.cos(rad));
+  }
+  grad = ctx.createLinearGradient(line.x0, line.y0, line.x1, line.y1);
+  ggAddStops(grad);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
 }
 
 function ggUpdate() {
-  var css = ggCss();
-  ggPreview.style.background = css;
-  ggCode.value = "background: " + css + ";";
-  ggAngleRow.hidden = ggType() !== "linear";
+  var type = ggType();
+  if (type === "mesh") {
+    ggPreview.style.background = "";
+    ggPreview.style.backgroundColor = ggStops[ggStops.length - 1];
+    ggPreview.style.backgroundImage = ggMeshImage();
+    ggCode.value = "background-color: " + ggStops[ggStops.length - 1] + ";\nbackground-image: " + ggMeshImage() + ";";
+  } else {
+    ggPreview.style.backgroundColor = "";
+    ggPreview.style.backgroundImage = "";
+    ggPreview.style.background = ggCss();
+    ggCode.value = "background: " + ggCss() + ";";
+  }
+  ggAngleRow.hidden = type !== "linear";
+  ggCornerRow.hidden = type !== "corner";
+  ggMeshNote.hidden = type !== "mesh";
   ggAdd.disabled = ggStops.length >= GG_MAX_STOPS;
   ggResult.hidden = false;
   ggStatus.className = "status";
@@ -190,6 +350,62 @@ ggAdd.addEventListener("click", function () {
 });
 document.getElementById("gg-type-linear").addEventListener("change", ggUpdate);
 document.getElementById("gg-type-radial").addEventListener("change", ggUpdate);
+document.getElementById("gg-type-corner").addEventListener("change", ggUpdate);
+document.getElementById("gg-type-mesh").addEventListener("change", ggUpdate);
+ggCorner.addEventListener("change", ggUpdate);
+ggInterp.addEventListener("change", ggUpdate);
+document.getElementById("gg-png").addEventListener("click", function () {
+  var w = Math.round(Number(ggPw.value));
+  var h = Math.round(Number(ggPh.value));
+  if (isNaN(w) || isNaN(h) || w < 16 || h < 16 || w > 4000 || h > 4000) {
+    ggPngStatus.className = "status error";
+    ggPngStatus.textContent = "Width and height must be whole numbers between 16 and 4000 pixels.";
+    return;
+  }
+  var canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  try {
+    ggDrawPng(canvas);
+    if (ggNoise.checked) {
+      var ctx = canvas.getContext("2d");
+      var img = ctx.getImageData(0, 0, w, h);
+      var d = img.data;
+      for (var i = 0; i < d.length; i += 4) {
+        var nz = Math.round((Math.random() - 0.5) * 6);
+        d[i] = Math.max(0, Math.min(255, d[i] + nz));
+        d[i + 1] = Math.max(0, Math.min(255, d[i + 1] + nz));
+        d[i + 2] = Math.max(0, Math.min(255, d[i + 2] + nz));
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+  } catch (e) {
+    ggPngStatus.className = "status error";
+    ggPngStatus.textContent = "The PNG could not be drawn in this browser.";
+    return;
+  }
+  if (canvas.toBlob) {
+    canvas.toBlob(function (blob) {
+      if (!blob) {
+        ggPngStatus.className = "status error";
+        ggPngStatus.textContent = "The PNG could not be created in this browser.";
+        return;
+      }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "gradient-" + w + "x" + h + ".png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      ggPngStatus.className = "status ok";
+      ggPngStatus.textContent = "PNG downloaded: " + w + " x " + h + " px, " + Math.max(1, Math.round(blob.size / 1024)) + " KB" + (ggNoise.checked ? ", with anti-banding noise." : ".");
+    }, "image/png");
+  } else {
+    ggPngStatus.className = "status error";
+    ggPngStatus.textContent = "This browser cannot export a PNG from a canvas.";
+  }
+});
 ggAngle.addEventListener("input", function () {
   var v = Number(ggAngle.value);
   if (!isNaN(v)) { ggAngleRange.value = String(((Math.round(v) % 360) + 360) % 360); }
