@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Video Muter - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Remove the sound from a video — the picture stays, the audio track goes — processed entirely in your browser.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/video-muter/">
+<meta property="og:title" content="Video Muter - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Remove the sound from a video — the picture stays, the audio track goes — processed entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/video-muter/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.vmu-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.vmu-drop.vmu-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.vmu-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+@media (max-width: 640px) { .vmu-cols { grid-template-columns: 1fr; } }
+.vmu-pane { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--card); }
+.vmu-pane h3 { margin: 0 0 8px; font-size: 1rem; color: var(--navy, #0a2540); }
+.vmu-pane video { width: 100%; height: auto; display: block; background: #000; border-radius: 6px; }
+.vmu-meta { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 8px; font-size: .92rem; }
+.vmu-meta strong { color: var(--navy, #0a2540); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Video Muter</h1>
+<p class="tool-sub">Remove the sound from a video — the picture stays, the audio track goes — processed entirely in your browser.</p>
+<div class="tool-card">
+  <p>Drop a video, preview it, then press the button: the video plays through once while this tab records only its picture track, and you download the silent result. Nothing is uploaded. Please read the honest note below about re-encoding before you rely on the output.</p>
+
+  <div class="vmu-drop" id="vmu-drop">
+    <label for="vmu-file"><strong>Choose a video file</strong>, or drop it here</label>
+    <input id="vmu-file" type="file" accept="video/*">
+  </div>
+
+  <div data-result>
+    <div id="vmu-editor" hidden>
+      <div class="vmu-cols">
+        <div class="vmu-pane">
+          <h3>Before — original (with sound)</h3>
+          <video id="vmu-src" controls playsinline></video>
+          <div class="vmu-meta">
+            <span>Size: <strong id="vmu-src-size">–</strong></span>
+            <span>Duration: <strong id="vmu-src-dur">–</strong></span>
+            <span>Picture: <strong id="vmu-src-dim">–</strong></span>
+          </div>
+        </div>
+        <div class="vmu-pane" id="vmu-out-pane" hidden>
+          <h3>After — muted (no sound)</h3>
+          <video id="vmu-out" controls playsinline></video>
+          <div class="vmu-meta">
+            <span>Size: <strong id="vmu-out-size">–</strong></span>
+            <span>Duration: <strong id="vmu-out-dur">–</strong></span>
+            <span>Format: <strong id="vmu-out-fmt">–</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn" id="vmu-go">Remove the audio track</button>
+        <a id="vmu-download" class="btn" href="#" download="video-muted.webm" hidden>Download muted video</a>
+      </div>
+    </div>
+  </div>
+  <p id="vmu-status" class="status" role="status">Choose or drop a video file to mute it.</p>
+</div>
+<div class="note"><strong>Good to know — please read, honestly:</strong> browsers cannot rewrite a video file's container to simply delete its audio track, so this tool <strong>re-encodes</strong> the picture while it plays (in real time — a 10-minute video takes about 10 minutes) and records no audio at all. That means the output quality depends on your browser's encoder and is not bit-identical to the original picture, and the output format is whatever your browser records — MP4 in some browsers, WebM in others; the download name and the panel above always say which. If you need the original picture stream kept bit-for-bit with only the audio removed, use a desktop tool with a stream-copy option (for example ffmpeg with <em>-c:v copy -an</em>). Nothing is uploaded either way — this all happens in your tab.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var vmu_file = document.getElementById("vmu-file");
+var vmu_drop = document.getElementById("vmu-drop");
+var vmu_status = document.getElementById("vmu-status");
+var vmu_editor = document.getElementById("vmu-editor");
+var vmu_src = document.getElementById("vmu-src");
+var vmu_out = document.getElementById("vmu-out");
+var vmu_go = document.getElementById("vmu-go");
+var vmu_download = document.getElementById("vmu-download");
+var vmu_srcUrl = null, vmu_outUrl = null;
+var vmu_srcBytes = 0, vmu_base = "video";
+var vmu_processing = false, vmu_done = false;
+var vmu_outInfo = { bytes: null, mime: null };
+
+function vmu_setStatus(text, kind) {
+  vmu_status.className = "status" + (kind ? " " + kind : "");
+  vmu_status.textContent = text;
+}
+function vmu_fmtBytes(b) {
+  if (b === null || b === undefined) { return "–"; }
+  if (b > 1048576) { return (b / 1048576).toFixed(2) + " MB"; }
+  if (b > 1024) { return (b / 1024).toFixed(1) + " KB"; }
+  return b + " B";
+}
+function vmu_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+vmu_src.addEventListener("loadedmetadata", function () {
+  document.getElementById("vmu-src-dur").textContent = isFinite(vmu_src.duration) ? vmu_src.duration.toFixed(2) + " s" : "unknown";
+  document.getElementById("vmu-src-dim").textContent = vmu_src.videoWidth + " × " + vmu_src.videoHeight;
+});
+vmu_out.addEventListener("loadedmetadata", function () {
+  document.getElementById("vmu-out-dur").textContent = isFinite(vmu_out.duration) ? vmu_out.duration.toFixed(2) + " s" : "unknown";
+});
+function vmu_load(file) {
+  if (!file) { return; }
+  vmu_base = vmu_baseName(file.name || "video");
+  vmu_srcBytes = file.size;
+  if (vmu_srcUrl) { URL.revokeObjectURL(vmu_srcUrl); }
+  vmu_srcUrl = URL.createObjectURL(file);
+  vmu_src.src = vmu_srcUrl;
+  vmu_done = false;
+  vmu_outInfo = { bytes: null, mime: null };
+  vmu_download.hidden = true;
+  document.getElementById("vmu-out-pane").hidden = true;
+  document.getElementById("vmu-src-size").textContent = vmu_fmtBytes(file.size);
+  vmu_editor.hidden = false;
+  vmu_setStatus("Video loaded. Press “Remove the audio track” — it plays through once (muted here) while the silent copy is recorded.", "ok");
+}
+vmu_go.addEventListener("click", function () {
+  if (vmu_processing || !vmu_srcUrl) { return; }
+  if (typeof MediaRecorder === "undefined") {
+    vmu_setStatus("This browser does not support MediaRecorder, so it cannot re-encode video. Try a current Chrome, Edge, Firefox or Safari.", "error");
+    return;
+  }
+  var capture = vmu_src.captureStream || vmu_src.mozCaptureStream;
+  if (!capture) {
+    vmu_setStatus("This browser cannot capture a playing video element, so the mute cannot run here.", "error");
+    return;
+  }
+  if (!isFinite(vmu_src.duration) || vmu_src.duration <= 0) {
+    vmu_setStatus("The video's duration could not be read, so the recording would not know when to stop. This file cannot be processed here.", "error");
+    return;
+  }
+  var candidates = ["video/mp4", "video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+  var mime = "";
+  for (var i = 0; i < candidates.length; i++) {
+    try { if (MediaRecorder.isTypeSupported(candidates[i])) { mime = candidates[i]; break; } } catch (e) {}
+  }
+  var stream = capture.call(vmu_src);
+  var videoTracks = stream.getVideoTracks();
+  if (!videoTracks.length) {
+    vmu_setStatus("No video track could be captured from that file.", "error");
+    return;
+  }
+  var recStream = new MediaStream(videoTracks);
+  var recorder;
+  try {
+    recorder = new MediaRecorder(recStream, mime ? { mimeType: mime, videoBitsPerSecond: 8000000 } : { videoBitsPerSecond: 8000000 });
+  } catch (e) {
+    vmu_setStatus("The recorder could not start in this browser: " + (e && e.message ? e.message : e), "error");
+    return;
+  }
+  var chunks = [];
+  recorder.ondataavailable = function (ev) { if (ev.data && ev.data.size) { chunks.push(ev.data); } };
+  recorder.onstop = function () {
+    vmu_processing = false;
+    vmu_go.disabled = false;
+    vmu_src.muted = false;
+    var type = recorder.mimeType || mime || "video/webm";
+    var blob = new Blob(chunks, { type: type });
+    var ext = type.indexOf("mp4") >= 0 ? "mp4" : "webm";
+    if (vmu_outUrl) { URL.revokeObjectURL(vmu_outUrl); }
+    vmu_outUrl = URL.createObjectURL(blob);
+    vmu_outInfo = { bytes: blob.size, mime: type };
+    vmu_done = true;
+    vmu_out.src = vmu_outUrl;
+    document.getElementById("vmu-out-size").textContent = vmu_fmtBytes(blob.size);
+    document.getElementById("vmu-out-fmt").textContent = type;
+    document.getElementById("vmu-out-pane").hidden = false;
+    vmu_download.href = vmu_outUrl;
+    vmu_download.setAttribute("download", vmu_base + "-muted." + ext);
+    vmu_download.hidden = false;
+    vmu_setStatus("Muted video ready (" + vmu_fmtBytes(blob.size) + ", " + type + "). It has no audio track — press play on the “After” preview to confirm it is silent.", "ok");
+  };
+  vmu_processing = true;
+  vmu_go.disabled = true;
+  vmu_setStatus("Recording the silent copy — the video is playing through once in real time (" + vmu_src.duration.toFixed(1) + " s). Keep this tab open…", "");
+  function onEnded() {
+    vmu_src.removeEventListener("ended", onEnded);
+    if (recorder.state !== "inactive") { recorder.stop(); }
+  }
+  vmu_src.addEventListener("ended", onEnded);
+  vmu_src.muted = true; /* so the room stays quiet; the recording never takes audio tracks anyway */
+  vmu_src.currentTime = 0;
+  var started = false;
+  function begin() {
+    if (started) { return; }
+    started = true;
+    vmu_src.play().then(function () {
+      recorder.start(200);
+    }).catch(function (err) {
+      vmu_processing = false;
+      vmu_go.disabled = false;
+      vmu_src.removeEventListener("ended", onEnded);
+      vmu_setStatus("Playback could not start, so nothing was recorded: " + (err && err.message ? err.message : err), "error");
+    });
+  }
+  if (vmu_src.readyState >= 2 && Math.abs(vmu_src.currentTime) < 0.01) { begin(); }
+  else {
+    vmu_src.addEventListener("seeked", function h() { vmu_src.removeEventListener("seeked", h); begin(); });
+    /* if the seek never fires (already at 0), begin anyway after a tick */
+    setTimeout(begin, 600);
+  }
+});
+vmu_file.addEventListener("change", function () { vmu_load(vmu_file.files && vmu_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  vmu_drop.addEventListener(ev, function (e) { e.preventDefault(); vmu_drop.classList.add("vmu-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  vmu_drop.addEventListener(ev, function (e) { e.preventDefault(); vmu_drop.classList.remove("vmu-over"); });
+});
+vmu_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { vmu_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.vmu_state = function () {
+  return {
+    hasVideo: !!vmu_srcUrl,
+    duration: vmu_srcUrl ? vmu_src.duration : 0,
+    width: vmu_src.videoWidth || 0,
+    height: vmu_src.videoHeight || 0,
+    srcBytes: vmu_srcBytes,
+    processing: vmu_processing,
+    done: vmu_done,
+    outBytes: vmu_outInfo.bytes,
+    outMime: vmu_outInfo.mime,
+    outUrl: vmu_outUrl
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="video-muter"></script>
+</body>
+</html>
