@@ -427,7 +427,7 @@ function mds_inspect(file) {
 mds_strip.addEventListener("click", function () {
   if (!mds_current) { return; }
   var cur = mds_current;
-  mds_setStatus("Rebuilding a clean copy…”);
+  mds_setStatus("Rebuilding a clean copy…");
   var done = function (blob, ext) {
     if (mds_outUrl) { URL.revokeObjectURL(mds_outUrl); }
     mds_outUrl = URL.createObjectURL(blob);
