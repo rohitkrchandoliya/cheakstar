@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image Tracer - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-tracer/">
+<meta property="og:title" content="Image Tracer - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-tracer/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.itr-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.itr-drop.itr-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.itr-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.itr-row:last-child { border-bottom: none; }
+.itr-lab { width: 180px; flex: none; font-weight: 600; }
+.itr-row code { flex: 1; min-width: 0; }
+.itr-pair { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 12px; }
+@media (min-width: 760px) { .itr-pair { grid-template-columns: 1fr 1fr; } }
+.itr-cell { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--card); text-align: center; }
+.itr-cell h3 { margin: 0 0 8px; font-size: .95rem; }
+.itr-cell canvas, .itr-cell .itr-svgwrap { max-width: 100%; }
+.itr-cell canvas { height: auto; }
+.itr-svgwrap { margin: 0 auto;
+  background-color: #fdfdfd;
+  background-image: linear-gradient(45deg, #d9d9d9 25%, transparent 25%), linear-gradient(-45deg, #d9d9d9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d9d9d9 75%), linear-gradient(-45deg, transparent 75%, #d9d9d9 75%);
+  background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0; }
+.itr-svgwrap svg { display: block; width: 100%; height: auto; }
+.itr-out { width: 100%; min-height: 120px; font-family: monospace; font-size: .75rem; margin-top: 10px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Tracer</h1>
+<p class="tool-sub">Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser.</p>
+<div class="tool-card">
+  <p>Drop an image, pick a preset, and trace. Fewer colours and a higher minimum path size give a simpler, bolder result; more colours keep photo detail at the cost of a bigger file. For speed the image is traced at up to 800 px on its longest side — the Scale control sets the SVG's output size. Your image is processed on this device only and never leaves this browser tab.</p>
+
+  <div class="itr-drop" id="itr-drop">
+    <label for="itr-file"><strong>Choose an image</strong>, or drop it here</label>
+    <input id="itr-file" type="file" accept="image/*">
+  </div>
+
+  <div data-result>
+    <div id="itr-editor" hidden>
+      <div class="row2" style="margin-top:16px">
+        <div>
+          <label for="itr-preset">Preset</label>
+          <select id="itr-preset">
+            <option value="logo" selected>Logo — few colours, crisp shapes</option>
+            <option value="photo">Photo — many colours, softer detail</option>
+            <option value="sketch">Sketch — two-tone line work</option>
+            <option value="custom">Custom — your settings below</option>
+          </select>
+        </div>
+        <div>
+          <label for="itr-colors">Colours: <span id="itr-colors-val">8</span></label>
+          <input id="itr-colors" type="range" min="2" max="64" step="1" value="8" style="width:100%">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="itr-smooth">Smoothing: <span id="itr-smooth-val">Balanced</span></label>
+          <input id="itr-smooth" type="range" min="0" max="3" step="1" value="1" style="width:100%">
+        </div>
+        <div>
+          <label for="itr-minpath">Minimum path size: <span id="itr-minpath-val">8</span> px</label>
+          <input id="itr-minpath" type="range" min="0" max="50" step="1" value="8" style="width:100%">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="itr-scale">Output scale</label>
+          <select id="itr-scale">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1× (traced size)</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="btn-row" style="margin-top:0"><button id="itr-trace" class="btn" type="button">Trace image</button></div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:20px">Result</h2>
+      <div class="itr-row"><span class="itr-lab">Colours used</span><code class="mono" id="itr-r-colors">—</code></div>
+      <div class="itr-row"><span class="itr-lab">Paths</span><code class="mono" id="itr-r-paths">—</code></div>
+      <div class="itr-row"><span class="itr-lab">Output size</span><code class="mono" id="itr-r-size">—</code></div>
+      <div class="itr-row"><span class="itr-lab">SVG file size</span><code class="mono" id="itr-r-bytes">—</code></div>
+
+      <div class="itr-pair">
+        <div class="itr-cell"><h3>Original</h3><canvas id="itr-before"></canvas></div>
+        <div class="itr-cell"><h3>Traced SVG (on transparency)</h3><div class="itr-svgwrap" id="itr-after"></div></div>
+      </div>
+
+      <label for="itr-out" style="margin-top:14px">SVG markup</label>
+      <textarea id="itr-out" class="itr-out" readonly placeholder="The traced SVG markup will appear here."></textarea>
+      <div class="btn-row">
+        <button id="itr-copy" class="btn" type="button">Copy SVG</button>
+        <a id="itr-download" class="btn ghost" href="#" download="image-traced.svg">Download SVG</a>
+      </div>
+    </div>
+  </div>
+  <p id="itr-status" class="status" role="status">Choose or drop an image to trace it.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> tracing is done by the open-source ImageTracerJS library (version 1.2.6, public domain / The Unlicense, by András Jankovics), loaded from the jsDelivr CDN; if it cannot load, this page says so plainly instead of faking a result. Flat logos and icons trace best. Photographs trace honestly but with many paths — the Photo preset keeps up to 48 colours, and the file can grow large; that is the real trade-off of vectorising a photo, not a fault. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script src="https://cdn.jsdelivr.net/gh/jankovicsandras/imagetracerjs@1.2.6/imagetracer_v1.2.6.js"></script>
+<script>
+"use strict";
+var itr_file = document.getElementById("itr-file");
+var itr_drop = document.getElementById("itr-drop");
+var itr_status = document.getElementById("itr-status");
+var itr_editor = document.getElementById("itr-editor");
+var itr_preset = document.getElementById("itr-preset");
+var itr_colors = document.getElementById("itr-colors");
+var itr_smooth = document.getElementById("itr-smooth");
+var itr_minpath = document.getElementById("itr-minpath");
+var itr_scale = document.getElementById("itr-scale");
+var itr_before = document.getElementById("itr-before");
+var itr_after = document.getElementById("itr-after");
+var itr_out = document.getElementById("itr-out");
+var itr_download = document.getElementById("itr-download");
+var itr_src = document.createElement("canvas"); /* working-size copy */
+var itr_has = false;
+var itr_base = "image";
+var itr_svg = "";
+var itr_outUrl = null;
+var itr_stats = { colors: 0, paths: 0, bytes: 0, outW: 0, outH: 0 };
+var ITR_CAP = 800;
+
+var itr_presets = {
+  logo:   { colors: 8,  smooth: 1, minpath: 8 },
+  photo:  { colors: 48, smooth: 2, minpath: 2 },
+  sketch: { colors: 2,  smooth: 1, minpath: 4 }
+};
+var itr_smoothSteps = [
+  { label: "Crisp (straight lines)", ltres: 0.05, qtres: 5, linefilter: true },
+  { label: "Balanced", ltres: 1, qtres: 1, linefilter: false },
+  { label: "Smooth curves", ltres: 2.5, qtres: 2.5, linefilter: false },
+  { label: "Very smooth", ltres: 5, qtres: 5, linefilter: false }
+];
+
+function itr_setStatus(text, kind) {
+  itr_status.className = "status" + (kind ? " " + kind : "");
+  itr_status.textContent = text;
+}
+function itr_set(id, text) { document.getElementById(id).textContent = text; }
+function itr_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function itr_fmtBytes(n) {
+  if (n < 1024) { return n + " B"; }
+  if (n < 1024 * 1024) { return (n / 1024).toFixed(1) + " KB"; }
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function itr_syncLabels() {
+  itr_set("itr-colors-val", itr_colors.value);
+  itr_set("itr-smooth-val", itr_smoothSteps[parseInt(itr_smooth.value, 10)].label);
+  itr_set("itr-minpath-val", itr_minpath.value);
+}
+function itr_trace() {
+  if (!itr_has) { return; }
+  if (typeof ImageTracer === "undefined") {
+    itr_setStatus("The tracing library (ImageTracerJS) could not be loaded — check your connection and reload the page. Nothing was traced.", "error");
+    return;
+  }
+  itr_setStatus("Tracing… this can take a few seconds on detailed images.");
+  setTimeout(function () {
+    try {
+      var sm = itr_smoothSteps[parseInt(itr_smooth.value, 10)];
+      var scale = parseFloat(itr_scale.value);
+      var opts = {
+        numberofcolors: parseInt(itr_colors.value, 10),
+        colorsampling: 2,
+        colorquantcycles: 3,
+        mincolorratio: 0,
+        pathomit: parseInt(itr_minpath.value, 10),
+        ltres: sm.ltres,
+        qtres: sm.qtres,
+        linefilter: sm.linefilter,
+        rightangleenhance: true,
+        strokewidth: 0,
+        roundcoords: 1,
+        scale: scale,
+        viewbox: true,
+        layering: 0,
+        desc: false
+      };
+      var ctx = itr_src.getContext("2d");
+      var imgd = ctx.getImageData(0, 0, itr_src.width, itr_src.height);
+      var tracer = window.ImageTracer; /* the library exports one ready instance */
+      var td = tracer.imagedataToTracedata(imgd, opts);
+      itr_svg = tracer.getsvgstring(td, opts);
+      /* Stats from the traced data itself. */
+      var paths = 0, used = {};
+      for (var li = 0; li < td.layers.length; li++) {
+        if (td.layers[li].length > 0) { paths += td.layers[li].length; used[li] = true; }
+      }
+      itr_stats = {
+        colors: Object.keys(used).length,
+        paths: paths,
+        bytes: new Blob([itr_svg]).size,
+        outW: Math.round(itr_src.width * scale),
+        outH: Math.round(itr_src.height * scale)
+      };
+      itr_out.value = itr_svg;
+      itr_after.innerHTML = itr_svg;
+      var blob = new Blob([itr_svg], { type: "image/svg+xml" });
+      if (itr_outUrl) { URL.revokeObjectURL(itr_outUrl); }
+      itr_outUrl = URL.createObjectURL(blob);
+      itr_download.href = itr_outUrl;
+      itr_download.setAttribute("download", itr_base + "-traced.svg");
+      itr_set("itr-r-colors", String(itr_stats.colors));
+      itr_set("itr-r-paths", String(itr_stats.paths));
+      itr_set("itr-r-size", itr_stats.outW + " × " + itr_stats.outH + " px (scales cleanly — it is a vector)");
+      itr_set("itr-r-bytes", itr_fmtBytes(itr_stats.bytes));
+      itr_setStatus("Traced: " + itr_stats.colors + " colours, " + itr_stats.paths + " paths, " + itr_fmtBytes(itr_stats.bytes) + ". Copy the markup or download the SVG.", "ok");
+    } catch (err) {
+      itr_setStatus("Tracing failed in this browser: " + (err && err.message ? err.message : "unknown error"), "error");
+    }
+  }, 30);
+}
+itr_preset.addEventListener("change", function () {
+  var p = itr_presets[itr_preset.value];
+  if (p) {
+    itr_colors.value = String(p.colors);
+    itr_smooth.value = String(p.smooth);
+    itr_minpath.value = String(p.minpath);
+    itr_syncLabels();
+  }
+  if (itr_has) { itr_trace(); }
+});
+[itr_colors, itr_smooth, itr_minpath].forEach(function (el) {
+  el.addEventListener("input", function () {
+    itr_preset.value = "custom";
+    itr_syncLabels();
+  });
+  el.addEventListener("change", function () { if (itr_has) { itr_trace(); } });
+});
+itr_scale.addEventListener("change", function () { if (itr_has) { itr_trace(); } });
+document.getElementById("itr-trace").addEventListener("click", itr_trace);
+document.getElementById("itr-copy").addEventListener("click", function () {
+  if (!itr_svg) { itr_setStatus("Trace an image first — there is no SVG to copy yet.", "error"); return; }
+  function done() { itr_setStatus("SVG markup copied to the clipboard.", "ok"); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(itr_svg).then(done).catch(function () {
+      itr_out.select(); document.execCommand("copy"); done();
+    });
+  } else {
+    itr_out.select(); document.execCommand("copy"); done();
+  }
+});
+function itr_load(file) {
+  if (!file) { return; }
+  itr_base = itr_baseName(file.name || "image");
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    var s = Math.min(1, ITR_CAP / Math.max(img.naturalWidth, img.naturalHeight));
+    itr_src.width = Math.max(1, Math.round(img.naturalWidth * s));
+    itr_src.height = Math.max(1, Math.round(img.naturalHeight * s));
+    itr_src.getContext("2d").drawImage(img, 0, 0, itr_src.width, itr_src.height);
+    URL.revokeObjectURL(url);
+    itr_before.width = itr_src.width;
+    itr_before.height = itr_src.height;
+    itr_before.getContext("2d").drawImage(itr_src, 0, 0);
+    itr_has = true;
+    itr_editor.hidden = false;
+    itr_setStatus("Image loaded (traced at " + itr_src.width + " × " + itr_src.height + " px). Tracing…", "");
+    itr_trace();
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    itr_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+}
+itr_file.addEventListener("change", function () { itr_load(itr_file.files && itr_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  itr_drop.addEventListener(ev, function (e) { e.preventDefault(); itr_drop.classList.add("itr-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  itr_drop.addEventListener(ev, function (e) { e.preventDefault(); itr_drop.classList.remove("itr-over"); });
+});
+itr_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { itr_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+itr_syncLabels();
+window.itr_state = function () {
+  return { hasImage: itr_has, svgLen: itr_svg.length, stats: itr_stats, libLoaded: typeof ImageTracer !== "undefined" };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-tracer"></script>
+</body>
+</html>
