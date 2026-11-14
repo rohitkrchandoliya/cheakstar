@@ -104,7 +104,7 @@
     tool: { title: "Your result is ready", text: "Log in free to reveal it." },
     download: { title: "Almost there", text: "Log in or create a free account to finish and download your file." },
     blog: { title: "Keep reading", text: "Log in to read the full article — it's free." },
-    contact: { title: "Send us a message", text: "Log in to send us a message. We reply to every genuine message." }
+    contact: { title: "", text: "Log in to send us a message. We reply to every genuine message." }
   };
   var LOCK_SVG = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>';
 
@@ -121,7 +121,8 @@
       '<a class="btn ghost" href="' + rootBase + "signup.html?next=" + next + '">Create free account</a>' +
       "</div>" +
       '<p class="gate-micro">Free forever · No card needed</p>';
-    box.querySelector("h3").textContent = c.title;
+    var titleEl = box.querySelector("h3");
+    if (c.title) { titleEl.textContent = c.title; } else { titleEl.parentNode.removeChild(titleEl); }
     box.querySelector("p").textContent = c.text;
     if (typeof onNavigate === "function") {
       box.querySelectorAll("a").forEach(function (a) {
@@ -218,14 +219,15 @@
   function signature(el) {
     if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") return "v:" + (el.value || "");
     var media = el.querySelector("img, canvas, video, audio, a[download], a.download") ? "m" : "";
-    return (el.hidden ? "h" : "s") + "|" + media + "|" + (el.innerHTML || "").length + "|" + (el.textContent || "").trim().length;
+    return (el.hidden ? "h" : "s") + "|" + media + "|" + (el.innerHTML || "").length + "|" + (el.textContent || "").trim().length + "|" + el.getElementsByTagName("*").length;
   }
-  function hasContent(el, initial) {
+  function hasContent(el, initial, initialKids) {
     if (el.tagName === "TEXTAREA" || el.tagName === "INPUT") return (el.value || "").trim().length > 0;
     if (el.hidden) return false;
     if (signature(el) === initial) return false;
     if ((el.textContent || "").trim().length > 0) return true;
-    return !!el.querySelector("img, canvas, video, audio, a[download], a.download");
+    if (el.querySelector("img, canvas, video, audio, a[download], a.download")) return true;
+    return el.getElementsByTagName("*").length > (initialKids || 0);
   }
 
   function initTool() {
@@ -276,12 +278,12 @@
           ? document.querySelector(el.getAttribute("data-result-peer"))
           : null;
         var watchEl = peer || el;
-        watched.push({ el: el, watchEl: watchEl, initial: signature(watchEl), done: false });
+        watched.push({ el: el, watchEl: watchEl, initial: signature(watchEl), kids: watchEl.getElementsByTagName("*").length, done: false });
       });
       function sweep() {
         watched.forEach(function (w) {
           if (w.done) return;
-          if (hasContent(w.watchEl, w.initial)) {
+          if (hasContent(w.watchEl, w.initial, w.kids)) {
             w.done = true;
             guard(w.el, {
               soft: w.el.hasAttribute("data-result-soft"),
