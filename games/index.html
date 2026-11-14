@@ -33,216 +33,200 @@
 })();
 </script>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="../styles.css?v=20261114">
 <title>Games - Cheakstar</title>
 <style>
   :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
   [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
   html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
-  body { font-family: system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 0 1rem 3rem; background: var(--bg); color: var(--ink); }
-  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  [data-theme="light"] header { color: var(--ink); }
-  [data-theme="light"] header p { color: var(--muted); }
-  .privacy { background: var(--card); border: 1px solid var(--gold); padding: 1rem; margin-top: 1rem; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-  .card { border: 1px solid var(--line); border-top: 4px solid var(--gold); padding: 1rem; display: flex; flex-direction: column; background: var(--card); }
-  .card h2 { margin: 0; font-size: 1.15rem; color: var(--ink); }
-  .card .tag { color: var(--gold); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0.25rem; }
-  .card p { color: var(--muted); font-size: 0.95rem; flex: 1; }
-  .card a { display: inline-block; text-align: center; padding: 0.6rem 1.2rem; background: var(--btn); color: #fff; text-decoration: none; font-weight: 600; }
-  .card a:hover { background: #123a5c; }
+  body { background: var(--bg); color: var(--ink); }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1.5rem; }
 </style>
 </head>
 <body>
-<header>
-  <h1>Games</h1>
-  <p>Free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs privately to your account when you sign in.</p>
-</header>
-<div class="privacy">
-  <strong>Your privacy.</strong> These games run fully on your device. Your progress is saved on this device, and when you are signed in it also syncs privately to your Cheakstar account, so it follows you across your devices. It is never shared or used for tracking. Every game also has a fullscreen mode for distraction-free play.
-</div>
-<div class="cards">
+<main class="wrap ck-main">
+<h1>Games</h1>
+<p>Free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs privately to your account when you sign in.</p>
+<div class="games-grid">
   <div class="card">
-    <h2>Gem Smash</h2>
-    <div class="tag">Match-3 puzzle</div>
+    <span class="tag">Match-3 puzzle</span>
+    <h3>Gem Smash</h3>
     <p>Swap neighbouring gems to match three or more of a kind. Cascades score extra. Reach 500 points within 30 moves.</p>
-    <a href="gem-smash/index.html">Play Gem Smash</a>
+    <a class="go" href="gem-smash/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Memory Match</h2>
-    <div class="tag">Memory game</div>
+    <span class="tag">Memory game</span>
+    <h3>Memory Match</h3>
     <p>Flip two cards at a time and find all 8 matching pairs. Fewer moves and less time make a better game.</p>
-    <a href="memory-match/index.html">Play Memory Match</a>
+    <a class="go" href="memory-match/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Number Merge 2048</h2>
-    <div class="tag">Number puzzle</div>
+    <span class="tag">Number puzzle</span>
+    <h3>Number Merge 2048</h3>
     <p>Slide the tiles so equal numbers merge into one bigger tile. Keep going until you build the 2048 tile.</p>
-    <a href="number-merge-2048/index.html">Play Number Merge 2048</a>
+    <a class="go" href="number-merge-2048/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>BlockFit Puzzle</h2>
-    <div class="tag">Block puzzle</div>
+    <span class="tag">Block puzzle</span>
+    <h3>BlockFit Puzzle</h3>
     <p>Place the three pieces on a 10 by 10 board. A full row or column clears. The game ends when no piece fits.</p>
-    <a href="blockfit-puzzle/index.html">Play BlockFit Puzzle</a>
+    <a class="go" href="blockfit-puzzle/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Classic Ludo</h2>
-    <div class="tag">Board game, 2-4 players</div>
+    <span class="tag">Board game, 2-4 players</span>
+    <h3>Classic Ludo</h3>
     <p>The traditional race board game on one device: pass-and-play for 2 to 4 players, or play against computer opponents.</p>
-    <a href="classic-ludo/index.html">Play Classic Ludo</a>
+    <a class="go" href="classic-ludo/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Snake Classic</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Snake Classic</h3>
     <p>Steer the snake with the arrow keys or a swipe. Eat the food to grow, and do not hit the walls or yourself.</p>
-    <a href="snake-classic/index.html">Play Snake Classic</a>
+    <a class="go" href="snake-classic/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Breakout Brick Smash</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Breakout Brick Smash</h3>
     <p>Move the paddle to bounce the ball and smash every brick. Three lives, and each new level is faster.</p>
-    <a href="breakout-brick-smash/index.html">Play Breakout Brick Smash</a>
+    <a class="go" href="breakout-brick-smash/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Flappy Wing</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Flappy Wing</h3>
     <p>Tap, click or press Space to flap through the gaps in the pipes. One point for every pipe you pass.</p>
-    <a href="flappy-wing/index.html">Play Flappy Wing</a>
+    <a class="go" href="flappy-wing/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Traffic Dodger</h2>
-    <div class="tag">Racing, 2D</div>
+    <span class="tag">Racing, 2D</span>
+    <h3>Traffic Dodger</h3>
     <p>Steer your car through traffic. The speed keeps rising and close passes earn near-miss bonuses.</p>
-    <a href="traffic-dodger/index.html">Play Traffic Dodger</a>
+    <a class="go" href="traffic-dodger/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Target Range</h2>
-    <div class="tag">Shooting</div>
+    <span class="tag">Shooting</span>
+    <h3>Target Range</h3>
     <p>Targets pop up on the range - click them before they vanish. Bullseyes score the most in a 45-second round.</p>
-    <a href="target-range/index.html">Play Target Range</a>
+    <a class="go" href="target-range/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Whack-a-Bug</h2>
-    <div class="tag">Arcade / reaction</div>
+    <span class="tag">Arcade / reaction</span>
+    <h3>Whack-a-Bug</h3>
     <p>Bugs pop out of the server racks. Tap them before they hide - gold bugs are worth extra.</p>
-    <a href="whack-a-bug/index.html">Play Whack-a-Bug</a>
+    <a class="go" href="whack-a-bug/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Simon Sequence</h2>
-    <div class="tag">Memory</div>
+    <span class="tag">Memory</span>
+    <h3>Simon Sequence</h3>
     <p>Watch the colours and listen to the tones, then repeat the sequence. It grows by one step every round.</p>
-    <a href="simon-sequence/index.html">Play Simon Sequence</a>
+    <a class="go" href="simon-sequence/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Stack Tower</h2>
-    <div class="tag">Timing</div>
+    <span class="tag">Timing</span>
+    <h3>Stack Tower</h3>
     <p>A block slides back and forth - tap to drop it on the tower. The overhang falls away, so line it up well.</p>
-    <a href="stack-tower/index.html">Play Stack Tower</a>
+    <a class="go" href="stack-tower/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Turbo Lane Racer</h2>
-    <div class="tag">Racing, pseudo-3D</div>
+    <span class="tag">Racing, pseudo-3D</span>
+    <h3>Turbo Lane Racer</h3>
     <p>Weave through traffic on a curving, hilly road and beat the checkpoint clock.</p>
-    <a href="turbo-lane-racer/index.html">Play Turbo Lane Racer</a>
+    <a class="go" href="turbo-lane-racer/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Space Blaster</h2>
-    <div class="tag">Shooting</div>
+    <span class="tag">Shooting</span>
+    <h3>Space Blaster</h3>
     <p>Blast through enemy waves, grab power-ups and down the boss every fifth wave.</p>
-    <a href="space-blaster/index.html">Play Space Blaster</a>
+    <a class="go" href="space-blaster/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Minesweeper</h2>
-    <div class="tag">Puzzle</div>
+    <span class="tag">Puzzle</span>
+    <h3>Minesweeper</h3>
     <p>Clear every safe square and flag the mines on three classic difficulties.</p>
-    <a href="minesweeper/index.html">Play Minesweeper</a>
+    <a class="go" href="minesweeper/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Sliding Puzzle</h2>
-    <div class="tag">Puzzle</div>
+    <span class="tag">Puzzle</span>
+    <h3>Sliding Puzzle</h3>
     <p>Slide the numbered tiles back into order on 3 by 3, 4 by 4 or 5 by 5 boards.</p>
-    <a href="sliding-puzzle/index.html">Play Sliding Puzzle</a>
+    <a class="go" href="sliding-puzzle/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Hangman: Tech Words</h2>
-    <div class="tag">Word</div>
+    <span class="tag">Word</span>
+    <h3>Hangman: Tech Words</h3>
     <p>Guess the hidden tech and security word before the gallows is complete.</p>
-    <a href="hangman-tech-words/index.html">Play Hangman: Tech Words</a>
+    <a class="go" href="hangman-tech-words/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Word Finder</h2>
-    <div class="tag">Word</div>
+    <span class="tag">Word</span>
+    <h3>Word Finder</h3>
     <p>Hunt down 8 hidden tech words in a 10 by 10 grid of letters.</p>
-    <a href="word-finder/index.html">Play Word Finder</a>
+    <a class="go" href="word-finder/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Connect Four</h2>
-    <div class="tag">Board</div>
+    <span class="tag">Board</span>
+    <h3>Connect Four</h3>
     <p>Line up four discs against the computer, or pass and play with a friend.</p>
-    <a href="connect-four/index.html">Play Connect Four</a>
+    <a class="go" href="connect-four/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Color Flood</h2>
-    <div class="tag">Puzzle</div>
+    <span class="tag">Puzzle</span>
+    <h3>Color Flood</h3>
     <p>Flood the whole board to one colour before your moves run out.</p>
-    <a href="color-flood/index.html">Play Color Flood</a>
+    <a class="go" href="color-flood/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Sudoku</h2>
-    <div class="tag">Puzzle</div>
+    <span class="tag">Puzzle</span>
+    <h3>Sudoku</h3>
     <p>Classic 9 by 9 Sudoku with three difficulties, pencil notes and a three-mistake limit.</p>
-    <a href="sudoku/index.html">Play Sudoku</a>
+    <a class="go" href="sudoku/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Parking Master</h2>
-    <div class="tag">Driving</div>
+    <span class="tag">Driving</span>
+    <h3>Parking Master</h3>
     <p>Steer a top-down car into the marked bay over three levels without bumping cones and cars.</p>
-    <a href="parking-master/index.html">Play Parking Master</a>
+    <a class="go" href="parking-master/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Paper Plane Pilot</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Paper Plane Pilot</h3>
     <p>Glide a paper plane on air currents, collect stars, dodge birds and fly as far as you can.</p>
-    <a href="paper-plane-pilot/index.html">Play Paper Plane Pilot</a>
+    <a class="go" href="paper-plane-pilot/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Archery Master</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Archery Master</h3>
     <p>Read the wind, draw the bow and loose ten arrows at a target that starts moving in round two.</p>
-    <a href="archery-master/index.html">Play Archery Master</a>
+    <a class="go" href="archery-master/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Pinball Mini</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Pinball Mini</h3>
     <p>A one-table mini pinball with a plunger, three bumpers, rollovers and two flippers over three balls.</p>
-    <a href="pinball-mini/index.html">Play Pinball Mini</a>
+    <a class="go" href="pinball-mini/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Chess Puzzles</h2>
-    <div class="tag">Board</div>
+    <span class="tag">Board</span>
+    <h3>Chess Puzzles</h3>
     <p>Eight composed checkmate puzzles - mate in 1 and mate in 2 - checked move by move.</p>
-    <a href="chess-puzzles/index.html">Play Chess Puzzles</a>
+    <a class="go" href="chess-puzzles/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Solitaire</h2>
-    <div class="tag">Cards</div>
+    <span class="tag">Cards</span>
+    <h3>Solitaire</h3>
     <p>Klondike Solitaire with draw 1 and a set of deals a solver verified as winnable before release.</p>
-    <a href="solitaire/index.html">Play Solitaire</a>
+    <a class="go" href="solitaire/index.html">Play game &rarr;</a>
   </div>
   <div class="card">
-    <h2>Aim Trainer</h2>
-    <div class="tag">Arcade</div>
+    <span class="tag">Arcade</span>
+    <h3>Aim Trainer</h3>
     <p>Measure your reaction time and then chase targets in a 30-second precision round.</p>
-    <a href="aim-trainer/index.html">Play Aim Trainer</a>
+    <a class="go" href="aim-trainer/index.html">Play game &rarr;</a>
   </div>
 </div>
 <p class="note">Honest notes: all games here are original implementations built for this site. Ludo is the traditional board game; it plays on one device with pass-and-play or computer opponents - there is no online multiplayer. The Ludo computer opponent plays a fair casual game, not an expert one. The arcade games are original takes on classic ideas; Traffic Dodger is a top-down dodging game, not a driving simulator. Turbo Lane Racer is a pseudo-3D canvas racer (a segmented road in the style of classic arcade racers), not a real 3D game, and the Connect Four computer opponent is a casual player, not a perfect solver. Wave 3 notes: Pinball Mini uses simplified physics rather than a full pinball simulation. Chess Puzzles is a set of composed mate puzzles checked by a small built-in move checker - it is not a full chess engine or a complete game of chess (the puzzles never need castling or en passant, and pawns promote to queens only). Solitaire uses click-to-move controls (no drag and drop) and deals from a built-in set of shuffles that a solver verified as winnable before release. Parking Master and Paper Plane Pilot are simple 2D simulations, not 3D games.</p>
-<script src="assets/games-nav.js"></script>
+</main>
+<script src="../shell.js?v=20261114"></script>
 <script src="game-sync.js"></script>
 <script src="../theme.js?v=20261106a"></script>
 </body>
