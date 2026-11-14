@@ -30,7 +30,7 @@
   </div>
 </div>
 <div class="tool-card">
-  <p>Turn the first seconds of a video into an animated GIF. Choose the smoothness (frames per second) and the width — smaller settings make much smaller GIF files.</p>
+  <p>Turn the first seconds of a video into an animated GIF. Choose the smoothness (frames per second) and the width — smaller settings make much smaller GIF files. The estimate panel updates live as you change settings, so you can see the frame count and the likely file size before you run anything.</p>
 
   <label for="gif-file">Choose a video file</label>
   <input id="gif-file" type="file" accept="video/*">
@@ -64,6 +64,15 @@
     </div>
   </div>
 
+  <div id="gmx-est" hidden>
+    <p class="big">Before you run — estimate</p>
+    <p class="kv"><b>Frames:</b> <span id="gmx-frames">—</span></p>
+    <p class="kv"><b>Output size:</b> <span id="gmx-dims">—</span></p>
+    <p class="kv"><b>Estimated file size:</b> <span id="gmx-size">—</span></p>
+    <p class="status">Frame count follows straight from the frame rate and length. File size is a rough estimate: a GIF's real size depends on how much detail and movement the clip has, so calm clips land near the low end and busy clips near the high end. After a run, the actual size is shown next to the estimate.</p>
+    <p class="kv" id="gmx-actual" hidden><b>Actual size of the last GIF:</b> <span id="gmx-actual-val"></span></p>
+  </div>
+
   <div class="btn-row">
     <button id="gif-run" class="btn" type="button" disabled>Make GIF</button>
   </div>
@@ -91,8 +100,90 @@ AV.wirePage({
 document.getElementById("gif-file").addEventListener("change", function (event) {
   gifFile = event.target.files && event.target.files[0] ? event.target.files[0] : null;
   document.getElementById("gif-run").disabled = !gifFile;
-  if (gifFile) { AV.showBasicInfo(gifFile, document.getElementById("gif-basic")); }
+  if (gifFile) {
+    AV.showBasicInfo(gifFile, document.getElementById("gif-basic"));
+    gmxLoadMeta(gifFile);
+  } else {
+    gmxMeta = null;
+    gmxUpdate();
+  }
 });
+
+/* ---------- Upgrade: live frame-count and file-size estimates (prefix gmx) ---------- */
+var gmxMeta = null;
+var gmxLastEstimate = "";
+function gmxLoadMeta(file) {
+  var url = URL.createObjectURL(file);
+  var v = document.createElement("video");
+  v.preload = "metadata";
+  v.muted = true;
+  v.addEventListener("loadedmetadata", function () {
+    gmxMeta = { duration: v.duration, width: v.videoWidth, height: v.videoHeight };
+    URL.revokeObjectURL(url);
+    gmxUpdate();
+  });
+  v.addEventListener("error", function () {
+    gmxMeta = null;
+    URL.revokeObjectURL(url);
+    gmxUpdate();
+  });
+  v.src = url;
+}
+function gmxFmtBytes(n) {
+  if (n < 1024) { return Math.round(n) + " B"; }
+  if (n < 1024 * 1024) { return (n / 1024).toFixed(1) + " KB"; }
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function gmxUpdate() {
+  var box = document.getElementById("gmx-est");
+  if (!gifFile) { box.hidden = true; return; }
+  box.hidden = false;
+  var fps = Number(document.getElementById("gif-fps").value) || 10;
+  var width = Number(document.getElementById("gif-width").value) || 320;
+  var start = Number(document.getElementById("gif-start").value) || 0;
+  var length = Number(document.getElementById("gif-length").value) || 5;
+  if (length > 15) { length = 15; }
+  var effLen = length;
+  if (gmxMeta && isFinite(gmxMeta.duration)) {
+    effLen = Math.max(0, Math.min(length, gmxMeta.duration - start));
+  }
+  var frames = Math.round(fps * effLen);
+  document.getElementById("gmx-frames").textContent = frames + " frames (" + fps + " fps × " + effLen.toFixed(1) + " s" +
+    ((gmxMeta && isFinite(gmxMeta.duration)) ? "" : " — full clip length unknown until the engine reads it") + ")";
+  var outH = null;
+  if (gmxMeta && gmxMeta.width > 0) {
+    outH = Math.round(width * gmxMeta.height / gmxMeta.width);
+    document.getElementById("gmx-dims").textContent = width + " × " + outH + " px";
+  } else {
+    document.getElementById("gmx-dims").textContent = width + " px wide (height follows the video's proportions)";
+  }
+  if (outH && frames > 0) {
+    var px = width * outH;
+    var low = frames * px * 0.10;
+    var mid = frames * px * 0.30;
+    var high = frames * px * 0.55;
+    gmxLastEstimate = gmxFmtBytes(low) + " – " + gmxFmtBytes(high) + " (about " + gmxFmtBytes(mid) + " typical)";
+    document.getElementById("gmx-size").textContent = gmxLastEstimate;
+  } else {
+    gmxLastEstimate = "";
+    document.getElementById("gmx-size").textContent = "Pick a readable video to estimate the size.";
+  }
+}
+["gif-fps", "gif-width", "gif-start", "gif-length"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", gmxUpdate);
+  document.getElementById(id).addEventListener("change", gmxUpdate);
+});
+/* After a run, put the real size next to the estimate it followed. */
+var gmxObserver = new MutationObserver(function () {
+  var res = document.getElementById("gif-result");
+  var m = res.textContent.match(/\(([\d.]+)\s*(B|KB|MB)\)/);
+  if (m && gmxLastEstimate) {
+    var row = document.getElementById("gmx-actual");
+    document.getElementById("gmx-actual-val").textContent = m[1] + " " + m[2] + " — the estimate before this run was " + gmxLastEstimate + ".";
+    row.hidden = false;
+  }
+});
+gmxObserver.observe(document.getElementById("gif-result"), { childList: true, characterData: true, subtree: true });
 
 document.getElementById("gif-run").addEventListener("click", function () {
   if (!gifFile) { return; }
