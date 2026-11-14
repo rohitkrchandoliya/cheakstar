@@ -1013,6 +1013,594 @@ window.CK_TOOL_INFO = {
    "Download the trimmed section as an MP4 when it is ready."
   ],
   "privacyTitle": "Your files never leave your browser"
+ },
+ "color-converter": {
+  "faq": [
+   {
+    "a": "No. The colour you pick is converted only in this browser tab and is never sent to any server, including Cheakstar.",
+    "q": "Is my colour uploaded?"
+   },
+   {
+    "a": "HEX, RGB, HSL, HSV, CMYK, OKLCH and Lab, plus the nearest CSS colour name — all at once, updating live.",
+    "q": "Which formats do I get?"
+   },
+   {
+    "a": "The named CSS colour (such as steelblue or tomato) closest to your colour, so you can use a readable name in your code.",
+    "q": "What is the nearest CSS colour name?"
+   },
+   {
+    "a": "Yes. The Transparency (alpha) slider sets the alpha value used by the formats that support one.",
+    "q": "Can I convert a transparent colour?"
+   }
+  ],
+  "goodToKnow": [
+   "Every format updates live as you pick or type — there is no Convert button.",
+   "Each row has its own Copy button, so you can grab exactly the format your code needs.",
+   "OKLCH and Lab are included alongside the classic formats, for modern CSS work."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colour is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Pick a colour with the Pick a colour control, or type a HEX code.",
+   "Adjust Transparency (alpha) if you need an alpha value.",
+   "Read every converted format — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and the nearest CSS colour name.",
+   "Click Copy on any row to copy exactly that format."
+  ],
+  "privacyTitle": "Converted on your device only"
+ },
+ "contrast-checker": {
+  "faq": [
+   {
+    "a": "No. Both colours are checked only in this browser tab and are never sent to any server, including Cheakstar.",
+    "q": "Are my colours uploaded?"
+   },
+   {
+    "a": "They are the WCAG contrast levels. AA needs a ratio of at least 4.5:1 for normal text and 3:1 for large text; AAA needs 7:1 and 4.5:1.",
+    "q": "What do AA and AAA mean?"
+   },
+   {
+    "a": "Headings at about 24px, or bold text at about 19px and above — the preview on the page shows large text as headings at 24px bold.",
+    "q": "What counts as large text?"
+   },
+   {
+    "a": "If the pair fails AA for normal text, the tool works out the smallest change to the text colour that passes — the background stays as it is.",
+    "q": "What does the one-click fix change?"
+   }
+  ],
+  "goodToKnow": [
+   "The ratio and badges update live as you change either colour.",
+   "Both AA and AAA are shown, for normal and large text — four badges in all.",
+   "Readable text is not a luxury: visitors with low vision depend on contrast like this."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colours is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Set the Text colour and the Background colour.",
+   "Read the Contrast ratio and the WCAG pass/fail badges for normal and large text.",
+   "If the pair fails, use the one-click fix to adjust the text colour by the smallest change that passes.",
+   "Use Swap colours to test the reverse pairing."
+  ],
+  "privacyTitle": "Your colours stay on your device"
+ },
+ "color-blindness-simulator": {
+  "faq": [
+   {
+    "a": "No. The image is processed on this device only — it is never uploaded to any server, including Cheakstar.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "All eight types of colour-vision deficiency — pick one to simulate, or preview a colour through all eight at once.",
+    "q": "How many types are covered?"
+   },
+   {
+    "a": "About 1 in 12 men and 1 in 200 women see colours differently.",
+    "q": "How common is colour-vision deficiency?"
+   },
+   {
+    "a": "Yes. Choose an image file and a deficiency type, and the simulated copy appears on the canvas next to the original.",
+    "q": "Can I simulate a whole image?"
+   }
+  ],
+  "goodToKnow": [
+   "A single colour can be previewed through all eight types at once.",
+   "Whole images can be simulated too, not just single colours.",
+   "Use it to check that meaning is never carried by colour alone — pair colour with labels, icons or patterns."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Pick a colour or type a HEX code to preview it through all eight deficiency types.",
+   "Or choose an Image file to simulate a whole picture.",
+   "Select a Deficiency type.",
+   "Compare the simulated copy on the canvas with the original."
+  ],
+  "privacyTitle": "Simulated on your device only"
+ },
+ "tailwind-shade-generator": {
+  "faq": [
+   {
+    "a": "No. Your palette is built only in this browser tab and is never sent to any server, including Cheakstar.",
+    "q": "Is my colour uploaded?"
+   },
+   {
+    "a": "A full 50–950 scale — eleven shades from the palest tint to the deepest shade of your base colour.",
+    "q": "Which shades do I get?"
+   },
+   {
+    "a": "OKLCH is the perceptual colour space Tailwind v4 uses, so the steps look evenly spaced instead of bunching up at one end.",
+    "q": "Why is the scale built in OKLCH?"
+   },
+   {
+    "a": "CSS variables in HEX, CSS variables in OKLCH, and a Tailwind config as a JS object — each with its own copy button.",
+    "q": "What can I export?"
+   }
+  ],
+  "goodToKnow": [
+   "Clicking any swatch copies its HEX code.",
+   "The scale is built in OKLCH, so the steps look evenly spaced to the eye.",
+   "All three exports are generated from the same scale, ready to paste into your project."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colour is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Pick a Base colour, or type a HEX code.",
+   "Type a Palette name.",
+   "Read the 50–950 shade scale — click any swatch to copy its HEX code.",
+   "Copy the CSS variables (HEX or OKLCH) or the Tailwind config."
+  ],
+  "privacyTitle": "Palettes are made on your device"
+ },
+ "color-atlas": {
+  "faq": [
+   {
+    "a": "No. The colour is studied only in this browser tab and is never sent to any server, including Cheakstar.",
+    "q": "Is my colour uploaded?"
+   },
+   {
+    "a": "Every format of the colour, its shade, tint and tone scales, its harmonies, its contrast partners and a CSS export — everything about one colour on one page.",
+    "q": "What is on the page?"
+   },
+   {
+    "a": "Complementary, analogous (neighbours 30 degrees apart), triadic (120 degrees), split-complementary and tetradic (90-degree steps).",
+    "q": "Which harmonies are shown?"
+   },
+   {
+    "a": "Yes. Every swatch on the page can be clicked to copy its HEX code.",
+    "q": "Can I copy a single colour from a scale or harmony?"
+   }
+  ],
+  "goodToKnow": [
+   "Every swatch on the page is clickable to copy its HEX code.",
+   "Five harmony types are shown, each explained in one line.",
+   "The CSS export covers the base colour, its scales and its harmonies in one copy."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colour is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Pick a colour, or type a HEX code.",
+   "Read every format, plus the shade, tint and tone scales.",
+   "Explore the harmonies and contrast partners — click any swatch to copy its HEX code.",
+   "Click Copy CSS export to copy variables for the base colour, its scales and its harmonies."
+  ],
+  "privacyTitle": "Your colour stays on your device"
+ },
+ "color-harmony-generator": {
+  "faq": [
+   {
+    "a": "No. Your harmonies are built only in this browser tab and are never sent to any server, including Cheakstar.",
+    "q": "Is my colour uploaded?"
+   },
+   {
+    "a": "The Lightness, Chroma and Hue sliders work in OKLCH, the perceptual colour space, so changes look even to the eye instead of bunching up.",
+    "q": "Why do the sliders work in OKLCH?"
+   },
+   {
+    "a": "It rotates the whole harmony set by the number of degrees you set, keeping the relationships between the colours.",
+    "q": "What does Hue shift do?"
+   },
+   {
+    "a": "Yes. The Reset sliders to base colour button puts every slider back to the base colour's own values.",
+    "q": "Can I undo my slider changes?"
+   }
+  ],
+  "goodToKnow": [
+   "Each harmony type is explained in plain English on the page.",
+   "The three sliders reshape the whole set at once, not one colour at a time.",
+   "One Copy CSS variables button copies the whole set."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your colour is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Pick a Base colour, or type a HEX code.",
+   "Choose a Harmony type — each type is explained in plain English.",
+   "Shape the whole set at once with the Lightness, Chroma and Hue shift sliders.",
+   "Copy the CSS variables for the finished set."
+  ],
+  "privacyTitle": "Palettes are made on your device"
+ },
+ "image-clipper": {
+  "faq": [
+   {
+    "a": "No. Your file is processed on this device only — it never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "It scans the alpha channel, finds the tightest box around the actual content, and cuts away the transparent edges outside that box.",
+    "q": "What exactly does it trim?"
+   },
+   {
+    "a": "A PNG or WebP with transparency — logos, icons and stickers often carry a wide transparent margin that this tool removes.",
+    "q": "Which images work best?"
+   },
+   {
+    "a": "Padding is kept on every side, inside the original edges — so the clipped image can keep a small margin and never grows beyond the original canvas.",
+    "q": "What is the padding setting?"
+   }
+  ],
+  "goodToKnow": [
+   "The report updates instantly when you change the padding after loading.",
+   "The tool reports exactly what was cut, in pixels, on each side.",
+   "Padding is kept inside the original edges, so the result is never larger than the original file's canvas."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image (PNG or WebP with transparency works best), or drop it here.",
+   "Set Padding to keep (px) if you want a margin kept around the content.",
+   "Read the exact report of what was cut.",
+   "Download the clipped image."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "metadata-stripper": {
+  "faq": [
+   {
+    "a": "No. Your file is processed on this device only — it never leaves this browser tab.",
+    "q": "Is my file uploaded?"
+   },
+   {
+    "a": "Camera or phone model, when a picture was taken, the software that made the file, and sometimes the GPS location — in the file it shows you EXIF, GPS, XMP, text chunks and the ICC colour profile.",
+    "q": "What metadata can it find and remove?"
+   },
+   {
+    "a": "Images are cleaned by re-encoding the pixels through the browser canvas, which cannot re-attach an ICC colour profile — so the tool honestly offers no “keep ICC” switch, and wide-gamut photos may shift very slightly.",
+    "q": "Why might colours shift very slightly after cleaning?"
+   },
+   {
+    "a": "PDFs are cleaned with the pdf-lib library, rebuilt without their metadata.",
+    "q": "How are PDFs cleaned?"
+   }
+  ],
+  "goodToKnow": [
+   "You see exactly what the file says about you before anything is stripped.",
+   "The same tool handles both images and PDFs.",
+   "There is deliberately no “keep ICC” switch — a browser canvas cannot re-attach a colour profile, so the tool does not pretend otherwise."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your file is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image (JPEG, PNG or WebP) or a PDF, or drop it here.",
+   "Read the metadata the tool finds in your file.",
+   "Click Strip metadata and prepare download.",
+   "Download the clean copy."
+  ],
+  "privacyTitle": "Your files never leave your browser"
+ },
+ "paste-image": {
+  "faq": [
+   {
+    "a": "No. The image is handled on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "The button needs your browser's permission; if it is unavailable, Ctrl+V (or Cmd+V) anywhere on the page always works.",
+    "q": "The Paste from clipboard button does not work — what else can I do?"
+   },
+   {
+    "a": "Free, 1:1, 4:3, 3:2, 16:9 and 9:16 — or use Select whole image to keep everything.",
+    "q": "Which aspect ratios can I lock?"
+   },
+   {
+    "a": "Your clipboard — a screenshot you just took or an image you copied in another app. It never has to exist as a file first.",
+    "q": "Where does the pasted image come from?"
+   }
+  ],
+  "goodToKnow": [
+   "Screenshots and copied images live on your clipboard, not in a file — this tool works straight from the clipboard.",
+   "The crop size and offset are shown live as you adjust.",
+   "No upload and no sign-up at any point."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Press Ctrl+V (or Cmd+V) anywhere on the page to paste — or use Paste from clipboard, or Choose a file instead.",
+   "Adjust the crop with Offset X, Offset Y, Crop width and Crop height, or lock an aspect ratio.",
+   "Choose a Download format — PNG, JPEG or WebP.",
+   "Download the cropped image."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "placeholder-generator": {
+  "faq": [
+   {
+    "a": "No. Everything is generated on this device; nothing is uploaded.",
+    "q": "Is anything uploaded?"
+   },
+   {
+    "a": "Any width and height you type — or use the presets: Full HD, YouTube thumbnail, Open Graph, Instagram post, Story/Reel, Facebook cover and common ad slots.",
+    "q": "What sizes can I make?"
+   },
+   {
+    "a": "The placeholder shows its own size (for example 800×600) as the label text.",
+    "q": "What happens if I leave the label empty?"
+   },
+   {
+    "a": "PNG, JPEG, WebP or SVG.",
+    "q": "Which formats can I download?"
+   }
+  ],
+  "goodToKnow": [
+   "The stats update live, including the exact size of the file you will download.",
+   "Presets cover social sizes and ad slots, from a 320×50 mobile banner to a 1920×1080 Full HD frame.",
+   "SVG output keeps the placeholder crisp at any display size."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — the placeholder is generated on this device and nothing is uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Set the Width (px) and Height (px), or pick a Size preset.",
+   "Pick the Background colour and Text colour, and type a Label text (leave empty to show the size).",
+   "Choose a Format.",
+   "Download the placeholder image."
+  ],
+  "privacyTitle": "Generated on your device only"
+ },
+ "artwork-enhancer": {
+  "faq": [
+   {
+    "a": "No. Your image is processed on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "It lays a layer of random colour noise over the artwork in overlay blend mode: every pixel gets a tiny random push toward a different colour, so flat areas gain the subtle texture of paper, canvas or film grain.",
+    "q": "What does the grain actually do?"
+   },
+   {
+    "a": "The classic recipe is just 2% opacity — enough to feel, not enough to see. Noise scale 1 is fine film grain; higher values are chunkier, more painterly blocks.",
+    "q": "What settings should I start with?"
+   },
+   {
+    "a": "Yes. The New grain button re-rolls the noise, so the same settings give a fresh random pattern.",
+    "q": "Can I try a different grain?"
+   }
+  ],
+  "goodToKnow": [
+   "Perfectly flat digital colour can look sterile; the grain makes it feel organic.",
+   "Opacity is how strong the grain is; scale is the size of each noise block.",
+   "The same trick digital painters use, with the classic 2% recipe as the starting point."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an artwork image, or drop it here.",
+   "Set Noise opacity (2% is the classic subtle recipe) and Noise scale.",
+   "Compare Before and After — with grain.",
+   "Download the enhanced image."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "image-splitter": {
+  "faq": [
+   {
+    "a": "No. Your image is processed on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "Tiles are cut at the largest equal size that fits. The leftover strip is shown honestly in the report and shaded on the preview — it is not included in any tile, and nothing is silently stretched.",
+    "q": "What if my image does not divide exactly?"
+   },
+   {
+    "a": "Columns and rows each go from 1 to 20.",
+    "q": "How big can the grid be?"
+   },
+   {
+    "a": "Instagram carousels, puzzle posts and print layouts — anywhere one picture needs to become a grid of equal tiles.",
+    "q": "What is it for?"
+   }
+  ],
+  "goodToKnow": [
+   "The gold lines on the preview are the cuts; a shaded strip on the right or bottom edge is the trimmed remainder.",
+   "Tiles are always equal-sized — the tool never stretches a tile to force a fit.",
+   "The ZIP download gathers every tile in one file."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image, or drop it here.",
+   "Set Columns (1–20) and Rows (1–20).",
+   "Check the gold cut lines and the report before downloading.",
+   "Download the tiles one by one, or Download all tiles as ZIP."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "image-masker": {
+  "faq": [
+   {
+    "a": "No. Your image is processed on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "None (full frame), circle, rounded rectangle, squircle, triangle, hexagon, star and heart — or your own custom SVG shape.",
+    "q": "Which shapes can I use?"
+   },
+   {
+    "a": "Upload an SVG file or paste SVG markup; the first path is used (a rect, circle, ellipse or polygon also works), and holes and multi-part paths follow the SVG fill rule of the path itself.",
+    "q": "How does a custom SVG shape work?"
+   },
+   {
+    "a": "A transparent PNG. The chequerboard in the preview is transparency — it is not part of the download.",
+    "q": "What do I download?"
+   }
+  ],
+  "goodToKnow": [
+   "Everything outside the shape becomes transparent — ready for profile pictures, stickers and design work.",
+   "The Shape parameter and Zoom controls fine-tune the mask before you position the image.",
+   "Custom shapes can come from an SVG file or from pasted markup."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image, or drop it here.",
+   "Pick a shape, or load your own SVG shape.",
+   "Zoom and drag the image until it sits exactly where you want it inside the shape.",
+   "Download the transparent PNG."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "image-de-skewer": {
+  "faq": [
+   {
+    "a": "No. The warp runs on this device only — your image never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "For speed, the straightened output is capped at 2000 px on its longest side. The corner editor always shows the full photo.",
+    "q": "Is the output full resolution?"
+   },
+   {
+    "a": "Anything flat photographed at an angle — a document, a whiteboard or a screen.",
+    "q": "What can I straighten?"
+   },
+   {
+    "a": "Drag each gold handle (TL, TR, BR, BL) onto the matching corner of the flat thing in the picture; the gold outline is the region that will be straightened.",
+    "q": "How do I line up the corners?"
+   }
+  ],
+  "goodToKnow": [
+   "The corner editor always shows the full photo, even though the output is capped at 2000 px for speed.",
+   "Reset corners puts all four handles back if a drag goes wrong.",
+   "The output shape presets match common document and screen proportions."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image, or drop it here.",
+   "Drag the four gold corner handles onto the real corners of the document or board.",
+   "Choose the Output shape (aspect).",
+   "Click Straighten and download the flat rectangle."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "image-tracer": {
+  "faq": [
+   {
+    "a": "No. Your image is processed on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "Use fewer colours and a higher minimum path size. More colours keep photo detail at the cost of a bigger file.",
+    "q": "How do I get a simpler, bolder result?"
+   },
+   {
+    "a": "For speed, the image is traced at up to 800 px on its longest side. The Scale control sets the SVG's output size independently.",
+    "q": "What size is the image traced at?"
+   },
+   {
+    "a": "Logos, drawings and icons — flat shapes with clear edges trace into the cleanest vectors.",
+    "q": "Which images trace best?"
+   }
+  ],
+  "goodToKnow": [
+   "Fewer colours and a higher minimum path size give a simpler, bolder vector.",
+   "The trace size (up to 800 px) and the output size are separate — a small trace can still export a large SVG.",
+   "Presets give a sensible starting point for logos, drawings and photos."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image, or drop it here.",
+   "Pick a Preset, and set Colours, Smoothing and Minimum path size.",
+   "Click Trace image.",
+   "Set the Output scale, then copy the SVG markup or download the SVG."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "svg-optimiser": {
+  "faq": [
+   {
+    "a": "No. Everything runs on this device — your SVG is never uploaded to any server, including Cheakstar.",
+    "q": "Is my SVG uploaded?"
+   },
+   {
+    "a": "Yes. This is a safe, conservative optimiser: it never touches shapes, colours or referenced ids, and it re-parses its own output to prove the SVG still works before offering it to you.",
+    "q": "Is the optimisation safe?"
+   },
+   {
+    "a": "Editor junk — comments, editor metadata and namespaces (Inkscape, Illustrator, Sketch, Affinity) — empty groups and empty definitions, and id attributes that nothing in the file references, according to the boxes you tick.",
+    "q": "What gets removed?"
+   },
+   {
+    "a": "Only when a viewBox is present, so the SVG still scales — and only if you tick that option.",
+    "q": "When is the root width/height removed?"
+   }
+  ],
+  "goodToKnow": [
+   "Long decimal numbers are rounded to the precision you choose — often the biggest saving in editor-exported files.",
+   "Only removals that cannot affect the picture are offered.",
+   "The result is re-checked before it is shown to you."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your SVG is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an SVG file, drop it here, or paste SVG markup.",
+   "Tick what to remove, and set Number precision (decimal places).",
+   "Click Optimise SVG.",
+   "Copy the optimised SVG, or download it."
+  ],
+  "privacyTitle": "Your SVG never leaves this device"
+ },
+ "image-watermark": {
+  "faq": [
+   {
+    "a": "No. Your image is processed on this device only and never leaves this browser tab.",
+    "q": "Is my image uploaded?"
+   },
+   {
+    "a": "Yes. Choose the Logo tab and add a logo image — a PNG with transparency works best — and set its width and opacity.",
+    "q": "Can I use my own logo instead of text?"
+   },
+   {
+    "a": "Yes. The Repeat option tiles the watermark across the whole picture instead of placing it once.",
+    "q": "Can the watermark repeat?"
+   },
+   {
+    "a": "In any of nine positions — the corners, the edges or the centre — using the position grid.",
+    "q": "Where can I place it?"
+   }
+  ],
+  "goodToKnow": [
+   "The preview updates live as you change size, opacity and position.",
+   "Text size is set as a percentage of the image width, so it scales sensibly on any photo.",
+   "Text and logo watermarks have their own opacity settings."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your image is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an image, or drop it here.",
+   "Choose Text or Logo, and set the text or logo, its size and opacity.",
+   "Pick a Position, and set Repeat if you want it tiled.",
+   "Choose a Download format and download the watermarked image."
+  ],
+  "privacyTitle": "Your image never leaves this device"
+ },
+ "audio-trimmer": {
+  "faq": [
+   {
+    "a": "No. Everything is decoded and trimmed on this device only — your file never leaves this browser tab.",
+    "q": "Is my audio file uploaded?"
+   },
+   {
+    "a": "Drag the edges of the gold selection on the waveform to fine-tune, drag the middle to move it — or type the Start and End seconds directly.",
+    "q": "How do I fine-tune the selection?"
  }
 };
 window.CK_TOOL_RELATED = {
