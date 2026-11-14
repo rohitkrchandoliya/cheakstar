@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Waveform Generator - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/waveform-generator/">
+<meta property="og:title" content="Waveform Generator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/waveform-generator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.wvg-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.wvg-drop.wvg-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.wvg-stage { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; background: var(--card);
+  background-image: linear-gradient(45deg, #e8e8e8 25%, transparent 25%), linear-gradient(-45deg, #e8e8e8 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e8e8e8 75%), linear-gradient(-45deg, transparent 75%, #e8e8e8 75%);
+  background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; }
+.wvg-stage canvas { max-width: 100%; height: auto; }
+.wvg-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px; font-size: .95rem; }
+.wvg-meta strong { color: var(--navy, #0a2540); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Waveform Generator</h1>
+<p class="tool-sub">Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG.</p>
+<div class="tool-card">
+  <p>Drop an audio file and design its waveform: bars, mirrored or line style, exact pixel size, your colours, transparent background if you want one. The picture is rendered on this device only — your file never leaves this browser tab.</p>
+
+  <div class="wvg-drop" id="wvg-drop">
+    <label for="wvg-file"><strong>Choose an audio file</strong>, or drop it here</label>
+    <input id="wvg-file" type="file" accept="audio/*">
+  </div>
+
+  <div data-result>
+    <div id="wvg-editor" hidden>
+      <div class="wvg-meta">
+        <span>Duration: <strong id="wvg-m-dur">–</strong></span>
+        <span>Sample rate: <strong id="wvg-m-sr">–</strong></span>
+        <span>Channels: <strong id="wvg-m-ch">–</strong></span>
+        <span>Peak: <strong id="wvg-m-peak">–</strong></span>
+      </div>
+
+      <div class="row2" style="margin-top:12px">
+        <div>
+          <label for="wvg-width">Image width (px)</label>
+          <input id="wvg-width" type="number" min="100" max="4000" step="10" value="1500">
+        </div>
+        <div>
+          <label for="wvg-height">Image height (px)</label>
+          <input id="wvg-height" type="number" min="50" max="2000" step="10" value="500">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="wvg-style">Style</label>
+          <select id="wvg-style">
+            <option value="bars" selected>Bars — min/max columns from the top</option>
+            <option value="mirror">Mirror — bars centred on the middle line</option>
+            <option value="line">Line — a filled outline of the peaks</option>
+          </select>
+        </div>
+        <div>
+          <label for="wvg-barwidth">Bar width (px, bars &amp; mirror)</label>
+          <input id="wvg-barwidth" type="number" min="1" max="20" step="1" value="2">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="wvg-gap">Gap between bars (px)</label>
+          <input id="wvg-gap" type="number" min="0" max="10" step="1" value="1">
+        </div>
+        <div>
+          <label for="wvg-color">Wave colour</label>
+          <input id="wvg-color" type="color" value="#c9a227" style="width:100%;height:38px;padding:2px">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="wvg-bg">Background colour</label>
+          <input id="wvg-bg" type="color" value="#0a2540" style="width:100%;height:38px;padding:2px">
+        </div>
+        <div>
+          <label for="wvg-transparent"><input type="checkbox" id="wvg-transparent" style="width:auto;margin-right:6px">Transparent background</label>
+          <div class="wvg-meta" style="margin-top:6px"><span>Output: <strong id="wvg-m-out">–</strong></span></div>
+        </div>
+      </div>
+
+      <div class="wvg-stage"><canvas id="wvg-canvas" aria-label="Waveform preview"></canvas></div>
+
+      <div class="btn-row">
+        <a id="wvg-dl-png" class="btn" href="#" download="waveform.png">Download PNG</a>
+        <a id="wvg-dl-svg" class="btn ghost" href="#" download="waveform.svg">Download SVG</a>
+      </div>
+    </div>
+  </div>
+  <p id="wvg-status" class="status" role="status">Choose or drop an audio file to draw its waveform.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> the waveform is drawn from the loudest channel peaks in each column, which is how waveform pictures are normally made — quiet detail inside a loud column is not shown. The preview sits on a chequerboard so a transparent background is visible; the chequerboard is never in the download. The SVG is true vector shapes (one rectangle per bar), so it scales cleanly but can get large on very detailed settings. Nothing is uploaded.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var wvg_file = document.getElementById("wvg-file");
+var wvg_drop = document.getElementById("wvg-drop");
+var wvg_status = document.getElementById("wvg-status");
+var wvg_editor = document.getElementById("wvg-editor");
+var wvg_canvas = document.getElementById("wvg-canvas");
+var wvg_buf = null;
+var wvg_base = "audio";
+var wvg_columns = 0;
+var wvg_peakDb = null;
+var wvg_pngUrl = null, wvg_svgUrl = null;
+
+function wvg_setStatus(text, kind) {
+  wvg_status.className = "status" + (kind ? " " + kind : "");
+  wvg_status.textContent = text;
+}
+function wvg_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function wvg_opts() {
+  function num(id, dflt, min, max) {
+    var v = parseFloat(document.getElementById(id).value);
+    if (!isFinite(v)) { v = dflt; }
+    return Math.max(min, Math.min(max, v));
+  }
+  return {
+    width: Math.round(num("wvg-width", 1500, 100, 4000)),
+    height: Math.round(num("wvg-height", 500, 50, 2000)),
+    style: document.getElementById("wvg-style").value,
+    barWidth: Math.round(num("wvg-barwidth", 2, 1, 20)),
+    gap: Math.round(num("wvg-gap", 1, 0, 10)),
+    color: document.getElementById("wvg-color").value,
+    bg: document.getElementById("wvg-bg").value,
+    transparent: document.getElementById("wvg-transparent").checked
+  };
+}
+/* Per-column min/max across all channels (the loudest excursion wins). */
+function wvg_peaks(columns) {
+  var ch = wvg_buf.numberOfChannels, n = wvg_buf.length;
+  var data = [];
+  for (var c = 0; c < ch; c++) { data.push(wvg_buf.getChannelData(c)); }
+  var out = new Array(columns);
+  for (var x = 0; x < columns; x++) {
+    var s0 = Math.floor(x / columns * n), s1 = Math.max(s0 + 1, Math.floor((x + 1) / columns * n));
+    var mn = 0, mx = 0;
+    for (var c2 = 0; c2 < ch; c2++) {
+      var d = data[c2];
+      for (var i = s0; i < s1 && i < n; i++) {
+        if (d[i] < mn) { mn = d[i]; }
+        if (d[i] > mx) { mx = d[i]; }
+      }
+    }
+    out[x] = { mn: mn, mx: mx };
+  }
+  return out;
+}
+function wvg_columnCount(o) {
+  if (o.style === "line") { return o.width; }
+  return Math.max(1, Math.floor((o.width + o.gap) / (o.barWidth + o.gap)));
+}
+function wvg_render() {
+  if (!wvg_buf) { return; }
+  var o = wvg_opts();
+  var cols = wvg_columnCount(o);
+  wvg_columns = cols;
+  var peaks = wvg_peaks(cols);
+  var W = o.width, H = o.height, mid = H / 2, amp = H / 2 - 1;
+  wvg_canvas.width = W;
+  wvg_canvas.height = H;
+  var ctx = wvg_canvas.getContext("2d");
+  ctx.clearRect(0, 0, W, H);
+  if (!o.transparent) {
+    ctx.fillStyle = o.bg;
+    ctx.fillRect(0, 0, W, H);
+  }
+  ctx.fillStyle = o.color;
+  var i, x, top, bot;
+  if (o.style === "line") {
+    ctx.beginPath();
+    for (i = 0; i < cols; i++) {
+      x = i;
+      top = mid - peaks[i].mx * amp;
+      if (i === 0) { ctx.moveTo(x, top); } else { ctx.lineTo(x, top); }
+    }
+    for (i = cols - 1; i >= 0; i--) {
+      bot = mid - peaks[i].mn * amp;
+      ctx.lineTo(i, bot);
+    }
+    ctx.closePath();
+    ctx.fill();
+  } else if (o.style === "mirror") {
+    for (i = 0; i < cols; i++) {
+      x = i * (o.barWidth + o.gap);
+      top = mid - peaks[i].mx * amp;
+      bot = mid - peaks[i].mn * amp;
+      ctx.fillRect(x, top, o.barWidth, Math.max(1, bot - top));
+    }
+  } else {
+    for (i = 0; i < cols; i++) {
+      x = i * (o.barWidth + o.gap);
+      top = mid - peaks[i].mx * amp;
+      bot = mid - peaks[i].mn * amp;
+      ctx.fillRect(x, top, o.barWidth, Math.max(1, bot - top));
+    }
+  }
+  /* downloads */
+  wvg_canvas.toBlob(function (blob) {
+    if (!blob) { return; }
+    if (wvg_pngUrl) { URL.revokeObjectURL(wvg_pngUrl); }
+    wvg_pngUrl = URL.createObjectURL(blob);
+    var a = document.getElementById("wvg-dl-png");
+    a.href = wvg_pngUrl;
+    a.setAttribute("download", wvg_base + "-waveform.png");
+  }, "image/png");
+  var svg = wvg_buildSvg(o, peaks);
+  var sblob = new Blob([svg], { type: "image/svg+xml" });
+  if (wvg_svgUrl) { URL.revokeObjectURL(wvg_svgUrl); }
+  wvg_svgUrl = URL.createObjectURL(sblob);
+  var sa = document.getElementById("wvg-dl-svg");
+  sa.href = wvg_svgUrl;
+  sa.setAttribute("download", wvg_base + "-waveform.svg");
+  document.getElementById("wvg-m-out").textContent =
+    W + " × " + H + " px · " + cols + " columns · " + (W * H / 1000000).toFixed(2) + " MP";
+}
+function wvg_buildSvg(o, peaks) {
+  var W = o.width, H = o.height, mid = H / 2, amp = H / 2 - 1;
+  var parts = ['<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '">'];
+  if (!o.transparent) {
+    parts.push('<rect width="' + W + '" height="' + H + '" fill="' + o.bg + '"/>');
+  }
+  var i, x, top, bot;
+  if (o.style === "line") {
+    var d = "";
+    for (i = 0; i < peaks.length; i++) {
+      top = (mid - peaks[i].mx * amp).toFixed(1);
+      d += (i === 0 ? "M" : "L") + i + " " + top;
+    }
+    for (i = peaks.length - 1; i >= 0; i--) {
+      bot = (mid - peaks[i].mn * amp).toFixed(1);
+      d += "L" + i + " " + bot;
+    }
+    parts.push('<path d="' + d + 'Z" fill="' + o.color + '"/>');
+  } else {
+    var rects = "";
+    for (i = 0; i < peaks.length; i++) {
+      x = i * (o.barWidth + o.gap);
+      top = mid - peaks[i].mx * amp;
+      bot = mid - peaks[i].mn * amp;
+      rects += '<rect x="' + x + '" y="' + top.toFixed(1) + '" width="' + o.barWidth + '" height="' + Math.max(1, bot - top).toFixed(1) + '"/>';
+    }
+    parts.push('<g fill="' + o.color + '">' + rects + "</g>");
+  }
+  parts.push("</svg>");
+  return parts.join("");
+}
+var wvg_timer = null;
+function wvg_schedule() {
+  if (wvg_timer) { clearTimeout(wvg_timer); }
+  wvg_timer = setTimeout(wvg_render, 120);
+}
+["wvg-width", "wvg-height", "wvg-style", "wvg-barwidth", "wvg-gap", "wvg-color", "wvg-bg", "wvg-transparent"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", wvg_schedule);
+  document.getElementById(id).addEventListener("change", wvg_schedule);
+});
+function wvg_load(file) {
+  if (!file) { return; }
+  wvg_base = wvg_baseName(file.name || "audio");
+  wvg_setStatus("Decoding " + (file.name || "audio") + "…", "");
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ac = new AC();
+  file.arrayBuffer().then(function (ab) {
+    return ac.decodeAudioData(ab);
+  }).then(function (buf) {
+    wvg_buf = buf;
+    var peak = 0;
+    for (var c = 0; c < buf.numberOfChannels; c++) {
+      var d = buf.getChannelData(c);
+      for (var i = 0; i < d.length; i++) { var a = Math.abs(d[i]); if (a > peak) { peak = a; } }
+    }
+    wvg_peakDb = peak > 0 ? 20 * Math.log10(peak) : -Infinity;
+    document.getElementById("wvg-m-dur").textContent = buf.duration.toFixed(2) + " s";
+    document.getElementById("wvg-m-sr").textContent = buf.sampleRate + " Hz";
+    document.getElementById("wvg-m-ch").textContent = String(buf.numberOfChannels);
+    document.getElementById("wvg-m-peak").textContent = (peak > 0 ? wvg_peakDb.toFixed(2) : "-inf") + " dBFS";
+    wvg_editor.hidden = false;
+    wvg_render();
+    wvg_setStatus("Waveform drawn. Adjust the size, style and colours — the downloads update live.", "ok");
+  }).catch(function (err) {
+    wvg_setStatus("That file could not be decoded as audio by this browser: " + (err && err.message ? err.message : err), "error");
+  });
+}
+wvg_file.addEventListener("change", function () { wvg_load(wvg_file.files && wvg_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  wvg_drop.addEventListener(ev, function (e) { e.preventDefault(); wvg_drop.classList.add("wvg-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  wvg_drop.addEventListener(ev, function (e) { e.preventDefault(); wvg_drop.classList.remove("wvg-over"); });
+});
+wvg_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { wvg_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.wvg_state = function () {
+  var o = wvg_opts();
+  return {
+    hasAudio: !!wvg_buf,
+    duration: wvg_buf ? wvg_buf.duration : 0,
+    sampleRate: wvg_buf ? wvg_buf.sampleRate : 0,
+    channels: wvg_buf ? wvg_buf.numberOfChannels : 0,
+    peakDb: wvg_peakDb,
+    columns: wvg_columns,
+    width: o.width,
+    height: o.height,
+    style: o.style
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="waveform-generator"></script>
+</body>
+</html>
