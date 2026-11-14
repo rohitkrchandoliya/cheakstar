@@ -27,14 +27,20 @@
 
   <label for="fav-file">Choose an image (a square logo works best)</label>
   <input id="fav-file" type="file" accept="image/*">
-  <div class="preview" id="fav-preview" data-result></div>
+  <div class="preview" id="fav-preview"></div>
   <p id="fav-status" class="status" role="status"></p>
 
   <div class="btn-row">
     <button id="fav-zip" class="btn" type="button" disabled data-gate-run>Download full set as ZIP</button>
   </div>
   <div id="fav-list" data-result></div>
-  <p class="status">In your website's HTML head, the usual lines are: &lt;link rel="icon" href="/favicon.ico" sizes="any"&gt; and &lt;link rel="apple-touch-icon" href="/favicon-180.png"&gt;. Put the files in the site's root folder.</p>
+  <h3>Paste into your HTML &lt;head&gt;</h3>
+  <p>Download the files, put them in your site's root folder, and paste this snippet into the &lt;head&gt; of your pages. It points at exactly the files this tool produces — the ICO (with the sizes inside it listed) and every PNG in the set.</p>
+  <textarea id="fvx-snippet" class="compact mono" readonly rows="10" aria-label="HTML snippet for the favicon set"></textarea>
+  <div class="btn-row">
+    <button id="fvx-copy" class="btn ghost" type="button">Copy snippet</button>
+  </div>
+  <p id="fvx-status" class="status" role="status"></p>
 </div>
 <div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never uploaded. Non-square images are centred on a square canvas, so nothing is stretched.</div>
 </main>
@@ -139,6 +145,40 @@ async function renderFavList() {
   }
   list.appendChild(ul);
 }
+
+/* ---------- Upgrade: ready-to-paste HTML snippet (prefix fvx) ---------- */
+/* The snippet is generated from PNG_SIZES and ICO_SIZES themselves, so the
+   file names and sizes in it always match the set this page produces. */
+(function fvxBuildSnippet() {
+  var lines = [];
+  lines.push("<!-- Favicon set: put these files in your site's root folder, next to your home page. -->");
+  lines.push('<link rel="icon" href="/favicon.ico" sizes="' + ICO_SIZES.map(function (n) { return n + "x" + n; }).join(" ") + '">');
+  PNG_SIZES.forEach(function (n) {
+    if (n === 180) {
+      lines.push('<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">');
+    } else {
+      lines.push('<link rel="icon" type="image/png" sizes="' + n + "x" + n + '" href="/favicon-' + n + '.png">');
+    }
+  });
+  document.getElementById("fvx-snippet").value = lines.join("\n");
+})();
+document.getElementById("fvx-copy").addEventListener("click", function () {
+  var ta = document.getElementById("fvx-snippet");
+  var st = document.getElementById("fvx-status");
+  function done() {
+    st.className = "status ok";
+    st.textContent = "Snippet copied — paste it into your page's <head>.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(done, function () {
+      ta.select();
+      st.textContent = "Copy was blocked — the snippet is selected, so copy with Ctrl+C (Cmd+C on a Mac).";
+    });
+  } else {
+    ta.select();
+    st.textContent = "Copy is not available here — the snippet is selected, so copy with Ctrl+C (Cmd+C on a Mac).";
+  }
+});
 
 document.getElementById("fav-file").addEventListener("change", function (event) {
   var file = event.target.files && event.target.files[0];
