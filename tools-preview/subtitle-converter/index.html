@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Subtitle Converter - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/subtitle-converter/">
+<meta property="og:title" content="Subtitle Converter - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/subtitle-converter/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.sco-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 16px; text-align: center; margin-top: 12px; }
+.sco-drop.sco-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.sco-area { width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85rem; }
+.sco-warn { margin: 8px 0 0; padding-left: 18px; font-size: .9rem; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Subtitle Converter</h1>
+<p class="tool-sub">Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser.</p>
+<div class="tool-card">
+  <p>Paste subtitle text below or drop a subtitle file, choose the output format, optionally shift every cue earlier or later, or rescale all timings (handy for frame-rate changes: multiply by 23.976/25, for example). Conversion is exact text processing on this device — nothing is uploaded.</p>
+
+  <div class="sco-drop" id="sco-drop">
+    <label for="sco-file"><strong>Choose a subtitle file</strong> (.srt, .vtt, .ass), or drop it here</label>
+    <input id="sco-file" type="file" accept=".srt,.vtt,.ass,.ssa,text/plain">
+  </div>
+
+  <div style="margin-top:12px">
+    <label for="sco-input">Input subtitles <span id="sco-detected" style="font-weight:400"></span></label>
+    <textarea id="sco-input" class="sco-area" rows="10" placeholder="Paste SRT, WebVTT or ASS subtitle text here…"></textarea>
+  </div>
+
+  <div data-result>
+    <div class="row2" style="margin-top:12px">
+      <div>
+        <label for="sco-format">Output format</label>
+        <select id="sco-format">
+          <option value="vtt" selected>WebVTT (.vtt)</option>
+          <option value="srt">SRT (.srt)</option>
+          <option value="ass">ASS / SSA (.ass)</option>
+          <option value="txt">Plain text (.txt) — words only, no timings</option>
+        </select>
+      </div>
+      <div>
+        <label for="sco-shift">Shift all cues by (seconds, + or −)</label>
+        <input id="sco-shift" type="number" step="0.001" value="0">
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label for="sco-scale">Rescale timings (× factor)</label>
+        <input id="sco-scale" type="number" step="0.001" min="0.01" value="1">
+      </div>
+      <div>
+        <label for="sco-kind">Track kind (WebVTT output)</label>
+        <select id="sco-kind">
+          <option value="subtitles" selected>subtitles</option>
+          <option value="captions">captions</option>
+          <option value="descriptions">descriptions</option>
+          <option value="chapters">chapters</option>
+          <option value="metadata">metadata</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label for="sco-lang">Language code (WebVTT output, optional, e.g. en)</label>
+        <input id="sco-lang" type="text" maxlength="12" placeholder="en">
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <div class="btn-row" style="margin-top:0">
+          <button type="button" class="btn" id="sco-convert">Convert</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="sco-result" hidden>
+      <div style="margin-top:12px">
+        <label for="sco-output">Converted subtitles <span id="sco-stats" style="font-weight:400"></span></label>
+        <textarea id="sco-output" class="sco-area" rows="10" readonly></textarea>
+      </div>
+      <ul class="sco-warn" id="sco-warnings" hidden></ul>
+      <div class="btn-row">
+        <button type="button" class="btn ghost" id="sco-copy">Copy output</button>
+        <a id="sco-download" class="btn" href="#" download="subtitles.vtt">Download converted file</a>
+      </div>
+    </div>
+  </div>
+  <p id="sco-status" class="status" role="status">Paste subtitles or drop a file to begin.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> styling is not carried between formats: ASS override tags (colours, positions, karaoke) are removed with a warning, and SRT/VTT carry plain text only, so a conversion through this tool keeps the words and the timings, not the styling. WebVTT NOTE and STYLE blocks are skipped and counted in the warnings. Cues that a negative shift would push before 00:00:00 are clamped to zero and counted. Everything runs locally in this tab.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var sco_file = document.getElementById("sco-file");
+var sco_drop = document.getElementById("sco-drop");
+var sco_input = document.getElementById("sco-input");
+var sco_output = document.getElementById("sco-output");
+var sco_status = document.getElementById("sco-status");
+var sco_detected = document.getElementById("sco-detected");
+var sco_stats = document.getElementById("sco-stats");
+var sco_warningsEl = document.getElementById("sco-warnings");
+var sco_result = document.getElementById("sco-result");
+var sco_download = document.getElementById("sco-download");
+var sco_last = { detected: null, cues: 0, warnings: [], outFormat: null, converted: false };
+var sco_outUrl = null;
+
+function sco_setStatus(text, kind) {
+  sco_status.className = "status" + (kind ? " " + kind : "");
+  sco_status.textContent = text;
+}
+/* ---- time helpers ---- */
+function sco_parseClock(str) {
+  /* "HH:MM:SS.mmm", "HH:MM:SS,mmm", "MM:SS.mmm" or ASS "H:MM:SS.cc" -> ms (or null) */
+  var m = /^(\d+):(\d{1,2}):(\d{1,2})[.,](\d{1,3})$/.exec(str.trim());
+  if (m) {
+    var frac = m[4];
+    var ms = parseInt(frac, 10) * (frac.length === 1 ? 100 : frac.length === 2 ? 10 : 1);
+    return ((parseInt(m[1], 10) * 60 + parseInt(m[2], 10)) * 60 + parseInt(m[3], 10)) * 1000 + ms;
+  }
+  var m2 = /^(\d{1,2}):(\d{1,2})[.,](\d{1,3})$/.exec(str.trim());
+  if (m2) {
+    var f2 = m2[3];
+    var ms2 = parseInt(f2, 10) * (f2.length === 1 ? 100 : f2.length === 2 ? 10 : 1);
+    return (parseInt(m2[1], 10) * 60 + parseInt(m2[2], 10)) * 1000 + ms2;
+  }
+  return null;
+}
+function sco_pad(n, w) { var s = String(n); while (s.length < w) { s = "0" + s; } return s; }
+function sco_fmtMs(ms, sep) {
+  ms = Math.max(0, Math.round(ms));
+  var h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60, r = ms % 1000;
+  return sco_pad(h, 2) + ":" + sco_pad(m, 2) + ":" + sco_pad(s, 2) + sep + sco_pad(r, 3);
+}
+function sco_fmtAss(ms) {
+  ms = Math.max(0, Math.round(ms));
+  var h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60, cs = Math.round((ms % 1000) / 10);
+  if (cs === 100) { cs = 0; s += 1; }
+  return h + ":" + sco_pad(m, 2) + ":" + sco_pad(s, 2) + "." + sco_pad(cs, 2);
+}
+/* ---- detection ---- */
+function sco_detect(text) {
+  var head = text.slice(0, 2048);
+  if (/^\s*WEBVTT/.test(head)) { return "vtt"; }
+  if (/\[Script Info\]/i.test(head) || /\[Events\]/i.test(head) || /^\s*Dialogue:/im.test(head)) { return "ass"; }
+  if (/\d{1,2}:\d{2}:\d{2}[.,]\d{1,3}\s*-->/.test(head)) { return "srt"; }
+  return null;
+}
+/* ---- parsers: all return { cues: [{start, end, text}], warnings: [] } ---- */
+function sco_parseSrtLike(text, isVtt, warnings) {
+  var cues = [];
+  var norm = text.replace(/\r\n?/g, "\n");
+  if (isVtt) {
+    norm = norm.replace(/^\s*WEBVTT[^\n]*\n/, "");
+    /* drop any remaining header metadata lines before the first blank line */
+    var firstBlank = norm.indexOf("\n\n");
+    var headChunk = firstBlank >= 0 ? norm.slice(0, firstBlank) : "";
+    if (headChunk && !/-->/.test(headChunk) && !/\n/.test(headChunk.trim())) {
+      norm = norm.slice(firstBlank + 2);
+    } else if (headChunk && !/-->/.test(headChunk.split("\n")[0])) {
+      var lines = norm.split("\n");
+      var cut = 0;
+      while (cut < lines.length && lines[cut].trim() !== "" && !/-->/.test(lines[cut])) { cut++; }
+      if (cut > 0 && cut < lines.length && lines[cut].trim() === "") { norm = lines.slice(cut + 1).join("\n"); }
+    }
+  }
+  var blocks = norm.split(/\n\s*\n/);
+  for (var bi = 0; bi < blocks.length; bi++) {
+    var block = blocks[bi];
+    if (!block.trim()) { continue; }
+    var blines = block.split("\n");
+    var first = blines[0].trim();
+    if (isVtt && /^(NOTE|STYLE|REGION)\b/.test(first)) {
+      warnings.push("Skipped a WebVTT " + first.split(/\s/)[0] + " block.");
+      continue;
+    }
+    var ti = -1;
+    for (var li = 0; li < Math.min(3, blines.length); li++) {
+      if (blines[li].indexOf("-->") >= 0) { ti = li; break; }
+    }
+    if (ti < 0) { warnings.push("Skipped a block with no timing line: \"" + first.slice(0, 40) + "\""); continue; }
+    var parts = blines[ti].split("-->");
+    var start = sco_parseClock(parts[0]);
+    var endPart = (parts[1] || "").trim().split(/\s+/)[0];
+    var end = sco_parseClock(endPart);
+    if (start === null || end === null) { warnings.push("Skipped a cue whose times could not be read: \"" + blines[ti].trim().slice(0, 50) + "\""); continue; }
+    var txt = blines.slice(ti + 1).join("\n").trim();
+    txt = txt.replace(/<[^>]+>/g, ""); /* VTT/HTML tags are styling - dropped */
+    cues.push({ start: start, end: end, text: txt });
+  }
+  return cues;
+}
+function sco_parseAss(text, warnings) {
+  var cues = [];
+  var lines = text.replace(/\r\n?/g, "\n").split("\n");
+  var inEvents = false, format = null, tagCount = 0;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var sec = /^\s*\[([^\]]+)\]/.exec(line);
+    if (sec) { inEvents = /events/i.test(sec[1]); continue; }
+    if (!inEvents) { continue; }
+    if (/^\s*Format:/i.test(line)) {
+      format = line.replace(/^\s*Format:/i, "").split(",").map(function (s) { return s.trim().toLowerCase(); });
+      continue;
+    }
+    if (/^\s*(Dialogue|Comment):/i.test(line)) {
+      var isComment = /^\s*Comment:/i.test(line);
+      var body = line.replace(/^\s*(Dialogue|Comment):/i, "");
+      if (!format) { format = ["layer", "start", "end", "style", "name", "marginl", "marginr", "marginv", "effect", "text"]; }
+      var fields = body.split(",");
+      var nFields = format.length;
+      while (fields.length > nFields) {
+        fields[nFields - 1] = fields[nFields - 1] + "," + fields[nFields];
+        fields.splice(nFields, 1);
+      }
+      var rec = {};
+      for (var fi = 0; fi < nFields && fi < fields.length; fi++) { rec[format[fi]] = fields[fi]; }
+      var start = sco_parseClock(rec.start || "");
+      var end = sco_parseClock(rec.end || "");
+      if (start === null || end === null) { warnings.push("Skipped an ASS event whose times could not be read."); continue; }
+      if (isComment) { warnings.push("Skipped an ASS Comment event (not a subtitle cue)."); continue; }
+      var txt = (rec.text || "");
+      var tags = txt.match(/\{[^}]*\}/g);
+      if (tags) { tagCount += tags.length; }
+      txt = txt.replace(/\{[^}]*\}/g, "").replace(/\\N/gi, "\n").replace(/\\h/gi, " ").trim();
+      cues.push({ start: start, end: end, text: txt });
+    }
+  }
+  if (tagCount) { warnings.push("Removed " + tagCount + " ASS override tag(s) (styling is not carried between formats)."); }
+  return cues;
+}
+/* ---- serialisers ---- */
+function sco_toSrt(cues) {
+  return cues.map(function (c, i) {
+    return (i + 1) + "\n" + sco_fmtMs(c.start, ",") + " --> " + sco_fmtMs(c.end, ",") + "\n" + c.text;
+  }).join("\n\n") + "\n";
+}
+function sco_toVtt(cues, kind, lang) {
+  var head = "WEBVTT\nKind: " + kind + (lang ? "\nLanguage: " + lang : "") + "\n\n";
+  return head + cues.map(function (c) {
+    return sco_fmtMs(c.start, ".") + " --> " + sco_fmtMs(c.end, ".") + "\n" + c.text;
+  }).join("\n\n") + "\n";
+}
+function sco_toAss(cues) {
+  var head = [
+    "[Script Info]",
+    "Title: Converted by Cheakstar Subtitle Converter",
+    "ScriptType: v4.00+",
+    "PlayResX: 384",
+    "PlayResY: 288",
+    "WrapStyle: 0",
+    "",
+    "[V4+ Styles]",
+    "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
+    "Style: Default,Arial,16,&H00FFFFFF,&H0000FFFF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,1,0,2,10,10,10,1",
+    "",
+    "[Events]",
+    "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"
+  ].join("\n");
+  var body = cues.map(function (c) {
+    return "Dialogue: 0," + sco_fmtAss(c.start) + "," + sco_fmtAss(c.end) + ",Default,,0,0,0,," + c.text.replace(/\n/g, "\\N");
+  }).join("\n");
+  return head + "\n" + body + "\n";
+}
+function sco_toTxt(cues) {
+  return cues.map(function (c) { return c.text; }).join("\n\n") + "\n";
+}
+/* ---- main flow ---- */
+function sco_refreshDetected() {
+  var fmt = sco_detect(sco_input.value);
+  sco_last.detected = fmt;
+  sco_detected.textContent = fmt ? "— detected format: " + fmt.toUpperCase() : (sco_input.value.trim() ? "— format not recognised" : "");
+}
+sco_input.addEventListener("input", sco_refreshDetected);
+document.getElementById("sco-convert").addEventListener("click", function () {
+  var text = sco_input.value;
+  if (!text.trim()) { sco_setStatus("There is no subtitle text to convert yet.", "error"); return; }
+  var fmt = sco_detect(text);
+  if (!fmt) { sco_setStatus("The input format was not recognised — it does not look like SRT, WebVTT or ASS.", "error"); return; }
+  var warnings = [];
+  var cues = fmt === "ass" ? sco_parseAss(text, warnings) : sco_parseSrtLike(text, fmt === "vtt", warnings);
+  if (!cues.length) { sco_setStatus("No usable cues were found in that input. See the warnings below.", "error"); }
+  var shiftMs = Math.round((parseFloat(document.getElementById("sco-shift").value) || 0) * 1000);
+  var scale = parseFloat(document.getElementById("sco-scale").value);
+  if (!isFinite(scale) || scale <= 0) { scale = 1; }
+  var clamped = 0;
+  cues = cues.map(function (c) {
+    var s = c.start * scale + shiftMs, e = c.end * scale + shiftMs;
+    if (s < 0) { clamped++; s = 0; }
+    if (e < s) { e = s; }
+    return { start: Math.round(s), end: Math.round(e), text: c.text };
+  });
+  if (clamped) { warnings.push(clamped + " cue(s) would have started before 00:00:00 and were clamped to zero."); }
+  cues.sort(function (a, b) { return a.start - b.start; });
+  var outFmt = document.getElementById("sco-format").value;
+  var out = "";
+  var ext = outFmt, mime = "text/plain";
+  if (outFmt === "srt") { out = sco_toSrt(cues); mime = "application/x-subrip"; }
+  else if (outFmt === "vtt") { out = sco_toVtt(cues, document.getElementById("sco-kind").value, document.getElementById("sco-lang").value.trim()); mime = "text/vtt"; }
+  else if (outFmt === "ass") { out = sco_toAss(cues); }
+  else { out = sco_toTxt(cues); ext = "txt"; }
+  sco_output.value = out;
+  var blob = new Blob([out], { type: mime + ";charset=utf-8" });
+  if (sco_outUrl) { URL.revokeObjectURL(sco_outUrl); }
+  sco_outUrl = URL.createObjectURL(blob);
+  sco_download.href = sco_outUrl;
+  sco_download.setAttribute("download", "subtitles." + ext);
+  sco_result.hidden = false;
+  sco_stats.textContent = "— " + cues.length + " cue(s), " + warnings.length + " warning(s)";
+  sco_warningsEl.innerHTML = "";
+  warnings.forEach(function (w) {
+    var li = document.createElement("li");
+    li.textContent = w;
+    sco_warningsEl.appendChild(li);
+  });
+  sco_warningsEl.hidden = !warnings.length;
+  sco_last = { detected: fmt, cues: cues.length, warnings: warnings, outFormat: outFmt, converted: true };
+  sco_setStatus(cues.length ? "Converted " + cues.length + " cue(s) from " + fmt.toUpperCase() + " to " + outFmt.toUpperCase() + "." : "Nothing converted.", cues.length ? "ok" : "error");
+});
+document.getElementById("sco-copy").addEventListener("click", function () {
+  if (!sco_output.value) { return; }
+  function done() { sco_setStatus("Converted subtitles copied to the clipboard.", "ok"); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(sco_output.value).then(done, function () {
+      sco_output.select(); document.execCommand("copy"); done();
+    });
+  } else {
+    sco_output.select(); document.execCommand("copy"); done();
+  }
+});
+function sco_load(file) {
+  if (!file) { return; }
+  file.text().then(function (text) {
+    sco_input.value = text;
+    sco_refreshDetected();
+    sco_setStatus("Loaded " + (file.name || "subtitle file") + (sco_last.detected ? " — detected as " + sco_last.detected.toUpperCase() : " — format not recognised") + ". Choose the output format and convert.", sco_last.detected ? "ok" : "error");
+  });
+}
+sco_file.addEventListener("change", function () { sco_load(sco_file.files && sco_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  sco_drop.addEventListener(ev, function (e) { e.preventDefault(); sco_drop.classList.add("sco-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  sco_drop.addEventListener(ev, function (e) { e.preventDefault(); sco_drop.classList.remove("sco-over"); });
+});
+sco_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { sco_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.sco_state = function () {
+  return {
+    detected: sco_last.detected,
+    cues: sco_last.cues,
+    warnings: sco_last.warnings.length,
+    outFormat: sco_last.outFormat,
+    converted: sco_last.converted
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="subtitle-converter"></script>
+</body>
+</html>
