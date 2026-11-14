@@ -32,10 +32,10 @@
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
 </script>
-<title>Parking Master - Cheakstar</title>
+<title>Parking Master - Cheakstar Games</title>
 <meta name="description" content="Steer into the gold parking bay without bumping cars or cones. Nine levels with parallel parking, a tight garage and timed runs, stars for clean parking, and a car-colour picker.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <style>
 :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --gold-d:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
 [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --gold-d:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
@@ -43,15 +43,7 @@ html[data-textsize="large"] { font-size:112.5%; }
 html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
 body { margin:0; font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif; background:var(--bg); color:var(--ink); text-align:center; }
-header { background:var(--navy); color:#fff; padding:1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-header .brand { color:#fff; text-decoration:none; font-weight:bold; font-size:1.25rem; }
-header .brand span { color:var(--gold); }
-header nav a { color:#fff; text-decoration:none; margin-left:1rem; }
-header nav a:hover { color:var(--gold); }
-[data-theme="light"] header { color: var(--ink); }
-[data-theme="light"] header .brand { color: var(--ink); }
-[data-theme="light"] header nav a { color: var(--muted); }
-h2 { color:var(--ink); margin-bottom:0.2rem; }
+h1, h2 { color:var(--ink); margin-bottom:0.2rem; }
 .note { color:var(--muted); max-width:640px; margin:0.4rem auto 0; }
 button { margin:0.5rem; padding:0.6rem 1.1rem; border:none; border-radius:6px; background:var(--gold); color:#111827; font-weight:bold; cursor:pointer; font-size:1rem; }
 button:hover { background:var(--gold-d); color:#fff; }
@@ -72,7 +64,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-s
 .cgx-fs:fullscreen { background:var(--bg); overflow:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:1rem 0.5rem 2rem; }
 .fs-exit { display:none; }
 .cgx-fs:fullscreen .fs-exit { display:inline-block; position:absolute; top:0.6rem; right:0.6rem; z-index:5; }
-.cgx-fs:fullscreen h2 { display:none; }
+.cgx-fs:fullscreen h1 { display:none; }
 .cgx-fs:fullscreen #fs-desc { display:none; }
 .stats-line { color:var(--muted); font-size:0.95rem; margin:0.6rem auto 0; max-width:680px; min-height:1.3em; }
 .keys-note { color:var(--muted); font-size:0.9rem; margin:0.5rem auto 0; max-width:680px; }
@@ -113,7 +105,6 @@ select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-s
   .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
   .cgx-btn-primary:hover { background: #dbb63a; }
   .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
-  body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
   [data-theme="light"] .cgx-dialog { background: var(--card); color: var(--ink); }
@@ -122,11 +113,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-s
 </style>
 </head>
 <body>
-<header>
-<a class="brand" href="../../../index.html">Cheak<span>star</span></a>
-<nav><a href="../../../index.html">Home</a><a href="../../../tools.html">Tools</a><a href="../../index.html">Games</a><a href="../../../blog.html">Blog</a><a href="../../../contact.html">Contact</a></nav>
-</header>
-
+<main class="wrap ck-main">
 <div class="play-bar">
 <button type="button" class="tool-btn" id="park-sound" aria-label="Toggle sound" title="Sound on or off">🔊</button>
 <button type="button" class="tool-btn" id="fs-btn" aria-label="Toggle fullscreen" title="Fullscreen">⛶</button>
@@ -134,7 +121,7 @@ select { padding:0.4rem; border-radius:6px; border:1px solid var(--line); font-s
 
 <section class="cgx-fs" id="fs-wrap">
 <button type="button" class="tool-btn fs-exit" id="fs-exit" aria-label="Exit fullscreen" title="Exit fullscreen">✕</button>
-<h2>🅿️ Parking Master</h2>
+<h1>🅿️ Parking Master</h1>
 <p class="note" id="fs-desc">Press Start, then drive with the arrow keys or WASD (or the on-screen buttons): up accelerates, down brakes and reverses, left and right steer, Space is the handbrake, R puts the car back at the start, P pauses. Park fully inside the gold bay and come to a stop. Bumps cost points and stars; finish inside the par time with no bumps for three stars. Nine levels: parallel parking, a tight garage and two timed levels are waiting.</p>
 
 <div class="scorebar">
@@ -1213,7 +1200,8 @@ var ParkingMaster = (function () {
   cgx.attachMuteToggle(document.getElementById("park-sound"));
 })();
 </script>
-<script src="../assets/games-nav.js"></script>
+</main>
+<script src="../../shell.js?v=20261114"></script>
 <script src="../game-sync.js"></script>
 <script src="../../theme.js?v=20261106a"></script>
 </body>
