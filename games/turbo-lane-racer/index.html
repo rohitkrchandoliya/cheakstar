@@ -33,20 +33,15 @@
 })();
 </script>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <title>Turbo Lane Racer - Cheakstar Games</title>
 <style>
   :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
   [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
   html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
-  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; background: var(--bg); color: var(--ink); }
-  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  [data-theme="light"] header { color: var(--ink); }
-  [data-theme="light"] header p { color: var(--muted); }
-  h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  body { background: var(--bg); color: var(--ink); }
+  h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   h3 { color: var(--ink); margin-top: 1.5rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
   .error { color: #b91c1c; }
@@ -78,14 +73,13 @@
 
 
   /* ---- Games staging additions: toolbar, fullscreen stage, responsiveness ---- */
-  body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
   .btn-link { display: inline-block; margin-top: 0.5rem; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); text-decoration: none; font-size: 1rem; }
   .btn-link:hover { background: var(--navy3); }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
-  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+  .play-stage:fullscreen h1 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
   .play-stage:fullscreen .game-note { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
@@ -96,7 +90,7 @@
   .play-stage:fullscreen button { margin-top: 0.35rem; }
   .play-stage:fullscreen .snake-keys, .play-stage:fullscreen .traf-keys { margin-top: 0.5rem; }
   @media (max-height: 640px) {
-    .play-stage:fullscreen h2 { display: none; }
+    .play-stage:fullscreen h1 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
   .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
@@ -109,7 +103,7 @@
   /* ---- Turbo Lane Racer polish (step 3a) ---- */
   button:focus-visible, .btn-link:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   .traf-keys button { min-width: 64px; min-height: 52px; font-size: 1.25rem; touch-action: none; }
-  .play-stage:fullscreen h2 { display: none; }
+  .play-stage:fullscreen h1 { display: none; }
   @media (pointer: fine) { .play-stage:fullscreen .traf-keys { display: none; } }
   @media (max-height: 560px) {
     .play-stage:fullscreen #race-board { width: min(97vw, calc((100vh - 118px) * 4 / 3)); width: min(97vw, calc((100dvh - 118px) * 4 / 3)); }
@@ -135,7 +129,6 @@
   .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
   .cgx-btn-primary:hover { background: #dbb63a; }
   .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
-  body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
@@ -146,11 +139,8 @@
   [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
 </style>
 </head>
-<body class="cgx-wide">
-<header>
-  <h1>Turbo Lane Racer</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
-</header>
+<body>
+<main class="wrap ck-main">
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
@@ -159,7 +149,7 @@
 </div>
 <section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
-  <h2>Turbo Lane Racer</h2>
+  <h1>Turbo Lane Racer</h1>
   <p class="fs-desc">A fast pseudo-3D arcade racing game: curves, hills, rival cars and timed checkpoints.</p>
   <div class="scorebar"><span>Score: <span id="race-score">0</span></span><span>Speed: <span id="race-speed">0</span> km/h</span><span>Time: <span id="race-time">45</span>s</span><span>Overtakes: <span id="race-over">0</span></span><span>Checkpoints: <span id="race-cp">0</span></span><span>Best: <span id="race-best">0</span></span></div>
   <canvas class="board game-canvas" id="race-board" width="480" height="360"></canvas>
@@ -744,12 +734,54 @@ var TurboLaneRacer = (function () {
     p.screen.y = Math.round(raceH / 2 - p.screen.scale * p.camera.y * raceH / 2);
     p.screen.w = Math.round(p.screen.scale * raceRoadW * raceW / 2);
   }
-  function racePoly(x1, y1, x2, y2, x3, y3, x4, y4, color) {
-    var ctx = raceCtx;
-    ctx.fillStyle = color;
+  /* Road-band run state (lag fix): consecutive visible segments that
+     share one colour band are drawn once per layer instead of once
+     per segment. Runs are at most raceRumble segments long; the
+     buffer is sized with room to spare. */
+  var raceRunSegs = [], raceRunCount = 0, raceRunColor = null, raceRunMax = 8;
+  /* One layer of one road band as a single polygon. The two edges of
+     the layer are polylines through the segments' shared projected
+     edge points: the near edge of the first segment, the far edge of
+     each segment, then the opposite edge back in reverse. sA/sB are
+     the lateral signs of the two edges (+1 right, -1 left); rA/rB
+     say whether that edge sits a rumble-strip width outside the
+     road edge. Adjacent segments share their projected edge points
+     exactly, so this polygon covers precisely the same pixels as
+     the separate per-segment quads it replaces. */
+  function raceRunPoly(sA, rA, sB, rB) {
+    var ctx = raceCtx, i, seg, p;
     ctx.beginPath();
-    ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3); ctx.lineTo(x4, y4);
-    ctx.closePath(); ctx.fill();
+    seg = raceRunSegs[0]; p = seg.p1.screen;
+    ctx.moveTo(p.x + sA * (p.w + (rA ? p.w / 6 : 0)), p.y);
+    for (i = 0; i < raceRunCount; i++) {
+      seg = raceRunSegs[i]; p = seg.p2.screen;
+      ctx.lineTo(p.x + sA * (p.w + (rA ? p.w / 6 : 0)), p.y);
+      }
+    for (i = raceRunCount - 1; i >= 0; i--) {
+      seg = raceRunSegs[i]; p = seg.p2.screen;
+        ctx.lineTo(p.x + sB * (p.w + (rB ? p.w / 6 : 0)), p.y);
+    }
+    seg = raceRunSegs[0]; p = seg.p1.screen;
+    ctx.lineTo(p.x + sB * (p.w + (rB ? p.w / 6 : 0)), p.y);
+    ctx.closePath();
+    ctx.fill();
+  }
+  /* Flush the pending road band: one full-width grass rect over the
+     band's vertical span (the per-segment grass rects were
+     contiguous strips of one colour, so the single rect covers
+     exactly the same pixels), then one polygon per layer. */
+  function raceFlushRoadRun() {
+    if (!raceRunCount) return;
+    var ctx = raceCtx;
+    var first = raceRunSegs[0], last = raceRunSegs[raceRunCount - 1];
+    ctx.fillStyle = first.grass;
+    ctx.fillRect(0, last.p2.screen.y, raceW, first.p1.screen.y - last.p2.screen.y);
+    ctx.fillStyle = first.rumble;
+    raceRunPoly(-1, 1, -1, 0); /* left rumble strip */
+    raceRunPoly(1, 1, 1, 0); /* right rumble strip */
+    ctx.fillStyle = first.road;
+    raceRunPoly(-1, 0, 1, 0); /* road surface */
+    raceRunCount = 0;
   }
   function raceDrawCarShape(ctx, cx, bottomY, w, color, isPlayer) {
     var h = w * 0.52;
@@ -870,6 +902,13 @@ var TurboLaneRacer = (function () {
     var plyrY = raceLerp(plyrSeg.p1.world.y, plyrSeg.p2.world.y, plyrPct);
     var maxY = raceH, x = 0, dx = -(base.curve * basePct), n, seg;
     var drawn = raceDrawnList; drawn.length = 0;
+    /* Road runs (lag fix): the colour palette flips every raceRumble
+       segments, so consecutive visible segments of one band are
+       buffered and drawn once per layer (see raceFlushRoadRun).
+       Projection, visibility, maxY, clip and the drawn list below
+       are byte-for-byte the original logic; only the drawing is
+       batched, in the same order. */
+    raceRunCount = 0; raceRunColor = null;
     for (n = 0; n < raceDrawDist; n++) {
       seg = raceSegments[(base.index + n) % raceSegments.length];
       var looped = seg.index < base.index;
@@ -878,19 +917,20 @@ var TurboLaneRacer = (function () {
       raceProject(seg.p2, racePlayerX * raceRoadW - x - dx, plyrY + raceCamH, camZ);
       x += dx; dx += seg.curve;
       seg.clip = maxY;
-      if (seg.p1.camera.z <= raceCamDepth || seg.p2.screen.y >= seg.p1.screen.y || seg.p2.screen.y >= maxY) continue;
-      ctx.fillStyle = seg.grass;
-      ctx.fillRect(0, seg.p2.screen.y, raceW, seg.p1.screen.y - seg.p2.screen.y);
-      var r1 = seg.p1.screen.w / 6, r2 = seg.p2.screen.w / 6;
-      racePoly(seg.p1.screen.x - seg.p1.screen.w - r1, seg.p1.screen.y, seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w - r2, seg.p2.screen.y, seg.rumble);
-      racePoly(seg.p1.screen.x + seg.p1.screen.w + r1, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x + seg.p2.screen.w + r2, seg.p2.screen.y, seg.rumble);
-      racePoly(seg.p1.screen.x - seg.p1.screen.w, seg.p1.screen.y, seg.p1.screen.x + seg.p1.screen.w, seg.p1.screen.y,
-               seg.p2.screen.x + seg.p2.screen.w, seg.p2.screen.y, seg.p2.screen.x - seg.p2.screen.w, seg.p2.screen.y, seg.road);
+      if (seg.p1.camera.z <= raceCamDepth || seg.p2.screen.y >= seg.p1.screen.y || seg.p2.screen.y >= maxY) {
+        raceFlushRoadRun();
+        continue;
+      }
+      if (raceRunColor !== seg.grass) {
+        raceFlushRoadRun();
+        raceRunColor = seg.grass;
+      }
+      if (raceRunCount >= raceRunMax) raceFlushRoadRun();
+      raceRunSegs[raceRunCount++] = seg;
       maxY = seg.p1.screen.y;
       drawn.push(seg);
     }
+    raceFlushRoadRun();
     /* Rival cars, farthest first. Each car is bucketed under its own
        segment (index maintained in raceUpdate): one pass over the 14
        cars replaces the old drawn-segments x cars nested scan, which
@@ -1154,7 +1194,8 @@ var TurboLaneRacer = (function () {
   cgx.watchFit($("race-board"), { logicalW: 480, logicalH: 360 }, function () { TurboLaneRacer.redraw(); });
 })();
 </script>
-<script src="../assets/games-nav.js"></script>
+</main>
+<script src="../../shell.js?v=20261114"></script>
 <script src="../game-sync.js"></script>
 <script src="../../theme.js?v=20261106a"></script>
 </body>
