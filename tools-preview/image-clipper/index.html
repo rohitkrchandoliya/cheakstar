@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image Clipper - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-clipper/">
+<meta property="og:title" content="Image Clipper - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-clipper/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.icl-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.icl-drop.icl-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.icl-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.icl-row:last-child { border-bottom: none; }
+.icl-lab { width: 170px; flex: none; font-weight: 600; }
+.icl-row code { flex: 1; min-width: 0; }
+.icl-checker { background-color: #fff; background-image: linear-gradient(45deg, #d9d9d9 25%, transparent 25%), linear-gradient(-45deg, #d9d9d9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d9d9d9 75%), linear-gradient(-45deg, transparent 75%, #d9d9d9 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; }
+.icl-checker canvas { max-width: 100%; height: auto; }
+.icl-pad { max-width: 130px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Clipper</h1>
+<p class="tool-sub">Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.</p>
+<div class="tool-card">
+  <p>Logos, icons and stickers often carry a wide transparent margin. This tool scans the alpha channel, finds the tightest box around the actual content and cuts the rest away. Your file is processed on this device only — it never leaves this browser tab.</p>
+
+  <div class="icl-drop" id="icl-drop">
+    <label for="icl-file"><strong>Choose an image</strong> (PNG or WebP with transparency works best), or drop it here</label>
+    <input id="icl-file" type="file" accept="image/png,image/webp,image/*">
+    <div class="row2" style="margin-top:14px; text-align:left">
+      <div>
+        <label for="icl-pad">Padding to keep (px)</label>
+        <input id="icl-pad" class="icl-pad" type="number" min="0" max="2000" step="1" value="0">
+      </div>
+      <div>
+        <label for="icl-pad-note">Padding is kept on every side, inside the original edges.</label>
+        <p id="icl-pad-note" style="margin:4px 0 0">Change it after loading and the report updates instantly.</p>
+      </div>
+    </div>
+  </div>
+
+  <div data-result>
+    <div id="icl-report" hidden>
+      <h2 style="margin-top:22px">Clip report</h2>
+      <div class="icl-row"><span class="icl-lab">Original size</span><code class="mono" id="icl-r-orig">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Clipped size</span><code class="mono" id="icl-r-clip">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Area saved</span><code class="mono" id="icl-r-area">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Trimmed — top</span><code class="mono" id="icl-r-top">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Trimmed — right</span><code class="mono" id="icl-r-right">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Trimmed — bottom</span><code class="mono" id="icl-r-bottom">—</code></div>
+      <div class="icl-row"><span class="icl-lab">Trimmed — left</span><code class="mono" id="icl-r-left">—</code></div>
+      <div class="icl-checker" id="icl-preview-wrap" hidden><canvas id="icl-preview" aria-label="Preview of the clipped image on a checkerboard"></canvas></div>
+      <div class="btn-row"><a id="icl-download" class="download" href="#" download="clipped.png">Download clipped PNG</a></div>
+    </div>
+  </div>
+  <p id="icl-status" class="status" role="status">Choose or drop an image to clip it.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> a pixel counts as content when its alpha value is above 0 — even a faint, almost invisible shadow pixel keeps its row and column alive. The output is always a PNG, because PNG keeps the transparency exactly; a WebP input is therefore converted to PNG. If the image turns out to be fully opaque there is nothing to trim, and the download then gives you your original file back, byte for byte unchanged. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var icl_file = document.getElementById("icl-file");
+var icl_pad = document.getElementById("icl-pad");
+var icl_drop = document.getElementById("icl-drop");
+var icl_status = document.getElementById("icl-status");
+var icl_report = document.getElementById("icl-report");
+var icl_preview = document.getElementById("icl-preview");
+var icl_previewWrap = document.getElementById("icl-preview-wrap");
+var icl_download = document.getElementById("icl-download");
+var icl_canvas = document.createElement("canvas");
+var icl_img = null;        /* decoded source image */
+var icl_srcFile = null;    /* original File, for the unchanged download */
+var icl_srcUrl = null;     /* object URL of the source file */
+var icl_outUrl = null;     /* object URL of the clipped PNG */
+var icl_base = "image";
+
+function icl_setStatus(text, kind) {
+  icl_status.className = "status" + (kind ? " " + kind : "");
+  icl_status.textContent = text;
+}
+function icl_set(id, text) { document.getElementById(id).textContent = text; }
+function icl_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+
+/* Scan the alpha channel and return the tight box around every pixel
+   whose alpha is above 0, or null when the image is fully transparent. */
+function icl_findBounds(data, w, h) {
+  var minX = w, minY = h, maxX = -1, maxY = -1;
+  for (var y = 0; y < h; y++) {
+    var rowBase = (y * w) * 4 + 3;
+    for (var x = 0; x < w; x++) {
+      if (data[rowBase + x * 4] > 0) {
+        if (x < minX) { minX = x; }
+        if (x > maxX) { maxX = x; }
+        if (y < minY) { minY = y; }
+        if (y > maxY) { maxY = y; }
+      }
+    }
+  }
+  if (maxX < 0) { return null; }
+  return { x0: minX, y0: minY, x1: maxX, y1: maxY };
+}
+
+function icl_render() {
+  if (!icl_img) { return; }
+  var w = icl_canvas.width, h = icl_canvas.height;
+  var ctx = icl_canvas.getContext("2d");
+  var data;
+  try {
+    data = ctx.getImageData(0, 0, w, h).data;
+  } catch (e) {
+    icl_setStatus("This image could not be read pixel by pixel in the browser.", "error");
+    return;
+  }
+  var box = icl_findBounds(data, w, h);
+  if (!box) {
+    icl_report.hidden = true;
+    icl_setStatus("This image is fully transparent — there is no visible content to clip to.", "error");
+    return;
+  }
+  var pad = parseInt(icl_pad.value, 10);
+  if (isNaN(pad) || pad < 0) { pad = 0; }
+  var x0 = Math.max(0, box.x0 - pad);
+  var y0 = Math.max(0, box.y0 - pad);
+  var x1 = Math.min(w - 1, box.x1 + pad);
+  var y1 = Math.min(h - 1, box.y1 + pad);
+  var cw = x1 - x0 + 1, ch = y1 - y0 + 1;
+  var top = y0, left = x0, right = (w - 1) - x1, bottom = (h - 1) - y1;
+  var opaque = (top === 0 && right === 0 && bottom === 0 && left === 0);
+
+  icl_set("icl-r-orig", w + " × " + h + " px");
+  icl_set("icl-r-clip", cw + " × " + ch + " px");
+  var savedPct = (1 - (cw * ch) / (w * h)) * 100;
+  icl_set("icl-r-area", savedPct.toFixed(1) + "% of the canvas removed (" + (w * h - cw * ch).toLocaleString("en-IN") + " of " + (w * h).toLocaleString("en-IN") + " pixels)");
+  icl_set("icl-r-top", top + " px");
+  icl_set("icl-r-right", right + " px");
+  icl_set("icl-r-bottom", bottom + " px");
+  icl_set("icl-r-left", left + " px");
+
+  if (icl_outUrl) { URL.revokeObjectURL(icl_outUrl); icl_outUrl = null; }
+  if (opaque) {
+    /* Nothing to trim: hand the original file back, byte for byte. */
+    icl_previewWrap.hidden = true;
+    icl_download.href = icl_srcUrl;
+    icl_download.setAttribute("download", icl_srcFile.name);
+    icl_download.textContent = "Download the original file (unchanged)";
+    icl_report.hidden = false;
+    icl_setStatus("This image is fully opaque — no transparent edges to trim" + (pad > 0 ? " (the padding covers the whole margin)" : "") + ". The download gives your original file back unchanged.");
+    return;
+  }
+
+  var out = document.createElement("canvas");
+  out.width = cw; out.height = ch;
+  out.getContext("2d").drawImage(icl_canvas, x0, y0, cw, ch, 0, 0, cw, ch);
+  icl_preview.width = cw; icl_preview.height = ch;
+  icl_preview.getContext("2d").clearRect(0, 0, cw, ch);
+  icl_preview.getContext("2d").drawImage(out, 0, 0);
+  icl_previewWrap.hidden = false;
+  icl_report.hidden = false;
+  icl_download.textContent = "Download clipped PNG";
+  icl_download.setAttribute("download", icl_base + "-clipped.png");
+  icl_download.href = "#";
+  out.toBlob(function (blob) {
+    if (!blob) { icl_setStatus("The browser could not create the clipped PNG.", "error"); return; }
+    icl_outUrl = URL.createObjectURL(blob);
+    icl_download.href = icl_outUrl;
+  }, "image/png");
+  icl_setStatus("Clipped " + w + " × " + h + " down to " + cw + " × " + ch + " — " + savedPct.toFixed(1) + "% of the canvas removed.", "ok");
+}
+
+function icl_load(file) {
+  if (!file) { return; }
+  if (icl_srcUrl) { URL.revokeObjectURL(icl_srcUrl); }
+  icl_srcFile = file;
+  icl_base = icl_baseName(file.name || "image");
+  icl_srcUrl = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    icl_img = img;
+    icl_canvas.width = img.naturalWidth;
+    icl_canvas.height = img.naturalHeight;
+    var ctx = icl_canvas.getContext("2d");
+    ctx.clearRect(0, 0, icl_canvas.width, icl_canvas.height);
+    ctx.drawImage(img, 0, 0);
+    icl_render();
+  };
+  img.onerror = function () {
+    icl_img = null;
+    icl_report.hidden = true;
+    icl_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = icl_srcUrl;
+}
+
+icl_file.addEventListener("change", function () { icl_load(icl_file.files && icl_file.files[0]); });
+icl_pad.addEventListener("input", icl_render);
+["dragenter", "dragover"].forEach(function (ev) {
+  icl_drop.addEventListener(ev, function (e) { e.preventDefault(); icl_drop.classList.add("icl-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  icl_drop.addEventListener(ev, function (e) { e.preventDefault(); icl_drop.classList.remove("icl-over"); });
+});
+icl_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { icl_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-clipper"></script>
+</body>
+</html>
