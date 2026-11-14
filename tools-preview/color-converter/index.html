@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Color Converter - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-converter/">
+<meta property="og:title" content="Color Converter - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-converter/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+#ccv-swatch { height: 92px; border: 1px solid var(--line); border-radius: 10px; margin-top: 14px; background-image: linear-gradient(45deg, #9aa5b1 25%, transparent 25%), linear-gradient(-45deg, #9aa5b1 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #9aa5b1 75%), linear-gradient(-45deg, transparent 75%, #9aa5b1 75%); background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0; overflow: hidden; }
+#ccv-swatch-fill { height: 100%; }
+.ccv-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.ccv-row:last-child { border-bottom: none; }
+.ccv-lab { width: 118px; flex: none; font-weight: 600; }
+.ccv-row code { flex: 1; min-width: 0; }
+.ccv-row .btn { margin-top: 0; flex: none; }
+#ccv-name-dot { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--line); vertical-align: -2px; margin-right: 6px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Color Converter</h1>
+<p class="tool-sub">Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name.</p>
+<div class="tool-card">
+  <p>Pick a colour (or type a HEX code) and every format updates live. Each row has its own copy button, so you can grab exactly the format your code needs.</p>
+
+  <div class="row2">
+    <div>
+      <label for="ccv-color">Pick a colour</label>
+      <input id="ccv-color" type="color" value="#3b82f6" style="height:44px; width:100%; padding:2px">
+    </div>
+    <div>
+      <label for="ccv-hex">Or type a HEX code</label>
+      <input id="ccv-hex" type="text" value="#3B82F6" autocomplete="off" spellcheck="false">
+    </div>
+    <div>
+      <label for="ccv-alpha">Transparency (alpha): <span id="ccv-alpha-val" class="mono">100%</span></label>
+      <input id="ccv-alpha" type="range" min="0" max="100" step="1" value="100" style="width:100%">
+    </div>
+  </div>
+
+  <div id="ccv-swatch" aria-hidden="true"><div id="ccv-swatch-fill"></div></div>
+
+  <div data-result>
+    <div class="ccv-row"><span class="ccv-lab">HEX</span><code class="mono" id="ccv-v-hex">#3B82F6</code><button type="button" class="btn ghost small" data-copy="ccv-v-hex">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">HEX + alpha</span><code class="mono" id="ccv-v-hexa">#3B82F6FF</code><button type="button" class="btn ghost small" data-copy="ccv-v-hexa">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">RGB</span><code class="mono" id="ccv-v-rgb">rgb(59, 130, 246)</code><button type="button" class="btn ghost small" data-copy="ccv-v-rgb">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">RGBA</span><code class="mono" id="ccv-v-rgba">rgba(59, 130, 246, 1)</code><button type="button" class="btn ghost small" data-copy="ccv-v-rgba">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">RGB %</span><code class="mono" id="ccv-v-rgbpct">rgb(23%, 51%, 96%)</code><button type="button" class="btn ghost small" data-copy="ccv-v-rgbpct">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">HSL</span><code class="mono" id="ccv-v-hsl">hsl(217, 91%, 60%)</code><button type="button" class="btn ghost small" data-copy="ccv-v-hsl">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">HSV / HSB</span><code class="mono" id="ccv-v-hsv">hsv(217, 76%, 96%)</code><button type="button" class="btn ghost small" data-copy="ccv-v-hsv">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">CMYK</span><code class="mono" id="ccv-v-cmyk">cmyk(76%, 47%, 0%, 4%)</code><button type="button" class="btn ghost small" data-copy="ccv-v-cmyk">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">OKLCH</span><code class="mono" id="ccv-v-oklch">oklch(62.3% 0.188 259.8)</code><button type="button" class="btn ghost small" data-copy="ccv-v-oklch">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">CIE Lab</span><code class="mono" id="ccv-v-lab">lab(55.6% 17.6 -64.4)</code><button type="button" class="btn ghost small" data-copy="ccv-v-lab">Copy</button></div>
+    <div class="ccv-row"><span class="ccv-lab">Colour name</span><code class="mono" id="ccv-v-name">—</code><button type="button" class="btn ghost small" data-copy="ccv-v-name">Copy</button></div>
+  </div>
+  <p id="ccv-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> the name is the nearest of the 148 standard CSS colour names, matched by a weighted (redmean) distance in sRGB, so it is a close neighbour, not an official name for your exact colour. OKLCH and Lab are worked out through linear sRGB with the standard CIE D65 reference white. The alpha slider only affects the HEX + alpha and RGBA rows; the other formats describe the solid colour. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var ccvColor = document.getElementById("ccv-color");
+var ccvHex = document.getElementById("ccv-hex");
+var ccvAlpha = document.getElementById("ccv-alpha");
+var ccvAlphaVal = document.getElementById("ccv-alpha-val");
+var ccvFill = document.getElementById("ccv-swatch-fill");
+var ccvStatus = document.getElementById("ccv-status");
+
+/* The 148 CSS named colours (CSS Color 4), name:hex packed into one string. */
+var CCV_NAMED = ("aliceblue:F0F8FF,antiquewhite:FAEBD7,aqua:00FFFF,aquamarine:7FFFD4,azure:F0FFFF,beige:F5F5DC,bisque:FFE4C4,black:000000,blanchedalmond:FFEBCD,blue:0000FF,blueviolet:8A2BE2,brown:A52A2A,burlywood:DEB887,cadetblue:5F9EA0,chartreuse:7FFF00,chocolate:D2691E,coral:FF7F50,cornflowerblue:6495ED,cornsilk:FFF8DC,crimson:DC143C,cyan:00FFFF,darkblue:00008B,darkcyan:008B8B,darkgoldenrod:B8860B,darkgray:A9A9A9,darkgreen:006400,darkgrey:A9A9A9,darkkhaki:BDB76B,darkmagenta:8B008B,darkolivegreen:556B2F,darkorange:FF8C00,darkorchid:9932CC,darkred:8B0000,darksalmon:E9967A,darkseagreen:8FBC8F,darkslateblue:483D8B,darkslategray:2F4F4F,darkslategrey:2F4F4F,darkturquoise:00CED1,darkviolet:9400D3,deeppink:FF1493,deepskyblue:00BFFF,dimgray:696969,dimgrey:696969,dodgerblue:1E90FF,firebrick:B22222,floralwhite:FFFAF0,forestgreen:228B22,fuchsia:FF00FF,gainsboro:DCDCDC,ghostwhite:F8F8FF,gold:FFD700,goldenrod:DAA520,gray:808080,green:008000,greenyellow:ADFF2F,grey:808080,honeydew:F0FFF0,hotpink:FF69B4,indianred:CD5C5C,indigo:4B0082,ivory:FFFFF0,khaki:F0E68C,lavender:E6E6FA,lavenderblush:FFF0F5,lawngreen:7CFC00,lemonchiffon:FFFACD,lightblue:ADD8E6,lightcoral:F08080,lightcyan:E0FFFF,lightgoldenrodyellow:FAFAD2,lightgray:D3D3D3,lightgreen:90EE90,lightgrey:D3D3D3,lightpink:FFB6C1,lightsalmon:FFA07A,lightseagreen:20B2AA,lightskyblue:87CEFA,lightslategray:778899,lightslategrey:778899,lightsteelblue:B0C4DE,lightyellow:FFFFE0,lime:00FF00,limegreen:32CD32,linen:FAF0E6,magenta:FF00FF,maroon:800000,mediumaquamarine:66CDAA,mediumblue:0000CD,mediumorchid:BA55D3,mediumpurple:9370DB,mediumseagreen:3CB371,mediumslateblue:7B68EE,mediumspringgreen:00FA9A,mediumturquoise:48D1CC,mediumvioletred:C71585,midnightblue:191970,mintcream:F5FFFA,mistyrose:FFE4E1,moccasin:FFE4B5,navajowhite:FFDEAD,navy:000080,oldlace:FDF5E6,olive:808000,olivedrab:6B8E23,orange:FFA500,orangered:FF4500,orchid:DA70D6,palegoldenrod:EEE8AA,palegreen:98FB98,paleturquoise:AFEEEE,palevioletred:DB7093,papayawhip:FFEFD5,peachpuff:FFDAB9,peru:CD853F,pink:FFC0CB,plum:DDA0DD,powderblue:B0E0E6,purple:800080,rebeccapurple:663399,red:FF0000,rosybrown:BC8F8F,royalblue:4169E1,saddlebrown:8B4513,salmon:FA8072,sandybrown:F4A460,seagreen:2E8B57,seashell:FFF5EE,sienna:A0522D,silver:C0C0C0,skyblue:87CEEB,slateblue:6A5ACD,slategray:708090,slategrey:708090,snow:FFFAFA,springgreen:00FF7F,steelblue:4682B4,tan:D2B48C,teal:008080,thistle:D8BFD8,tomato:FF6347,turquoise:40E0D0,violet:EE82EE,wheat:F5DEB3,white:FFFFFF,whitesmoke:F5F5F5,yellow:FFFF00,yellowgreen:9ACD32").split(",").map(function (pair) {
+  var parts = pair.split(":");
+  return { name: parts[0], hex: "#" + parts[1], r: parseInt(parts[1].slice(0, 2), 16), g: parseInt(parts[1].slice(2, 4), 16), b: parseInt(parts[1].slice(4, 6), 16) };
+});
+
+function ccvHexToRgb(hex) {
+  var h = hex.replace("#", "");
+  if (h.length === 3) { h = h.split("").map(function (c) { return c + c; }).join(""); }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) { return null; }
+  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+function ccvTwo(n) { return ("0" + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
+function ccvRgbToHex(r, g, b) { return ("#" + ccvTwo(r) + ccvTwo(g) + ccvTwo(b)).toUpperCase(); }
+function ccvRgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b);
+  var h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    var d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) { h = (g - b) / d + (g < b ? 6 : 0); }
+    else if (max === g) { h = (b - r) / d + 2; }
+    else { h = (r - g) / d + 4; }
+    h *= 60;
+  }
+  return { h: h, s: s, l: l };
+}
+function ccvRgbToHsv(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  var max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  var h = 0;
+  if (d !== 0) {
+    if (max === r) { h = 60 * (((g - b) / d) % 6); }
+    else if (max === g) { h = 60 * ((b - r) / d + 2); }
+    else { h = 60 * ((r - g) / d + 4); }
+  }
+  if (h < 0) { h += 360; }
+  return { h: h, s: max === 0 ? 0 : d / max, v: max };
+}
+function ccvRgbToCmyk(r, g, b) {
+  var rr = r / 255, gg = g / 255, bb = b / 255;
+  var k = 1 - Math.max(rr, gg, bb);
+  if (k >= 1) { return { c: 0, m: 0, y: 0, k: 1 }; }
+  return { c: (1 - rr - k) / (1 - k), m: (1 - gg - k) / (1 - k), y: (1 - bb - k) / (1 - k), k: k };
+}
+function ccvLin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function ccvRgbToLab(r, g, b) {
+  var R = ccvLin(r), G = ccvLin(g), B = ccvLin(b);
+  var x = (0.4123908 * R + 0.3575843 * G + 0.1804808 * B) * 100 / 95.047;
+  var y = (0.2126390 * R + 0.7151687 * G + 0.0721923 * B);
+  var z = (0.0193308 * R + 0.1191948 * G + 0.9505322 * B) * 100 / 108.883;
+  function f(t) { return t > 0.008856 ? Math.cbrt(t) : (1 / 3) * Math.pow(29 / 6, 2) * t + 4 / 29; }
+  var fx = f(x), fy = f(y), fz = f(z);
+  return { L: 116 * fy - 16, a: 500 * (fx - fy), b: 200 * (fy - fz) };
+}
+function ccvRgbToOklch(r, g, b) {
+  var R = ccvLin(r), G = ccvLin(g), B = ccvLin(b);
+  var l = 0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B;
+  var m = 0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B;
+  var s = 0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B;
+  var lr = Math.cbrt(l), mr = Math.cbrt(m), sr = Math.cbrt(s);
+  var L = 0.2104542553 * lr + 0.7936177850 * mr - 0.0040720468 * sr;
+  var A = 1.9779984951 * lr - 2.4285922050 * mr + 0.4505937099 * sr;
+  var Bb = 0.0259040371 * lr + 0.7827717662 * mr - 0.8086757660 * sr;
+  var C = Math.sqrt(A * A + Bb * Bb);
+  var H = Math.atan2(Bb, A) * 180 / Math.PI;
+  if (H < 0) { H += 360; }
+  return { L: L, C: C, H: H };
+}
+function ccvNearestName(r, g, b) {
+  var best = null, bestD = Infinity;
+  for (var i = 0; i < CCV_NAMED.length; i++) {
+    var n = CCV_NAMED[i];
+    var rMean = (r + n.r) / 2;
+    var dr = r - n.r, dg = g - n.g, db = b - n.b;
+    /* redmean weighted distance — closer to how eyes judge colour gaps */
+    var d = (2 + rMean / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rMean) / 256) * db * db;
+    if (d < bestD) { bestD = d; best = n; }
+  }
+  return best;
+}
+function ccvSet(id, text) { document.getElementById(id).textContent = text; }
+function ccvRender() {
+  var rgb = ccvHexToRgb(ccvHex.value.trim());
+  if (!rgb) {
+    ccvStatus.className = "status error";
+    ccvStatus.textContent = "Enter a valid HEX code, for example #3B82F6 (three or six hex digits).";
+    return;
+  }
+  var r = rgb.r, g = rgb.g, b = rgb.b;
+  var alphaPct = Number(ccvAlpha.value);
+  var a = alphaPct / 100;
+  ccvAlphaVal.textContent = alphaPct + "%";
+  ccvColor.value = ccvRgbToHex(r, g, b);
+  ccvFill.style.background = "rgba(" + r + ", " + g + ", " + b + ", " + a + ")";
+  var hsl = ccvRgbToHsl(r, g, b);
+  var hsv = ccvRgbToHsv(r, g, b);
+  var cmyk = ccvRgbToCmyk(r, g, b);
+  var oklch = ccvRgbToOklch(r, g, b);
+  var lab = ccvRgbToLab(r, g, b);
+  var name = ccvNearestName(r, g, b);
+  ccvSet("ccv-v-hex", ccvRgbToHex(r, g, b));
+  ccvSet("ccv-v-hexa", ccvRgbToHex(r, g, b) + ccvTwo(a * 255).toUpperCase());
+  ccvSet("ccv-v-rgb", "rgb(" + r + ", " + g + ", " + b + ")");
+  ccvSet("ccv-v-rgba", "rgba(" + r + ", " + g + ", " + b + ", " + (Math.round(a * 100) / 100) + ")");
+  ccvSet("ccv-v-rgbpct", "rgb(" + Math.round(r / 255 * 100) + "%, " + Math.round(g / 255 * 100) + "%, " + Math.round(b / 255 * 100) + "%)");
+  ccvSet("ccv-v-hsl", "hsl(" + Math.round(hsl.h) + ", " + Math.round(hsl.s * 100) + "%, " + Math.round(hsl.l * 100) + "%)");
+  ccvSet("ccv-v-hsv", "hsv(" + Math.round(hsv.h) + ", " + Math.round(hsv.s * 100) + "%, " + Math.round(hsv.v * 100) + "%)");
+  ccvSet("ccv-v-cmyk", "cmyk(" + Math.round(cmyk.c * 100) + "%, " + Math.round(cmyk.m * 100) + "%, " + Math.round(cmyk.y * 100) + "%, " + Math.round(cmyk.k * 100) + "%)");
+  ccvSet("ccv-v-oklch", "oklch(" + (Math.round(oklch.L * 1000) / 10) + "% " + (Math.round(oklch.C * 1000) / 1000) + " " + (Math.round(oklch.H * 10) / 10) + ")");
+  ccvSet("ccv-v-lab", "lab(" + (Math.round(lab.L * 10) / 10) + "% " + (Math.round(lab.a * 10) / 10) + " " + (Math.round(lab.b * 10) / 10) + ")");
+  document.getElementById("ccv-v-name").innerHTML = "";
+  var dot = document.createElement("span");
+  dot.id = "ccv-name-dot";
+  dot.style.background = name.hex;
+  var txt = document.createElement("span");
+  txt.textContent = name.name + " (" + name.hex + ")";
+  var nameCell = document.getElementById("ccv-v-name");
+  nameCell.appendChild(dot);
+  nameCell.appendChild(txt);
+  nameCell.setAttribute("data-copytext", name.name);
+  ccvStatus.className = "status ok";
+  ccvStatus.textContent = "All formats updated for " + ccvRgbToHex(r, g, b) + ".";
+}
+document.querySelectorAll("[data-copy]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var cell = document.getElementById(btn.getAttribute("data-copy"));
+    var text = cell.getAttribute("data-copytext") || cell.textContent;
+    function done() {
+      ccvStatus.className = "status ok";
+      ccvStatus.textContent = "Copied: " + text;
+    }
+    function fail() {
+      ccvStatus.className = "status error";
+      ccvStatus.textContent = "Copy was blocked by the browser — select the value and copy it by hand.";
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fail);
+    } else { fail(); }
+  });
+});
+ccvColor.addEventListener("input", function () {
+  ccvHex.value = ccvColor.value.toUpperCase();
+  ccvRender();
+});
+ccvHex.addEventListener("input", ccvRender);
+ccvAlpha.addEventListener("input", ccvRender);
+ccvRender();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="color-converter"></script>
+</body>
+</html>
