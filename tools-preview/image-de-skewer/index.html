@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image De-skewer - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Photographed a document, whiteboard or screen at an angle? Drag the four corners onto the real corners and this tool straightens the perspective into a flat rectangle.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-de-skewer/">
+<meta property="og:title" content="Image De-skewer - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Photographed a document, whiteboard or screen at an angle? Drag the four corners onto the real corners and this tool straightens the perspective into a flat rectangle.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-de-skewer/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.idk-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.idk-drop.idk-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.idk-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.idk-row:last-child { border-bottom: none; }
+.idk-lab { width: 180px; flex: none; font-weight: 600; }
+.idk-row code { flex: 1; min-width: 0; }
+.idk-stage { position: relative; margin: 14px auto 0; max-width: 640px; width: 100%; touch-action: none; }
+.idk-stage canvas { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+.idk-handle { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+  background: var(--gold, #c9a227); border: 2px solid #0a2540; color: #0a2540; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; -webkit-user-select: none;
+  box-shadow: 0 1px 5px rgba(0,0,0,.35); z-index: 3; }
+.idk-handle:active { cursor: grabbing; }
+.idk-pair { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 12px; }
+@media (min-width: 760px) { .idk-pair { grid-template-columns: 1fr 1fr; } }
+.idk-cell { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--card); text-align: center; }
+.idk-cell canvas { max-width: 100%; height: auto; }
+.idk-cell h3 { margin: 0 0 8px; font-size: .95rem; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image De-skewer</h1>
+<p class="tool-sub">Photographed a document, whiteboard or screen at an angle? Drag the four corners onto the real corners and this tool straightens the perspective into a flat rectangle.</p>
+<div class="tool-card">
+  <p>Drop the photo, drag the gold corner handles (TL, TR, BR, BL) onto the four corners of the flat thing in the picture, choose the output shape, and download the straightened image. The warp runs on this device only — your image never leaves this browser tab. For speed, the straightened output is capped at 2000 px on its longest side (the corner editor always shows the full photo).</p>
+
+  <div class="idk-drop" id="idk-drop">
+    <label for="idk-file"><strong>Choose an image</strong>, or drop it here</label>
+    <input id="idk-file" type="file" accept="image/*">
+  </div>
+
+  <div data-result>
+    <div id="idk-editor" hidden>
+      <h2 style="margin-top:20px">Corners</h2>
+      <div class="idk-stage" id="idk-stage">
+        <canvas id="idk-view" aria-label="Photo with draggable corner handles"></canvas>
+        <div class="idk-handle" data-pt="0" style="left:10%;top:10%">TL</div>
+        <div class="idk-handle" data-pt="1" style="left:90%;top:10%">TR</div>
+        <div class="idk-handle" data-pt="2" style="left:90%;top:90%">BR</div>
+        <div class="idk-handle" data-pt="3" style="left:10%;top:90%">BL</div>
+      </div>
+      <p style="margin-top:8px">Drag each handle onto the matching corner of the document in the photo. The gold outline is the region that will be straightened.</p>
+
+      <div class="row2" style="margin-top:10px">
+        <div>
+          <label for="idk-aspect">Output shape (aspect)</label>
+          <select id="idk-aspect">
+            <option value="free" selected>Free — follow the corners</option>
+            <option value="quad">The corners' own average</option>
+            <option value="a4l">A4 landscape (1.414 : 1)</option>
+            <option value="a4p">A4 portrait (1 : 1.414)</option>
+            <option value="16:9">16 : 9</option>
+            <option value="4:3">4 : 3</option>
+            <option value="1:1">1 : 1 (square)</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="btn-row" style="margin-top:0">
+            <button id="idk-warp" class="btn" type="button">Straighten</button>
+            <button id="idk-reset" class="btn ghost" type="button">Reset corners</button>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="margin-top:20px">Result</h2>
+      <div class="idk-row"><span class="idk-lab">Output size</span><code class="mono" id="idk-r-size">—</code></div>
+      <div class="idk-pair">
+        <div class="idk-cell"><h3>Before</h3><canvas id="idk-before"></canvas></div>
+        <div class="idk-cell"><h3>After (straightened)</h3><canvas id="idk-after"></canvas></div>
+      </div>
+      <div class="btn-row">
+        <a id="idk-download" class="btn" href="#" download="image-straightened.png">Download straightened PNG</a>
+      </div>
+    </div>
+  </div>
+  <p id="idk-status" class="status" role="status">Choose or drop an image to straighten it.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> "Free" sizes the output from the corner distances, so a strongly angled photo keeps its natural proportions; the fixed shapes (A4, 16:9 and so on) force that exact rectangle, which is what you want for paper and screens. The straightening is a true perspective warp (a homography solved from your four corners, sampled with bilinear interpolation) — not a simple stretch. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var idk_file = document.getElementById("idk-file");
+var idk_drop = document.getElementById("idk-drop");
+var idk_status = document.getElementById("idk-status");
+var idk_editor = document.getElementById("idk-editor");
+var idk_stage = document.getElementById("idk-stage");
+var idk_view = document.getElementById("idk-view");
+var idk_aspect = document.getElementById("idk-aspect");
+var idk_before = document.getElementById("idk-before");
+var idk_after = document.getElementById("idk-after");
+var idk_download = document.getElementById("idk-download");
+var idk_handles = idk_stage.querySelectorAll(".idk-handle");
+var idk_src = document.createElement("canvas");
+var idk_srcData = null;
+var idk_has = false;
+var idk_base = "image";
+var idk_pts = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }]; /* TL TR BR BL, natural px */
+var idk_out = { w: 0, h: 0 };
+var idk_outUrl = null;
+var idk_dragPt = -1;
+var IDK_CAP = 2000;
+
+function idk_setStatus(text, kind) {
+  idk_status.className = "status" + (kind ? " " + kind : "");
+  idk_status.textContent = text;
+}
+function idk_set(id, text) { document.getElementById(id).textContent = text; }
+function idk_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function idk_dist(a, b) { var dx = a.x - b.x, dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy); }
+
+/* Solve homography H (3x3, h33 = 1) mapping (x,y) -> (X,Y) for 4 point pairs,
+   by Gaussian elimination on the 8x8 system. Returns [h11..h32]. */
+function idk_solveH(src, dst) {
+  var A = [], b = [], i, j;
+  for (i = 0; i < 4; i++) {
+    var x = src[i].x, y = src[i].y, X = dst[i].x, Y = dst[i].y;
+    A.push([x, y, 1, 0, 0, 0, -X * x, -X * y]); b.push(X);
+    A.push([0, 0, 0, x, y, 1, -Y * x, -Y * y]); b.push(Y);
+  }
+  var n = 8;
+  for (i = 0; i < n; i++) {
+    var piv = i;
+    for (var r = i + 1; r < n; r++) { if (Math.abs(A[r][i]) > Math.abs(A[piv][i])) { piv = r; } }
+    if (Math.abs(A[piv][i]) < 1e-12) { return null; }
+    if (piv !== i) { var t = A[i]; A[i] = A[piv]; A[piv] = t; var tb = b[i]; b[i] = b[piv]; b[piv] = tb; }
+    for (var r2 = 0; r2 < n; r2++) {
+      if (r2 === i) { continue; }
+      var f = A[r2][i] / A[i][i];
+      if (f === 0) { continue; }
+      for (j = i; j < n; j++) { A[r2][j] -= f * A[i][j]; }
+      b[r2] -= f * b[i];
+    }
+  }
+  var h = [];
+  for (i = 0; i < n; i++) { h.push(b[i] / A[i][i]); }
+  return h;
+}
+function idk_outSize() {
+  var p = idk_pts;
+  var top = idk_dist(p[0], p[1]), bottom = idk_dist(p[3], p[2]);
+  var left = idk_dist(p[0], p[3]), right = idk_dist(p[1], p[2]);
+  var wAvg = (top + bottom) / 2, hAvg = (left + right) / 2;
+  var mode = idk_aspect.value;
+  var W, H;
+  if (mode === "free") {
+    W = Math.max(top, bottom); H = Math.max(left, right);
+  } else if (mode === "quad") {
+    W = wAvg; H = hAvg;
+  } else {
+    var ratio = { "a4l": Math.SQRT2, "a4p": 1 / Math.SQRT2, "16:9": 16 / 9, "4:3": 4 / 3, "1:1": 1 }[mode];
+    W = Math.max(top, bottom);
+    H = W / ratio;
+  }
+  W = Math.round(W); H = Math.round(H);
+  if (W < 2 || H < 2) { return null; }
+  var s = Math.min(1, IDK_CAP / Math.max(W, H));
+  if (s < 1) { W = Math.max(2, Math.round(W * s)); H = Math.max(2, Math.round(H * s)); }
+  return { w: W, h: H };
+}
+function idk_drawView() {
+  if (!idk_has) { return; }
+  var rect = idk_stage.getBoundingClientRect();
+  var dispW = Math.max(50, Math.round(rect.width));
+  var scale = dispW / idk_src.width;
+  var dispH = Math.max(2, Math.round(idk_src.height * scale));
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  idk_view.width = Math.round(dispW * dpr);
+  idk_view.height = Math.round(dispH * dpr);
+  var ctx = idk_view.getContext("2d");
+  ctx.drawImage(idk_src, 0, 0, idk_view.width, idk_view.height);
+  var k = idk_view.width / idk_src.width;
+  ctx.strokeStyle = "#c9a227";
+  ctx.lineWidth = Math.max(2, Math.round(2 * dpr));
+  ctx.beginPath();
+  for (var i = 0; i < 4; i++) {
+    var p = idk_pts[i], q = idk_pts[(i + 1) % 4];
+    ctx.moveTo(p.x * k, p.y * k);
+    ctx.lineTo(q.x * k, q.y * k);
+  }
+  ctx.stroke();
+  ctx.fillStyle = "rgba(201,162,39,.10)";
+  ctx.beginPath();
+  ctx.moveTo(idk_pts[0].x * k, idk_pts[0].y * k);
+  for (var j = 1; j < 4; j++) { ctx.lineTo(idk_pts[j].x * k, idk_pts[j].y * k); }
+  ctx.closePath();
+  ctx.fill();
+  for (var m = 0; m < 4; m++) {
+    idk_handles[m].style.left = (idk_pts[m].x / idk_src.width * 100) + "%";
+    idk_handles[m].style.top = (idk_pts[m].y / idk_src.height * 100) + "%";
+  }
+}
+function idk_warp() {
+  if (!idk_has) { return; }
+  var size = idk_outSize();
+  if (!size) { idk_setStatus("Those corners make a shape too small to straighten — spread them further apart.", "error"); return; }
+  var W = size.w, H = size.h;
+  var rect = [{ x: 0, y: 0 }, { x: W, y: 0 }, { x: W, y: H }, { x: 0, y: H }];
+  /* Map each output pixel back into the source quad, then sample. */
+  var h = idk_solveH(rect, idk_pts);
+  if (!h) { idk_setStatus("Those corners could not be solved — try a less extreme shape.", "error"); return; }
+  if (!idk_srcData) {
+    idk_srcData = idk_src.getContext("2d").getImageData(0, 0, idk_src.width, idk_src.height);
+  }
+  var sd = idk_srcData.data, sw = idk_src.width, sh = idk_src.height;
+  var out = document.createElement("canvas");
+  out.width = W; out.height = H;
+  var octx = out.getContext("2d");
+  var img = octx.createImageData(W, H);
+  var od = img.data;
+  for (var y = 0; y < H; y++) {
+    for (var x = 0; x < W; x++) {
+      var px = x + 0.5, py = y + 0.5;
+      var den = h[6] * px + h[7] * py + 1;
+      var sx = (h[0] * px + h[1] * py + h[2]) / den;
+      var sy = (h[3] * px + h[4] * py + h[5]) / den;
+      /* bilinear sample, edge-clamped */
+      var x0 = Math.floor(sx), y0 = Math.floor(sy);
+      var fx = sx - x0, fy = sy - y0;
+      if (x0 < 0) { x0 = 0; fx = 0; } if (y0 < 0) { y0 = 0; fy = 0; }
+      if (x0 > sw - 1) { x0 = sw - 1; fx = 0; } if (y0 > sh - 1) { y0 = sh - 1; fy = 0; }
+      var x1 = Math.min(sw - 1, x0 + 1), y1 = Math.min(sh - 1, y0 + 1);
+      var oi = (y * W + x) * 4;
+      for (var ch = 0; ch < 4; ch++) {
+        var top = sd[(y0 * sw + x0) * 4 + ch] * (1 - fx) + sd[(y0 * sw + x1) * 4 + ch] * fx;
+        var bot = sd[(y1 * sw + x0) * 4 + ch] * (1 - fx) + sd[(y1 * sw + x1) * 4 + ch] * fx;
+        od[oi + ch] = top * (1 - fy) + bot * fy;
+      }
+    }
+  }
+  octx.putImageData(img, 0, 0);
+  idk_out = { w: W, h: H };
+  /* Before / After panels */
+  idk_before.width = idk_src.width; idk_before.height = idk_src.height;
+  idk_before.getContext("2d").drawImage(idk_src, 0, 0);
+  idk_after.width = W; idk_after.height = H;
+  idk_after.getContext("2d").drawImage(out, 0, 0);
+  out.toBlob(function (blob) {
+    if (!blob) { return; }
+    if (idk_outUrl) { URL.revokeObjectURL(idk_outUrl); }
+    idk_outUrl = URL.createObjectURL(blob);
+    idk_download.href = idk_outUrl;
+    idk_download.setAttribute("download", idk_base + "-straightened.png");
+  }, "image/png");
+  idk_set("idk-r-size", W + " × " + H + " px (PNG)");
+  idk_setStatus("Straightened to " + W + " × " + H + " px. Adjust the corners and straighten again if an edge is off.", "ok");
+}
+function idk_resetPts() {
+  var w = idk_src.width, h = idk_src.height;
+  idk_pts = [
+    { x: w * 0.08, y: h * 0.08 }, { x: w * 0.92, y: h * 0.08 },
+    { x: w * 0.92, y: h * 0.92 }, { x: w * 0.08, y: h * 0.92 }
+  ];
+}
+function idk_stagePos(e) {
+  var rect = idk_stage.getBoundingClientRect();
+  return {
+    x: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+    y: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height))
+  };
+}
+idk_stage.addEventListener("pointerdown", function (e) {
+  var hd = e.target.closest(".idk-handle");
+  if (!hd || !idk_has) { return; }
+  idk_dragPt = parseInt(hd.getAttribute("data-pt"), 10);
+  hd.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+idk_stage.addEventListener("pointermove", function (e) {
+  if (idk_dragPt < 0) { return; }
+  var f = idk_stagePos(e);
+  idk_pts[idk_dragPt] = { x: f.x * idk_src.width, y: f.y * idk_src.height };
+  idk_drawView();
+});
+["pointerup", "pointercancel"].forEach(function (ev) {
+  idk_stage.addEventListener(ev, function () {
+    if (idk_dragPt >= 0) { idk_dragPt = -1; idk_warp(); }
+  });
+});
+document.getElementById("idk-warp").addEventListener("click", idk_warp);
+document.getElementById("idk-reset").addEventListener("click", function () {
+  idk_resetPts();
+  idk_drawView();
+  idk_warp();
+});
+idk_aspect.addEventListener("change", idk_warp);
+function idk_load(file) {
+  if (!file) { return; }
+  idk_base = idk_baseName(file.name || "image");
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    idk_src.width = img.naturalWidth;
+    idk_src.height = img.naturalHeight;
+    idk_src.getContext("2d").drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    idk_srcData = null;
+    idk_has = true;
+    idk_editor.hidden = false;
+    idk_resetPts();
+    idk_drawView();
+    idk_warp();
+    idk_setStatus("Photo loaded (" + idk_src.width + " × " + idk_src.height + " px). Drag the four gold handles onto the real corners.", "ok");
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    idk_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+}
+idk_file.addEventListener("change", function () { idk_load(idk_file.files && idk_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  idk_drop.addEventListener(ev, function (e) { e.preventDefault(); idk_drop.classList.add("idk-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  idk_drop.addEventListener(ev, function (e) { e.preventDefault(); idk_drop.classList.remove("idk-over"); });
+});
+idk_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { idk_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.addEventListener("resize", function () { if (idk_has) { idk_drawView(); } });
+window.idk_state = function () {
+  return {
+    hasImage: idk_has,
+    pts: idk_pts.map(function (p) { return { x: Math.round(p.x * 10) / 10, y: Math.round(p.y * 10) / 10 }; }),
+    outW: idk_out.w, outH: idk_out.h, aspect: idk_aspect.value
+  };
+};
+window.idk_setPts = function (pts) {
+  idk_pts = pts.map(function (p) { return { x: p.x, y: p.y }; });
+  idk_drawView();
+  idk_warp();
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-de-skewer"></script>
+</body>
+</html>
