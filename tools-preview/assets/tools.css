@@ -260,3 +260,16 @@ img, canvas, video { max-width: 100%; }
 /* Category anchors linked from the homepage Free Tools section
    (master list item 21): keep the block clear of the sticky bars. */
 .cat-block{scroll-margin-top:84px}
+
+/* Hub polish (2026-11-14 deep-audit fixes): the floating points card
+   (.cs-pc-card in site.css: 272px wide, right:16px, fixed) must never
+   cover the hub's fourth-column cards or their "Open tool" links, so on
+   wide screens the hub grids keep a clear lane on the right at least as
+   wide as the card plus its offset. Narrower layouts are untouched. */
+@media (min-width: 1280px) {
+  .ck-main.wide .grid { padding-right: 304px; }
+}
+/* Equal-height hub cards: the flex/pin rules under "Index cards" above
+   align the .go link at the card bottom; this makes each card fill its
+   grid row so the rows line up exactly. */
+.ck-main.wide .grid > .tool-card-item { height: 100%; }
