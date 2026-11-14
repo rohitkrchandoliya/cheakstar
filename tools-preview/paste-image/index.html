@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Paste Image - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/paste-image/">
+<meta property="og:title" content="Paste Image - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/paste-image/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.pim-stage-wrap { text-align: center; margin-top: 14px; }
+.pim-stage { position: relative; display: inline-block; max-width: 100%; line-height: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.pim-stage img { max-width: 100%; max-height: 480px; width: auto; height: auto; user-select: none; -webkit-user-drag: none; }
+.pim-box { position: absolute; border: 2px solid var(--gold, #c9a227); box-shadow: 0 0 0 9999px rgba(6, 20, 38, .5); cursor: move; touch-action: none; }
+.pim-handle { position: absolute; right: -9px; bottom: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold, #c9a227); border: 2px solid #fff; cursor: nwse-resize; touch-action: none; }
+.pim-nums { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; text-align: left; }
+@media (min-width: 720px) { .pim-nums { grid-template-columns: repeat(4, 1fr); } }
+.pim-aspects { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pim-aspects .btn { margin-top: 0; }
+.pim-readout { font-size: 1.02rem; margin-top: 12px; }
+.pim-empty { border: 2px dashed var(--line); border-radius: 10px; padding: 30px 16px; text-align: center; margin-top: 12px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Paste Image</h1>
+<p class="tool-sub">Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP.</p>
+<div class="tool-card">
+  <p>Screenshots and copied images live on your clipboard, not in a file. Paste one here, trim it with the crop box, and save it — no upload, no sign-up. The image is handled on this device only and never leaves this browser tab.</p>
+
+  <div class="pim-empty" id="pim-empty">
+    <p style="margin:0 0 10px"><strong>Press Ctrl+V / Cmd+V</strong> to paste, or use a button:</p>
+    <div class="btn-row" style="justify-content:center">
+      <button id="pim-paste-btn" class="btn" type="button">Paste from clipboard</button>
+      <label class="btn ghost" for="pim-file" style="cursor:pointer">Choose a file instead</label>
+      <input id="pim-file" type="file" accept="image/*" hidden>
+    </div>
+    <p style="margin:10px 0 0">The “Paste from clipboard” button needs your browser's permission; if it is unavailable, Ctrl+V always works.</p>
+  </div>
+
+  <div data-result>
+    <div id="pim-editor" hidden>
+      <div class="pim-stage-wrap">
+        <div class="pim-stage" id="pim-stage">
+          <img id="pim-img" alt="Pasted image being cropped">
+          <div class="pim-box" id="pim-box" role="img" aria-label="Crop area. Use the number fields below to set it exactly."><div class="pim-handle" id="pim-handle"></div></div>
+        </div>
+      </div>
+      <p class="pim-readout mono" id="pim-readout" aria-live="polite">Crop size: — · Offset: —</p>
+
+      <div class="pim-nums">
+        <div><label for="pim-x">Offset X (px)</label><input id="pim-x" type="number" min="0" step="1" value="0"></div>
+        <div><label for="pim-y">Offset Y (px)</label><input id="pim-y" type="number" min="0" step="1" value="0"></div>
+        <div><label for="pim-w">Crop width (px)</label><input id="pim-w" type="number" min="1" step="1" value="0"></div>
+        <div><label for="pim-h">Crop height (px)</label><input id="pim-h" type="number" min="1" step="1" value="0"></div>
+      </div>
+
+      <label style="margin-top:14px">Aspect ratio lock</label>
+      <div class="pim-aspects" id="pim-aspects" role="group" aria-label="Aspect ratio presets">
+        <button type="button" class="btn ghost small" data-aspect="0">Free</button>
+        <button type="button" class="btn ghost small" data-aspect="1">1:1</button>
+        <button type="button" class="btn ghost small" data-aspect="1.3333">4:3</button>
+        <button type="button" class="btn ghost small" data-aspect="1.5">3:2</button>
+        <button type="button" class="btn ghost small" data-aspect="1.7778">16:9</button>
+        <button type="button" class="btn ghost small" data-aspect="0.5625">9:16</button>
+      </div>
+
+      <div class="row2" style="margin-top:14px">
+        <div>
+          <label for="pim-format">Download format</label>
+          <select id="pim-format">
+            <option value="image/png" selected>PNG (lossless)</option>
+            <option value="image/jpeg">JPEG (smaller, no transparency)</option>
+            <option value="image/webp">WebP (small, keeps transparency)</option>
+          </select>
+        </div>
+        <div>
+          <label for="pim-full">Quick actions</label>
+          <div class="btn-row" style="margin-top:0">
+            <button id="pim-full" class="btn ghost small" type="button">Select whole image</button>
+            <button id="pim-new" class="btn ghost small" type="button">Paste a different image</button>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><a id="pim-download" class="download" href="#" download="pasted-image.png">Download cropped image</a></div>
+    </div>
+  </div>
+  <p id="pim-status" class="status" role="status">Waiting for an image — press Ctrl+V / Cmd+V.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the crop numbers are in the image's real pixels, not screen pixels — the readouts stay exact even when a large screenshot is shown scaled down. Drag the gold box to move the crop and the corner dot to resize it; with an aspect lock on, resizing keeps that shape. JPEG output is composited on white, because JPEG has no transparency. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var pim_img = document.getElementById("pim-img");
+var pim_stage = document.getElementById("pim-stage");
+var pim_box = document.getElementById("pim-box");
+var pim_handle = document.getElementById("pim-handle");
+var pim_empty = document.getElementById("pim-empty");
+var pim_editor = document.getElementById("pim-editor");
+var pim_status = document.getElementById("pim-status");
+var pim_readout = document.getElementById("pim-readout");
+var pim_inX = document.getElementById("pim-x");
+var pim_inY = document.getElementById("pim-y");
+var pim_inW = document.getElementById("pim-w");
+var pim_inH = document.getElementById("pim-h");
+var pim_format = document.getElementById("pim-format");
+var pim_download = document.getElementById("pim-download");
+var pim_file = document.getElementById("pim-file");
+var pim_nat = { w: 0, h: 0 };            /* natural image size */
+var pim_crop = { x: 0, y: 0, w: 0, h: 0 }; /* crop in natural pixels */
+var pim_aspect = 0;                        /* 0 = free */
+var pim_url = null;
+var pim_outUrl = null;
+
+function pim_setStatus(text, kind) {
+  pim_status.className = "status" + (kind ? " " + kind : "");
+  pim_status.textContent = text;
+}
+function pim_scale() {
+  if (!pim_nat.w) { return 1; }
+  return pim_img.clientWidth / pim_nat.w;
+}
+function pim_clamp() {
+  pim_crop.w = Math.max(1, Math.min(pim_crop.w, pim_nat.w));
+  pim_crop.h = Math.max(1, Math.min(pim_crop.h, pim_nat.h));
+  if (pim_aspect > 0) {
+    pim_crop.h = Math.round(pim_crop.w / pim_aspect);
+    if (pim_crop.h > pim_nat.h) {
+      pim_crop.h = pim_nat.h;
+      pim_crop.w = Math.round(pim_crop.h * pim_aspect);
+    }
+    if (pim_crop.h < 1) { pim_crop.h = 1; }
+  }
+  pim_crop.x = Math.max(0, Math.min(pim_crop.x, pim_nat.w - pim_crop.w));
+  pim_crop.y = Math.max(0, Math.min(pim_crop.y, pim_nat.h - pim_crop.h));
+}
+function pim_paint() {
+  var s = pim_scale();
+  pim_box.style.left = (pim_crop.x * s) + "px";
+  pim_box.style.top = (pim_crop.y * s) + "px";
+  pim_box.style.width = Math.max(8, pim_crop.w * s - 4) + "px";
+  pim_box.style.height = Math.max(8, pim_crop.h * s - 4) + "px";
+  pim_inX.value = pim_crop.x;
+  pim_inY.value = pim_crop.y;
+  pim_inW.value = pim_crop.w;
+  pim_inH.value = pim_crop.h;
+  pim_readout.textContent = "Crop size: " + pim_crop.w + " × " + pim_crop.h + " px · Offset: " + pim_crop.x + ", " + pim_crop.y + " px · Image: " + pim_nat.w + " × " + pim_nat.h + " px";
+  pim_makeDownload();
+}
+function pim_makeDownload() {
+  if (!pim_nat.w) { return; }
+  var canvas = document.createElement("canvas");
+  canvas.width = pim_crop.w;
+  canvas.height = pim_crop.h;
+  var ctx = canvas.getContext("2d");
+  if (pim_format.value === "image/jpeg") {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+  ctx.drawImage(pim_img, pim_crop.x, pim_crop.y, pim_crop.w, pim_crop.h, 0, 0, pim_crop.w, pim_crop.h);
+  if (pim_outUrl) { URL.revokeObjectURL(pim_outUrl); pim_outUrl = null; }
+  canvas.toBlob(function (blob) {
+    if (!blob) { pim_setStatus("The browser could not create the cropped image.", "error"); return; }
+    pim_outUrl = URL.createObjectURL(blob);
+    pim_download.href = pim_outUrl;
+    var ext = pim_format.value === "image/png" ? "png" : (pim_format.value === "image/webp" ? "webp" : "jpg");
+    pim_download.setAttribute("download", "pasted-image-" + pim_crop.w + "x" + pim_crop.h + "." + ext);
+  }, pim_format.value, 0.92);
+}
+function pim_loadBlob(blob, sourceLabel) {
+  if (!blob) { return; }
+  if (pim_url) { URL.revokeObjectURL(pim_url); }
+  pim_url = URL.createObjectURL(blob);
+  var probe = new Image();
+  probe.onload = function () {
+    pim_nat = { w: probe.naturalWidth, h: probe.naturalHeight };
+    pim_img.src = pim_url;
+    pim_img.onload = function () {
+      pim_crop = { x: 0, y: 0, w: pim_nat.w, h: pim_nat.h };
+      pim_empty.hidden = true;
+      pim_editor.hidden = false;
+      pim_paint();
+      pim_setStatus(sourceLabel + " loaded: " + pim_nat.w + " × " + pim_nat.h + " px. Adjust the crop, then download.", "ok");
+    };
+  };
+  probe.onerror = function () { pim_setStatus("That clipboard content could not be read as an image.", "error"); };
+  probe.src = pim_url;
+}
+
+/* Paste via Ctrl/Cmd+V anywhere on the page. */
+document.addEventListener("paste", function (e) {
+  var items = (e.clipboardData && e.clipboardData.items) || [];
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf("image/") === 0) {
+      var f = items[i].getAsFile();
+      if (f) {
+        e.preventDefault();
+        pim_loadBlob(f, "Pasted image");
+        return;
+      }
+    }
+  }
+});
+/* Paste button (Clipboard API — needs permission, may be unavailable). */
+document.getElementById("pim-paste-btn").addEventListener("click", function () {
+  if (!navigator.clipboard || !navigator.clipboard.read) {
+    pim_setStatus("This browser does not allow the paste button — press Ctrl+V / Cmd+V instead, or choose a file.", "error");
+    return;
+  }
+  navigator.clipboard.read().then(function (entries) {
+    for (var i = 0; i < entries.length; i++) {
+      var types = entries[i].types || [];
+      for (var j = 0; j < types.length; j++) {
+        if (types[j].indexOf("image/") === 0) {
+          entries[i].getType(types[j]).then(function (blob) { pim_loadBlob(blob, "Pasted image"); });
+          return;
+        }
+      }
+    }
+    pim_setStatus("The clipboard does not currently hold an image. Copy an image or take a screenshot first.", "error");
+  }).catch(function () {
+    pim_setStatus("Clipboard access was not granted — press Ctrl+V / Cmd+V instead, or choose a file.", "error");
+  });
+});
+pim_file.addEventListener("change", function () {
+  var f = pim_file.files && pim_file.files[0];
+  if (f) { pim_loadBlob(f, "Image file"); }
+});
+
+/* Drag the box to move; drag the corner dot to resize. Pointer events
+   with capture keep it working for mouse and touch alike. */
+var pim_drag = null;
+function pim_stagePos(e) {
+  var r = pim_img.getBoundingClientRect();
+  var s = pim_scale();
+  return { x: (e.clientX - r.left) / s, y: (e.clientY - r.top) / s };
+}
+pim_box.addEventListener("pointerdown", function (e) {
+  var p = pim_stagePos(e);
+  pim_drag = { mode: "move", dx: p.x - pim_crop.x, dy: p.y - pim_crop.y };
+  pim_box.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+pim_handle.addEventListener("pointerdown", function (e) {
+  pim_drag = { mode: "resize" };
+  pim_box.setPointerCapture(e.pointerId);
+  e.preventDefault();
+  e.stopPropagation();
+});
+pim_box.addEventListener("pointermove", function (e) {
+  if (!pim_drag) { return; }
+  var p = pim_stagePos(e);
+  if (pim_drag.mode === "move") {
+    pim_crop.x = Math.round(p.x - pim_drag.dx);
+    pim_crop.y = Math.round(p.y - pim_drag.dy);
+  } else {
+    pim_crop.w = Math.round(p.x - pim_crop.x);
+    if (pim_aspect > 0) { pim_crop.h = Math.round(pim_crop.w / pim_aspect); }
+    else { pim_crop.h = Math.round(p.y - pim_crop.y); }
+  }
+  pim_clamp();
+  pim_paint();
+});
+["pointerup", "pointercancel"].forEach(function (ev) {
+  pim_box.addEventListener(ev, function () { pim_drag = null; });
+});
+
+/* Numeric fields — the exact way to set the crop. */
+function pim_fromNums(which) {
+  var x = parseInt(pim_inX.value, 10), y = parseInt(pim_inY.value, 10);
+  var w = parseInt(pim_inW.value, 10), h = parseInt(pim_inH.value, 10);
+  if (!isNaN(x)) { pim_crop.x = x; }
+  if (!isNaN(y)) { pim_crop.y = y; }
+  if (!isNaN(w) && w >= 1) { pim_crop.w = w; if (pim_aspect > 0) { pim_crop.h = Math.round(w / pim_aspect); } }
+  if (!isNaN(h) && h >= 1 && pim_aspect === 0) { pim_crop.h = h; }
+  if (pim_aspect > 0 && which === "h" && !isNaN(h) && h >= 1) { pim_crop.h = h; pim_crop.w = Math.round(h * pim_aspect); }
+  pim_clamp();
+  pim_paint();
+}
+pim_inX.addEventListener("input", function () { pim_fromNums("x"); });
+pim_inY.addEventListener("input", function () { pim_fromNums("y"); });
+pim_inW.addEventListener("input", function () { pim_fromNums("w"); });
+pim_inH.addEventListener("input", function () { pim_fromNums("h"); });
+document.getElementById("pim-aspects").addEventListener("click", function (e) {
+  var btn = e.target.closest("[data-aspect]");
+  if (!btn) { return; }
+  pim_aspect = parseFloat(btn.getAttribute("data-aspect")) || 0;
+  document.querySelectorAll("#pim-aspects .btn").forEach(function (b) {
+    var on = b === btn;
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.style.borderColor = on ? "var(--gold, #c9a227)" : "";
+    b.style.boxShadow = on ? "0 0 0 1px var(--gold, #c9a227)" : "";
+  });
+  pim_clamp();
+  pim_paint();
+  pim_setStatus(pim_aspect > 0 ? "Aspect lock on — resizing keeps the chosen shape." : "Aspect lock off — free crop.");
+});
+document.getElementById("pim-full").addEventListener("click", function () {
+  pim_crop = { x: 0, y: 0, w: pim_nat.w, h: pim_nat.h };
+  if (pim_aspect > 0) { pim_crop.h = Math.round(pim_crop.w / pim_aspect); if (pim_crop.h > pim_nat.h) { pim_crop.h = pim_nat.h; pim_crop.w = Math.round(pim_crop.h * pim_aspect); } }
+  pim_clamp();
+  pim_paint();
+});
+document.getElementById("pim-new").addEventListener("click", function () {
+  pim_editor.hidden = true;
+  pim_empty.hidden = false;
+  pim_setStatus("Waiting for an image — press Ctrl+V / Cmd+V.");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+pim_format.addEventListener("change", pim_paint);
+window.addEventListener("resize", function () { if (!pim_editor.hidden) { pim_paint(); } });
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="paste-image"></script>
+</body>
+</html>
