@@ -37,6 +37,9 @@
         <option value="cols2">2 columns</option>
         <option value="cols3">3 columns</option>
         <option value="cols1">1 column</option>
+        <option value="vstrip">Vertical strip — full photos stacked (stitch)</option>
+        <option value="hstrip">Horizontal strip — full photos side by side (stitch)</option>
+        <option value="base">Base image — first photo large, the rest as tiles on it</option>
       </select>
     </div>
     <div>
@@ -61,7 +64,7 @@
     </div>
   </div>
 </div>
-<div class="note"><strong>Good to know:</strong> your photos are processed on your device only — they are never uploaded or sent anywhere, and nothing is stored. Photos are centre-cropped to fill square cells, so the edges of wide or tall photos are trimmed; the spacing and background colour frame the grid. Very large photos are scaled down to fit the 1200-pixel-wide export.</div>
+<div class="note"><strong>Good to know:</strong> your photos are processed on your device only — they are never uploaded or sent anywhere, and nothing is stored. In the grid layouts, photos are centre-cropped to fill square cells, so the edges of wide or tall photos are trimmed. The strip layouts never crop: every photo is shown whole, scaled to a shared width (vertical) or height (horizontal, up to 4000 px wide overall). In base-image mode the first photo is the base and the rest sit as a tile band over its bottom edge. Very large photos are scaled down to fit the export.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
@@ -115,6 +118,10 @@ function cmBuild() {
   var cmLoads = cmPicked.map(function (cmFile) { return cmLoadImage(cmFile); });
   Promise.all(cmLoads).then(function (cmImages) {
     var cmCount = cmImages.length;
+    if (cmLayout === "vstrip" || cmLayout === "hstrip" || cmLayout === "base") {
+      cmxBuildMode(cmImages, cmLayout, cmGap, cmBg);
+      return;
+    }
     var cmCols;
     if (cmLayout === "cols1") { cmCols = 1; }
     else if (cmLayout === "cols2") { cmCols = 2; }
@@ -162,6 +169,105 @@ function cmBuild() {
   }).catch(function (cmErr) {
     cmSetStatus(cmErr && cmErr.message ? cmErr.message : "One of the photos could not be read.", "error");
   });
+}
+/* ---------- Upgrade: stitch modes (prefix cmx) ---------- */
+function cmxFinish(cmCount, cmW, cmH, cmLabel) {
+  cmMeta.textContent = cmCount + " photos · " + cmLabel + " · export size " + cmW + " × " + cmH + " px";
+  cmResult.hidden = false;
+  cmCanvas.toBlob(function (cmBlob) {
+    if (cmBlob) {
+      cmMeta.textContent = cmCount + " photos · " + cmLabel + " · export size " + cmW + " × " + cmH +
+        " px · PNG file " + cmFmtSize(cmBlob.size);
+    }
+  }, "image/png");
+  cmImagesCleanup();
+  cmSetStatus("Collage ready — download it as a PNG or JPEG below.", "ok");
+}
+var cmxPendingUrls = [];
+function cmImagesCleanup() {
+  cmxPendingUrls.forEach(function (u) { URL.revokeObjectURL(u); });
+  cmxPendingUrls = [];
+}
+function cmxBuildMode(cmImages, cmMode, cmGap, cmBg) {
+  cmxPendingUrls = cmImages.map(function (e) { return e.url; });
+  var cmCtx = cmCanvas.getContext("2d");
+  var i, cmEntry, cmIw, cmIh;
+  if (cmMode === "vstrip") {
+    var cmW = 1200;
+    var cmInnerW = cmW - cmGap * 2;
+    var cmHeights = cmImages.map(function (e) {
+      return Math.round(cmInnerW * (e.img.naturalHeight / e.img.naturalWidth));
+    });
+    var cmH = cmGap * (cmImages.length + 1) + cmHeights.reduce(function (a, b) { return a + b; }, 0);
+    cmCanvas.width = cmW;
+    cmCanvas.height = cmH;
+    cmCtx.fillStyle = cmBg;
+    cmCtx.fillRect(0, 0, cmW, cmH);
+    var cmY = cmGap;
+    cmImages.forEach(function (e, idx) {
+      cmCtx.drawImage(e.img, cmGap, cmY, cmInnerW, cmHeights[idx]);
+      cmY += cmHeights[idx] + cmGap;
+    });
+    cmxFinish(cmImages.length, cmW, cmH, "vertical strip");
+    return;
+  }
+  if (cmMode === "hstrip") {
+    var cmInnerH = 900 - cmGap * 2;
+    var cmWidths = cmImages.map(function (e) {
+      return Math.round(cmInnerH * (e.img.naturalWidth / e.img.naturalHeight));
+    });
+    var cmTotalW = cmGap * (cmImages.length + 1) + cmWidths.reduce(function (a, b) { return a + b; }, 0);
+    if (cmTotalW > 4000) {
+      var cmF = 4000 / cmTotalW;
+      cmInnerH = Math.round(cmInnerH * cmF);
+      cmWidths = cmWidths.map(function (w) { return Math.round(w * cmF); });
+      cmTotalW = cmGap * (cmImages.length + 1) + cmWidths.reduce(function (a, b) { return a + b; }, 0);
+    }
+    var cmH2 = cmInnerH + cmGap * 2;
+    cmCanvas.width = cmTotalW;
+    cmCanvas.height = cmH2;
+    cmCtx.fillStyle = cmBg;
+    cmCtx.fillRect(0, 0, cmTotalW, cmH2);
+    var cmX = cmGap;
+    cmImages.forEach(function (e, idx) {
+      cmCtx.drawImage(e.img, cmX, cmGap, cmWidths[idx], cmInnerH);
+      cmX += cmWidths[idx] + cmGap;
+    });
+    cmxFinish(cmImages.length, cmTotalW, cmH2, "horizontal strip");
+    return;
+  }
+  /* base image mode */
+  var cmBase = cmImages[0];
+  var cmW3 = 1200;
+  var cmInnerW3 = cmW3 - cmGap * 2;
+  var cmBaseH = Math.round(cmInnerW3 * (cmBase.img.naturalHeight / cmBase.img.naturalWidth));
+  var cmTiles = cmImages.slice(1);
+  var cmTile = Math.min(260, Math.floor((cmInnerW3 - cmGap * (cmTiles.length - 1)) / cmTiles.length));
+  var cmBandH = cmTile + cmGap * 2;
+  var cmH3 = cmGap * 2 + cmBaseH;
+  if (cmH3 < cmGap * 2 + cmBandH + 40) { cmH3 = cmGap * 2 + cmBandH + 40; }
+  cmCanvas.width = cmW3;
+  cmCanvas.height = cmH3;
+  cmCtx.fillStyle = cmBg;
+  cmCtx.fillRect(0, 0, cmW3, cmH3);
+  cmCtx.drawImage(cmBase.img, cmGap, cmGap, cmInnerW3, cmBaseH);
+  var cmBandY = cmH3 - cmGap - cmBandH;
+  cmCtx.fillStyle = cmBg;
+  cmCtx.fillRect(cmGap, cmBandY, cmInnerW3, cmBandH);
+  var cmTx = cmGap + Math.max(0, Math.floor((cmInnerW3 - (cmTile * cmTiles.length + cmGap * (cmTiles.length - 1))) / 2));
+  cmTiles.forEach(function (e) {
+    var iw = e.img.naturalWidth, ih = e.img.naturalHeight;
+    var sc = Math.max(cmTile / iw, cmTile / ih);
+    var dw = iw * sc, dh = ih * sc;
+    cmCtx.save();
+    cmCtx.beginPath();
+    cmCtx.rect(cmTx, cmBandY + cmGap, cmTile, cmTile);
+    cmCtx.clip();
+    cmCtx.drawImage(e.img, cmTx + (cmTile - dw) / 2, cmBandY + cmGap + (cmTile - dh) / 2, dw, dh);
+    cmCtx.restore();
+    cmTx += cmTile + cmGap;
+  });
+  cmxFinish(cmImages.length, cmW3, cmH3, "base image");
 }
 function cmDownload(cmKind) {
   var cmType = cmKind === "jpeg" ? "image/jpeg" : "image/png";
