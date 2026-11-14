@@ -889,7 +889,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) return;
         document.body.classList.toggle("cs-rail", want);
         var btn = document.getElementById("csRailToggle");
-        if (btn) { btn.textContent = want ? "»" : "« Collapse"; btn.setAttribute("aria-expanded", want ? "false" : "true"); }
+        if (btn) { btn.textContent = want ? "\u00bb" : "\u00ab Collapse"; btn.setAttribute("aria-expanded", want ? "false" : "true"); }
       } catch (e) {}
     }
     function hookRewards() {
@@ -1188,9 +1188,9 @@ document.addEventListener("DOMContentLoaded", function () {
     f.className = "site";
     f.innerHTML =
       '<div class="wrap foot">' +
-      '<div>© <span id="year">' + new Date().getFullYear() + '</span> Cheakstar Private Limited · Jaipur, India</div>' +
-      '<div>GSTIN 08AALCC3997L1ZU · <a href="' + prefix + 'privacy-policy.html">Privacy Policy</a> · <a href="' + prefix + 'terms.html">Terms</a> · <a href="' + prefix + 'refund-policy.html">Refund Policy</a></div>' +
-      '<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> · <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> · <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> · <a href="' + prefix + 'contact.html">Contact</a></div>' +
+      '<div>\u00a9 <span id="year">' + new Date().getFullYear() + '</span> Cheakstar Private Limited \u00b7 Jaipur, India</div>' +
+      '<div>GSTIN 08AALCC3997L1ZU \u00b7 <a href="' + prefix + 'privacy-policy.html">Privacy Policy</a> \u00b7 <a href="' + prefix + 'terms.html">Terms</a> \u00b7 <a href="' + prefix + 'refund-policy.html">Refund Policy</a></div>' +
+      '<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> \u00b7 <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> \u00b7 <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> \u00b7 <a href="' + prefix + 'contact.html">Contact</a></div>' +
       "</div>";
     document.body.appendChild(f);
   }
