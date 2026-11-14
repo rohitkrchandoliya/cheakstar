@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
 <title>Scientific Calculator - Free Online Tool - Cheakstar Tools</title>
-<link rel="stylesheet" href="../assets/site.css">
+<meta name="description" content="A full scientific calculator with trig, logs, powers and memory.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/scientific-calculator/">
+<meta property="og:title" content="Scientific Calculator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="A full scientific calculator with trig, logs, powers and memory.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/scientific-calculator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <link rel="stylesheet" href="../assets/tools.css">
 <link rel="stylesheet" href="../assets/tool-info.css">
 
@@ -77,11 +84,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> "%" turns the number before it into a percentage (50% = 0.5), the way phone calculators treat it. Factorial (n!) works for whole numbers up to 170. Results follow the DEG/RAD setting shown on the keypad. Long expressions are capped at 200 characters.</div>
 </main>
-<footer class="site"><div class="wrap foot">
-<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
-<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
-</div></footer>
-<script src="../assets/tools.js"></script>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
 <script>
 "use strict";
 var sciExpr = document.getElementById("sci-expr");
@@ -97,7 +101,7 @@ var lastValue = 0;
 var FUNCTIONS = { sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1, ln: 1, log: 1, sqrt: 1, exp: 1, abs: 1 };
 var PRECEDENCE = { "+": 2, "-": 2, "*": 3, "/": 3, "neg": 4, "^": 5 };
 
-function pretty(s) {
+  function pretty(s) {
   return s.replace(/\*/g, "×").replace(/\//g, "÷").replace(/-/g, "−")
           .replace(/pi/g, "π").replace(/sqrt\(/g, "√(");
 }
