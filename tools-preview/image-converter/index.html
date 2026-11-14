@@ -21,7 +21,7 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">Image Converter</h1>
-<p class="tool-sub">Convert an image between JPG, PNG and WebP.</p>
+<p class="tool-sub">Convert images between JPG, PNG, WebP, BMP, GIF and ICO — one at a time or a whole batch.</p>
 <div class="tool-card">
   <p>The file never leaves your device.</p>
 
@@ -45,12 +45,33 @@
   <p class="status" id="convert-result"></p>
   <p id="convert-status" class="status" role="status"></p>
   <p class="status">Converting to PNG from a photo usually makes a larger file, because PNG is lossless. Converting to JPEG drops transparency: transparent areas become white. HEIC photos from iPhones are not supported in this version.</p>
+
+  <h3 style="margin-top:22px">Batch convert (many files at once)</h3>
+  <p>Pick several images and convert them all to one format — including BMP, GIF and ICO, which the single-file converter above does not offer. GIF files are written with a fixed 256-colour palette, so photos may show some banding; ICO files contain 16, 24, 32, 48 and 64 px PNG entries. Transparency becomes white for JPEG, BMP and GIF; PNG, WebP and ICO keep it.</p>
+  <label for="icv-files">Choose images (you can select several)</label>
+  <input id="icv-files" type="file" accept="image/*" multiple>
+  <label for="icv-format">Convert the batch to</label>
+  <select id="icv-format">
+    <option value="image/jpeg">JPEG (.jpg)</option>
+    <option value="image/png" selected>PNG (.png)</option>
+    <option value="image/webp">WebP (.webp)</option>
+    <option value="image/bmp">BMP (.bmp)</option>
+    <option value="image/gif">GIF (.gif)</option>
+    <option value="image/x-icon">ICO (.ico) — 16, 24, 32, 48, 64 px</option>
+  </select>
+  <div class="btn-row">
+    <button id="icv-run" class="btn" type="button">Convert all</button>
+    <button id="icv-zip" class="btn ghost" type="button" disabled>Download all as ZIP</button>
+  </div>
+  <p class="status" id="icv-status" role="status"></p>
+  <div id="icv-list"></div>
 </div>
 <div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never sent to any server.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
 <script src="../assets/img-tools.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 "use strict";
 var IT = window.ImgTools;
@@ -114,6 +135,258 @@ convertRunBtn.addEventListener("click", async function () {
 convertDownloadBtn.addEventListener("click", function () {
   if (!convertBlob || !convertFile) { return; }
   IT.triggerDownload(convertBlob, IT.baseName(convertFile.name) + "-converted." + IT.extensionFor(convertBlob.type));
+});
+
+/* ---------- Upgrade: batch conversion + BMP / GIF / ICO encoders (prefix icv) ---------- */
+var icvFilesInput = document.getElementById("icv-files");
+var icvStatusEl = document.getElementById("icv-status");
+var icvListEl = document.getElementById("icv-list");
+var icvZipBtn = document.getElementById("icv-zip");
+var icvResults = [];
+
+function icvFlatten(img, w, h, white) {
+  var canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  var ctx = canvas.getContext("2d");
+  if (white) { ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, w, h); }
+  ctx.drawImage(img, 0, 0, w, h);
+  return canvas;
+}
+
+/* 24-bit BMP written by hand: browsers cannot save BMP from a canvas directly. */
+function icvEncodeBmp(canvas) {
+  var w = canvas.width, h = canvas.height;
+  var ctx = canvas.getContext("2d", { willReadFrequently: true });
+  var data = ctx.getImageData(0, 0, w, h).data;
+  var rowSize = Math.floor((24 * w + 31) / 32) * 4;
+  var pixelBytes = rowSize * h;
+  var fileSize = 54 + pixelBytes;
+  var buf = new ArrayBuffer(fileSize);
+  var v = new DataView(buf);
+  var u = new Uint8Array(buf);
+  u[0] = 0x42; u[1] = 0x4D; /* "BM" */
+  v.setUint32(2, fileSize, true);
+  v.setUint32(10, 54, true);
+  v.setUint32(14, 40, true);
+  v.setInt32(18, w, true);
+  v.setInt32(22, h, true);
+  v.setUint16(26, 1, true);
+  v.setUint16(28, 24, true);
+  v.setUint32(34, pixelBytes, true);
+  for (var y = 0; y < h; y++) {
+    var srcRow = (h - 1 - y) * w * 4;
+    var dstRow = 54 + y * rowSize;
+    for (var x = 0; x < w; x++) {
+      var si = srcRow + x * 4, di = dstRow + x * 3;
+      u[di] = data[si + 2]; u[di + 1] = data[si + 1]; u[di + 2] = data[si];
+    }
+  }
+  return new Blob([buf], { type: "image/bmp" });
+}
+
+/* GIF89a written by hand with a fixed 256-colour (3-3-2) palette and LZW compression. */
+function icvEncodeGif(canvas) {
+  var w = canvas.width, h = canvas.height;
+  var ctx = canvas.getContext("2d", { willReadFrequently: true });
+  var data = ctx.getImageData(0, 0, w, h).data;
+  var count = w * h;
+  var indices = new Uint8Array(count);
+  for (var i = 0, p = 0; i < count; i++, p += 4) {
+    indices[i] = ((data[p] >> 5) << 5) | ((data[p + 1] >> 5) << 2) | (data[p + 2] >> 6);
+  }
+  var bytes = [];
+  function putStr(str) { for (var c = 0; c < str.length; c++) { bytes.push(str.charCodeAt(c)); } }
+  function put16(n) { bytes.push(n & 0xFF, (n >> 8) & 0xFF); }
+  putStr("GIF89a");
+  put16(w); put16(h);
+  bytes.push(0xF7, 0, 0); /* 256-entry global palette follows */
+  for (var pi = 0; pi < 256; pi++) {
+    bytes.push(Math.round(((pi >> 5) & 7) * 255 / 7), Math.round(((pi >> 2) & 7) * 255 / 7), Math.round((pi & 3) * 255 / 3));
+  }
+  bytes.push(0x2C); /* image descriptor */
+  put16(0); put16(0); put16(w); put16(h);
+  bytes.push(0);
+  bytes.push(8); /* LZW minimum code size */
+  var dict = new Map();
+  var nextCode = 258;
+  var codeSize = 9;
+  var bitBuf = 0, bitCount = 0;
+  var block = [];
+  function emit(code) {
+    bitBuf |= (code << bitCount);
+    bitCount += codeSize;
+    while (bitCount >= 8) {
+      block.push(bitBuf & 0xFF);
+      if (block.length === 255) {
+        bytes.push(255);
+        for (var b = 0; b < 255; b++) { bytes.push(block[b]); }
+        block = [];
+      }
+      bitBuf >>= 8; bitCount -= 8;
+    }
+  }
+  function resetDict() { dict = new Map(); nextCode = 258; codeSize = 9; }
+  emit(256); /* clear code */
+  var prefix = indices[0];
+  for (var k = 1; k < count; k++) {
+    var px = indices[k];
+    var key = prefix * 256 + px;
+    if (dict.has(key)) {
+      prefix = dict.get(key);
+    } else {
+      emit(prefix);
+      if (nextCode < 4096) {
+        dict.set(key, nextCode);
+        nextCode++;
+        if (nextCode - 1 === (1 << codeSize) && codeSize < 12) { codeSize++; }
+      } else {
+        emit(256);
+        resetDict();
+      }
+      prefix = px;
+    }
+  }
+  emit(prefix);
+  emit(257); /* end of information */
+  if (bitCount > 0) { block.push(bitBuf & 0xFF); }
+  if (block.length) {
+    bytes.push(block.length);
+    for (var b2 = 0; b2 < block.length; b2++) { bytes.push(block[b2]); }
+  }
+  bytes.push(0); /* block terminator */
+  bytes.push(0x3B); /* trailer */
+  return new Blob([new Uint8Array(bytes)], { type: "image/gif" });
+}
+
+/* ICO container holding PNG entries, the same approach as the favicon tool. */
+var ICV_ICO_SIZES = [16, 24, 32, 48, 64];
+function icvEncodeIco(img) {
+  var side = Math.min(img.naturalWidth, img.naturalHeight);
+  var jobs = ICV_ICO_SIZES.map(function (size) {
+    var canvas = document.createElement("canvas");
+    canvas.width = size; canvas.height = size;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, size, size);
+    return IT.canvasToBlob(canvas, "image/png").then(function (blob) {
+      return blob.arrayBuffer().then(function (buf) { return { size: size, bytes: new Uint8Array(buf) }; });
+    });
+  });
+  return Promise.all(jobs).then(function (entries) {
+    var header = 6 + entries.length * 16;
+    var total = header;
+    entries.forEach(function (e) { total += e.bytes.length; });
+    var out = new Uint8Array(total);
+    var view = new DataView(out.buffer);
+    view.setUint16(0, 0, true);
+    view.setUint16(2, 1, true);
+    view.setUint16(4, entries.length, true);
+    var offset = header;
+    entries.forEach(function (e, idx) {
+      var b = 6 + idx * 16;
+      out[b] = e.size >= 256 ? 0 : e.size;
+      out[b + 1] = e.size >= 256 ? 0 : e.size;
+      out[b + 2] = 0; out[b + 3] = 0;
+      view.setUint16(b + 4, 1, true);
+      view.setUint16(b + 6, 32, true);
+      view.setUint32(b + 8, e.bytes.length, true);
+      view.setUint32(b + 12, offset, true);
+      out.set(e.bytes, offset);
+      offset += e.bytes.length;
+    });
+    return new Blob([out], { type: "image/x-icon" });
+  });
+}
+
+function icvExtFor(mime) {
+  if (mime === "image/jpeg") { return "jpg"; }
+  if (mime === "image/bmp") { return "bmp"; }
+  if (mime === "image/gif") { return "gif"; }
+  if (mime === "image/x-icon") { return "ico"; }
+  return IT.extensionFor(mime);
+}
+
+function icvConvertOne(file, mime) {
+  return IT.readImageFile(file).then(function (img) {
+    var w = img.naturalWidth, h = img.naturalHeight;
+    if (mime === "image/x-icon") {
+      return icvEncodeIco(img).then(function (blob) { return { blob: blob, w: w, h: h }; });
+    }
+    var needsWhite = (mime === "image/jpeg" || mime === "image/bmp" || mime === "image/gif");
+    var canvas = icvFlatten(img, w, h, needsWhite);
+    if (mime === "image/bmp") { return { blob: icvEncodeBmp(canvas), w: w, h: h }; }
+    if (mime === "image/gif") { return { blob: icvEncodeGif(canvas), w: w, h: h }; }
+    return IT.canvasToBlob(canvas, mime, mime === "image/png" ? undefined : 0.92).then(function (blob) {
+      return { blob: blob, w: w, h: h };
+    });
+  });
+}
+
+document.getElementById("icv-run").addEventListener("click", function () {
+  var files = icvFilesInput.files;
+  if (!files || files.length === 0) {
+    icvStatusEl.className = "status error";
+    icvStatusEl.textContent = "Choose at least one image first.";
+    return;
+  }
+  var mime = document.getElementById("icv-format").value;
+  icvResults = [];
+  icvZipBtn.disabled = true;
+  icvListEl.innerHTML = "";
+  icvStatusEl.className = "status";
+  icvStatusEl.textContent = "Converting " + files.length + " file(s)...";
+  var rows = [];
+  Array.prototype.forEach.call(files, function (file, idx) {
+    var row = document.createElement("p");
+    row.className = "kv";
+    row.textContent = file.name + " — waiting...";
+    icvListEl.appendChild(row);
+    rows[idx] = row;
+  });
+  var chain = Promise.resolve();
+  var doneCount = 0, failCount = 0;
+  Array.prototype.forEach.call(files, function (file, idx) {
+    chain = chain.then(function () {
+      return icvConvertOne(file, mime).then(function (res) {
+        var outName = IT.baseName(file.name) + "-converted." + icvExtFor(mime);
+        icvResults.push({ name: outName, blob: res.blob });
+        var row = rows[idx];
+        row.innerHTML = "";
+        var b = document.createElement("b");
+        b.textContent = file.name + ":";
+        row.appendChild(b);
+        row.appendChild(document.createTextNode(" " + res.w + " x " + res.h + " px → " + IT.formatSize(res.blob.size) + " "));
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(res.blob);
+        a.download = outName;
+        a.textContent = "Download";
+        row.appendChild(a);
+        doneCount++;
+      }).catch(function (err) {
+        rows[idx].textContent = file.name + " — could not be converted (" + err.message + ")";
+        failCount++;
+      });
+    });
+  });
+  chain.then(function () {
+    icvZipBtn.disabled = icvResults.length === 0;
+    icvStatusEl.className = failCount ? "status error" : "status ok";
+    icvStatusEl.textContent = "Batch finished: " + doneCount + " converted" + (failCount ? ", " + failCount + " failed." : ".");
+  });
+});
+
+icvZipBtn.addEventListener("click", function () {
+  if (typeof JSZip === "undefined") {
+    icvStatusEl.className = "status error";
+    icvStatusEl.textContent = "The ZIP library could not be loaded (check your connection) — the individual Download links above still work.";
+    return;
+  }
+  var zip = new JSZip();
+  icvResults.forEach(function (r) { zip.file(r.name, r.blob); });
+  zip.generateAsync({ type: "blob" }).then(function (blob) {
+    IT.triggerDownload(blob, "converted-images.zip");
+    icvStatusEl.className = "status ok";
+    icvStatusEl.textContent = "ZIP downloaded with " + icvResults.length + " converted image(s).";
+  });
 });
 </script>
 <script src="../../theme.js?v=20261106a"></script>
