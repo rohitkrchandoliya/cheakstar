@@ -21,9 +21,9 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">Color Palette Generator</h1>
-<p class="tool-sub">Build harmonious colour palettes from one base colour.</p>
+<p class="tool-sub">Build harmonious colour palettes from one base colour — with colour names, categories, strategies, a curated collection and a CSS-variables export.</p>
 <div class="tool-card">
-  <p>Pick a colour and choose a harmony — complementary, analogous, triadic and more. You get five colours that work together, each with a HEX code you can copy with one click.</p>
+  <p>Pick a colour, choose a harmony, a colour category and a strategy. You get five colours that work together, each with a HEX code and its closest colour name, ready to copy with one click — or grab the whole palette as CSS variables. Further down, the Palette Collection holds ready-made curated palettes you can load in one click.</p>
 
   <div class="row2">
     <div>
@@ -46,6 +46,29 @@
       </select>
     </div>
   </div>
+  <div class="row2">
+    <div>
+      <label for="cpp-category">Colour category</label>
+      <select id="cpp-category">
+        <option value="all" selected>All colours</option>
+        <option value="warm">Warm (reds, oranges, golds)</option>
+        <option value="cool">Cool (blues, greens, violets)</option>
+        <option value="earth">Earth tones</option>
+        <option value="pastel">Pastel (soft and light)</option>
+        <option value="vivid">Vivid (bold and saturated)</option>
+        <option value="neutral">Neutral (muted, grey-leaning)</option>
+      </select>
+    </div>
+    <div>
+      <label for="cpp-strategy">Strategy</label>
+      <select id="cpp-strategy">
+        <option value="harmony" selected>Harmony (use the harmony above)</option>
+        <option value="random">Random cohesive (a fresh mix each time)</option>
+        <option value="shades">Shades and tints of the base colour</option>
+        <option value="contrast">Bold contrast</option>
+      </select>
+    </div>
+  </div>
   <div class="btn-row">
     <button id="cp-run" class="btn" type="button">Generate palette</button>
     <button id="cp-random" class="btn ghost" type="button">Random base colour</button>
@@ -53,8 +76,16 @@
   <p id="cp-status" class="status" role="status">Click any swatch to copy its HEX code.</p>
   <div id="cp-out" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:12px" data-result></div>
   <p id="cp-list" class="mono" style="margin-top:10px; overflow-wrap:break-word"></p>
+  <h3>CSS variables for this palette</h3>
+  <textarea id="cpp-vars" class="compact mono" readonly rows="7" aria-label="CSS variables for the current palette"></textarea>
+  <div class="btn-row">
+    <button id="cpp-copy-vars" class="btn ghost" type="button">Copy CSS variables</button>
+  </div>
+  <h3>Palette Collection</h3>
+  <p>Curated palettes, grouped by mood. Pick one and it loads above with names and CSS variables, ready to copy — the same way a palette library hands a set over to the generator.</p>
+  <div id="cpp-collection"></div>
 </div>
-<div class="note"><strong>Good to know:</strong> harmonies are worked out from the colour wheel — complementary pairs sit opposite each other, analogous colours sit side by side, and triadic colours sit 120 degrees apart. A pretty palette is not a guarantee of readable text: always check that text on a colour has enough contrast before using it for headings or buttons. Everything runs in this browser tab; nothing is sent anywhere.</div>
+<div class="note"><strong>Good to know:</strong> each colour name is the nearest of the 148 standard CSS colour names, matched by a weighted (redmean) distance — a close neighbour, not an official name for the exact colour. The category gently pulls every colour of the palette into that family (warm, cool, earth and so on). Harmonies are worked out from the colour wheel — complementary pairs sit opposite each other, analogous colours sit side by side, and triadic colours sit 120 degrees apart. A pretty palette is not a guarantee of readable text: always check that text on a colour has enough contrast before using it for headings or buttons. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
@@ -111,6 +142,161 @@ function hslToHex(h, s, l) {
   return rgbToHex(rgb.r, rgb.g, rgb.b);
 }
 
+/* ---------- Upgrade: names, categories, strategies, collection, CSS variables ---------- */
+var CPP_NAMED = ("aliceblue:F0F8FF,antiquewhite:FAEBD7,aqua:00FFFF,aquamarine:7FFFD4,azure:F0FFFF,beige:F5F5DC,bisque:FFE4C4,black:000000,blanchedalmond:FFEBCD,blue:0000FF,blueviolet:8A2BE2,brown:A52A2A,burlywood:DEB887,cadetblue:5F9EA0,chartreuse:7FFF00,chocolate:D2691E,coral:FF7F50,cornflowerblue:6495ED,cornsilk:FFF8DC,crimson:DC143C,cyan:00FFFF,darkblue:00008B,darkcyan:008B8B,darkgoldenrod:B8860B,darkgray:A9A9A9,darkgreen:006400,darkgrey:A9A9A9,darkkhaki:BDB76B,darkmagenta:8B008B,darkolivegreen:556B2F,darkorange:FF8C00,darkorchid:9932CC,darkred:8B0000,darksalmon:E9967A,darkseagreen:8FBC8F,darkslateblue:483D8B,darkslategray:2F4F4F,darkslategrey:2F4F4F,darkturquoise:00CED1,darkviolet:9400D3,deeppink:FF1493,deepskyblue:00BFFF,dimgray:696969,dimgrey:696969,dodgerblue:1E90FF,firebrick:B22222,floralwhite:FFFAF0,forestgreen:228B22,fuchsia:FF00FF,gainsboro:DCDCDC,ghostwhite:F8F8FF,gold:FFD700,goldenrod:DAA520,gray:808080,green:008000,greenyellow:ADFF2F,grey:808080,honeydew:F0FFF0,hotpink:FF69B4,indianred:CD5C5C,indigo:4B0082,ivory:FFFFF0,khaki:F0E68C,lavender:E6E6FA,lavenderblush:FFF0F5,lawngreen:7CFC00,lemonchiffon:FFFACD,lightblue:ADD8E6,lightcoral:F08080,lightcyan:E0FFFF,lightgoldenrodyellow:FAFAD2,lightgray:D3D3D3,lightgreen:90EE90,lightgrey:D3D3D3,lightpink:FFB6C1,lightsalmon:FFA07A,lightseagreen:20B2AA,lightskyblue:87CEFA,lightslategray:778899,lightslategrey:778899,lightsteelblue:B0C4DE,lightyellow:FFFFE0,lime:00FF00,limegreen:32CD32,linen:FAF0E6,magenta:FF00FF,maroon:800000,mediumaquamarine:66CDAA,mediumblue:0000CD,mediumorchid:BA55D3,mediumpurple:9370DB,mediumseagreen:3CB371,mediumslateblue:7B68EE,mediumspringgreen:00FA9A,mediumturquoise:48D1CC,mediumvioletred:C71585,midnightblue:191970,mintcream:F5FFFA,mistyrose:FFE4E1,moccasin:FFE4B5,navajowhite:FFDEAD,navy:000080,oldlace:FDF5E6,olive:808000,olivedrab:6B8E23,orange:FFA500,orangered:FF4500,orchid:DA70D6,palegoldenrod:EEE8AA,palegreen:98FB98,paleturquoise:AFEEEE,palevioletred:DB7093,papayawhip:FFEFD5,peachpuff:FFDAB9,peru:CD853F,pink:FFC0CB,plum:DDA0DD,powderblue:B0E0E6,purple:800080,rebeccapurple:663399,red:FF0000,rosybrown:BC8F8F,royalblue:4169E1,saddlebrown:8B4513,salmon:FA8072,sandybrown:F4A460,seagreen:2E8B57,seashell:FFF5EE,sienna:A0522D,silver:C0C0C0,skyblue:87CEEB,slateblue:6A5ACD,slategray:708090,slategrey:708090,snow:FFFAFA,springgreen:00FF7F,steelblue:4682B4,tan:D2B48C,teal:008080,thistle:D8BFD8,tomato:FF6347,turquoise:40E0D0,violet:EE82EE,wheat:F5DEB3,white:FFFFFF,whitesmoke:F5F5F5,yellow:FFFF00,yellowgreen:9ACD32").split(",").map(function (pair) {
+  var bits = pair.split(":");
+  return { name: bits[0], r: parseInt(bits[1].slice(0, 2), 16), g: parseInt(bits[1].slice(2, 4), 16), b: parseInt(bits[1].slice(4, 6), 16) };
+});
+function cppNameFor(hex) {
+  var rgb = hexToRgb(hex);
+  if (!rgb) { return ""; }
+  var best = null, bestD = Infinity;
+  for (var i = 0; i < CPP_NAMED.length; i++) {
+    var c = CPP_NAMED[i];
+    var rm = (rgb.r + c.r) / 2;
+    var dr = rgb.r - c.r, dg = rgb.g - c.g, db = rgb.b - c.b;
+    var d = (2 + rm / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rm) / 256) * db * db;
+    if (d < bestD) { bestD = d; best = c; }
+  }
+  return best ? best.name : "";
+}
+function cppApplyCategory(colors, cat) {
+  if (cat === "all") { return colors; }
+  return colors.map(function (hex) {
+    var rgb = hexToRgb(hex);
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    var h = hsl.h, sat = hsl.s, l = hsl.l;
+    if (cat === "warm") {
+      if (h > 80 && h < 340) { h = (h < 210) ? 80 : 340; }
+    } else if (cat === "cool") {
+      if (h < 160 || h > 265) { h = (h >= 265 || h < 30) ? 265 : 160; if (h > 30 && h < 160) { h = 160; } }
+    } else if (cat === "earth") {
+      h = Math.max(15, Math.min(50, h)); sat = Math.max(0.25, Math.min(0.6, sat)); l = Math.max(0.25, Math.min(0.65, l));
+    } else if (cat === "pastel") {
+      sat = Math.min(sat, 0.5); l = Math.max(0.72, Math.min(0.88, l));
+    } else if (cat === "vivid") {
+      sat = Math.max(sat, 0.75); l = Math.max(0.38, Math.min(0.62, l));
+    } else if (cat === "neutral") {
+      sat = Math.min(sat, 0.22);
+    }
+    return hslToHex(h, sat, l);
+  });
+}
+var CPP_COLLECTIONS = [
+  { group: "Classic", name: "Mayfair Club", colors: [["#1F3A5F", "Prussian Night"], ["#C9A227", "Antique Gold"], ["#F4EFE6", "Ivory Paper"], ["#7A1E1E", "Claret"], ["#2E4B3F", "Racing Green"]] },
+  { group: "Classic", name: "Ink and Paper", colors: [["#0B0B0F", "Ink Black"], ["#26262E", "Charcoal"], ["#55565E", "Slate Grey"], ["#A7A8B0", "Silver Mist"], ["#F2F2F0", "Paper White"]] },
+  { group: "Nature", name: "Forest Floor", colors: [["#1E4634", "Deep Pine"], ["#3E7C4F", "Fern"], ["#7FB069", "Moss Light"], ["#DDE8CB", "Pale Sage"], ["#5C4A2E", "Bark Brown"]] },
+  { group: "Nature", name: "Ocean Depth", colors: [["#04293E", "Abyss"], ["#065A60", "Deep Teal"], ["#0E9594", "Lagoon"], ["#94D1BE", "Seafoam"], ["#F4F1DE", "Shore Sand"]] },
+  { group: "Warm", name: "Desert Dusk", colors: [["#8C4A1F", "Sienna Earth"], ["#C97B3D", "Dune"], ["#E8B04B", "Ochre Sun"], ["#F2D8A7", "Pale Sand"], ["#5B2333", "Dusk Plum"]] },
+  { group: "Warm", name: "Autumn Market", colors: [["#7C2D12", "Roast Chestnut"], ["#B45309", "Pumpkin Spice"], ["#D97706", "Marigold"], ["#F59E0B", "Amber Leaf"], ["#FDE68A", "Hay Bale"]] },
+  { group: "Modern", name: "Neon Grid", colors: [["#0D0D12", "Midnight Panel"], ["#00E5FF", "Cyan Beam"], ["#FF2E88", "Magenta Pulse"], ["#7C4DFF", "Ultraviolet"], ["#C6FF00", "Acid Lime"]] },
+  { group: "Modern", name: "Soft Pastel Desk", colors: [["#F9C6D0", "Blush"], ["#FDEBD3", "Cream Peach"], ["#DFF5E1", "Mint Milk"], ["#CDE7F0", "Powder Blue"], ["#E6DEF5", "Lilac Haze"]] }
+];
+var cpCurrent = [];
+function cppRender(palette, note) {
+  cpCurrent = palette.slice();
+  cpOut.innerHTML = "";
+  palette.forEach(function (hex) {
+    var name = cppNameFor(hex);
+    var cell = document.createElement("button");
+    cell.type = "button";
+    cell.style.cssText = "border:1px solid #d8dee8; border-radius:8px; padding:0; overflow:hidden; cursor:pointer; background:#fff; text-align:left";
+    var sw = document.createElement("div");
+    sw.style.cssText = "height:72px; background:" + hex;
+    var label = document.createElement("div");
+    label.className = "mono";
+    label.style.cssText = "padding:6px 8px; font-size:0.85rem";
+    label.textContent = hex;
+    var nm = document.createElement("div");
+    nm.className = "cpp-name";
+    nm.style.cssText = "padding:0 8px 7px; font-size:0.8rem; color:#5a6b80";
+    nm.textContent = name;
+    cell.appendChild(sw);
+    cell.appendChild(label);
+    cell.appendChild(nm);
+    cell.addEventListener("click", function () {
+      function done() {
+        cpStatus.className = "status ok";
+        cpStatus.textContent = hex + " (" + name + ") copied — paste it anywhere.";
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(done, function () {
+          cpStatus.className = "status error";
+          cpStatus.textContent = "Copy was blocked by the browser.";
+        });
+      } else {
+        cpStatus.textContent = "Copy is not available in this browser.";
+      }
+    });
+    cpOut.appendChild(cell);
+  });
+  cpList.textContent = palette.map(function (hex) { return hex + " " + cppNameFor(hex); }).join("   ");
+  var vars = ":root {\n" + palette.map(function (hex, i) {
+    return "  --palette-" + (i + 1) + ": " + hex.toLowerCase() + "; /* " + cppNameFor(hex) + " */";
+  }).join("\n") + "\n}";
+  document.getElementById("cpp-vars").value = vars;
+  cpStatus.className = "status ok";
+  cpStatus.textContent = note || "Palette ready — click any swatch to copy its HEX code.";
+}
+function cppRenderCollection() {
+  var box = document.getElementById("cpp-collection");
+  box.innerHTML = "";
+  CPP_COLLECTIONS.forEach(function (pal) {
+    var card = document.createElement("div");
+    card.style.cssText = "border:1px solid #d8dee8; border-radius:10px; padding:10px 12px; margin-top:10px; background:#fff";
+    var head = document.createElement("div");
+    head.style.cssText = "display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap";
+    var title = document.createElement("strong");
+    title.textContent = pal.name + " · " + pal.group;
+    var use = document.createElement("button");
+    use.type = "button";
+    use.className = "btn ghost small";
+    use.textContent = "Use this palette";
+    use.addEventListener("click", function () {
+      var hexes = pal.colors.map(function (c) { return c[0]; });
+      cppRender(hexes, "\u201C" + pal.name + "\u201D loaded from the Palette Collection — click any swatch to copy its HEX code.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    head.appendChild(title);
+    head.appendChild(use);
+    var strip = document.createElement("div");
+    strip.style.cssText = "display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-top:8px";
+    pal.colors.forEach(function (c) {
+      var d = document.createElement("div");
+      d.style.cssText = "height:38px; border-radius:6px; background:" + c[0];
+      d.title = c[0] + " " + c[1];
+      strip.appendChild(d);
+    });
+    var names = document.createElement("p");
+    names.className = "mono";
+    names.style.cssText = "margin:8px 0 0; font-size:0.8rem; overflow-wrap:break-word";
+    names.textContent = pal.colors.map(function (c) { return c[0] + " " + c[1]; }).join("   ");
+    card.appendChild(head);
+    card.appendChild(strip);
+    card.appendChild(names);
+    box.appendChild(card);
+  });
+}
+document.getElementById("cpp-copy-vars").addEventListener("click", function () {
+  var ta = document.getElementById("cpp-vars");
+  function done() {
+    cpStatus.className = "status ok";
+    cpStatus.textContent = "CSS variables copied — paste them into your stylesheet.";
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ta.value).then(done, function () {
+      ta.select();
+      cpStatus.textContent = "Copy was blocked — the variables are selected, so copy with Ctrl+C (Cmd+C on a Mac).";
+    });
+  } else {
+    ta.select();
+    cpStatus.textContent = "Copy is not available here — the variables are selected, so copy with Ctrl+C (Cmd+C on a Mac).";
+  }
+});
+document.getElementById("cpp-category").addEventListener("change", generate);
+document.getElementById("cpp-strategy").addEventListener("change", generate);
+cppRenderCollection();
+
 function generate() {
   var hexInput = document.getElementById("cp-hex").value.trim();
   var rgb = hexToRgb(hexInput);
@@ -121,8 +307,29 @@ function generate() {
   }
   var base = rgbToHsl(rgb.r, rgb.g, rgb.b);
   var mode = document.getElementById("cp-mode").value;
+  var strategy = document.getElementById("cpp-strategy").value;
   var h = base.h, s = base.s, l = base.l;
   var palette = [];
+  if (strategy === "random") {
+    var rb = new Uint8Array(3);
+    window.crypto.getRandomValues(rb);
+    var rr = rgbToHsl(rb[0], rb[1], rb[2]);
+    h = rr.h; s = Math.max(0.45, rr.s); l = 0.3 + (rb[2] / 255) * 0.35;
+    palette = [hslToHex(h, s, l), hslToHex(h + 28, s * 0.9, Math.min(0.85, l + 0.25)), hslToHex(h - 24, s * 0.85, Math.max(0.15, l - 0.12)), hslToHex(h + 165, s * 0.8, Math.min(0.8, l + 0.1)), hslToHex(h + 48, s * 0.55, Math.min(0.9, l + 0.38))];
+    cppRender(cppApplyCategory(palette, document.getElementById("cpp-category").value), "Random cohesive palette ready — generate again for another mix, or click a swatch to copy its HEX code.");
+    return;
+  }
+  if (strategy === "shades") {
+    palette = [hslToHex(h, Math.min(1, s * 1.05), 0.16), hslToHex(h, s, 0.32), hslToHex(h, s, l), hslToHex(h, s * 0.85, 0.7), hslToHex(h, s * 0.6, 0.86)];
+    cppRender(cppApplyCategory(palette, document.getElementById("cpp-category").value));
+    return;
+  }
+  if (strategy === "contrast") {
+    var cs = Math.max(0.7, s);
+    palette = [hslToHex(h, cs, l), hslToHex(h + 180, cs, 0.45), hslToHex(h + 180, 0.85, 0.28), hslToHex(h, 0.9, 0.58), (l > 0.5 ? "#14181F" : "#F5F2EA")];
+    cppRender(cppApplyCategory(palette, document.getElementById("cpp-category").value));
+    return;
+  }
   if (mode === "complementary") {
     palette = [hslToHex(h, s, l), hslToHex(h + 180, s, l), hslToHex(h, s, Math.max(0.08, l - 0.18)), hslToHex(h + 180, s, Math.min(0.92, l + 0.18)), hslToHex(h, s * 0.6, Math.min(0.92, l + 0.28))];
   } else if (mode === "analogous") {
@@ -136,38 +343,7 @@ function generate() {
   } else {
     palette = [hslToHex(h, s, 0.16), hslToHex(h, s, 0.32), hslToHex(h, s, l), hslToHex(h, s, 0.72), hslToHex(h, s, 0.88)];
   }
-  cpOut.innerHTML = "";
-  palette.forEach(function (hex) {
-    var cell = document.createElement("button");
-    cell.type = "button";
-    cell.style.cssText = "border:1px solid #d8dee8; border-radius:8px; padding:0; overflow:hidden; cursor:pointer; background:#fff; text-align:left";
-    var sw = document.createElement("div");
-    sw.style.cssText = "height:72px; background:" + hex;
-    var label = document.createElement("div");
-    label.className = "mono";
-    label.style.cssText = "padding:6px 8px; font-size:0.85rem";
-    label.textContent = hex;
-    cell.appendChild(sw);
-    cell.appendChild(label);
-    cell.addEventListener("click", function () {
-      function done() {
-        cpStatus.className = "status ok";
-        cpStatus.textContent = hex + " copied — paste it anywhere.";
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(hex).then(done, function () {
-          cpStatus.className = "status error";
-          cpStatus.textContent = "Copy was blocked by the browser.";
-        });
-      } else {
-        cpStatus.textContent = "Copy is not available in this browser.";
-      }
-    });
-    cpOut.appendChild(cell);
-  });
-  cpList.textContent = palette.join("  ");
-  cpStatus.className = "status ok";
-  cpStatus.textContent = "Palette ready — click any swatch to copy its HEX code.";
+  cppRender(cppApplyCategory(palette, document.getElementById("cpp-category").value));
 }
 
 document.getElementById("cp-run").addEventListener("click", generate);
