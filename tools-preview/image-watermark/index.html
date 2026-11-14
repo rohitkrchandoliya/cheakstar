@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image Watermark - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-watermark/">
+<meta property="og:title" content="Image Watermark - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-watermark/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.iwm-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.iwm-drop.iwm-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.iwm-preview { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; background: var(--card); }
+.iwm-preview canvas { max-width: 100%; height: auto; }
+.iwm-posgrid { display: grid; grid-template-columns: repeat(3, 44px); gap: 6px; margin-top: 6px; }
+.iwm-posgrid button { height: 34px; margin: 0; padding: 0; font-size: .8rem; }
+.iwm-posgrid button[aria-pressed="true"] { background: var(--gold, #c9a227); color: #0a2540; border-color: var(--gold, #c9a227); }
+.iwm-modes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.iwm-modes .btn { margin-top: 0; }
+.iwm-modes .btn[aria-pressed="true"] { background: var(--gold, #c9a227); color: #0a2540; border-color: var(--gold, #c9a227); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Watermark</h1>
+<p class="tool-sub">Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture.</p>
+<div class="tool-card">
+  <p>Drop an image, choose a text watermark or your own logo, set its size, opacity and position, and download the result. The preview updates live. Your image is processed on this device only and never leaves this browser tab.</p>
+
+  <div class="iwm-drop" id="iwm-drop">
+    <label for="iwm-file"><strong>Choose an image</strong>, or drop it here</label>
+    <input id="iwm-file" type="file" accept="image/*">
+  </div>
+
+  <div data-result>
+    <div id="iwm-editor" hidden>
+      <h2 style="margin-top:20px">Watermark</h2>
+      <div class="iwm-modes" role="group" aria-label="Watermark type">
+        <button type="button" class="btn ghost small" id="iwm-mode-text" aria-pressed="true">Text</button>
+        <button type="button" class="btn ghost small" id="iwm-mode-logo" aria-pressed="false">Logo</button>
+      </div>
+
+      <div id="iwm-textbox">
+        <div class="row2" style="margin-top:12px">
+          <div>
+            <label for="iwm-text">Watermark text</label>
+            <input id="iwm-text" type="text" value="© Cheakstar" maxlength="80">
+          </div>
+          <div>
+            <label for="iwm-color">Text colour</label>
+            <input id="iwm-color" type="color" value="#ffffff" style="width:100%;height:38px;padding:2px">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="iwm-size">Text size: <span id="iwm-size-val">6%</span> of image width</label>
+            <input id="iwm-size" type="range" min="2" max="20" step="0.5" value="6" style="width:100%">
+          </div>
+          <div>
+            <label for="iwm-opacity-t">Opacity: <span id="iwm-opacity-t-val">50%</span></label>
+            <input id="iwm-opacity-t" type="range" min="5" max="100" step="1" value="50" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <div id="iwm-logobox" hidden>
+        <div style="margin-top:12px">
+          <label for="iwm-logofile">Logo image (a PNG with transparency works best)</label>
+          <input id="iwm-logofile" type="file" accept="image/*">
+        </div>
+        <div class="row2">
+          <div>
+            <label for="iwm-logoscale">Logo width: <span id="iwm-logoscale-val">25%</span> of image width</label>
+            <input id="iwm-logoscale" type="range" min="5" max="80" step="1" value="25" style="width:100%">
+          </div>
+          <div>
+            <label for="iwm-opacity-l">Opacity: <span id="iwm-opacity-l-val">70%</span></label>
+            <input id="iwm-opacity-l" type="range" min="5" max="100" step="1" value="70" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <div class="row2" style="margin-top:6px">
+        <div>
+          <label>Position</label>
+          <div class="iwm-posgrid" id="iwm-posgrid" role="group" aria-label="Watermark position">
+            <button type="button" class="btn ghost" data-pos="tl" aria-label="Top left">↖</button>
+            <button type="button" class="btn ghost" data-pos="tc" aria-label="Top centre">↑</button>
+            <button type="button" class="btn ghost" data-pos="tr" aria-label="Top right">↗</button>
+            <button type="button" class="btn ghost" data-pos="ml" aria-label="Middle left">←</button>
+            <button type="button" class="btn ghost" data-pos="mc" aria-label="Centre">●</button>
+            <button type="button" class="btn ghost" data-pos="mr" aria-label="Middle right">→</button>
+            <button type="button" class="btn ghost" data-pos="bl" aria-label="Bottom left">↙</button>
+            <button type="button" class="btn ghost" data-pos="bc" aria-label="Bottom centre">↓</button>
+            <button type="button" class="btn ghost" data-pos="br" aria-pressed="true" aria-label="Bottom right">↘</button>
+          </div>
+        </div>
+        <div>
+          <label for="iwm-tile">Repeat</label>
+          <select id="iwm-tile">
+            <option value="single" selected>Single — one watermark at the position</option>
+            <option value="tile">Tiled — diagonal repeat across the whole image</option>
+          </select>
+          <label for="iwm-format" style="margin-top:10px">Download format</label>
+          <select id="iwm-format">
+            <option value="png" selected>PNG</option>
+            <option value="jpeg">JPEG</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="iwm-preview"><canvas id="iwm-canvas" aria-label="Live preview of the watermarked image"></canvas></div>
+
+      <div class="btn-row">
+        <a id="iwm-download" class="btn" href="#" download="image-watermarked.png">Download watermarked image</a>
+      </div>
+    </div>
+  </div>
+  <p id="iwm-status" class="status" role="status">Choose or drop an image to watermark it.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> a visible watermark <em>deters casual reuse</em> and shows ownership at a glance. It is <strong>not copy protection</strong>: a watermark can be cropped out or edited away by someone determined, and it does not stop anyone downloading the file. For work that must stay private, do not publish it — no watermark changes that. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var iwm_file = document.getElementById("iwm-file");
+var iwm_drop = document.getElementById("iwm-drop");
+var iwm_status = document.getElementById("iwm-status");
+var iwm_editor = document.getElementById("iwm-editor");
+var iwm_canvas = document.getElementById("iwm-canvas");
+var iwm_download = document.getElementById("iwm-download");
+var iwm_text = document.getElementById("iwm-text");
+var iwm_color = document.getElementById("iwm-color");
+var iwm_tile = document.getElementById("iwm-tile");
+var iwm_format = document.getElementById("iwm-format");
+var iwm_src = document.createElement("canvas");
+var iwm_logo = null; /* canvas with the logo, or null */
+var iwm_has = false;
+var iwm_base = "image";
+var iwm_mode = "text"; /* text | logo */
+var iwm_pos = "br";
+var iwm_outUrl = null;
+var iwm_timer = null;
+
+function iwm_setStatus(text, kind) {
+  iwm_status.className = "status" + (kind ? " " + kind : "");
+  iwm_status.textContent = text;
+}
+function iwm_set(id, text) { document.getElementById(id).textContent = text; }
+function iwm_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function iwm_opacity() {
+  return parseInt((iwm_mode === "text" ? document.getElementById("iwm-opacity-t") : document.getElementById("iwm-opacity-l")).value, 10) / 100;
+}
+/* One stamp, drawn with its top-left at (0,0) of the current transform.
+   Returns { w, h } of the stamp. */
+function iwm_stamp(ctx, W) {
+  if (iwm_mode === "logo") {
+    if (!iwm_logo) { return { w: 0, h: 0 }; }
+    var lw = W * parseInt(document.getElementById("iwm-logoscale").value, 10) / 100;
+    var lh = lw * iwm_logo.height / iwm_logo.width;
+    ctx.drawImage(iwm_logo, 0, 0, lw, lh);
+    return { w: lw, h: lh };
+  }
+  var text = iwm_text.value || "";
+  if (!text) { return { w: 0, h: 0 }; }
+  var fs = W * parseFloat(document.getElementById("iwm-size").value) / 100;
+  ctx.font = "700 " + fs + "px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+  ctx.textBaseline = "top";
+  /* soft shadow so the stamp reads on any background */
+  ctx.shadowColor = "rgba(0,0,0,.45)";
+  ctx.shadowBlur = Math.max(1, fs * 0.06);
+  ctx.shadowOffsetY = Math.max(1, fs * 0.03);
+  ctx.fillStyle = iwm_color.value;
+  ctx.fillText(text, 0, 0);
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
+  return { w: ctx.measureText(text).width, h: fs * 1.25 };
+}
+function iwm_measure(W) {
+  var probe = document.createElement("canvas").getContext("2d");
+  return iwm_stamp(probe, W);
+}
+function iwm_render() {
+  if (!iwm_has) { return; }
+  var W = iwm_src.width, H = iwm_src.height;
+  iwm_canvas.width = W;
+  iwm_canvas.height = H;
+  var ctx = iwm_canvas.getContext("2d");
+  ctx.drawImage(iwm_src, 0, 0);
+  ctx.save();
+  ctx.globalAlpha = iwm_opacity();
+  var dim = iwm_measure(W);
+  if (dim.w > 0) {
+    if (iwm_tile.value === "tile") {
+      var stepX = dim.w * 1.6, stepY = dim.h * 3.2;
+      var diag = Math.sqrt(W * W + H * H);
+      ctx.translate(W / 2, H / 2);
+      ctx.rotate(-Math.PI / 6);
+      for (var yy = -diag / 2; yy < diag / 2; yy += stepY) {
+        for (var xx = -diag / 2; xx < diag / 2; xx += stepX) {
+          ctx.save();
+          ctx.translate(xx, yy);
+          iwm_stamp(ctx, W);
+          ctx.restore();
+        }
+      }
+    } else {
+      var pad = Math.round(W * 0.03);
+      var x = pad, y = pad;
+      var col = iwm_pos.charAt(1), row = iwm_pos.charAt(0);
+      if (col === "c") { x = (W - dim.w) / 2; } else if (col === "r") { x = W - dim.w - pad; }
+      if (row === "m") { y = (H - dim.h) / 2; } else if (row === "b") { y = H - dim.h - pad; }
+      ctx.translate(x, y);
+      iwm_stamp(ctx, W);
+    }
+  }
+  ctx.restore();
+  /* Download blob in the chosen format. */
+  var isJpeg = iwm_format.value === "jpeg";
+  iwm_canvas.toBlob(function (blob) {
+    if (!blob) { return; }
+    if (iwm_outUrl) { URL.revokeObjectURL(iwm_outUrl); }
+    iwm_outUrl = URL.createObjectURL(blob);
+    iwm_download.href = iwm_outUrl;
+    iwm_download.setAttribute("download", iwm_base + "-watermarked." + (isJpeg ? "jpg" : "png"));
+  }, isJpeg ? "image/jpeg" : "image/png", 0.92);
+}
+function iwm_schedule() {
+  if (iwm_timer) { clearTimeout(iwm_timer); }
+  iwm_timer = setTimeout(iwm_render, 120);
+}
+function iwm_syncLabels() {
+  iwm_set("iwm-size-val", document.getElementById("iwm-size").value + "%");
+  iwm_set("iwm-opacity-t-val", document.getElementById("iwm-opacity-t").value + "%");
+  iwm_set("iwm-logoscale-val", document.getElementById("iwm-logoscale").value + "%");
+  iwm_set("iwm-opacity-l-val", document.getElementById("iwm-opacity-l").value + "%");
+}
+function iwm_setMode(mode) {
+  iwm_mode = mode;
+  document.getElementById("iwm-mode-text").setAttribute("aria-pressed", mode === "text" ? "true" : "false");
+  document.getElementById("iwm-mode-logo").setAttribute("aria-pressed", mode === "logo" ? "true" : "false");
+  document.getElementById("iwm-textbox").hidden = mode !== "text";
+  document.getElementById("iwm-logobox").hidden = mode !== "logo";
+  if (mode === "logo" && !iwm_logo) {
+    iwm_setStatus("Choose a logo image — until then no watermark is drawn.", "");
+  }
+  iwm_render();
+}
+document.getElementById("iwm-mode-text").addEventListener("click", function () { iwm_setMode("text"); });
+document.getElementById("iwm-mode-logo").addEventListener("click", function () { iwm_setMode("logo"); });
+document.getElementById("iwm-posgrid").addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-pos]");
+  if (!btn) { return; }
+  iwm_pos = btn.getAttribute("data-pos");
+  var all = this.querySelectorAll("button[data-pos]");
+  for (var i = 0; i < all.length; i++) { all[i].setAttribute("aria-pressed", all[i] === btn ? "true" : "false"); }
+  iwm_render();
+});
+[iwm_text, iwm_color].forEach(function (el) {
+  el.addEventListener("input", iwm_schedule);
+});
+["iwm-size", "iwm-opacity-t", "iwm-logoscale", "iwm-opacity-l"].forEach(function (id) {
+  var el = document.getElementById(id);
+  el.addEventListener("input", function () { iwm_syncLabels(); iwm_schedule(); });
+});
+iwm_tile.addEventListener("change", iwm_render);
+iwm_format.addEventListener("change", iwm_render);
+document.getElementById("iwm-logofile").addEventListener("change", function () {
+  var f = this.files && this.files[0];
+  if (!f) { return; }
+  var url = URL.createObjectURL(f);
+  var img = new Image();
+  img.onload = function () {
+    iwm_logo = document.createElement("canvas");
+    iwm_logo.width = img.naturalWidth;
+    iwm_logo.height = img.naturalHeight;
+    iwm_logo.getContext("2d").drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    iwm_setStatus("Logo loaded (" + iwm_logo.width + " × " + iwm_logo.height + " px).", "ok");
+    iwm_render();
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    iwm_setStatus("That logo file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+});
+function iwm_load(file) {
+  if (!file) { return; }
+  iwm_base = iwm_baseName(file.name || "image");
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    iwm_src.width = img.naturalWidth;
+    iwm_src.height = img.naturalHeight;
+    iwm_src.getContext("2d").drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    iwm_has = true;
+    iwm_editor.hidden = false;
+    iwm_syncLabels();
+    iwm_render();
+    iwm_setStatus("Image loaded (" + iwm_src.width + " × " + iwm_src.height + " px). Adjust the watermark — the preview and download update live.", "ok");
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    iwm_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+}
+iwm_file.addEventListener("change", function () { iwm_load(iwm_file.files && iwm_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  iwm_drop.addEventListener(ev, function (e) { e.preventDefault(); iwm_drop.classList.add("iwm-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  iwm_drop.addEventListener(ev, function (e) { e.preventDefault(); iwm_drop.classList.remove("iwm-over"); });
+});
+iwm_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { iwm_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.iwm_state = function () {
+  return { hasImage: iwm_has, mode: iwm_mode, pos: iwm_pos, tile: iwm_tile.value, hasLogo: !!iwm_logo };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-watermark"></script>
+</body>
+</html>
