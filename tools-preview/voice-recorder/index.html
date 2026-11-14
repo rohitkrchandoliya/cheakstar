@@ -21,9 +21,9 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">Voice Recorder</h1>
-<p class="tool-sub">Record from your microphone and download the recording.</p>
+<p class="tool-sub">Record voice memos from your microphone and download them. Every memo is kept in a takes list, so you can record several and keep the best.</p>
 <div class="tool-card">
-  <p>The recording never leaves this device — it is made and stored only in this browser tab. Use it for a voice note, a song idea or a quick dictation.</p>
+  <p>The recording never leaves this device — it is made and stored only in this browser tab. Use it for a voice note, a song idea or a quick dictation. Each finished memo is added to the takes list under the player; the newest one also appears in the player above.</p>
 
   <div class="btn-row">
     <button id="vr-start" class="btn" type="button">Start recording</button>
@@ -39,6 +39,12 @@
       <a id="vr-download" class="btn" href="#" download="voice-recording.webm">Download recording</a>
     </div>
     <p class="status" id="vr-meta"></p>
+  </div>
+
+  <div id="vrx-takes-wrap" hidden>
+    <h3>All memos this session</h3>
+    <div id="vrx-takes"></div>
+    <p class="status">Memos live in this tab only — download the ones you want to keep before closing it.</p>
   </div>
 </div>
 <div class="note"><strong>Format note:</strong> recordings are saved in the format your browser records best (usually WebM or OGG). Use the Audio Converter tool on this site if you need MP3. Closing this tab without downloading loses the recording — nothing is kept on any server.</div>
@@ -99,6 +105,52 @@ vrStopBtn.addEventListener("click", function () {
   if (vrRecorder && vrRecorder.state !== "inactive") { vrRecorder.stop(); }
 });
 
+/* ---------- Upgrade: takes list (prefix vrx) ---------- */
+var vrxTakeCount = 0;
+function vrxAddTake(blob, seconds, ext, type) {
+  vrxTakeCount++;
+  var n = vrxTakeCount;
+  var wrap = document.getElementById("vrx-takes-wrap");
+  wrap.hidden = false;
+  var box = document.getElementById("vrx-takes");
+  var item = document.createElement("div");
+  item.style.cssText = "border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:10px";
+  var url = URL.createObjectURL(blob);
+  var title = document.createElement("p");
+  title.className = "kv";
+  var b = document.createElement("b");
+  b.textContent = "Memo " + n + ":";
+  title.appendChild(b);
+  title.appendChild(document.createTextNode(" about " + vrFormatTime(seconds) + " long · " +
+    (blob.size / 1024).toFixed(1) + " KB · " + type + " · recorded at " + new Date().toLocaleTimeString("en-IN")));
+  var player = document.createElement("audio");
+  player.controls = true;
+  player.style.width = "100%";
+  player.src = url;
+  var row = document.createElement("div");
+  row.className = "btn-row";
+  var dl = document.createElement("a");
+  dl.className = "btn small";
+  dl.href = url;
+  dl.download = "voice-recording-" + n + "." + ext;
+  dl.textContent = "Download memo " + n;
+  var rm = document.createElement("button");
+  rm.type = "button";
+  rm.className = "btn ghost small";
+  rm.textContent = "Remove";
+  rm.addEventListener("click", function () {
+    URL.revokeObjectURL(url);
+    item.remove();
+    if (!box.children.length) { wrap.hidden = true; }
+  });
+  row.appendChild(dl);
+  row.appendChild(rm);
+  item.appendChild(title);
+  item.appendChild(player);
+  item.appendChild(row);
+  box.appendChild(item);
+}
+
 function vrOnStop() {
   clearInterval(vrTimerId);
   vrTimerEl.textContent = "";
@@ -118,8 +170,9 @@ function vrOnStop() {
   document.getElementById("vr-meta").textContent = "Length about " + vrFormatTime((Date.now() - vrStartedAt) / 1000) +
     ", size " + (blob.size / 1024).toFixed(1) + " KB, format " + type + ".";
   document.getElementById("vr-result").hidden = false;
+  vrxAddTake(blob, (Date.now() - vrStartedAt) / 1000, ext, type);
   vrStatusEl.className = "status ok";
-  vrStatusEl.textContent = "Recording finished. Listen to it above, then download it.";
+  vrStatusEl.textContent = "Recording finished — it is in the player above and in the memos list. Record another memo any time.";
 }
 </script>
 <script src="../../theme.js?v=20261106a"></script>
