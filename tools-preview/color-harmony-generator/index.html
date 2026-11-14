@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Color Harmony Generator - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-harmony-generator/">
+<meta property="og:title" content="Color Harmony Generator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-harmony-generator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.chg-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+@media (min-width: 720px) { .chg-row { grid-template-columns: repeat(5, 1fr); } }
+.chg-cell { border: 1px solid var(--line); border-radius: 8px; padding: 0; overflow: hidden; cursor: pointer; background: var(--card); text-align: left; font: inherit; color: var(--ink); }
+.chg-cell .chg-sw { height: 72px; }
+.chg-cell .chg-lb { padding: 6px 8px; font-size: .85rem; }
+.chg-slider-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.chg-slider-row label { flex: none; width: 170px; margin-top: 0; }
+.chg-slider-row input[type="range"] { flex: 1; }
+.chg-slider-row .chg-val { flex: none; width: 64px; text-align: right; }
+textarea#chg-css { width: 100%; }
+#chg-desc { color: var(--muted); margin-top: 6px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Color Harmony Generator</h1>
+<p class="tool-sub">Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders.</p>
+<div class="tool-card">
+  <p>Choose a base colour and a harmony type — each type is explained in plain English. Then shape the whole set at once with the Lightness, Chroma and Hue sliders, which work in OKLCH so changes look even to the eye.</p>
+
+  <div class="row2">
+    <div>
+      <label for="chg-color">Base colour</label>
+      <input id="chg-color" type="color" value="#e63946" style="height:44px; width:100%; padding:2px">
+    </div>
+    <div>
+      <label for="chg-hex">Or type a HEX code</label>
+      <input id="chg-hex" type="text" value="#E63946" autocomplete="off" spellcheck="false">
+    </div>
+    <div>
+      <label for="chg-type">Harmony type</label>
+      <select id="chg-type">
+        <option value="complementary" selected>Complementary</option>
+        <option value="split">Split-complementary</option>
+        <option value="analogous">Analogous</option>
+        <option value="triadic">Triadic</option>
+        <option value="square">Tetradic (square)</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="mono">Monochromatic</option>
+      </select>
+    </div>
+  </div>
+  <p id="chg-desc"></p>
+
+  <div class="chg-slider-row">
+    <label for="chg-l">Lightness (OKLCH)</label>
+    <input id="chg-l" type="range" min="0.05" max="0.95" step="0.005" value="0.55">
+    <span class="chg-val mono" id="chg-l-val">0.55</span>
+  </div>
+  <div class="chg-slider-row">
+    <label for="chg-c">Chroma (OKLCH)</label>
+    <input id="chg-c" type="range" min="0" max="0.32" step="0.002" value="0.15">
+    <span class="chg-val mono" id="chg-c-val">0.150</span>
+  </div>
+  <div class="chg-slider-row">
+    <label for="chg-h">Hue shift (degrees)</label>
+    <input id="chg-h" type="range" min="-180" max="180" step="1" value="0">
+    <span class="chg-val mono" id="chg-h-val">0°</span>
+  </div>
+  <div class="btn-row">
+    <button id="chg-reset" class="btn ghost" type="button">Reset sliders to base colour</button>
+  </div>
+
+  <div data-result>
+    <div class="chg-row" id="chg-out"></div>
+    <label for="chg-css" style="margin-top:18px">CSS variables</label>
+    <textarea id="chg-css" class="mono" readonly rows="7"></textarea>
+    <div class="btn-row"><button id="chg-copy" class="btn ghost small" type="button">Copy CSS variables</button></div>
+  </div>
+  <p id="chg-status" class="status" role="status"></p>
+</div>
+<div class="note"><strong>Good to know:</strong> harmonies are hue rotations in OKLCH space. The Lightness and Chroma sliders set absolute OKLCH values for the whole set (for Monochromatic, Lightness sets the middle step and the others step around it), and Hue shift rotates every colour together. If a colour would fall outside the sRGB gamut, its chroma is reduced just enough to fit, so every HEX here is displayable. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var chgColor = document.getElementById("chg-color");
+var chgHex = document.getElementById("chg-hex");
+var chgType = document.getElementById("chg-type");
+var chgDesc = document.getElementById("chg-desc");
+var chgL = document.getElementById("chg-l");
+var chgC = document.getElementById("chg-c");
+var chgH = document.getElementById("chg-h");
+var chgOut = document.getElementById("chg-out");
+var chgStatus = document.getElementById("chg-status");
+var chgBaseHue = 0; /* hue of the base colour, kept while sliders move */
+
+var CHG_TYPES = {
+  complementary: { desc: "Two colours opposite on the colour wheel — maximum contrast and pop.", offsets: [0, 180] },
+  split: { desc: "The base colour plus the two colours beside its opposite — strong contrast, but softer than complementary.", offsets: [0, 150, 210] },
+  analogous: { desc: "Colours that sit next to each other on the wheel — calm, natural and easy on the eye.", offsets: [-40, -20, 0, 20, 40] },
+  triadic: { desc: "Three colours evenly spaced at 120 degrees — balanced, but vibrant.", offsets: [0, 120, 240] },
+  square: { desc: "Four colours evenly spaced at 90 degrees — rich and varied; let one colour dominate.", offsets: [0, 90, 180, 270] },
+  rectangle: { desc: "Two complementary pairs, 60 degrees apart — varied like the square, but the pairs sit closer together.", offsets: [0, 60, 180, 240] },
+  mono: { desc: "One hue at five lightness levels — the safest, most unified scheme of all.", offsets: [0, 0, 0, 0, 0] }
+};
+function chgHexToRgb(hex) {
+  var h = String(hex).replace("#", "");
+  if (h.length === 3) { h = h.split("").map(function (c) { return c + c; }).join(""); }
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) { return null; }
+  return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+function chgTwo(n) { return ("0" + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
+function chgRgbToHex(r, g, b) { return ("#" + chgTwo(r) + chgTwo(g) + chgTwo(b)).toUpperCase(); }
+function chgLin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function chgLinOut(c) { var v = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055; return v * 255; }
+function chgRgbToOklch(r, g, b) {
+  var R = chgLin(r), G = chgLin(g), B = chgLin(b);
+  var l = 0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B;
+  var m = 0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B;
+  var s = 0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B;
+  var lr = Math.cbrt(l), mr = Math.cbrt(m), sr = Math.cbrt(s);
+  var L = 0.2104542553 * lr + 0.7936177850 * mr - 0.0040720468 * sr;
+  var A = 1.9779984951 * lr - 2.4285922050 * mr + 0.4505937099 * sr;
+  var Bb = 0.0259040371 * lr + 0.7827717662 * mr - 0.8086757660 * sr;
+  var C = Math.sqrt(A * A + Bb * Bb);
+  var H = Math.atan2(Bb, A) * 180 / Math.PI;
+  if (H < 0) { H += 360; }
+  return { L: L, C: C, H: H };
+}
+function chgOklchRaw(L, C, H) {
+  var hr = H * Math.PI / 180;
+  var a = C * Math.cos(hr), b = C * Math.sin(hr);
+  var lr = L + 0.3963377774 * a + 0.2158037573 * b;
+  var mr = L - 0.1055613458 * a - 0.0638541728 * b;
+  var sr = L - 0.0894841775 * a - 1.2914855480 * b;
+  var l = lr * lr * lr, m = mr * mr * mr, s = sr * sr * sr;
+  return {
+    r: chgLinOut(+4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+    g: chgLinOut(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+    b: chgLinOut(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)
+  };
+}
+function chgInGamut(rgb) { return rgb.r >= -0.01 && rgb.r <= 255.01 && rgb.g >= -0.01 && rgb.g <= 255.01 && rgb.b >= -0.01 && rgb.b <= 255.01; }
+function chgOklchToRgb(L, C, H) {
+  var rgb = chgOklchRaw(L, C, H);
+  if (!chgInGamut(rgb)) {
+    var lo = 0, hi = C;
+    for (var i = 0; i < 22; i++) {
+      var mid = (lo + hi) / 2;
+      if (chgInGamut(chgOklchRaw(L, mid, H))) { lo = mid; } else { hi = mid; }
+    }
+    rgb = chgOklchRaw(L, lo, H);
+  }
+  return { r: Math.round(Math.max(0, Math.min(255, rgb.r))), g: Math.round(Math.max(0, Math.min(255, rgb.g))), b: Math.round(Math.max(0, Math.min(255, rgb.b))) };
+}
+function chgCopy(text) {
+  function done() { chgStatus.className = "status ok"; chgStatus.textContent = "Copied: " + text; }
+  function fail() { chgStatus.className = "status error"; chgStatus.textContent = "Copy was blocked by the browser."; }
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, fail); } else { fail(); }
+}
+function chgSyncSlidersFromBase() {
+  var rgb = chgHexToRgb(chgHex.value.trim());
+  if (!rgb) { return; }
+  var o = chgRgbToOklch(rgb.r, rgb.g, rgb.b);
+  chgBaseHue = o.H;
+  chgL.value = String(Math.max(0.05, Math.min(0.95, o.L)));
+  chgC.value = String(Math.max(0, Math.min(0.32, o.C)));
+  chgH.value = "0";
+}
+function chgRender() {
+  var rgb = chgHexToRgb(chgHex.value.trim());
+  if (!rgb) {
+    chgStatus.className = "status error";
+    chgStatus.textContent = "Enter a valid HEX code, for example #E63946 (three or six hex digits).";
+    return;
+  }
+  chgColor.value = chgRgbToHex(rgb.r, rgb.g, rgb.b);
+  var type = CHG_TYPES[chgType.value] || CHG_TYPES.complementary;
+  chgDesc.textContent = type.desc;
+  var L = Number(chgL.value), C = Number(chgC.value), shift = Number(chgH.value);
+  document.getElementById("chg-l-val").textContent = L.toFixed(2);
+  document.getElementById("chg-c-val").textContent = C.toFixed(3);
+  document.getElementById("chg-h-val").textContent = shift + "°";
+  var colours = type.offsets.map(function (off, idx) {
+    var l = L;
+    if (chgType.value === "mono") {
+      l = Math.max(0.06, Math.min(0.96, L + (idx - 2) * 0.14));
+    }
+    var c = chgOklchToRgb(l, C, chgBaseHue + shift + off);
+    return chgRgbToHex(c.r, c.g, c.b);
+  });
+  chgOut.innerHTML = "";
+  colours.forEach(function (hex, idx) {
+    var cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "chg-cell";
+    cell.setAttribute("aria-label", "Harmony colour " + (idx + 1) + ", " + hex + ". Activate to copy.");
+    cell.innerHTML = "<div class=\"chg-sw\" style=\"background:" + hex + "\"></div><div class=\"chg-lb mono\">" + hex + "</div>";
+    cell.addEventListener("click", function () { chgCopy(hex); });
+    chgOut.appendChild(cell);
+  });
+  var lines = colours.map(function (hex, idx) { return "  --harmony-" + (idx + 1) + ": " + hex + ";"; });
+  document.getElementById("chg-css").value = ":root {\n" + lines.join("\n") + "\n}";
+  chgStatus.className = "status";
+  chgStatus.textContent = colours.length + " colours — click any swatch to copy its HEX code.";
+}
+chgColor.addEventListener("input", function () {
+  chgHex.value = chgColor.value.toUpperCase();
+  chgSyncSlidersFromBase();
+  chgRender();
+});
+chgHex.addEventListener("input", function () {
+  if (chgHexToRgb(chgHex.value.trim())) { chgSyncSlidersFromBase(); }
+  chgRender();
+});
+chgType.addEventListener("change", chgRender);
+chgL.addEventListener("input", chgRender);
+chgC.addEventListener("input", chgRender);
+chgH.addEventListener("input", chgRender);
+document.getElementById("chg-reset").addEventListener("click", function () { chgSyncSlidersFromBase(); chgRender(); });
+document.getElementById("chg-copy").addEventListener("click", function () { chgCopy(document.getElementById("chg-css").value); });
+chgSyncSlidersFromBase();
+chgRender();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="color-harmony-generator"></script>
+</body>
+</html>
