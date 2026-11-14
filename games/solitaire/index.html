@@ -32,29 +32,20 @@
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
 </script>
-<title>Solitaire — Play Free Online, No Sign-up | Cheakstar Games</title>
+<title>Solitaire - Cheakstar Games</title>
 <meta name="description" content="Play Klondike Solitaire free in your browser. Drag or click to move cards, undo, hints and an auto-finish, with your game and best times saved on your device. No sign-up to try.">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <style>
 :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; --zone:rgba(238,242,248,.07); color-scheme:dark; }
 [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; --zone:rgba(248,250,252,.55); color-scheme:light; }
 html[data-textsize="large"] { font-size:112.5%; }
 html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
 * { box-sizing:border-box; }
-body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); }
-header.site { background:var(--navy); color:#fff; padding:.8rem 1.2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; border-bottom:1px solid var(--line); }
-header.site .brand { font-weight:800; font-size:1.25rem; color:#fff; text-decoration:none; letter-spacing:.5px; }
-header.site .brand span { color:var(--gold); }
-header.site nav { margin-left:auto; display:flex; gap:1rem; flex-wrap:wrap; }
-header.site nav a { color:#dce6f5; text-decoration:none; font-size:.95rem; }
-header.site nav a:hover { color:var(--gold); }
-[data-theme="light"] header.site { color:var(--ink); }
-[data-theme="light"] header.site .brand { color:var(--ink); }
-[data-theme="light"] header.site nav a { color:var(--muted); }
+body { margin:0; background:var(--bg); color:var(--ink); }
 main { max-width:1120px; margin:0 auto; padding:1.2rem 1rem 3rem; }
 h1 { font-size:1.7rem; margin:.4rem 0 .3rem; }
-h2 { font-size:1.25rem; margin:1.6rem 0 .5rem; }
+h1, h2 { font-size:1.25rem; margin:1.6rem 0 .5rem; }
 h3 { font-size:1.05rem; margin:1.1rem 0 .4rem; }
 p, li { line-height:1.55; }
 .note { color:var(--muted); }
@@ -79,10 +70,10 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
 .play-stage:fullscreen .scorebar, .play-stage:-webkit-full-screen .scorebar { justify-content:center; }
 .play-stage:fullscreen .scorebar span b, .play-stage:-webkit-full-screen .scorebar span b { color:var(--gold); }
 .play-stage:fullscreen .status, .play-stage:-webkit-full-screen .status { text-align:center; color:#cfe0f4; }
-.play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2 { color:#eef3fa; }
+.play-stage:fullscreen h1, .play-stage:-webkit-full-screen h1 { color:#eef3fa; }
 .play-stage:fullscreen #sol-stats, .play-stage:-webkit-full-screen #sol-stats { color:#cbd5e1; text-align:center; }
 @media (max-height:640px) {
-  .play-stage:fullscreen h2, .play-stage:-webkit-full-screen h2 { display:none; }
+  .play-stage:fullscreen h1, .play-stage:-webkit-full-screen h1 { display:none; }
 }
 
 /* ---- Solitaire (persistent absolutely-positioned card elements) ---- */
@@ -130,29 +121,15 @@ label { font-weight:600; display:block; margin:.6rem 0 .25rem; }
   [data-theme="light"] .cgx-dialog-body { color: var(--muted); }
   [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
   .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
-  body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 */
 </style>
 </head>
-<body class="cgx-wide">
-<header class="site">
-  <a class="brand" href="../index.html">CHEAK<span>STAR</span></a>
-  <nav>
-    <a href="../index.html">Tools</a>
-    <a href="index.html">Games</a>
-    <a href="../blog.html">Blog</a>
-    <a href="../about.html">About</a>
-    <a href="../my-account.html">My Account</a>
-  </nav>
-</header>
-<main>
-<h1>Solitaire</h1>
-<p class="note">Classic Klondike Solitaire. Build each foundation up by suit from ace to king, and build the table down in alternating colours.</p>
-
+<body>
+<main class="wrap ck-main">
 <section class="play-stage cgx-fs" id="stage">
-  <h2>Solitaire</h2>
+  <h1>Solitaire</h1>
   <p class="fs-desc">Draw one card at a time with unlimited passes through the stock. Drag a card — or click it, then click where it goes — to move it; double-click a top card to send it home. Undo, Hint and an Auto-finish (once every table card is face up) are below the table, and your game, best time and win record are saved on this device so you can pick up where you left off.</p>
   <div class="play-bar">
     <button type="button" id="sol-sound">Sound: Off</button>
@@ -1480,7 +1457,7 @@ window.addEventListener("resize", function () { solRender(); });
 cgx.onFullscreenChange(function () { setTimeout(function () { solRender(); }, 60); });
 
 </script>
-<script src="../assets/games-nav.js"></script>
+<script src="../../shell.js?v=20261114"></script>
 <script src="../game-sync.js"></script>
 <script src="../../theme.js?v=20261106a"></script>
 </body>
