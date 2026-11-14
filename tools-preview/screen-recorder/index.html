@@ -21,11 +21,12 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">Screen Recorder</h1>
-<p class="tool-sub">Record your screen, with optional microphone sound, and download the video.</p>
+<p class="tool-sub">Record your screen, with your microphone mixed in if you want it, and download the video. Every take is kept in a list.</p>
 <div class="tool-card">
   <p>Useful for tutorials, demos and bug reports. The recording is made only in this browser tab; nothing is uploaded.</p>
 
-  <label class="check-line"><input id="sr-mic" type="checkbox" checked> Also record my microphone (narration)</label>
+  <label class="check-line"><input id="sr-mic" type="checkbox" checked> Mix my microphone into the recording (narration)</label>
+  <p class="status">With mixing on, your microphone and the screen's own sound are blended into one audio track — tick "Share audio" in the browser's picker if you want the screen sound included. With mixing off, only the screen sound is kept, and only if you share it. Every finished recording is added to the takes list under the player, so you can record several takes and download the best one. Takes live in this tab only and are lost when it closes.</p>
 
   <div class="btn-row">
     <button id="sr-start" class="btn" type="button">Start screen recording</button>
@@ -42,8 +43,13 @@
     </div>
     <p class="status" id="sr-meta"></p>
   </div>
+
+  <div id="srx-takes-wrap" hidden>
+    <h3>All takes this session</h3>
+    <div id="srx-takes"></div>
+  </div>
 </div>
-<div class="note"><strong>Notes:</strong> screen recording works on desktop browsers (Chrome, Edge, Firefox) and most Android browsers; iPhone Safari does not offer screen capture to websites — use the phone's own screen recorder there. Recordings are WebM files, which play in browsers and most players; use the Video Converter tool here if you need MP3 audio or other formats. If you stop sharing from the browser's own "Stop sharing" bar, the recording ends and is saved here the same way.</div>
+<div class="note"><strong>Notes:</strong> mixing uses your browser’s audio tools to blend the microphone and the shared screen sound into a single track before recording; nothing is processed anywhere else. Screen recording works on desktop browsers (Chrome, Edge, Firefox) and most Android browsers; iPhone Safari does not offer screen capture to websites — use the phone's own screen recorder there. Recordings are WebM files, which play in browsers and most players; use the Video Converter tool here if you need MP3 audio or other formats. If you stop sharing from the browser's own "Stop sharing" bar, the recording ends and is saved here the same way.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
@@ -59,6 +65,9 @@ var srStreams = [];
 var srStartedAt = 0;
 var srTimerId = null;
 var srUrl = null;
+var srxMixCtx = null;
+var srxMicDenied = false;
+var srxTakeCount = 0;
 
 function srFormatTime(sec) {
   var m = Math.floor(sec / 60);
@@ -73,20 +82,11 @@ srStartBtn.addEventListener("click", async function () {
     return;
   }
   try {
-    var displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    var displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
     srStreams = [displayStream];
-    var tracks = displayStream.getVideoTracks().slice();
-    if (document.getElementById("sr-mic").checked) {
-      try {
-        var micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        srStreams.push(micStream);
-        micStream.getAudioTracks().forEach(function (t) { tracks.push(t); });
-      } catch (e) {
-        srStatusEl.textContent = "Microphone was not allowed, so recording continues with screen only.";
-        srStatusEl.className = "status";
-      }
-    }
-    var combined = new MediaStream(tracks);
+    srxMicDenied = false;
+    var built = await srxBuildStream(displayStream, document.getElementById("sr-mic").checked);
+    var combined = built.stream;
     srChunks = [];
     var options = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")
       ? { mimeType: "video/webm;codecs=vp9,opus" }
@@ -109,7 +109,13 @@ srStartBtn.addEventListener("click", async function () {
     srStopBtn.disabled = false;
     document.getElementById("sr-result").hidden = true;
     srStatusEl.className = "status";
-    srStatusEl.textContent = "Recording your screen now. Switch to the window you want to show, and press Stop when finished.";
+    if (srxMicDenied) {
+      srStatusEl.textContent = "Microphone was not allowed, so recording is running without it. Switch to the window you want to show, and press Stop when finished.";
+    } else if (document.getElementById("sr-mic").checked) {
+      srStatusEl.textContent = "Recording your screen now, microphone mixed in. Switch to the window you want to show, and press Stop when finished.";
+    } else {
+      srStatusEl.textContent = "Recording your screen now. Switch to the window you want to show, and press Stop when finished.";
+    }
   } catch (err) {
     srStatusEl.textContent = "Screen sharing was cancelled or not allowed. Press Start and pick a screen, window or tab to record.";
     srStatusEl.className = "status error";
@@ -120,11 +126,98 @@ srStopBtn.addEventListener("click", function () {
   if (srRecorder && srRecorder.state !== "inactive") { srRecorder.stop(); }
 });
 
+/* ---------- Upgrade: microphone mix-in + takes list (prefix srx) ---------- */
+function srxBuildStream(displayStream, wantMic) {
+  var videoTrack = displayStream.getVideoTracks()[0];
+  var dispAudio = displayStream.getAudioTracks()[0] || null;
+  if (!wantMic) {
+    var plain = [videoTrack];
+    if (dispAudio) { plain.push(dispAudio); }
+    return Promise.resolve({ stream: new MediaStream(plain) });
+  }
+  return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (micStream) {
+    srStreams.push(micStream);
+    var micTrack = micStream.getAudioTracks()[0] || null;
+    if (!micTrack) {
+      srxMicDenied = true;
+      var noMic = [videoTrack];
+      if (dispAudio) { noMic.push(dispAudio); }
+      return { stream: new MediaStream(noMic) };
+    }
+    if (!dispAudio) {
+      return { stream: new MediaStream([videoTrack, micTrack]) };
+    }
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) {
+      return { stream: new MediaStream([videoTrack, micTrack]) };
+    }
+    if (srxMixCtx && srxMixCtx.close) { srxMixCtx.close(); }
+    srxMixCtx = new AC();
+    var dest = srxMixCtx.createMediaStreamDestination();
+    srxMixCtx.createMediaStreamSource(new MediaStream([dispAudio])).connect(dest);
+    srxMixCtx.createMediaStreamSource(new MediaStream([micTrack])).connect(dest);
+    var mixed = dest.stream.getAudioTracks()[0];
+    return { stream: new MediaStream([videoTrack, mixed]) };
+  }).catch(function () {
+    srxMicDenied = true;
+    var fallback = [videoTrack];
+    if (dispAudio) { fallback.push(dispAudio); }
+    return { stream: new MediaStream(fallback) };
+  });
+}
+
+function srxAddTake(blob, seconds) {
+  srxTakeCount++;
+  var n = srxTakeCount;
+  var wrap = document.getElementById("srx-takes-wrap");
+  wrap.hidden = false;
+  var box = document.getElementById("srx-takes");
+  var item = document.createElement("div");
+  item.style.cssText = "border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:10px";
+  var title = document.createElement("p");
+  title.className = "kv";
+  var url = URL.createObjectURL(blob);
+  title.innerHTML = "";
+  var b = document.createElement("b");
+  b.textContent = "Take " + n + ":";
+  title.appendChild(b);
+  title.appendChild(document.createTextNode(" about " + srFormatTime(seconds) + " long · " +
+    (blob.size / (1024 * 1024)).toFixed(2) + " MB · recorded at " + new Date().toLocaleTimeString("en-IN")));
+  var vid = document.createElement("video");
+  vid.controls = true;
+  vid.playsInline = true;
+  vid.style.width = "100%";
+  vid.src = url;
+  var row = document.createElement("div");
+  row.className = "btn-row";
+  var dl = document.createElement("a");
+  dl.className = "btn small";
+  dl.href = url;
+  dl.download = "screen-recording-take-" + n + ".webm";
+  dl.textContent = "Download take " + n;
+  var rm = document.createElement("button");
+  rm.type = "button";
+  rm.className = "btn ghost small";
+  rm.textContent = "Remove";
+  rm.addEventListener("click", function () {
+    URL.revokeObjectURL(url);
+    item.remove();
+    if (!box.children.length) { wrap.hidden = true; }
+  });
+  row.appendChild(dl);
+  row.appendChild(rm);
+  item.appendChild(title);
+  item.appendChild(vid);
+  item.appendChild(row);
+  box.appendChild(item);
+}
+
 function srOnStop() {
   clearInterval(srTimerId);
   srTimerEl.textContent = "";
   srStreams.forEach(function (s) { s.getTracks().forEach(function (t) { t.stop(); }); });
   srStreams = [];
+  if (srxMixCtx && srxMixCtx.close) { srxMixCtx.close(); srxMixCtx = null; }
   srStartBtn.disabled = false;
   srStopBtn.disabled = true;
   var type = (srRecorder && srRecorder.mimeType) || "video/webm";
@@ -139,8 +232,9 @@ function srOnStop() {
   document.getElementById("sr-meta").textContent = "Length about " + srFormatTime((Date.now() - srStartedAt) / 1000) +
     ", size " + (blob.size / (1024 * 1024)).toFixed(2) + " MB, format WebM (" + type + ").";
   document.getElementById("sr-result").hidden = false;
+  srxAddTake(blob, (Date.now() - srStartedAt) / 1000);
   srStatusEl.className = "status ok";
-  srStatusEl.textContent = "Recording finished. Watch it above, then download it.";
+  srStatusEl.textContent = "Recording finished — it is in the player above and in the takes list. Record another take any time.";
 }
 </script>
 <script src="../../theme.js?v=20261106a"></script>
