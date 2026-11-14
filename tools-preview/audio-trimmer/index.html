@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Audio Trimmer - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/audio-trimmer/">
+<meta property="og:title" content="Audio Trimmer - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/audio-trimmer/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.atr-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.atr-drop.atr-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.atr-wave { width: 100%; height: 130px; display: block; margin-top: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; touch-action: none; cursor: crosshair; }
+.atr-meta { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 10px; font-size: .95rem; }
+.atr-meta strong { color: var(--navy, #0a2540); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Audio Trimmer</h1>
+<p class="tool-sub">Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV.</p>
+<div class="tool-card">
+  <p>Drop an audio file, drag the gold selection on the waveform (drag the edges to fine-tune, drag the middle to move it), set optional fade in / fade out, and export. Everything is decoded and trimmed on this device only — your file never leaves this browser tab.</p>
+
+  <div class="atr-drop" id="atr-drop">
+    <label for="atr-file"><strong>Choose an audio file</strong>, or drop it here</label>
+    <input id="atr-file" type="file" accept="audio/*">
+  </div>
+
+  <div data-result>
+    <div id="atr-editor" hidden>
+      <div class="atr-meta" id="atr-meta"></div>
+      <canvas class="atr-wave" id="atr-wave" width="900" height="130" aria-label="Waveform with a draggable trim selection"></canvas>
+
+      <div class="row2" style="margin-top:12px">
+        <div>
+          <label for="atr-start">Start (seconds)</label>
+          <input id="atr-start" type="number" min="0" step="0.001" value="0">
+        </div>
+        <div>
+          <label for="atr-end">End (seconds)</label>
+          <input id="atr-end" type="number" min="0" step="0.001" value="0">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="atr-fadein">Fade in (seconds, 0–10)</label>
+          <input id="atr-fadein" type="number" min="0" max="10" step="0.1" value="0">
+        </div>
+        <div>
+          <label for="atr-fadeout">Fade out (seconds, 0–10)</label>
+          <input id="atr-fadeout" type="number" min="0" max="10" step="0.1" value="0">
+        </div>
+      </div>
+
+      <div class="atr-meta">
+        <span>Original: <strong id="atr-dur-orig">–</strong></span>
+        <span>Selection: <strong id="atr-dur-sel">–</strong></span>
+        <span>Estimated WAV size: <strong id="atr-size-est">–</strong></span>
+        <span id="atr-out-wrap" hidden>Exported: <strong id="atr-dur-out">–</strong></span>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn ghost" id="atr-play-sel">Play selection</button>
+        <button type="button" class="btn ghost" id="atr-play-all">Play all</button>
+        <button type="button" class="btn ghost" id="atr-stop">Stop</button>
+        <button type="button" class="btn" id="atr-export">Export trimmed WAV</button>
+        <a id="atr-download" class="btn" href="#" download="audio-trimmed.wav" hidden>Download trimmed WAV</a>
+      </div>
+    </div>
+  </div>
+  <p id="atr-status" class="status" role="status">Choose or drop an audio file to trim it.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> export is <strong>WAV only</strong> (uncompressed PCM). WAV files are large but lossless and open everywhere; this tool does not offer MP3 because a good MP3 encoder is a big extra library and re-encoding to MP3 would also lose quality. Fades longer than the selection are shortened to fit, and the status line tells you when that happens. Very long files are decoded fully into memory by your browser, so an hour-long file needs a fair amount of free RAM. Nothing is uploaded — the trim happens entirely in this tab.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var atr_file = document.getElementById("atr-file");
+var atr_drop = document.getElementById("atr-drop");
+var atr_status = document.getElementById("atr-status");
+var atr_editor = document.getElementById("atr-editor");
+var atr_wave = document.getElementById("atr-wave");
+var atr_start = document.getElementById("atr-start");
+var atr_end = document.getElementById("atr-end");
+var atr_fadein = document.getElementById("atr-fadein");
+var atr_fadeout = document.getElementById("atr-fadeout");
+var atr_download = document.getElementById("atr-download");
+var atr_ctx = null;         /* AudioContext (decode + playback) */
+var atr_buf = null;         /* decoded AudioBuffer */
+var atr_base = "audio";
+var atr_sel = { start: 0, end: 0 };
+var atr_src = null;         /* current playback source node */
+var atr_outUrl = null;
+var atr_out = null;         /* { duration, bytes } after export */
+var atr_drag = null;        /* { mode: "start"|"end"|"move"|"new", anchor, origStart, origEnd } */
+
+function atr_setStatus(text, kind) {
+  atr_status.className = "status" + (kind ? " " + kind : "");
+  atr_status.textContent = text;
+}
+function atr_fmt(sec) { return sec.toFixed(3) + " s"; }
+function atr_fmtBytes(b) {
+  if (b > 1048576) { return (b / 1048576).toFixed(2) + " MB"; }
+  if (b > 1024) { return (b / 1024).toFixed(1) + " KB"; }
+  return b + " B";
+}
+function atr_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function atr_audioCtx() {
+  if (!atr_ctx) {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    atr_ctx = new AC();
+  }
+  if (atr_ctx.state === "suspended") { atr_ctx.resume(); }
+  return atr_ctx;
+}
+/* ---- WAV writer (16-bit PCM), shared shape with the normaliser ---- */
+function atr_encodeWav(buffer) {
+  var ch = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
+  var bytes = 44 + len * ch * 2;
+  var ab = new ArrayBuffer(bytes);
+  var v = new DataView(ab);
+  function wstr(off, s) { for (var i = 0; i < s.length; i++) { v.setUint8(off + i, s.charCodeAt(i)); } }
+  wstr(0, "RIFF"); v.setUint32(4, bytes - 8, true); wstr(8, "WAVE"); wstr(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, ch, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * ch * 2, true); v.setUint16(32, ch * 2, true);
+  v.setUint16(34, 16, true); wstr(36, "data"); v.setUint32(40, len * ch * 2, true);
+  var data = [];
+  for (var c = 0; c < ch; c++) { data.push(buffer.getChannelData(c)); }
+  var off = 44;
+  for (var i = 0; i < len; i++) {
+    for (var k = 0; k < ch; k++) {
+      var s = Math.max(-1, Math.min(1, data[k][i]));
+      v.setInt16(off, s < 0 ? s * 32768 : s * 32767, true);
+      off += 2;
+    }
+  }
+  return new Blob([ab], { type: "audio/wav" });
+}
+/* ---- waveform ---- */
+function atr_draw() {
+  if (!atr_buf) { return; }
+  var dpr = window.devicePixelRatio || 1;
+  var cssW = atr_wave.clientWidth || 900;
+  var W = Math.max(300, Math.round(cssW * dpr));
+  var H = 130 * dpr;
+  if (atr_wave.width !== W || atr_wave.height !== H) { atr_wave.width = W; atr_wave.height = H; }
+  var ctx = atr_wave.getContext("2d");
+  var dur = atr_buf.duration;
+  var x0 = Math.floor(atr_sel.start / dur * W);
+  var x1 = Math.ceil(atr_sel.end / dur * W);
+  ctx.clearRect(0, 0, W, H);
+  /* selection tint */
+  ctx.fillStyle = "rgba(201,162,39,.16)";
+  ctx.fillRect(x0, 0, Math.max(1, x1 - x0), H);
+  /* peaks */
+  var chData = [];
+  for (var c = 0; c < atr_buf.numberOfChannels; c++) { chData.push(atr_buf.getChannelData(c)); }
+  var n = atr_buf.length;
+  var mid = H / 2;
+  ctx.fillStyle = "#0a2540";
+  for (var x = 0; x < W; x++) {
+    var s0 = Math.floor(x / W * n), s1 = Math.max(s0 + 1, Math.floor((x + 1) / W * n));
+    var mn = 0, mx = 0;
+    for (var c = 0; c < chData.length; c++) {
+      var d = chData[c];
+      for (var i = s0; i < s1 && i < n; i++) {
+        if (d[i] < mn) { mn = d[i]; }
+        if (d[i] > mx) { mx = d[i]; }
+      }
+    }
+    ctx.fillRect(x, mid - mx * (mid - 2), 1, Math.max(1, (mx - mn) * (mid - 2)));
+  }
+  /* handles */
+  ctx.fillStyle = "#c9a227";
+  ctx.fillRect(x0 - 2 * dpr, 0, 3 * dpr, H);
+  ctx.fillRect(x1 - 1 * dpr, 0, 3 * dpr, H);
+  /* dim outside the selection */
+  ctx.fillStyle = "rgba(255,255,255,.45)";
+  if (x0 > 0) { ctx.fillRect(0, 0, x0, H); }
+  if (x1 < W) { ctx.fillRect(x1, 0, W - x1, H); }
+}
+function atr_syncReadouts() {
+  if (!atr_buf) { return; }
+  var dur = atr_buf.duration;
+  atr_sel.start = Math.max(0, Math.min(atr_sel.start, dur));
+  atr_sel.end = Math.max(atr_sel.start, Math.min(atr_sel.end, dur));
+  atr_start.value = atr_sel.start.toFixed(3);
+  atr_end.value = atr_sel.end.toFixed(3);
+  document.getElementById("atr-dur-orig").textContent = atr_fmt(dur);
+  document.getElementById("atr-dur-sel").textContent = atr_fmt(atr_sel.end - atr_sel.start);
+  var frames = Math.round((atr_sel.end - atr_sel.start) * atr_buf.sampleRate);
+  document.getElementById("atr-size-est").textContent = atr_fmtBytes(44 + frames * atr_buf.numberOfChannels * 2);
+  atr_draw();
+}
+function atr_posToTime(e) {
+  var r = atr_wave.getBoundingClientRect();
+  var frac = (e.clientX - r.left) / r.width;
+  return Math.max(0, Math.min(atr_buf.duration, frac * atr_buf.duration));
+}
+atr_wave.addEventListener("pointerdown", function (e) {
+  if (!atr_buf) { return; }
+  var r = atr_wave.getBoundingClientRect();
+  var t = atr_posToTime(e);
+  var pxPerSec = r.width / atr_buf.duration;
+  var grab = 9 / pxPerSec; /* seconds within which an edge counts as grabbed */
+  atr_wave.setPointerCapture(e.pointerId);
+  if (Math.abs(t - atr_sel.start) <= grab) { atr_drag = { mode: "start" }; }
+  else if (Math.abs(t - atr_sel.end) <= grab) { atr_drag = { mode: "end" }; }
+  else if (t > atr_sel.start && t < atr_sel.end) { atr_drag = { mode: "move", anchor: t, origStart: atr_sel.start, origEnd: atr_sel.end }; }
+  else { atr_drag = { mode: "new", anchor: t }; atr_sel.start = t; atr_sel.end = t; }
+  atr_syncReadouts();
+});
+atr_wave.addEventListener("pointermove", function (e) {
+  if (!atr_drag || !atr_buf) { return; }
+  var t = atr_posToTime(e);
+  var dur = atr_buf.duration;
+  if (atr_drag.mode === "start") { atr_sel.start = Math.min(t, atr_sel.end); }
+  else if (atr_drag.mode === "end") { atr_sel.end = Math.max(t, atr_sel.start); }
+  else if (atr_drag.mode === "move") {
+    var len = atr_drag.origEnd - atr_drag.origStart;
+    var ns = Math.max(0, Math.min(dur - len, atr_drag.origStart + (t - atr_drag.anchor)));
+    atr_sel.start = ns; atr_sel.end = ns + len;
+  } else if (atr_drag.mode === "new") {
+    atr_sel.start = Math.min(atr_drag.anchor, t);
+    atr_sel.end = Math.max(atr_drag.anchor, t);
+  }
+  atr_syncReadouts();
+});
+["pointerup", "pointercancel"].forEach(function (ev) {
+  atr_wave.addEventListener(ev, function () { atr_drag = null; });
+});
+[atr_start, atr_end].forEach(function (el) {
+  el.addEventListener("input", function () {
+    if (!atr_buf) { return; }
+    var s = parseFloat(atr_start.value), en = parseFloat(atr_end.value);
+    if (isFinite(s)) { atr_sel.start = s; }
+    if (isFinite(en)) { atr_sel.end = en; }
+    atr_syncReadouts();
+  });
+});
+window.addEventListener("resize", atr_draw);
+/* ---- playback ---- */
+function atr_stop() {
+  if (atr_src) {
+    try { atr_src.onended = null; atr_src.stop(); } catch (e) {}
+    atr_src = null;
+  }
+}
+function atr_play(from, to) {
+  if (!atr_buf) { return; }
+  atr_stop();
+  var ac = atr_audioCtx();
+  atr_src = ac.createBufferSource();
+  atr_src.buffer = atr_buf;
+  atr_src.connect(ac.destination);
+  atr_src.onended = function () { atr_src = null; };
+  atr_src.start(0, from, Math.max(0.01, to - from));
+}
+document.getElementById("atr-play-sel").addEventListener("click", function () { atr_play(atr_sel.start, atr_sel.end); });
+document.getElementById("atr-play-all").addEventListener("click", function () { atr_play(0, atr_buf.duration); });
+document.getElementById("atr-stop").addEventListener("click", atr_stop);
+/* ---- export ---- */
+document.getElementById("atr-export").addEventListener("click", function () {
+  if (!atr_buf) { return; }
+  atr_stop();
+  var dur = atr_sel.end - atr_sel.start;
+  if (dur <= 0) { atr_setStatus("The selection is empty — drag on the waveform or set a start and end time first.", "error"); return; }
+  var fIn = Math.max(0, Math.min(10, parseFloat(atr_fadein.value) || 0));
+  var fOut = Math.max(0, Math.min(10, parseFloat(atr_fadeout.value) || 0));
+  var clamped = false;
+  if (fIn + fOut > dur) {
+    var k = dur / (fIn + fOut);
+    fIn *= k; fOut *= k; clamped = true;
+  }
+  var sr = atr_buf.sampleRate;
+  var off = new OfflineAudioContext(atr_buf.numberOfChannels, Math.max(1, Math.round(dur * sr)), sr);
+  var src = off.createBufferSource();
+  src.buffer = atr_buf;
+  var g = off.createGain();
+  var t0 = 0;
+  if (fIn > 0) {
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(1, t0 + fIn);
+  } else {
+    g.gain.setValueAtTime(1, t0);
+  }
+  if (fOut > 0) {
+    g.gain.setValueAtTime(1, t0 + Math.max(0, dur - fOut));
+    g.gain.linearRampToValueAtTime(0, t0 + dur);
+  }
+  src.connect(g); g.connect(off.destination);
+  src.start(0, atr_sel.start, dur);
+  atr_setStatus("Rendering the trimmed WAV…", "");
+  off.startRendering().then(function (rendered) {
+    var blob = atr_encodeWav(rendered);
+    if (atr_outUrl) { URL.revokeObjectURL(atr_outUrl); }
+    atr_outUrl = URL.createObjectURL(blob);
+    atr_out = { duration: rendered.duration, bytes: blob.size };
+    atr_download.href = atr_outUrl;
+    atr_download.setAttribute("download", atr_base + "-trimmed.wav");
+    atr_download.hidden = false;
+    document.getElementById("atr-out-wrap").hidden = false;
+    document.getElementById("atr-dur-out").textContent = atr_fmt(rendered.duration) + " · " + atr_fmtBytes(blob.size);
+    atr_setStatus("Trimmed WAV ready: " + atr_fmt(rendered.duration) + (clamped ? ". Note: the fades were shortened so they fit inside the selection." : ""), "ok");
+  }).catch(function (err) {
+    atr_setStatus("Rendering failed in this browser: " + (err && err.message ? err.message : err), "error");
+  });
+});
+/* ---- loading ---- */
+function atr_load(file) {
+  if (!file) { return; }
+  atr_base = atr_baseName(file.name || "audio");
+  atr_stop();
+  atr_setStatus("Decoding " + (file.name || "audio") + "…", "");
+  file.arrayBuffer().then(function (ab) {
+    return atr_audioCtx().decodeAudioData(ab);
+  }).then(function (buf) {
+    atr_buf = buf;
+    atr_sel = { start: 0, end: buf.duration };
+    atr_out = null;
+    atr_download.hidden = true;
+    document.getElementById("atr-out-wrap").hidden = true;
+    document.getElementById("atr-meta").innerHTML =
+      "<span>File: <strong></strong></span><span>Duration: <strong>" + atr_fmt(buf.duration) + "</strong></span>" +
+      "<span>Sample rate: <strong>" + buf.sampleRate + " Hz</strong></span><span>Channels: <strong>" + buf.numberOfChannels + "</strong></span>";
+    document.getElementById("atr-meta").querySelector("strong").textContent = file.name || "audio";
+    atr_editor.hidden = false;
+    atr_syncReadouts();
+    atr_setStatus("Audio loaded. Drag on the waveform or type the start and end times, then export.", "ok");
+  }).catch(function (err) {
+    atr_setStatus("That file could not be decoded as audio by this browser: " + (err && err.message ? err.message : err), "error");
+  });
+}
+atr_file.addEventListener("change", function () { atr_load(atr_file.files && atr_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  atr_drop.addEventListener(ev, function (e) { e.preventDefault(); atr_drop.classList.add("atr-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  atr_drop.addEventListener(ev, function (e) { e.preventDefault(); atr_drop.classList.remove("atr-over"); });
+});
+atr_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { atr_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.atr_state = function () {
+  return {
+    hasAudio: !!atr_buf,
+    duration: atr_buf ? atr_buf.duration : 0,
+    sampleRate: atr_buf ? atr_buf.sampleRate : 0,
+    channels: atr_buf ? atr_buf.numberOfChannels : 0,
+    start: atr_sel.start,
+    end: atr_sel.end,
+    fadeIn: parseFloat(atr_fadein.value) || 0,
+    fadeOut: parseFloat(atr_fadeout.value) || 0,
+    outDuration: atr_out ? atr_out.duration : null,
+    outBytes: atr_out ? atr_out.bytes : null
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="audio-trimmer"></script>
+</body>
+</html>
