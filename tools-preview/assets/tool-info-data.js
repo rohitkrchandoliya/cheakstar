@@ -2029,7 +2029,7 @@ window.CK_TOOL_RELATED = {
   {
    "slug": "metadata-stripper",
    "name": "Metadata Stripper",
-   "description": "See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed.""
+   "description": "See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed."
   }
  ],
  "image-resizer-cropper": [
@@ -2056,7 +2056,7 @@ window.CK_TOOL_RELATED = {
   {
    "slug": "image-clipper",
    "name": "Image Clipper",
-   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.""
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
   }
  ],
  "images-to-pdf": [
@@ -2105,7 +2105,7 @@ window.CK_TOOL_RELATED = {
   {
    "slug": "image-masker",
    "name": "Image Masker",
-   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.""
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
   }
  ],
  "pdf-compressor": [
@@ -2325,7 +2325,7 @@ window.CK_TOOL_RELATED = {
   {
    "slug": "audio-trimmer",
    "name": "Audio Trimmer",
-   "description": "Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV.""
+   "description": "Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV."
   }
  ],
  "audio-merger": [
@@ -2506,7 +2506,7 @@ window.CK_TOOL_RELATED = {
   {
    "slug": "waveform-generator",
    "name": "Waveform Generator",
-   "description": "Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG.""
+   "description": "Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG."
   }
  ],
  "screen-recorder": [
