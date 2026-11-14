@@ -40,6 +40,22 @@
     <option value="1080x1080">Square - 1080 x 1080 px</option>
   </select>
 
+  <label for="irx-social">Social media preset (recommended upload sizes)</label>
+  <select id="irx-social">
+    <option value="" selected>Choose a platform size...</option>
+    <option value="1080x1080" data-ratio="1">Instagram post — square (1080 x 1080 px)</option>
+    <option value="1080x1350" data-ratio="0.8">Instagram post — portrait (1080 x 1350 px)</option>
+    <option value="1080x1920" data-ratio="0.5625">Instagram / WhatsApp story and reel (1080 x 1920 px)</option>
+    <option value="1200x630" data-ratio="1.904762">Facebook post / link image (1200 x 630 px)</option>
+    <option value="1640x924" data-ratio="1.774892">Facebook cover (1640 x 924 px)</option>
+    <option value="1600x900" data-ratio="1.777778">X (Twitter) post (1600 x 900 px)</option>
+    <option value="1500x500" data-ratio="3">X (Twitter) header (1500 x 500 px)</option>
+    <option value="1200x627" data-ratio="1.913876">LinkedIn post (1200 x 627 px)</option>
+    <option value="1280x720" data-ratio="1.777778">YouTube thumbnail (1280 x 720 px)</option>
+    <option value="1000x1500" data-ratio="0.666667">Pinterest pin (1000 x 1500 px)</option>
+  </select>
+  <p class="status">Picking a social preset fills in the width and height, unticks "keep aspect ratio", and sets the crop ratio to match, so the crop box and the output size agree.</p>
+
   <div class="row2">
     <div>
       <label for="resize-width">Width (px)</label>
@@ -63,6 +79,11 @@
     <option value="1.5">3:2</option>
     <option value="1.777778">16:9</option>
     <option value="0.777778">Passport 35 x 45 (7:9)</option>
+    <option value="0.8">Portrait 4:5 (Instagram)</option>
+    <option value="0.5625">Story / reel 9:16</option>
+    <option value="1.904762">Link image 1.91:1 (Facebook)</option>
+    <option value="0.666667">Pin 2:3 (Pinterest)</option>
+    <option value="3">Header 3:1 (X)</option>
   </select>
 
   <div class="btn-row">
@@ -73,7 +94,7 @@
   <p id="resize-status" class="status" role="status"></p>
   <p class="status">Resizing to a larger size than the original will not add detail; it only stretches the image. Passport sizes here use 300 dpi equivalents (2 x 2 inch = 600 x 600 px, 35 x 45 mm = 413 x 531 px). Always check the official photo rules of the form or authority you are submitting to.</p>
 </div>
-<div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never sent to any server.</div>
+<div class="note"><strong>Privacy:</strong> your image is processed only in this browser tab and is never sent to any server. Social sizes are the platforms' commonly recommended upload sizes; platforms revise them from time to time, so check the platform's own help page if a size must be exact for a campaign.</div>
 </main>
 <script src="../../shell.js?v=20261114"></script>
 <script src="../assets/tools.js?v=20261114"></script>
@@ -137,6 +158,31 @@ document.getElementById("preset").addEventListener("change", function (e) {
   document.getElementById("resize-width").value = parts[0];
   document.getElementById("resize-height").value = parts[1];
   document.getElementById("keep-aspect").checked = false;
+});
+
+/* ---------- Upgrade: social-media size presets (prefix irx) ---------- */
+document.getElementById("irx-social").addEventListener("change", function (e) {
+  var value = e.target.value;
+  if (!value) { return; }
+  var parts = value.split("x");
+  document.getElementById("resize-width").value = parts[0];
+  document.getElementById("resize-height").value = parts[1];
+  document.getElementById("keep-aspect").checked = false;
+  document.getElementById("preset").value = "custom";
+  var ratio = parseFloat(e.target.options[e.target.selectedIndex].getAttribute("data-ratio"));
+  if (!isNaN(ratio)) {
+    var cropSel = document.getElementById("crop-ratio");
+    for (var i = 0; i < cropSel.options.length; i++) {
+      var ov = parseFloat(cropSel.options[i].value);
+      if (!isNaN(ov) && Math.abs(ov - ratio) < 0.001) {
+        cropSel.value = cropSel.options[i].value;
+        cropSel.dispatchEvent(new Event("change", { bubbles: true }));
+        break;
+      }
+    }
+  }
+  resizeStatusEl.className = "status";
+  resizeStatusEl.textContent = "Social preset applied: " + parts[0] + " x " + parts[1] + " px. Press Apply crop & resize.";
 });
 
 document.getElementById("crop-ratio").addEventListener("change", function (e) {
