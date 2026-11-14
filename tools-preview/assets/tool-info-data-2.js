@@ -3924,6 +3924,11 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
     "slug": "qr-code-generator",
     "name": "QR Code Generator",
     "description": "Create QR codes for links, text, Wi-Fi, UPI and contact cards."
+   },
+   {
+    "slug": "color-harmony-generator",
+    "name": "Color Harmony Generator",
+    "description": "Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders."
    }
  ],
  "barcode-generator": [
@@ -4012,6 +4017,11 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
    "slug": "passport-photo-maker",
    "name": "Passport Photo Maker",
    "description": "Crop a photo to 35 x 45 mm and download it, plus a 4 x 6 inch sheet of 8 copies."
+  },
+  {
+   "slug": "image-splitter",
+   "name": "Image Splitter",
+   "description": "Cut an image into a grid of equal tiles — for Instagram carousels, puzzle posts and print layouts — and download them one by one or all together as a ZIP."
   }
  ],
  "pdf-watermark": [
@@ -4166,6 +4176,11 @@ window.CK_TOOL_RELATED = Object.assign(window.CK_TOOL_RELATED || {}, {
    "slug": "code-formatter",
    "name": "Code Formatter & Minifier",
    "description": "Format JavaScript, HTML or CSS, or minify JavaScript."
+  },
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
   }
  ],
  "password-generator": [
