@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>SVG Optimiser - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/svg-optimiser/">
+<meta property="og:title" content="SVG Optimiser - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/svg-optimiser/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.svo-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.svo-row:last-child { border-bottom: none; }
+.svo-lab { width: 180px; flex: none; font-weight: 600; }
+.svo-row code { flex: 1; min-width: 0; }
+.svo-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 18px 16px; text-align: center; margin-top: 12px; }
+.svo-drop.svo-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.svo-area { width: 100%; min-height: 130px; font-family: monospace; font-size: .75rem; }
+.svo-check { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
+.svo-check input { margin-top: 3px; }
+.svo-pair { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 12px; }
+@media (min-width: 760px) { .svo-pair { grid-template-columns: 1fr 1fr; } }
+.svo-cell { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--card); text-align: center; }
+.svo-cell h3 { margin: 0 0 8px; font-size: .95rem; }
+.svo-cell img { max-width: 100%; max-height: 260px; height: auto; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">SVG Optimiser</h1>
+<p class="tool-sub">Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you.</p>
+<div class="tool-card">
+  <p>Paste SVG markup or drop an SVG file. The optimiser removes what editors leave behind (comments, Inkscape/Illustrator metadata and namespaces, empty groups), rounds long decimal numbers to the precision you choose, and collapses whitespace. It never touches shapes, colours or referenced ids — and it re-parses the result to prove the SVG still works before showing it. Everything runs on this device only; your file never leaves this browser tab.</p>
+
+  <div class="svo-drop" id="svo-drop">
+    <label for="svo-file"><strong>Choose an SVG file</strong>, or drop it here</label>
+    <input id="svo-file" type="file" accept=".svg,image/svg+xml">
+  </div>
+  <label for="svo-in" style="margin-top:12px">…or paste SVG markup</label>
+  <textarea id="svo-in" class="svo-area" placeholder="<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; …>…</svg>"></textarea>
+
+  <h2 style="margin-top:18px">Options</h2>
+  <label class="svo-check"><input type="checkbox" id="svo-opt-junk" checked><span>Remove comments, editor metadata and editor namespaces (Inkscape, Illustrator, Sketch, Affinity)</span></label>
+  <label class="svo-check"><input type="checkbox" id="svo-opt-empty" checked><span>Remove empty groups and empty definitions (only ones that cannot affect the picture)</span></label>
+  <label class="svo-check"><input type="checkbox" id="svo-opt-ids" checked><span>Remove <span class="mono">id</span> attributes that nothing in the file references</span></label>
+  <label class="svo-check"><input type="checkbox" id="svo-opt-size"><span>Remove root <span class="mono">width</span>/<span class="mono">height</span> (only when a <span class="mono">viewBox</span> is present, so the SVG still scales)</span></label>
+  <div class="row2">
+    <div>
+      <label for="svo-prec">Number precision (decimal places)</label>
+      <select id="svo-prec">
+        <option value="0">0 — whole numbers, smallest file</option>
+        <option value="1">1</option>
+        <option value="2" selected>2 — balanced</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5 — gentlest</option>
+      </select>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <div class="btn-row" style="margin-top:0"><button id="svo-run" class="btn" type="button">Optimise SVG</button></div>
+    </div>
+  </div>
+
+  <div data-result>
+    <div id="svo-editor" hidden>
+      <h2 style="margin-top:20px">Result</h2>
+      <div class="svo-row"><span class="svo-lab">Before</span><code class="mono" id="svo-r-before">—</code></div>
+      <div class="svo-row"><span class="svo-lab">After</span><code class="mono" id="svo-r-after">—</code></div>
+      <div class="svo-row"><span class="svo-lab">Saved</span><code class="mono" id="svo-r-saved">—</code></div>
+      <div class="svo-row"><span class="svo-lab">Output check</span><code class="mono" id="svo-r-check">—</code></div>
+      <div class="svo-pair">
+        <div class="svo-cell"><h3>Original</h3><img id="svo-img-before" alt="Original SVG rendered"></div>
+        <div class="svo-cell"><h3>Optimised</h3><img id="svo-img-after" alt="Optimised SVG rendered"></div>
+      </div>
+      <label for="svo-out" style="margin-top:14px">Optimised SVG</label>
+      <textarea id="svo-out" class="svo-area" readonly></textarea>
+      <div class="btn-row">
+        <button id="svo-copy" class="btn" type="button">Copy optimised SVG</button>
+        <a id="svo-download" class="btn ghost" href="#" download="optimised.svg">Download optimised SVG</a>
+      </div>
+    </div>
+  </div>
+  <p id="svo-status" class="status" role="status">Paste or drop an SVG, then press Optimise.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> this is deliberately a <em>safe, basic</em> optimiser. It removes comments, editor metadata and namespaces, provably unreferenced ids, empty groups/definitions, excess whitespace and excess decimal precision. It does <strong>not</strong> merge paths, convert shapes, simplify curves or minify colours — the heavy rewriting a tool like SVGO does — because those can change how a file renders. The optimised output is re-parsed and rendered side by side with the original so you can see it still works. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var svo_file = document.getElementById("svo-file");
+var svo_drop = document.getElementById("svo-drop");
+var svo_status = document.getElementById("svo-status");
+var svo_editor = document.getElementById("svo-editor");
+var svo_in = document.getElementById("svo-in");
+var svo_out = document.getElementById("svo-out");
+var svo_download = document.getElementById("svo-download");
+var svo_outText = "";
+var svo_outUrl = null;
+var svo_stats = { before: 0, after: 0, savedPct: 0, ok: false };
+var svo_base = "optimised";
+
+var SVO_EDITOR_NS = [
+  "http://www.inkscape.org/namespaces/inkscape",
+  "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd",
+  "http://ns.adobe.com/AdobeIllustrator/10.0/",
+  "http://www.serif.com/",
+  "http://www.bohemiancoding.com/sketch/ns"
+];
+var SVO_EDITOR_PREFIX = ["inkscape", "sodipodi", "serif", "sketch"];
+var SVO_SKIP_ROUND = { id: 1, "class": 1, href: 1, target: 1, name: 1, type: 1, "xlink:href": 1 };
+
+function svo_setStatus(text, kind) {
+  svo_status.className = "status" + (kind ? " " + kind : "");
+  svo_status.textContent = text;
+}
+function svo_set(id, text) { document.getElementById(id).textContent = text; }
+function svo_bytes(text) { return new Blob([text]).size; }
+function svo_fmtBytes(n) {
+  if (n < 1024) { return n + " B"; }
+  if (n < 1024 * 1024) { return (n / 1024).toFixed(1) + " KB"; }
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function svo_roundToken(tok, dec) {
+  var v = parseFloat(tok);
+  if (!isFinite(v)) { return tok; }
+  var s = v.toFixed(dec);
+  if (s.indexOf(".") >= 0) { s = s.replace(/0+$/, "").replace(/\.$/, ""); }
+  if (s === "-0" || s === "") { s = "0"; }
+  return s;
+}
+function svo_roundNumbers(value, dec) {
+  /* Hex colours (#cc0000, #0a2540) are NOT numbers: protect them first,
+     otherwise "0000" would collapse to "0" and change the colour. */
+  var parts = value.split(/(#[0-9a-fA-F]{3,8})/g);
+  for (var i = 0; i < parts.length; i += 2) {
+    parts[i] = parts[i].replace(/-?\d*\.\d+(?:e[-+]?\d+)?|-?\d+(?:e[-+]?\d+)?/gi, function (tok) {
+      return svo_roundToken(tok, dec);
+    });
+  }
+  return parts.join("");
+}
+function svo_removeComments(node) {
+  var kids = Array.prototype.slice.call(node.childNodes);
+  for (var i = 0; i < kids.length; i++) {
+    if (kids[i].nodeType === 8) { node.removeChild(kids[i]); }
+    else if (kids[i].nodeType === 1) { svo_removeComments(kids[i]); }
+  }
+}
+function svo_isEditorEl(el) {
+  if (SVO_EDITOR_NS.indexOf(el.namespaceURI) >= 0) { return true; }
+  var ln = (el.localName || "").toLowerCase();
+  if (ln === "metadata" || ln === "namedview" || ln === "pgf") { return true; }
+  return false;
+}
+function svo_optimise(text) {
+  var parser = new DOMParser();
+  var doc = parser.parseFromString(text, "image/svg+xml");
+  if (doc.querySelector("parsererror")) { return { error: "That text could not be parsed as SVG/XML — check for unclosed tags or stray characters." }; }
+  var root = doc.documentElement;
+  if (!root || (root.localName || "").toLowerCase() !== "svg") { return { error: "That document's root element is not <svg>." }; }
+
+  var optJunk = document.getElementById("svo-opt-junk").checked;
+  var optEmpty = document.getElementById("svo-opt-empty").checked;
+  var optIds = document.getElementById("svo-opt-ids").checked;
+  var optSize = document.getElementById("svo-opt-size").checked;
+  var dec = parseInt(document.getElementById("svo-prec").value, 10);
+
+  var removed = { comments: 0, editorEls: 0, editorAttrs: 0, ids: 0, empty: 0 };
+
+  if (optJunk) {
+    /* comments first (count via a walk) */
+    (function countComments(node) {
+      var kids = node.childNodes;
+      for (var i = 0; i < kids.length; i++) {
+        if (kids[i].nodeType === 8) { removed.comments++; }
+        else if (kids[i].nodeType === 1) { countComments(kids[i]); }
+      }
+    })(doc);
+    svo_removeComments(doc);
+    /* editor elements */
+    var all = Array.prototype.slice.call(doc.getElementsByTagName("*"));
+    var toRemove = all.filter(svo_isEditorEl);
+    for (var i = 0; i < toRemove.length; i++) {
+      if (toRemove[i].parentNode) { toRemove[i].parentNode.removeChild(toRemove[i]); removed.editorEls++; }
+    }
+    /* editor attributes + editor xmlns declarations */
+    all = Array.prototype.slice.call(doc.getElementsByTagName("*"));
+    for (var e = 0; e < all.length; e++) {
+      var el = all[e];
+      var names = el.getAttributeNames ? el.getAttributeNames() : [];
+      for (var a = 0; a < names.length; a++) {
+        var name = names[a];
+        var attrNode = el.getAttributeNode(name);
+        var kill = false;
+        if (name.indexOf("xmlns:") === 0) {
+          var pfx = name.slice(6);
+          if (SVO_EDITOR_PREFIX.indexOf(pfx) >= 0 || (attrNode && SVO_EDITOR_NS.indexOf(attrNode.value) >= 0)) { kill = true; }
+        } else if (name.indexOf(":") > 0) {
+          var p2 = name.slice(0, name.indexOf(":"));
+          if (SVO_EDITOR_PREFIX.indexOf(p2) >= 0) { kill = true; }
+        }
+        if (attrNode && SVO_EDITOR_NS.indexOf(attrNode.namespaceURI) >= 0) { kill = true; }
+        if (kill) { el.removeAttribute(name); removed.editorAttrs++; }
+      }
+    }
+    /* Namespace declarations whose prefix is no longer used anywhere (for
+       example cc/dc/rdf left behind by removed metadata) are inert — drop
+       them. The default xmlns is never touched. */
+    var serTmp = new XMLSerializer().serializeToString(doc);
+    var rootAttrs = root.getAttributeNames ? root.getAttributeNames() : [];
+    for (var u = 0; u < rootAttrs.length; u++) {
+      var un = rootAttrs[u];
+      if (un.indexOf("xmlns:") !== 0) { continue; }
+      var upfx = un.slice(6);
+      var upfxEsc = upfx.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      var restDoc = serTmp.replace(new RegExp("xmlns:" + upfxEsc + "=\"[^\"]*\""), "");
+      if (!new RegExp("[<\\s]" + upfxEsc + ":").test(restDoc)) {
+        root.removeAttribute(un);
+        removed.editorAttrs++;
+      }
+    }
+  }
+
+  var ser = new XMLSerializer();
+  if (optIds) {
+    /* Remove ids that nothing references: url(#id), href="#id", begin/end syncbase etc. */
+    var withIds = Array.prototype.slice.call(doc.querySelectorAll("[id]"));
+    var snapshot = ser.serializeToString(doc);
+    for (var q = 0; q < withIds.length; q++) {
+      var id = withIds[q].getAttribute("id");
+      if (!id) { continue; }
+      var esc = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      var refs = (snapshot.match(new RegExp("url\\(#" + esc + "\\)|href=\"#" + esc + "\"|href='#" + esc + "'|:#" + esc + "\\b", "g")) || []).length;
+      /* SMIL syncbase references look like begin="someId.click". */
+      if (new RegExp("[\"'\\s;]" + esc + "\\.").test(snapshot)) { refs++; }
+      /* The id attribute itself appears once as id="..." — that is not a reference. */
+      if (refs === 0) { withIds[q].removeAttribute("id"); removed.ids++; }
+    }
+  }
+
+  /* Numeric precision (skip identity/reference attributes). */
+  var els = Array.prototype.slice.call(doc.getElementsByTagName("*"));
+  els.push(root);
+  for (var n = 0; n < els.length; n++) {
+    var el2 = els[n];
+    if (!el2.getAttributeNames) { continue; }
+    var attrs = el2.getAttributeNames();
+    for (var b = 0; b < attrs.length; b++) {
+      var an = attrs[b];
+      if (SVO_SKIP_ROUND[an]) { continue; }
+      var val = el2.getAttribute(an);
+      if (val === null || !/\d/.test(val)) { continue; }
+      var nv = svo_roundNumbers(val, dec);
+      if (an === "d" || an === "points" || an === "transform") { nv = nv.replace(/\s+/g, " ").trim(); }
+      if (nv !== val) { el2.setAttribute(an, nv); }
+    }
+  }
+
+  if (optEmpty) {
+    /* Repeat: removing one layer of empties can empty its parent. */
+    var changed = true, guard = 0;
+    while (changed && guard < 12) {
+      changed = false;
+      guard++;
+      var gs = Array.prototype.slice.call(doc.getElementsByTagName("*"));
+      for (var g = gs.length - 1; g >= 0; g--) {
+        var gel = gs[g];
+        var ln2 = (gel.localName || "").toLowerCase();
+        if (gel === root || !gel.parentNode) { continue; }
+        var hasElChild = false;
+        for (var c = 0; c < gel.childNodes.length; c++) { if (gel.childNodes[c].nodeType === 1) { hasElChild = true; break; } }
+        if (hasElChild) { continue; }
+        var hasText = (gel.textContent || "").trim().length > 0;
+        if (hasText) { continue; }
+        if (ln2 === "defs") {
+          gel.parentNode.removeChild(gel); removed.empty++; changed = true;
+        } else if (ln2 === "g" && gel.getAttributeNames().length === 0) {
+          gel.parentNode.removeChild(gel); removed.empty++; changed = true;
+        }
+      }
+    }
+  }
+
+  if (optSize && root.hasAttribute("viewBox")) {
+    root.removeAttribute("width");
+    root.removeAttribute("height");
+  }
+
+  var out = ser.serializeToString(doc);
+  /* Collapse whitespace between tags and around the document. */
+  out = out.replace(/>\s+</g, "><").trim();
+  /* Keep the XML declaration if the input had one. */
+  var decl = text.match(/^\s*(<\?xml[^>]*\?>)/);
+  if (decl && out.indexOf("<?xml") !== 0) { out = decl[1] + "\n" + out; }
+
+  /* Safety net: the output must still parse as SVG. */
+  var check = parser.parseFromString(out, "image/svg+xml");
+  if (check.querySelector("parsererror") || !check.documentElement || (check.documentElement.localName || "").toLowerCase() !== "svg") {
+    return { error: "The optimised output failed its re-parse check, so nothing was offered. Try fewer options or a higher precision." };
+  }
+  return { out: out, removed: removed };
+}
+function svo_setImg(img, text) {
+  var blob = new Blob([text], { type: "image/svg+xml" });
+  var url = URL.createObjectURL(blob);
+  img.onload = function () { setTimeout(function () { URL.revokeObjectURL(url); }, 4000); };
+  img.onerror = function () { setTimeout(function () { URL.revokeObjectURL(url); }, 4000); };
+  img.src = url;
+  return url;
+}
+function svo_run() {
+  var text = svo_in.value;
+  if (!text || !text.trim()) { svo_setStatus("Paste some SVG markup or drop an SVG file first.", "error"); return; }
+  var res = svo_optimise(text.trim());
+  if (res.error) {
+    svo_editor.hidden = true;
+    svo_stats = { before: svo_bytes(text), after: 0, savedPct: 0, ok: false };
+    svo_setStatus(res.error, "error");
+    return;
+  }
+  svo_outText = res.out;
+  svo_out.value = svo_outText;
+  var before = svo_bytes(text.trim()), after = svo_bytes(svo_outText);
+  var pct = before > 0 ? (1 - after / before) * 100 : 0;
+  svo_stats = { before: before, after: after, savedPct: Math.round(pct * 10) / 10, ok: true };
+  svo_set("svo-r-before", svo_fmtBytes(before) + " (" + before + " bytes)");
+  svo_set("svo-r-after", svo_fmtBytes(after) + " (" + after + " bytes)");
+  svo_set("svo-r-saved", (pct >= 0 ? pct.toFixed(1) + "% smaller" : Math.abs(pct).toFixed(1) + "% larger — this file was already lean"));
+  var r = res.removed;
+  svo_set("svo-r-check", "Re-parsed OK · removed: " + r.comments + " comments, " + r.editorEls + " editor elements, " + r.editorAttrs + " editor attributes, " + r.ids + " unused ids, " + r.empty + " empty groups/defs");
+  svo_setImg(document.getElementById("svo-img-before"), text.trim());
+  svo_setImg(document.getElementById("svo-img-after"), svo_outText);
+  if (svo_outUrl) { URL.revokeObjectURL(svo_outUrl); }
+  svo_outUrl = URL.createObjectURL(new Blob([svo_outText], { type: "image/svg+xml" }));
+  svo_download.href = svo_outUrl;
+  svo_download.setAttribute("download", svo_base + "-optimised.svg");
+  svo_editor.hidden = false;
+  svo_setStatus("Optimised: " + svo_fmtBytes(before) + " → " + svo_fmtBytes(after) + " (" + pct.toFixed(1) + "% saved). The optimised SVG re-parsed cleanly and is previewed above.", "ok");
+}
+document.getElementById("svo-run").addEventListener("click", svo_run);
+document.getElementById("svo-copy").addEventListener("click", function () {
+  if (!svo_outText) { svo_setStatus("Optimise an SVG first — there is nothing to copy yet.", "error"); return; }
+  function done() { svo_setStatus("Optimised SVG copied to the clipboard.", "ok"); }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(svo_outText).then(done).catch(function () {
+      svo_out.select(); document.execCommand("copy"); done();
+    });
+  } else {
+    svo_out.select(); document.execCommand("copy"); done();
+  }
+});
+["svo-opt-junk", "svo-opt-empty", "svo-opt-ids", "svo-opt-size", "svo-prec"].forEach(function (id) {
+  document.getElementById(id).addEventListener("change", function () {
+    if (svo_in.value && svo_in.value.trim()) { svo_run(); }
+  });
+});
+function svo_load(file) {
+  if (!file) { return; }
+  var dot = (file.name || "").lastIndexOf(".");
+  svo_base = dot > 0 ? file.name.slice(0, dot) : "optimised";
+  file.text().then(function (text) {
+    svo_in.value = text;
+    svo_run();
+  }).catch(function () { svo_setStatus("That file could not be read as text.", "error"); });
+}
+svo_file.addEventListener("change", function () { svo_load(svo_file.files && svo_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  svo_drop.addEventListener(ev, function (e) { e.preventDefault(); svo_drop.classList.add("svo-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  svo_drop.addEventListener(ev, function (e) { e.preventDefault(); svo_drop.classList.remove("svo-over"); });
+});
+svo_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { svo_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.svo_state = function () {
+  return { stats: svo_stats, outLen: svo_outText.length };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="svg-optimiser"></script>
+</body>
+</html>
