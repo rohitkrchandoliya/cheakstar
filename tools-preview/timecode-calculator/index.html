@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Timecode Calculator - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/timecode-calculator/">
+<meta property="og:title" content="Timecode Calculator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/timecode-calculator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.tcc-out { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 12px; background: var(--card); }
+.tcc-out h3 { margin: 0 0 8px; font-size: 1rem; color: var(--navy, #0a2540); }
+.tcc-grid { display: flex; flex-wrap: wrap; gap: 6px 26px; font-size: .98rem; }
+.tcc-grid strong { color: var(--navy, #0a2540); font-variant-numeric: tabular-nums; }
+.tcc-mono { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Timecode Calculator</h1>
+<p class="tool-sub">Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate.</p>
+<div class="tool-card">
+  <p>Pick a frame rate, then type in any box — every result updates live. Drop-frame rates (29.97 and 59.94) skip frame <em>numbers</em> exactly the way broadcast timecode does, so the frame counts here match your editor. Everything is calculated locally in this tab.</p>
+
+  <div class="row2" style="margin-top:12px">
+    <div>
+      <label for="tcc-fps">Frame rate</label>
+      <select id="tcc-fps">
+        <option value="23.976">23.976 fps (24000/1001)</option>
+        <option value="24">24 fps (film)</option>
+        <option value="25" selected>25 fps (PAL)</option>
+        <option value="29.97df">29.97 fps — drop-frame</option>
+        <option value="30">30 fps</option>
+        <option value="50">50 fps</option>
+        <option value="59.94df">59.94 fps — drop-frame</option>
+        <option value="60">60 fps</option>
+      </select>
+    </div>
+    <div>
+      <label for="tcc-tc">Timecode → frames</label>
+      <input id="tcc-tc" class="tcc-mono" type="text" value="00:01:00:00" placeholder="HH:MM:SS:FF">
+    </div>
+  </div>
+  <div class="tcc-out">
+    <h3>That timecode is</h3>
+    <div class="tcc-grid">
+      <span>Frames: <strong id="tcc-tc-frames">–</strong></span>
+      <span>Real time: <strong id="tcc-tc-secs">–</strong></span>
+    </div>
+  </div>
+
+  <div class="row2" style="margin-top:14px">
+    <div>
+      <label for="tcc-frames">Frames → timecode</label>
+      <input id="tcc-frames" type="number" min="0" step="1" value="1500">
+    </div>
+    <div>
+      <label>Result</label>
+      <div class="tcc-grid" style="margin-top:8px">
+        <span>Timecode: <strong id="tcc-f-tc">–</strong></span>
+        <span>Real time: <strong id="tcc-f-secs">–</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:22px">Add or subtract two timecodes</h2>
+  <div class="row2">
+    <div>
+      <label for="tcc-a">Timecode A</label>
+      <input id="tcc-a" class="tcc-mono" type="text" value="00:10:00:00">
+    </div>
+    <div>
+      <label for="tcc-b">Timecode B</label>
+      <input id="tcc-b" class="tcc-mono" type="text" value="00:02:30:00">
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label for="tcc-op">Operation</label>
+      <select id="tcc-op">
+        <option value="add" selected>A + B</option>
+        <option value="sub">A − B</option>
+      </select>
+    </div>
+    <div>
+      <label>Result</label>
+      <div class="tcc-grid" style="margin-top:8px">
+        <span>Timecode: <strong id="tcc-r-tc">–</strong></span>
+        <span>Frames: <strong id="tcc-r-frames">–</strong></span>
+        <span>Real time: <strong id="tcc-r-secs">–</strong></span>
+      </div>
+    </div>
+  </div>
+  <div class="tcc-out">
+    <h3>Duration between A and B</h3>
+    <div class="tcc-grid">
+      <span>Timecode: <strong id="tcc-d-tc">–</strong></span>
+      <span>Frames: <strong id="tcc-d-frames">–</strong></span>
+      <span>Real time: <strong id="tcc-d-secs">–</strong></span>
+    </div>
+  </div>
+
+  <p id="tcc-status" class="status" role="status">Results update as you type.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> drop-frame timecode does not drop any actual frames — it skips frame <em>numbers</em> (two numbers at the start of most minutes at 29.97, four at 59.94) so the clock stays in step with real time. At 29.97 drop-frame, one hour of timecode is 107,892 frames, not 108,000. "Real time" is the true playback duration: frame count divided by the exact rate (for example 30000/1001 for 29.97). Non-drop 23.976 counts frames at 24, as editors do.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+/* Rates: nom = the counting rate (frames are numbered at this rate),
+   exact = the true playback rate, drop = frame numbers skipped at the
+   start of a non-tenth minute (0 for non-drop rates). */
+var tcc_RATES = {
+  "23.976": { nom: 24, exact: 24000 / 1001, drop: 0 },
+  "24": { nom: 24, exact: 24, drop: 0 },
+  "25": { nom: 25, exact: 25, drop: 0 },
+  "29.97df": { nom: 30, exact: 30000 / 1001, drop: 2 },
+  "30": { nom: 30, exact: 30, drop: 0 },
+  "50": { nom: 50, exact: 50, drop: 0 },
+  "59.94df": { nom: 60, exact: 60000 / 1001, drop: 4 },
+  "60": { nom: 60, exact: 60, drop: 0 }
+};
+function tcc_pad(n) { return (n < 10 ? "0" : "") + n; }
+function tcc_parse(str) {
+  if (typeof str !== "string") { return null; }
+  var m = /^\s*(\d+):(\d{1,2}):(\d{1,2})[:;](\d{1,2})\s*$/.exec(str);
+  if (!m) { return null; }
+  return { h: parseInt(m[1], 10), m: parseInt(m[2], 10), s: parseInt(m[3], 10), f: parseInt(m[4], 10) };
+}
+function tcc_tcToFrames(str, key) {
+  var rate = tcc_RATES[key];
+  var p = tcc_parse(str);
+  if (!rate || !p) { return null; }
+  if (p.m > 59 || p.s > 59 || p.f >= rate.nom) { return null; }
+  var totalMinutes = p.h * 60 + p.m;
+  var frames = ((p.h * 3600 + p.m * 60 + p.s) * rate.nom) + p.f;
+  if (rate.drop) {
+    frames -= rate.drop * (totalMinutes - Math.floor(totalMinutes / 10));
+  }
+  return frames;
+}
+function tcc_framesToTc(frames, key) {
+  var rate = tcc_RATES[key];
+  if (!rate || !isFinite(frames)) { return null; }
+  frames = Math.round(frames);
+  var sign = "";
+  if (frames < 0) { sign = "-"; frames = -frames; }
+  var nominal = frames;
+  if (rate.drop) {
+    var blockFrames = rate.nom * 600 - rate.drop * 9;   /* frames in 10 minutes of DF timecode */
+    var firstMinute = rate.nom * 60;                    /* the tenth minute drops nothing */
+    var blocks = Math.floor(frames / blockFrames);
+    var rem = frames % blockFrames;
+    var extra = rate.drop * 9 * blocks;
+    if (rem >= firstMinute) {
+      extra += rate.drop * (1 + Math.floor((rem - firstMinute) / (firstMinute - rate.drop)));
+    }
+    nominal = frames + extra;
+  }
+  var f = nominal % rate.nom;
+  var totalSec = Math.floor(nominal / rate.nom);
+  var s = totalSec % 60, m = Math.floor(totalSec / 60) % 60, h = Math.floor(totalSec / 3600);
+  var sep = rate.drop ? ";" : ":";
+  return sign + tcc_pad(h) + ":" + tcc_pad(m) + ":" + tcc_pad(s) + sep + tcc_pad(f);
+}
+function tcc_realSecs(frames, key) {
+  var rate = tcc_RATES[key];
+  return rate ? frames / rate.exact : null;
+}
+/* ---- UI ---- */
+var tcc_fps = document.getElementById("tcc-fps");
+var tcc_status = document.getElementById("tcc-status");
+function tcc_set(id, text) { document.getElementById(id).textContent = text; }
+function tcc_fmtSecs(x) { return x === null || !isFinite(x) ? "–" : x.toFixed(3) + " s"; }
+function tcc_update() {
+  var key = tcc_fps.value;
+  var bad = [];
+  var f1 = tcc_tcToFrames(document.getElementById("tcc-tc").value, key);
+  if (f1 === null) { bad.push("the timecode"); tcc_set("tcc-tc-frames", "–"); tcc_set("tcc-tc-secs", "–"); }
+  else { tcc_set("tcc-tc-frames", String(f1)); tcc_set("tcc-tc-secs", tcc_fmtSecs(tcc_realSecs(f1, key))); }
+  var frIn = parseFloat(document.getElementById("tcc-frames").value);
+  if (!isFinite(frIn) || frIn < 0) { bad.push("the frame count"); tcc_set("tcc-f-tc", "–"); tcc_set("tcc-f-secs", "–"); }
+  else { tcc_set("tcc-f-tc", tcc_framesToTc(frIn, key)); tcc_set("tcc-f-secs", tcc_fmtSecs(tcc_realSecs(frIn, key))); }
+  var fa = tcc_tcToFrames(document.getElementById("tcc-a").value, key);
+  var fb = tcc_tcToFrames(document.getElementById("tcc-b").value, key);
+  if (fa === null || fb === null) {
+    bad.push("A or B");
+    tcc_set("tcc-r-tc", "–"); tcc_set("tcc-r-frames", "–"); tcc_set("tcc-r-secs", "–");
+    tcc_set("tcc-d-tc", "–"); tcc_set("tcc-d-frames", "–"); tcc_set("tcc-d-secs", "–");
+  } else {
+    var res = document.getElementById("tcc-op").value === "add" ? fa + fb : fa - fb;
+    tcc_set("tcc-r-tc", tcc_framesToTc(res, key));
+    tcc_set("tcc-r-frames", String(res));
+    tcc_set("tcc-r-secs", tcc_fmtSecs(tcc_realSecs(res, key)));
+    var dur = Math.abs(fa - fb);
+    tcc_set("tcc-d-tc", tcc_framesToTc(dur, key));
+    tcc_set("tcc-d-frames", String(dur));
+    tcc_set("tcc-d-secs", tcc_fmtSecs(tcc_realSecs(dur, key)));
+  }
+  tcc_status.className = "status" + (bad.length ? " error" : "");
+  tcc_status.textContent = bad.length
+    ? "Check " + bad.join(" and ") + " — use HH:MM:SS:FF with minutes/seconds under 60 and frames under the rate."
+    : "Results update as you type.";
+}
+["tcc-tc", "tcc-frames", "tcc-a", "tcc-b"].forEach(function (id) {
+  document.getElementById(id).addEventListener("input", tcc_update);
+});
+document.getElementById("tcc-op").addEventListener("change", tcc_update);
+tcc_fps.addEventListener("change", tcc_update);
+tcc_update();
+window.tcc_api = { tcToFrames: tcc_tcToFrames, framesToTc: tcc_framesToTc, realSecs: tcc_realSecs, rates: tcc_RATES };
+window.tcc_state = function () {
+  return {
+    fps: tcc_fps.value,
+    tcFrames: document.getElementById("tcc-tc-frames").textContent,
+    fTc: document.getElementById("tcc-f-tc").textContent,
+    rTc: document.getElementById("tcc-r-tc").textContent,
+    dFrames: document.getElementById("tcc-d-frames").textContent
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="timecode-calculator"></script>
+</body>
+</html>
