@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Artwork Enhancer - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/artwork-enhancer/">
+<meta property="og:title" content="Artwork Enhancer - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/artwork-enhancer/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.aen-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.aen-drop.aen-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.aen-pair { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+@media (min-width: 720px) { .aen-pair { grid-template-columns: 1fr 1fr; } }
+.aen-cell { border: 1px solid var(--line); border-radius: 10px; padding: 10px; text-align: center; background: var(--card); }
+.aen-cell canvas { max-width: 100%; height: auto; }
+.aen-cell p { margin: 0 0 8px; font-weight: 600; }
+.aen-slider-val { font-weight: 700; }
+input[type="range"] { width: 100%; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Artwork Enhancer</h1>
+<p class="tool-sub">Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic.</p>
+<div class="tool-card">
+  <p>Perfectly flat digital colour can look sterile. Painters have long fixed that by laying a layer of random <strong>colour noise</strong> over the artwork in <strong>overlay</strong> blend mode: every pixel gets a tiny random push toward a different colour, so flat areas gain the subtle, living texture of paper, canvas or film grain. The classic recipe uses just <strong>2% opacity</strong> — enough to feel, not enough to see. Your image is processed on this device only and never leaves this browser tab.</p>
+
+  <div class="aen-drop" id="aen-drop">
+    <label for="aen-file"><strong>Choose an artwork image</strong>, or drop it here</label>
+    <input id="aen-file" type="file" accept="image/*">
+  </div>
+
+  <div data-result>
+    <div id="aen-editor" hidden>
+      <div class="row2" style="margin-top:16px">
+        <div>
+          <label for="aen-opacity">Noise opacity: <span class="aen-slider-val mono" id="aen-opacity-val">2%</span></label>
+          <input id="aen-opacity" type="range" min="0" max="30" step="0.5" value="2" aria-describedby="aen-opacity-val">
+        </div>
+        <div>
+          <label for="aen-scale">Noise scale: <span class="aen-slider-val mono" id="aen-scale-val">2 px blocks</span></label>
+          <input id="aen-scale" type="range" min="1" max="16" step="1" value="2" aria-describedby="aen-scale-val">
+        </div>
+      </div>
+      <p style="margin-top:6px">Opacity is how strong the grain is (2% is the classic subtle recipe; push it up to see the effect clearly). Scale is the size of each noise block — 1 is fine film grain, higher values are chunkier, more painterly blocks.</p>
+      <div class="btn-row">
+        <button id="aen-reroll" class="btn ghost small" type="button">New grain (re-roll the noise)</button>
+      </div>
+      <div class="aen-pair">
+        <div class="aen-cell"><p>Before</p><canvas id="aen-before" aria-label="Original artwork"></canvas></div>
+        <div class="aen-cell"><p>After — with grain</p><canvas id="aen-after" aria-label="Artwork with colour-noise grain applied"></canvas></div>
+      </div>
+      <div class="btn-row"><a id="aen-download" class="download" href="#" download="artwork-enhanced.png">Download enhanced PNG</a></div>
+    </div>
+  </div>
+  <p id="aen-status" class="status" role="status">Choose or drop an image to add grain to it.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the noise is generated fresh for your image in the browser — every pixel block gets a fully random colour, drawn enlarged so blocks stay crisp, then blended in overlay mode at your chosen opacity. Images are worked at up to 2048 px on the longest side (a very large original is scaled down first, which is also the size of the download) so the grain stays fast even on a phone. Moving a slider keeps the same grain pattern so you can judge strength fairly; “New grain” deals a fresh pattern. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var aen_file = document.getElementById("aen-file");
+var aen_drop = document.getElementById("aen-drop");
+var aen_status = document.getElementById("aen-status");
+var aen_editor = document.getElementById("aen-editor");
+var aen_opacity = document.getElementById("aen-opacity");
+var aen_scale = document.getElementById("aen-scale");
+var aen_opacityVal = document.getElementById("aen-opacity-val");
+var aen_scaleVal = document.getElementById("aen-scale-val");
+var aen_before = document.getElementById("aen-before");
+var aen_after = document.getElementById("aen-after");
+var aen_download = document.getElementById("aen-download");
+var AEN_MAX_SIDE = 2048;
+var aen_src = document.createElement("canvas");  /* capped original */
+var aen_noise = document.createElement("canvas"); /* current grain, at block resolution */
+var aen_has = false;
+var aen_outUrl = null;
+var aen_timer = null;
+var aen_base = "artwork";
+
+function aen_setStatus(text, kind) {
+  aen_status.className = "status" + (kind ? " " + kind : "");
+  aen_status.textContent = text;
+}
+function aen_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+/* Deal a fresh random colour-noise pattern at block resolution for the
+   current scale — one block per pixel of this small canvas. */
+function aen_rollNoise() {
+  var scale = parseInt(aen_scale.value, 10) || 1;
+  var nw = Math.max(1, Math.ceil(aen_src.width / scale));
+  var nh = Math.max(1, Math.ceil(aen_src.height / scale));
+  aen_noise.width = nw;
+  aen_noise.height = nh;
+  var nctx = aen_noise.getContext("2d");
+  var img = nctx.createImageData(nw, nh);
+  var d = img.data;
+  for (var i = 0; i < d.length; i += 4) {
+    d[i] = (Math.random() * 256) | 0;
+    d[i + 1] = (Math.random() * 256) | 0;
+    d[i + 2] = (Math.random() * 256) | 0;
+    d[i + 3] = 255;
+  }
+  nctx.putImageData(img, 0, 0);
+}
+function aen_render() {
+  if (!aen_has) { return; }
+  var opacity = parseFloat(aen_opacity.value) / 100;
+  aen_opacityVal.textContent = aen_opacity.value + "%";
+  aen_scaleVal.textContent = aen_scale.value + (parseInt(aen_scale.value, 10) === 1 ? " px block" : " px blocks");
+  aen_before.width = aen_src.width;
+  aen_before.height = aen_src.height;
+  aen_before.getContext("2d").drawImage(aen_src, 0, 0);
+  aen_after.width = aen_src.width;
+  aen_after.height = aen_src.height;
+  var ctx = aen_after.getContext("2d");
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.drawImage(aen_src, 0, 0);
+  ctx.globalCompositeOperation = "overlay";
+  ctx.globalAlpha = opacity;
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(aen_noise, 0, 0, aen_src.width, aen_src.height);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+  if (aen_outUrl) { URL.revokeObjectURL(aen_outUrl); aen_outUrl = null; }
+  aen_after.toBlob(function (blob) {
+    if (!blob) { aen_setStatus("The browser could not create the enhanced PNG.", "error"); return; }
+    aen_outUrl = URL.createObjectURL(blob);
+    aen_download.href = aen_outUrl;
+    aen_download.setAttribute("download", aen_base + "-enhanced.png");
+  }, "image/png");
+}
+function aen_schedule(roll) {
+  if (aen_timer) { clearTimeout(aen_timer); }
+  aen_timer = setTimeout(function () {
+    if (roll) { aen_rollNoise(); }
+    aen_render();
+  }, 90);
+}
+function aen_load(file) {
+  if (!file) { return; }
+  aen_base = aen_baseName(file.name || "artwork");
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var scaleDown = Math.min(1, AEN_MAX_SIDE / Math.max(w, h));
+    aen_src.width = Math.max(1, Math.round(w * scaleDown));
+    aen_src.height = Math.max(1, Math.round(h * scaleDown));
+    aen_src.getContext("2d").drawImage(img, 0, 0, aen_src.width, aen_src.height);
+    URL.revokeObjectURL(url);
+    aen_has = true;
+    aen_editor.hidden = false;
+    aen_rollNoise();
+    aen_render();
+    aen_setStatus("Artwork loaded at " + aen_src.width + " × " + aen_src.height + " px" + (scaleDown < 1 ? " (scaled down from " + w + " × " + h + " for speed)" : "") + ". Grain applied at " + aen_opacity.value + "% opacity.", "ok");
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    aen_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+}
+aen_file.addEventListener("change", function () { aen_load(aen_file.files && aen_file.files[0]); });
+aen_opacity.addEventListener("input", function () { aen_schedule(false); });
+aen_scale.addEventListener("input", function () { aen_schedule(true); });
+document.getElementById("aen-reroll").addEventListener("click", function () { aen_rollNoise(); aen_render(); });
+["dragenter", "dragover"].forEach(function (ev) {
+  aen_drop.addEventListener(ev, function (e) { e.preventDefault(); aen_drop.classList.add("aen-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  aen_drop.addEventListener(ev, function (e) { e.preventDefault(); aen_drop.classList.remove("aen-over"); });
+});
+aen_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { aen_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="artwork-enhancer"></script>
+</body>
+</html>
