@@ -21,9 +21,9 @@
 <main class="wrap tool-wrap ck-main">
 <p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
 <h1 class="tool-title">Image Information</h1>
-<p class="tool-sub">See an image's size, dimensions and the camera details (EXIF) stored inside it.</p>
+<p class="tool-sub">See an image's size, dimensions, colour details, GPS location and the camera details (EXIF) stored inside it.</p>
 <div class="tool-card">
-  <p>Everything is read on this device. For any image you get its file details; for photos you also get the EXIF data recorded by the camera — model, date taken, exposure settings and sometimes the GPS location.</p>
+  <p>Everything is read on this device. For any image you get its file details plus a colour panel (profile, bit depth, alpha channel, gamut); for photos you also get the EXIF data recorded by the camera — model, date taken, exposure settings and, in its own panel, the GPS location with a map link.</p>
 
   <label for="info-file">Choose an image</label>
   <input id="info-file" type="file" accept="image/*">
@@ -33,9 +33,22 @@
   <div class="result" id="info-result" hidden data-result>
     <p class="big">Image information</p>
     <div id="info-basic"></div>
+    <h3 style="margin-top:16px">Colour</h3>
+    <div id="iin-color"></div>
+    <h3 style="margin-top:16px">Location (GPS)</h3>
+    <div id="iin-gps"></div>
     <h3 style="margin-top:16px">Camera details (EXIF)</h3>
     <div id="info-exif"></div>
     <p class="status" id="info-exif-note"></p>
+    <h3 style="margin-top:16px">Open in another tool</h3>
+    <p>Carry on working with this image in a related tool. The tool opens fresh, so you will pick the file once more there — browsers do not let pages hand files to each other.</p>
+    <div class="btn-row">
+      <a class="btn ghost small" href="../color-picker-from-image/">Pick a colour from it</a>
+      <a class="btn ghost small" href="../image-converter/">Convert its format</a>
+      <a class="btn ghost small" href="../image-resizer-cropper/">Resize or crop it</a>
+      <a class="btn ghost small" href="../collage-maker/">Put it in a collage</a>
+      <a class="btn ghost small" href="../favicon-generator/">Make a favicon from it</a>
+    </div>
   </div>
   <p id="info-status" class="status" role="status"></p>
 </div>
@@ -94,6 +107,177 @@ function formatExposure(v) {
   return v + " s";
 }
 
+/* ---------- Upgrade: colour panel + GPS panel (prefix iin) ---------- */
+function iinGpsNone(message) {
+  var box = document.getElementById("iin-gps");
+  box.innerHTML = "";
+  var p = document.createElement("p");
+  p.className = "kv";
+  p.textContent = message;
+  box.appendChild(p);
+}
+function iinGpsShow(lat, lon) {
+  var box = document.getElementById("iin-gps");
+  box.innerHTML = "";
+  var gLink = document.createElement("a");
+  gLink.href = "https://www.google.com/maps/search/?api=1&query=" + lat.toFixed(6) + "," + lon.toFixed(6);
+  gLink.target = "_blank";
+  gLink.rel = "noopener";
+  gLink.textContent = "Open on Google Maps";
+  var oLink = document.createElement("a");
+  oLink.href = "https://www.openstreetmap.org/?mlat=" + lat.toFixed(6) + "&mlon=" + lon.toFixed(6) + "#map=15/" + lat.toFixed(6) + "/" + lon.toFixed(6);
+  oLink.target = "_blank";
+  oLink.rel = "noopener";
+  oLink.textContent = "Open on OpenStreetMap";
+  addRow(box, "Latitude", lat.toFixed(6));
+  addRow(box, "Longitude", lon.toFixed(6));
+  addRow(box, "Map", gLink);
+  addRow(box, "Map", oLink);
+  var note = document.createElement("p");
+  note.className = "status";
+  note.textContent = "This location was recorded by the camera or phone that took the photo. Think before sharing the original file — anyone who has it can read this too.";
+  box.appendChild(note);
+}
+
+/* Header facts read straight from the file bytes: PNG chunks, JPEG markers, WebP header. */
+function iinHeaderInfo(bytes, type) {
+  var out = {};
+  var u8 = new Uint8Array(bytes);
+  function u32be(o) { return ((u8[o] << 24) | (u8[o + 1] << 16) | (u8[o + 2] << 8) | u8[o + 3]) >>> 0; }
+  if (u8.length > 8 && u8[0] === 0x89 && u8[1] === 0x50) {
+    out.kind = "PNG";
+    var types = { 0: "Greyscale", 2: "RGB (truecolour)", 3: "Palette (indexed colour)", 4: "Greyscale with alpha", 6: "RGB with alpha (RGBA)" };
+    var off = 8;
+    while (off + 12 <= u8.length) {
+      var len = u32be(off);
+      var name = String.fromCharCode(u8[off + 4], u8[off + 5], u8[off + 6], u8[off + 7]);
+      if (name === "IHDR") {
+        out.bitDepth = u8[off + 8 + 8];
+        out.colorType = types[u8[off + 8 + 9]] || ("Code " + u8[off + 8 + 9]);
+        out.alphaHeader = (u8[off + 8 + 9] === 4 || u8[off + 8 + 9] === 6);
+      } else if (name === "tRNS") {
+        out.alphaHeader = true;
+        out.trns = true;
+      } else if (name === "iCCP") {
+        var end = off + 8;
+        var nm = "";
+        while (end < off + 8 + len && u8[end] !== 0) { nm += String.fromCharCode(u8[end]); end++; }
+        out.iccName = nm || "Embedded ICC profile";
+      } else if (name === "gAMA") {
+        out.gamma = (u32be(off + 8) / 100000).toFixed(3);
+      }
+      if (name === "IEND") { break; }
+      off += 12 + len;
+    }
+    return out;
+  }
+  if (u8.length > 4 && u8[0] === 0xFF && u8[1] === 0xD8) {
+    out.kind = "JPEG";
+    var pos = 2;
+    while (pos + 4 <= u8.length) {
+      if (u8[pos] !== 0xFF) { break; }
+      var marker = u8[pos + 1];
+      var segLen = (u8[pos + 2] << 8) | u8[pos + 3];
+      if (marker === 0xC0 || marker === 0xC1 || marker === 0xC2) {
+        out.bitDepth = u8[pos + 4];
+        out.components = u8[pos + 9];
+      }
+      if (marker === 0xE2 && segLen > 14) {
+        var sig = "";
+        for (var q = 0; q < 11; q++) { sig += String.fromCharCode(u8[pos + 4 + q]); }
+        if (sig.indexOf("ICC_PROFILE") === 0) { out.iccName = "Embedded ICC profile"; }
+      }
+      if (marker === 0xDA) { break; }
+      pos += 2 + segLen;
+    }
+    return out;
+  }
+  if (type === "image/webp" || (u8.length > 12 && u8[8] === 0x57 && u8[9] === 0x45 && u8[10] === 0x42 && u8[11] === 0x50)) {
+    out.kind = "WebP";
+    var wpos = 12;
+    while (wpos + 8 <= u8.length) {
+      var cname = String.fromCharCode(u8[wpos], u8[wpos + 1], u8[wpos + 2], u8[wpos + 3]);
+      var csize = (u8[wpos + 4] | (u8[wpos + 5] << 8) | (u8[wpos + 6] << 16) | (u8[wpos + 7] << 24)) >>> 0;
+      if (cname === "VP8X") { out.alphaHeader = !!(u8[wpos + 8] & 0x10); }
+      if (cname === "ICCP") { out.iccName = "Embedded ICC profile"; }
+      if (cname === "VP8L") { out.bitDepth = 8; }
+      wpos += 8 + csize + (csize % 2);
+    }
+    return out;
+  }
+  return out;
+}
+
+function iinColourPanel(file, img) {
+  var box = document.getElementById("iin-color");
+  box.innerHTML = "";
+  file.arrayBuffer().then(function (buf) {
+    var head = iinHeaderInfo(buf, file.type);
+    // pixel sampling on a small copy
+    var scale = Math.min(1, 200 / Math.max(img.naturalWidth, img.naturalHeight));
+    var cw = Math.max(1, Math.round(img.naturalWidth * scale));
+    var ch = Math.max(1, Math.round(img.naturalHeight * scale));
+    var cv = document.createElement("canvas");
+    cv.width = cw; cv.height = ch;
+    var cx = cv.getContext("2d", { willReadFrequently: true });
+    var alphaUsed = null, edgeShare = null, avgHex = "";
+    if (cx) {
+      cx.drawImage(img, 0, 0, cw, ch);
+      var d = cx.getImageData(0, 0, cw, ch).data;
+      var totalPx = cw * ch, trans = 0, semi = 0, edge = 0, sr = 0, sg = 0, sb = 0;
+      for (var i = 0; i < d.length; i += 4) {
+        if (d[i + 3] === 0) { trans++; }
+        else if (d[i + 3] < 255) { semi++; }
+        var mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]);
+        if (mx >= 250 || (mx - mn >= 245)) { edge++; }
+        sr += d[i]; sg += d[i + 1]; sb += d[i + 2];
+      }
+      alphaUsed = { trans: (trans / totalPx) * 100, semi: (semi / totalPx) * 100 };
+      edgeShare = (edge / totalPx) * 100;
+      avgHex = "#" + [sr / totalPx, sg / totalPx, sb / totalPx].map(function (v) {
+        var n = Math.max(0, Math.min(255, Math.round(v)));
+        return (n < 16 ? "0" : "") + n.toString(16);
+      }).join("").toUpperCase();
+    }
+    if (head.iccName) {
+      addRow(box, "Colour profile", head.iccName + " (embedded in the file)");
+    } else {
+      addRow(box, "Colour profile", "None embedded — the browser displays the image as sRGB");
+    }
+    if (head.bitDepth) {
+      addRow(box, "Bit depth", head.bitDepth + " bits per channel" + (head.kind ? " (from the " + head.kind + " file header)" : ""));
+    } else {
+      addRow(box, "Bit depth", "Not stored in a readable header — the browser decodes the image to 8 bits per channel");
+    }
+    if (head.colorType) {
+      addRow(box, "Colour type", head.colorType);
+    } else if (head.kind === "JPEG") {
+      addRow(box, "Colour type", "YCbCr inside the file (the usual JPEG storage), shown as RGB");
+    } else {
+      addRow(box, "Colour type", "Shown by the browser as RGB" + (head.alphaHeader ? " with alpha" : ""));
+    }
+    if (head.alphaHeader) {
+      addRow(box, "Alpha channel", "Yes — the file format stores one" + (head.trns ? " (via a tRNS chunk)" : ""));
+    } else if (alphaUsed) {
+      addRow(box, "Alpha channel", "No alpha channel found in the header");
+    }
+    if (alphaUsed) {
+      addRow(box, "Transparency actually used", alphaUsed.trans.toFixed(1) + "% of pixels fully transparent, " + alphaUsed.semi.toFixed(1) + "% partly transparent");
+    }
+    if (avgHex) {
+      addRow(box, "Average colour", avgHex);
+    }
+    if (head.gamma) {
+      addRow(box, "Stored gamma (gAMA)", head.gamma);
+    }
+    if (edgeShare !== null) {
+      addRow(box, "Gamut", "Displayed in sRGB. " + edgeShare.toFixed(1) + "% of sampled pixels sit at the very edge of sRGB (fully saturated or clipped) — any colour wider than sRGB there has already been clipped to fit.");
+    }
+  }).catch(function () {
+    addRow(box, "Colour", "The file bytes could not be re-read for the colour panel.");
+  });
+}
+
 infoFileInput.addEventListener("change", function () {
   var file = infoFileInput.files[0];
   if (!file) { return; }
@@ -102,6 +286,8 @@ infoFileInput.addEventListener("change", function () {
   var exifNote = document.getElementById("info-exif-note");
   basicEl.innerHTML = "";
   exifEl.innerHTML = "";
+  document.getElementById("iin-color").innerHTML = "";
+  document.getElementById("iin-gps").innerHTML = "";
   exifNote.textContent = "";
   infoStatusEl.className = "status";
   infoStatusEl.textContent = "Reading the image on this device...";
@@ -122,17 +308,20 @@ infoFileInput.addEventListener("change", function () {
     addRow(basicEl, "Dimensions", w + " x " + h + " pixels");
     addRow(basicEl, "Aspect ratio", IT.aspectText(w, h) + " (" + (w / h).toFixed(2) + ":1)");
     addRow(basicEl, "Megapixels", ((w * h) / 1000000).toFixed(2) + " MP");
+    iinColourPanel(file, img);
   }).catch(function () {
     addRow(basicEl, "Dimensions", "This browser cannot display this format, so the pixel size is unavailable.");
   }).then(function () {
     // EXIF details need the exifr library (full build) from the CDN.
     if (typeof exifr === "undefined") {
+      iinGpsNone("The GPS location could not be checked, because the camera-details library did not load.");
       exifNote.textContent = "The camera-details library could not be loaded (check your connection). The basic file details above still work.";
       infoStatusEl.textContent = "Basic information shown.";
       return null;
     }
     return exifr.parse(file, { gps: true }).then(function (data) {
       if (!data || Object.keys(data).length === 0) {
+        iinGpsNone("This image carries no EXIF data, so it stores no GPS location. That is normal for screenshots and most PNG files.");
         exifNote.textContent = "This image carries no EXIF camera details. That is normal for screenshots, downloads from social media, and most PNG files.";
         infoStatusEl.textContent = "Information shown. No EXIF data in this image.";
         return;
@@ -153,7 +342,11 @@ infoFileInput.addEventListener("change", function () {
       var iso = data.ISO || data.ISOSpeedRatings;
       exifRow("ISO", iso ? String(iso) : "");
       exifRow("Focal length", (typeof data.FocalLength === "number") ? data.FocalLength + " mm" : "");
+      if (typeof data.ColorSpace === "number") {
+        addRow(document.getElementById("iin-color"), "EXIF colour space", data.ColorSpace === 1 ? "sRGB" : (data.ColorSpace === 65535 ? "Uncalibrated (not sRGB-tagged)" : "Code " + data.ColorSpace));
+      }
       if (typeof data.latitude === "number" && typeof data.longitude === "number") {
+        iinGpsShow(data.latitude, data.longitude);
         var link = document.createElement("a");
         link.href = "https://www.google.com/maps/search/?api=1&query=" + data.latitude.toFixed(6) + "," + data.longitude.toFixed(6);
         link.target = "_blank";
@@ -161,6 +354,9 @@ infoFileInput.addEventListener("change", function () {
         link.textContent = data.latitude.toFixed(6) + ", " + data.longitude.toFixed(6) + " — open on Google Maps";
         addRow(exifEl, "GPS location", link);
         shown++;
+      }
+      if (!(typeof data.latitude === "number" && typeof data.longitude === "number")) {
+        iinGpsNone("No GPS location is stored in this image.");
       }
       if (shown === 0) {
         exifNote.textContent = "This image has some stored data, but none of the usual camera details (make, model, date, exposure) were in it.";
