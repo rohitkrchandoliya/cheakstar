@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Placeholder Generator - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Make a placeholder image of any size — for mockups, wireframes and ad slots — with live stats and PNG, JPEG, WebP or SVG output.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/placeholder-generator/">
+<meta property="og:title" content="Placeholder Generator - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Make a placeholder image of any size — for mockups, wireframes and ad slots — with live stats and PNG, JPEG, WebP or SVG output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/placeholder-generator/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.phg-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.phg-presets .btn { margin-top: 0; }
+.phg-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.phg-row:last-child { border-bottom: none; }
+.phg-lab { width: 180px; flex: none; font-weight: 600; }
+.phg-row code { flex: 1; min-width: 0; }
+.phg-preview { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-top: 12px; text-align: center; background: var(--card); }
+.phg-preview canvas { max-width: 100%; height: auto; }
+.phg-color { height: 44px; width: 100%; padding: 2px; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Placeholder Generator</h1>
+<p class="tool-sub">Make a placeholder image of any size — for mockups, wireframes and ad slots — with live stats and PNG, JPEG, WebP or SVG output.</p>
+<div class="tool-card">
+  <p>Set the size, pick the colours, type a label, and download. The stats update live, including the exact size of the file you will download. Everything is generated on this device; nothing is uploaded.</p>
+
+  <div class="row2">
+    <div>
+      <label for="phg-w">Width (px)</label>
+      <input id="phg-w" type="number" min="1" max="4000" step="1" value="1200">
+    </div>
+    <div>
+      <label for="phg-h">Height (px)</label>
+      <input id="phg-h" type="number" min="1" max="4000" step="1" value="630">
+    </div>
+  </div>
+
+  <label style="margin-top:14px">Size presets</label>
+  <div class="phg-presets" id="phg-presets" role="group" aria-label="Size presets">
+    <button type="button" class="btn ghost small" data-w="1920" data-h="1080">Full HD 1920×1080</button>
+    <button type="button" class="btn ghost small" data-w="1280" data-h="720">HD / YouTube thumb 1280×720</button>
+    <button type="button" class="btn ghost small" data-w="1200" data-h="630">Open Graph 1200×630</button>
+    <button type="button" class="btn ghost small" data-w="1080" data-h="1080">Instagram post 1080×1080</button>
+    <button type="button" class="btn ghost small" data-w="1080" data-h="1920">Story / Reel 1080×1920</button>
+    <button type="button" class="btn ghost small" data-w="1640" data-h="924">Facebook cover 1640×924</button>
+    <button type="button" class="btn ghost small" data-w="728" data-h="90">Leaderboard ad 728×90</button>
+    <button type="button" class="btn ghost small" data-w="300" data-h="250">Rectangle ad 300×250</button>
+    <button type="button" class="btn ghost small" data-w="320" data-h="50">Mobile banner 320×50</button>
+    <button type="button" class="btn ghost small" data-w="800" data-h="600">4:3 classic 800×600</button>
+  </div>
+
+  <div class="row2" style="margin-top:14px">
+    <div>
+      <label for="phg-bg">Background colour</label>
+      <input id="phg-bg" class="phg-color" type="color" value="#0a2540">
+    </div>
+    <div>
+      <label for="phg-fg">Text colour</label>
+      <input id="phg-fg" class="phg-color" type="color" value="#c9a227">
+    </div>
+  </div>
+  <div class="row2" style="margin-top:10px">
+    <div>
+      <label for="phg-label">Label text (leave empty to show the size)</label>
+      <input id="phg-label" type="text" value="" placeholder="e.g. Hero image comes here" autocomplete="off">
+    </div>
+    <div>
+      <label for="phg-format">Format</label>
+      <select id="phg-format">
+        <option value="image/png" selected>PNG</option>
+        <option value="image/jpeg">JPEG</option>
+        <option value="image/webp">WebP</option>
+        <option value="svg">SVG (vector, tiny file)</option>
+      </select>
+    </div>
+  </div>
+
+  <div data-result>
+    <div class="phg-preview"><canvas id="phg-canvas" width="1200" height="630" aria-label="Live preview of the placeholder"></canvas></div>
+    <h2 style="margin-top:20px">Live stats</h2>
+    <div class="phg-row"><span class="phg-lab">Aspect ratio</span><code class="mono" id="phg-s-aspect">—</code></div>
+    <div class="phg-row"><span class="phg-lab">Megapixels</span><code class="mono" id="phg-s-mp">—</code></div>
+    <div class="phg-row"><span class="phg-lab">Rendered text size</span><code class="mono" id="phg-s-text">—</code></div>
+    <div class="phg-row"><span class="phg-lab">Output file size</span><code class="mono" id="phg-s-size">—</code></div>
+    <div class="btn-row"><a id="phg-download" class="download" href="#" download="placeholder-1200x630.png">Download placeholder</a></div>
+  </div>
+  <p id="phg-status" class="status" role="status">Adjust anything — the preview and the file update live.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the label is auto-fitted — it grows until it nearly fills the width, then shrinks to fit, and the “rendered text size” stat is the exact pixel size used, so a design can be matched in CSS later. Each side is capped at 4000 px, which covers every common screen and print-mock size. SVG output is a real vector file (a rectangle plus a text element), so it stays sharp at any size and is usually the smallest download of all. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var phg_w = document.getElementById("phg-w");
+var phg_h = document.getElementById("phg-h");
+var phg_bg = document.getElementById("phg-bg");
+var phg_fg = document.getElementById("phg-fg");
+var phg_label = document.getElementById("phg-label");
+var phg_format = document.getElementById("phg-format");
+var phg_canvas = document.getElementById("phg-canvas");
+var phg_download = document.getElementById("phg-download");
+var phg_status = document.getElementById("phg-status");
+var phg_measure = document.createElement("canvas").getContext("2d");
+var phg_outUrl = null;
+var phg_timer = null;
+
+function phg_setStatus(text, kind) {
+  phg_status.className = "status" + (kind ? " " + kind : "");
+  phg_status.textContent = text;
+}
+function phg_set(id, text) { document.getElementById(id).textContent = text; }
+function phg_fmtSize(n) {
+  if (n < 1024) { return n + " bytes"; }
+  if (n < 1024 * 1024) { return (n / 1024).toFixed(1) + " KB"; }
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function phg_gcd(a, b) { return b === 0 ? a : phg_gcd(b, a % b); }
+function phg_dims() {
+  var w = parseInt(phg_w.value, 10), h = parseInt(phg_h.value, 10);
+  if (isNaN(w) || w < 1) { w = 1; }
+  if (isNaN(h) || h < 1) { h = 1; }
+  if (w > 4000) { w = 4000; }
+  if (h > 4000) { h = 4000; }
+  return { w: w, h: h };
+}
+function phg_labelText(w, h) {
+  var t = phg_label.value.trim();
+  return t || (w + " × " + h);
+}
+/* Fit the label: start from a size based on height, then shrink until the
+   measured text fits within 88% of the width. Returns the font size used. */
+function phg_fitFont(text, w, h) {
+  var size = Math.max(8, Math.floor(h * 0.22));
+  phg_measure.font = "600 " + size + "px Arial, Helvetica, sans-serif";
+  var tw = phg_measure.measureText(text).width;
+  var maxW = w * 0.88;
+  if (tw > maxW) {
+    size = Math.max(8, Math.floor(size * (maxW / tw)));
+    phg_measure.font = "600 " + size + "px Arial, Helvetica, sans-serif";
+    tw = phg_measure.measureText(text).width;
+    while (tw > maxW && size > 8) {
+      size -= 1;
+      phg_measure.font = "600 " + size + "px Arial, Helvetica, sans-serif";
+      tw = phg_measure.measureText(text).width;
+    }
+  }
+  return size;
+}
+function phg_escapeXml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function phg_render() {
+  var d = phg_dims();
+  var label = phg_labelText(d.w, d.h);
+  var fontSize = phg_fitFont(label, d.w, d.h);
+  phg_canvas.width = d.w;
+  phg_canvas.height = d.h;
+  var ctx = phg_canvas.getContext("2d");
+  ctx.fillStyle = phg_bg.value;
+  ctx.fillRect(0, 0, d.w, d.h);
+  ctx.fillStyle = phg_fg.value;
+  ctx.font = "600 " + fontSize + "px Arial, Helvetica, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, d.w / 2, d.h / 2);
+
+  var g = phg_gcd(d.w, d.h) || 1;
+  phg_set("phg-s-aspect", (d.w / g) + ":" + (d.h / g) + "  (" + (d.w / d.h).toFixed(3) + ")");
+  phg_set("phg-s-mp", ((d.w * d.h) / 1000000).toFixed(2) + " MP (" + (d.w * d.h).toLocaleString("en-IN") + " pixels)");
+  phg_set("phg-s-text", fontSize + " px");
+
+  if (phg_outUrl) { URL.revokeObjectURL(phg_outUrl); phg_outUrl = null; }
+  var base = "placeholder-" + d.w + "x" + d.h;
+  if (phg_format.value === "svg") {
+    var svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + d.w + "\" height=\"" + d.h + "\" viewBox=\"0 0 " + d.w + " " + d.h + "\">"
+      + "<rect width=\"" + d.w + "\" height=\"" + d.h + "\" fill=\"" + phg_bg.value + "\"/>"
+      + "<text x=\"" + (d.w / 2) + "\" y=\"" + (d.h / 2) + "\" font-family=\"Arial, Helvetica, sans-serif\" font-weight=\"600\" font-size=\"" + fontSize + "\" fill=\"" + phg_fg.value + "\" text-anchor=\"middle\" dominant-baseline=\"central\">" + phg_escapeXml(label) + "</text>"
+      + "</svg>";
+    var blob = new Blob([svg], { type: "image/svg+xml" });
+    phg_outUrl = URL.createObjectURL(blob);
+    phg_download.href = phg_outUrl;
+    phg_download.setAttribute("download", base + ".svg");
+    phg_set("phg-s-size", "SVG · " + phg_fmtSize(blob.size) + " (" + blob.size.toLocaleString("en-IN") + " bytes)");
+    return;
+  }
+  var mime = phg_format.value;
+  phg_canvas.toBlob(function (blob) {
+    if (!blob) { phg_setStatus("The browser could not generate this placeholder.", "error"); return; }
+    phg_outUrl = URL.createObjectURL(blob);
+    phg_download.href = phg_outUrl;
+    var ext = mime === "image/png" ? "png" : (mime === "image/webp" ? "webp" : "jpg");
+    phg_download.setAttribute("download", base + "." + ext);
+    phg_set("phg-s-size", ext.toUpperCase() + " · " + phg_fmtSize(blob.size) + " (" + blob.size.toLocaleString("en-IN") + " bytes)");
+  }, mime, 0.92);
+}
+function phg_schedule() {
+  if (phg_timer) { clearTimeout(phg_timer); }
+  phg_timer = setTimeout(phg_render, 120);
+}
+[phg_w, phg_h, phg_bg, phg_fg, phg_label, phg_format].forEach(function (el) {
+  el.addEventListener("input", phg_schedule);
+  el.addEventListener("change", phg_schedule);
+});
+document.getElementById("phg-presets").addEventListener("click", function (e) {
+  var btn = e.target.closest("[data-w]");
+  if (!btn) { return; }
+  phg_w.value = btn.getAttribute("data-w");
+  phg_h.value = btn.getAttribute("data-h");
+  phg_render();
+  phg_setStatus("Preset applied: " + phg_w.value + " × " + phg_h.value + " px.", "ok");
+});
+phg_render();
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="placeholder-generator"></script>
+</body>
+</html>
