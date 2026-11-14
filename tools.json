@@ -1,7 +1,7 @@
 {
   "name": "Cheakstar Tools Catalogue",
   "description": "Machine-readable catalogue of the free tools on the Cheakstar website. Generated from the tools.js NAV catalogue and the tools hub page; do not edit by hand — rerun build-tools-json.py.",
-  "generated": "2026-11-10",
+  "generated": "2026-11-14",
   "toolCount": 110,
   "categories": [
     {
