@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Image Masker - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-masker/">
+<meta property="og:title" content="Image Masker - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-masker/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.imk-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.imk-drop.imk-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.imk-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.imk-row:last-child { border-bottom: none; }
+.imk-lab { width: 180px; flex: none; font-weight: 600; }
+.imk-row code { flex: 1; min-width: 0; }
+.imk-frame { position: relative; margin: 14px auto 0; max-width: 520px; width: 100%; touch-action: none;
+  background-color: #fdfdfd;
+  background-image: linear-gradient(45deg, #d9d9d9 25%, transparent 25%), linear-gradient(-45deg, #d9d9d9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d9d9d9 75%), linear-gradient(-45deg, transparent 75%, #d9d9d9 75%);
+  background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0; }
+.imk-frame canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.imk-frame canvas:active { cursor: grabbing; }
+.imk-shapes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.imk-shapes .btn { margin-top: 0; }
+.imk-shapes .btn[aria-pressed="true"] { background: var(--gold, #c9a227); color: #0a2540; border-color: var(--gold, #c9a227); }
+.imk-svgbox { width: 100%; min-height: 64px; font-family: monospace; font-size: .8rem; }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Image Masker</h1>
+<p class="tool-sub">Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.</p>
+<div class="tool-card">
+  <p>Pick a shape, then zoom and drag the image until it sits exactly where you want it inside the shape. Everything outside the shape becomes transparent. Your image is processed on this device only and never leaves this browser tab.</p>
+
+  <div class="imk-drop" id="imk-drop">
+    <label for="imk-file"><strong>Choose an image</strong>, or drop it here</label>
+    <input id="imk-file" type="file" accept="image/*">
+  </div>
+
+  <div data-result>
+    <div id="imk-editor" hidden>
+      <h2 style="margin-top:20px">Shape</h2>
+      <div class="imk-shapes" id="imk-shapes" role="group" aria-label="Mask shape">
+        <button type="button" class="btn ghost small" data-shape="none">None (full frame)</button>
+        <button type="button" class="btn ghost small" data-shape="circle" aria-pressed="true">Circle</button>
+        <button type="button" class="btn ghost small" data-shape="rounded">Rounded rectangle</button>
+        <button type="button" class="btn ghost small" data-shape="squircle">Squircle</button>
+        <button type="button" class="btn ghost small" data-shape="triangle">Triangle</button>
+        <button type="button" class="btn ghost small" data-shape="hexagon">Hexagon</button>
+        <button type="button" class="btn ghost small" data-shape="star">Star</button>
+        <button type="button" class="btn ghost small" data-shape="heart">Heart</button>
+        <button type="button" class="btn ghost small" data-shape="custom">Custom SVG</button>
+      </div>
+
+      <div id="imk-custom" hidden style="margin-top:12px">
+        <label for="imk-svgfile">Upload an SVG file to use its first shape as the mask</label>
+        <input id="imk-svgfile" type="file" accept=".svg,image/svg+xml">
+        <label for="imk-svgtext" style="margin-top:10px">…or paste SVG markup here</label>
+        <textarea id="imk-svgtext" class="imk-svgbox" placeholder="<svg viewBox=&quot;0 0 100 100&quot;><path d=&quot;M…&quot;/></svg>"></textarea>
+        <div class="btn-row"><button id="imk-applysvg" class="btn ghost small" type="button">Use this SVG shape</button></div>
+        <p style="margin-top:6px">The first <span class="mono">&lt;path&gt;</span> is used (a <span class="mono">&lt;rect&gt;</span>, <span class="mono">&lt;circle&gt;</span>, <span class="mono">&lt;ellipse&gt;</span> or <span class="mono">&lt;polygon&gt;</span> also works). Holes and multi-part paths follow the SVG fill rule of the path itself.</p>
+      </div>
+
+      <div class="imk-frame" id="imk-frame"><canvas id="imk-canvas" aria-label="Mask preview — drag to position the image inside the shape"></canvas></div>
+      <p style="margin-top:8px">Drag the image to position it. The chequerboard is transparency — it is not part of the download.</p>
+
+      <div class="row2" style="margin-top:10px">
+        <div>
+          <label for="imk-zoom">Zoom: <span id="imk-zoom-val">100%</span></label>
+          <input id="imk-zoom" type="range" min="100" max="400" step="1" value="100" style="width:100%">
+        </div>
+        <div id="imk-param-wrap">
+          <label for="imk-param" id="imk-param-lab">Shape parameter</label>
+          <input id="imk-param" type="range" min="0" max="50" step="1" value="18" style="width:100%">
+        </div>
+      </div>
+
+      <h2 style="margin-top:20px">Output</h2>
+      <div class="imk-row"><span class="imk-lab">Shape</span><code class="mono" id="imk-r-shape">—</code></div>
+      <div class="imk-row"><span class="imk-lab">Output size</span><code class="mono" id="imk-r-size">—</code></div>
+      <div class="btn-row">
+        <a id="imk-download" class="btn" href="#" download="image-masked.png">Download transparent PNG</a>
+        <button id="imk-reset" class="btn ghost" type="button">Reset position</button>
+      </div>
+    </div>
+  </div>
+  <p id="imk-status" class="status" role="status">Choose or drop an image to mask it.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the output size follows the shape — round shapes (circle, hexagon, star, heart, triangle) are square at the image's smaller side, up to 2048 × 2048 px; the full frame, rounded rectangle and squircle keep the image's own proportions, capped at 2048 px on the longest side; a custom SVG shape is rendered at 1024 px on its longest side, following the SVG's own proportions. Very large photos are scaled to those caps, never upscaled. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var imk_file = document.getElementById("imk-file");
+var imk_drop = document.getElementById("imk-drop");
+var imk_status = document.getElementById("imk-status");
+var imk_editor = document.getElementById("imk-editor");
+var imk_frame = document.getElementById("imk-frame");
+var imk_canvas = document.getElementById("imk-canvas");
+var imk_zoom = document.getElementById("imk-zoom");
+var imk_zoomVal = document.getElementById("imk-zoom-val");
+var imk_param = document.getElementById("imk-param");
+var imk_paramLab = document.getElementById("imk-param-lab");
+var imk_paramWrap = document.getElementById("imk-param-wrap");
+var imk_customBox = document.getElementById("imk-custom");
+var imk_download = document.getElementById("imk-download");
+var imk_src = document.createElement("canvas");
+var imk_has = false;
+var imk_base = "image";
+var imk_shape = "circle";
+var imk_zoomF = 1;
+var imk_ox = 0.5, imk_oy = 0.5; /* position: 0..1 across the spare space */
+var imk_custom = null; /* { d, vbW, vbH } */
+var imk_outUrl = null;
+var imk_drag = null;
+
+function imk_setStatus(text, kind) {
+  imk_status.className = "status" + (kind ? " " + kind : "");
+  imk_status.textContent = text;
+}
+function imk_set(id, text) { document.getElementById(id).textContent = text; }
+function imk_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+/* Output box for the current shape, in output pixels. */
+function imk_box() {
+  var iw = imk_src.width, ih = imk_src.height;
+  if (imk_shape === "none" || imk_shape === "rounded" || imk_shape === "squircle") {
+    var s = Math.min(1, 2048 / Math.max(iw, ih));
+    return { w: Math.max(1, Math.round(iw * s)), h: Math.max(1, Math.round(ih * s)) };
+  }
+  if (imk_shape === "custom") {
+    if (!imk_custom) { return { w: 512, h: 512 }; }
+    var m = Math.max(imk_custom.vbW, imk_custom.vbH);
+    return { w: Math.max(16, Math.round(1024 * imk_custom.vbW / m)), h: Math.max(16, Math.round(1024 * imk_custom.vbH / m)) };
+  }
+  var side = Math.min(iw, ih, 2048);
+  return { w: side, h: side };
+}
+/* Build the mask path in a w x h box. Returns a Path2D. */
+function imk_path(w, h) {
+  var p = new Path2D();
+  var cx = w / 2, cy = h / 2, i, a, x, y;
+  if (imk_shape === "none") {
+    p.rect(0, 0, w, h);
+  } else if (imk_shape === "circle") {
+    p.ellipse(cx, cy, w / 2, h / 2, 0, 0, Math.PI * 2);
+  } else if (imk_shape === "rounded") {
+    var r = Math.min(w, h) * (parseFloat(imk_param.value) / 100);
+    if (p.roundRect) { p.roundRect(0, 0, w, h, r); }
+    else { p.rect(0, 0, w, h); }
+  } else if (imk_shape === "squircle") {
+    var n = 2 + (parseFloat(imk_param.value) / 50) * 6; /* exponent 2..8 */
+    var steps = 72;
+    for (i = 0; i <= steps; i++) {
+      a = (i / steps) * Math.PI * 2;
+      var ca = Math.cos(a), sa = Math.sin(a);
+      x = cx + (w / 2) * Math.sign(ca) * Math.pow(Math.abs(ca), 2 / n);
+      y = cy + (h / 2) * Math.sign(sa) * Math.pow(Math.abs(sa), 2 / n);
+      if (i === 0) { p.moveTo(x, y); } else { p.lineTo(x, y); }
+    }
+    p.closePath();
+  } else if (imk_shape === "triangle") {
+    var ix = w * 0.04, iy = h * 0.04;
+    p.moveTo(cx, iy);
+    p.lineTo(w - ix, h - iy);
+    p.lineTo(ix, h - iy);
+    p.closePath();
+  } else if (imk_shape === "hexagon") {
+    for (i = 0; i < 6; i++) {
+      a = (Math.PI / 180) * (60 * i - 30);
+      x = cx + (w / 2) * Math.cos(a);
+      y = cy + (h / 2) * Math.sin(a);
+      if (i === 0) { p.moveTo(x, y); } else { p.lineTo(x, y); }
+    }
+    p.closePath();
+  } else if (imk_shape === "star") {
+    var R = Math.min(w, h) / 2, r2 = R * 0.42;
+    for (i = 0; i < 10; i++) {
+      a = (Math.PI / 180) * (36 * i - 90);
+      var rad = (i % 2 === 0) ? R : r2;
+      x = cx + rad * Math.cos(a);
+      y = cy + rad * Math.sin(a);
+      if (i === 0) { p.moveTo(x, y); } else { p.lineTo(x, y); }
+    }
+    p.closePath();
+  } else if (imk_shape === "heart") {
+    var s = Math.min(w, h);
+    var ox = (w - s) / 2, oy = (h - s) / 2;
+    p.moveTo(ox + s * 0.5, oy + s * 0.98);
+    p.bezierCurveTo(ox - s * 0.08, oy + s * 0.6, ox + s * 0.04, oy + s * 0.05, ox + s * 0.28, oy + s * 0.02);
+    p.bezierCurveTo(ox + s * 0.42, oy + s * 0.0, ox + s * 0.5, oy + s * 0.1, ox + s * 0.5, oy + s * 0.24);
+    p.bezierCurveTo(ox + s * 0.5, oy + s * 0.1, ox + s * 0.58, oy + s * 0.0, ox + s * 0.72, oy + s * 0.02);
+    p.bezierCurveTo(ox + s * 0.96, oy + s * 0.05, ox + s * 1.08, oy + s * 0.6, ox + s * 0.5, oy + s * 0.98);
+    p.closePath();
+  } else if (imk_shape === "custom" && imk_custom) {
+    var sx = w / imk_custom.vbW, sy = h / imk_custom.vbH;
+    var m = new DOMMatrix().scale(sx, sy).translate(-imk_custom.vbX, -imk_custom.vbY);
+    var inner = new Path2D();
+    inner.addPath(new Path2D(imk_custom.d), m);
+    return inner;
+  } else {
+    p.rect(0, 0, w, h);
+  }
+  return p;
+}
+/* Draw image (cover + zoom + position) clipped to the shape into ctx at w x h. */
+function imk_draw(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+  ctx.save();
+  ctx.clip(imk_path(w, h));
+  var iw = imk_src.width, ih = imk_src.height;
+  var cover = Math.max(w / iw, h / ih) * imk_zoomF;
+  var dw = iw * cover, dh = ih * cover;
+  var dx = (w - dw) * imk_ox, dy = (h - dh) * imk_oy;
+  ctx.drawImage(imk_src, dx, dy, dw, dh);
+  ctx.restore();
+}
+function imk_render() {
+  if (!imk_has) { return; }
+  var box = imk_box();
+  /* Preview backing follows the displayed size for crispness. */
+  var rect = imk_frame.getBoundingClientRect();
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var pw = Math.max(2, Math.round(rect.width * dpr));
+  var ph = Math.max(2, Math.round(pw * box.h / box.w));
+  imk_canvas.width = pw;
+  imk_canvas.height = ph;
+  imk_draw(imk_canvas.getContext("2d"), pw, ph);
+  /* Full-size output for the download link. */
+  var out = document.createElement("canvas");
+  out.width = box.w;
+  out.height = box.h;
+  imk_draw(out.getContext("2d"), box.w, box.h);
+  out.toBlob(function (blob) {
+    if (!blob) { return; }
+    if (imk_outUrl) { URL.revokeObjectURL(imk_outUrl); }
+    imk_outUrl = URL.createObjectURL(blob);
+    imk_download.href = imk_outUrl;
+    imk_download.setAttribute("download", imk_base + "-masked.png");
+  }, "image/png");
+  var names = { none: "None (full frame)", circle: "Circle", rounded: "Rounded rectangle", squircle: "Squircle", triangle: "Triangle", hexagon: "Hexagon", star: "Star", heart: "Heart", custom: "Custom SVG" };
+  imk_set("imk-r-shape", names[imk_shape] || imk_shape);
+  imk_set("imk-r-size", box.w + " × " + box.h + " px (transparent PNG)");
+}
+function imk_syncParam() {
+  if (imk_shape === "rounded") {
+    imk_paramWrap.hidden = false;
+    imk_paramLab.textContent = "Corner radius: " + imk_param.value + "% of the short side";
+    imk_param.min = "0"; imk_param.max = "50";
+  } else if (imk_shape === "squircle") {
+    imk_paramWrap.hidden = false;
+    var n = 2 + (parseFloat(imk_param.value) / 50) * 6;
+    imk_paramLab.textContent = "Squircle roundness: curve " + n.toFixed(1) + " (2 = ellipse, higher = squarer)";
+    imk_param.min = "0"; imk_param.max = "50";
+  } else {
+    imk_paramWrap.hidden = true;
+  }
+}
+function imk_syncFrame() {
+  var box = imk_box();
+  imk_frame.style.aspectRatio = box.w + " / " + box.h;
+  imk_frame.style.maxWidth = (imk_shape === "none" || imk_shape === "rounded" || imk_shape === "squircle") ? "520px" : "440px";
+}
+function imk_refresh() { imk_syncParam(); imk_syncFrame(); imk_render(); }
+
+/* ---- custom SVG parsing ---- */
+function imk_parseSvg(text) {
+  var doc = new DOMParser().parseFromString(text, "image/svg+xml");
+  if (doc.querySelector("parsererror")) { return null; }
+  var svg = doc.querySelector("svg");
+  var node = doc.querySelector("path") || doc.querySelector("rect") || doc.querySelector("circle") || doc.querySelector("ellipse") || doc.querySelector("polygon") || doc.querySelector("polyline");
+  if (!node) { return null; }
+  var d = null, tag = node.tagName.toLowerCase();
+  function num(v, fb) { var f = parseFloat(v); return isNaN(f) ? fb : f; }
+  if (tag === "path") {
+    d = node.getAttribute("d");
+  } else if (tag === "rect") {
+    var x = num(node.getAttribute("x"), 0), y = num(node.getAttribute("y"), 0);
+    var w = num(node.getAttribute("width"), 0), h = num(node.getAttribute("height"), 0);
+    if (w <= 0 || h <= 0) { return null; }
+    d = "M" + x + " " + y + "H" + (x + w) + "V" + (y + h) + "H" + x + "Z";
+  } else if (tag === "circle") {
+    var ccx = num(node.getAttribute("cx"), 0), ccy = num(node.getAttribute("cy"), 0), cr = num(node.getAttribute("r"), 0);
+    if (cr <= 0) { return null; }
+    d = "M" + (ccx - cr) + " " + ccy + "a" + cr + " " + cr + " 0 1 0 " + (2 * cr) + " 0a" + cr + " " + cr + " 0 1 0 " + (-2 * cr) + " 0";
+  } else if (tag === "ellipse") {
+    var ecx = num(node.getAttribute("cx"), 0), ecy = num(node.getAttribute("cy"), 0);
+    var erx = num(node.getAttribute("rx"), 0), ery = num(node.getAttribute("ry"), 0);
+    if (erx <= 0 || ery <= 0) { return null; }
+    d = "M" + (ecx - erx) + " " + ecy + "a" + erx + " " + ery + " 0 1 0 " + (2 * erx) + " 0a" + erx + " " + ery + " 0 1 0 " + (-2 * erx) + " 0";
+  } else { /* polygon / polyline */
+    var pts = (node.getAttribute("points") || "").trim().split(/[\s,]+/).filter(function (t) { return t !== ""; });
+    if (pts.length < 4) { return null; }
+    d = "M" + pts[0] + " " + pts[1];
+    for (var i = 2; i + 1 < pts.length; i += 2) { d += "L" + pts[i] + " " + pts[i + 1]; }
+    d += "Z";
+  }
+  if (!d) { return null; }
+  try { new Path2D(d); } catch (e) { return null; }
+  var vbX = 0, vbY = 0, vbW = 0, vbH = 0;
+  if (svg) {
+    var vb = (svg.getAttribute("viewBox") || "").trim().split(/[\s,]+/).map(parseFloat);
+    if (vb.length === 4 && vb[2] > 0 && vb[3] > 0) { vbX = vb[0]; vbY = vb[1]; vbW = vb[2]; vbH = vb[3]; }
+    if (!vbW) { vbW = num(svg.getAttribute("width"), 0); vbH = num(svg.getAttribute("height"), 0); }
+  }
+  if (!vbW || !vbH) {
+    /* No viewBox: measure the path itself in a 1000 x 1000 probe box. */
+    var probe = document.createElement("canvas");
+    probe.width = 1000; probe.height = 1000;
+    var pctx = probe.getContext("2d");
+    var pp = new Path2D(d);
+    /* draw and scan for the bounding box */
+    pctx.fillStyle = "#000";
+    pctx.fill(pp);
+    var data = pctx.getImageData(0, 0, 1000, 1000).data;
+    var minX = 1000, minY = 1000, maxX = -1, maxY = -1;
+    for (var yy = 0; yy < 1000; yy++) {
+      for (var xx = 0; xx < 1000; xx++) {
+        if (data[(yy * 1000 + xx) * 4 + 3] > 0) {
+          if (xx < minX) { minX = xx; } if (xx > maxX) { maxX = xx; }
+          if (yy < minY) { minY = yy; } if (yy > maxY) { maxY = yy; }
+        }
+      }
+    }
+    if (maxX < 0) { return null; }
+    vbX = minX; vbY = minY; vbW = maxX - minX + 1; vbH = maxY - minY + 1;
+  }
+  return { d: d, vbX: vbX, vbY: vbY, vbW: vbW, vbH: vbH };
+}
+function imk_applyCustom(text) {
+  var parsed = imk_parseSvg(text);
+  if (!parsed) {
+    imk_setStatus("That SVG could not be used — no readable path, rect, circle, ellipse or polygon was found in it.", "error");
+    return;
+  }
+  imk_custom = parsed;
+  imk_refresh();
+  imk_setStatus("Custom SVG shape applied (" + Math.round(parsed.vbW) + " × " + Math.round(parsed.vbH) + " shape units).", "ok");
+}
+
+/* ---- events ---- */
+document.getElementById("imk-shapes").addEventListener("click", function (e) {
+  var btn = e.target.closest("button[data-shape]");
+  if (!btn) { return; }
+  imk_shape = btn.getAttribute("data-shape");
+  var all = this.querySelectorAll("button[data-shape]");
+  for (var i = 0; i < all.length; i++) { all[i].setAttribute("aria-pressed", all[i] === btn ? "true" : "false"); }
+  imk_customBox.hidden = imk_shape !== "custom";
+  if (imk_shape === "custom" && !imk_custom) {
+    imk_setStatus("Upload or paste an SVG above — its first shape becomes the mask. Until then the full frame is shown.", "");
+  }
+  imk_refresh();
+});
+imk_zoom.addEventListener("input", function () {
+  imk_zoomF = parseInt(imk_zoom.value, 10) / 100;
+  imk_zoomVal.textContent = imk_zoom.value + "%";
+  imk_render();
+});
+imk_param.addEventListener("input", function () { imk_syncParam(); imk_render(); });
+document.getElementById("imk-reset").addEventListener("click", function () {
+  imk_zoomF = 1; imk_zoom.value = "100"; imk_zoomVal.textContent = "100%";
+  imk_ox = 0.5; imk_oy = 0.5;
+  imk_render();
+});
+document.getElementById("imk-applysvg").addEventListener("click", function () {
+  var text = document.getElementById("imk-svgtext").value;
+  if (text && text.trim()) { imk_applyCustom(text); }
+  else { imk_setStatus("Paste some SVG markup first, or upload an SVG file.", "error"); }
+});
+document.getElementById("imk-svgfile").addEventListener("change", function () {
+  var f = this.files && this.files[0];
+  if (!f) { return; }
+  f.text().then(function (text) {
+    document.getElementById("imk-svgtext").value = text.slice(0, 20000);
+    imk_applyCustom(text);
+  }).catch(function () { imk_setStatus("That SVG file could not be read.", "error"); });
+});
+imk_canvas.addEventListener("pointerdown", function (e) {
+  if (!imk_has) { return; }
+  imk_drag = { x: e.clientX, y: e.clientY, ox: imk_ox, oy: imk_oy };
+  imk_canvas.setPointerCapture(e.pointerId);
+});
+imk_canvas.addEventListener("pointermove", function (e) {
+  if (!imk_drag) { return; }
+  var rect = imk_canvas.getBoundingClientRect();
+  var box = imk_box();
+  var iw = imk_src.width, ih = imk_src.height;
+  var coverDisp = Math.max(rect.width / iw, rect.height / ih) * imk_zoomF;
+  var dw = iw * coverDisp, dh = ih * coverDisp;
+  var spareX = rect.width - dw, spareY = rect.height - dh;
+  if (spareX < 0) { imk_ox = Math.min(1, Math.max(0, imk_drag.ox + (e.clientX - imk_drag.x) / spareX)); }
+  if (spareY < 0) { imk_oy = Math.min(1, Math.max(0, imk_drag.oy + (e.clientY - imk_drag.y) / spareY)); }
+  imk_render();
+});
+["pointerup", "pointercancel"].forEach(function (ev) {
+  imk_canvas.addEventListener(ev, function () { imk_drag = null; });
+});
+function imk_load(file) {
+  if (!file) { return; }
+  imk_base = imk_baseName(file.name || "image");
+  var url = URL.createObjectURL(file);
+  var img = new Image();
+  img.onload = function () {
+    imk_src.width = img.naturalWidth;
+    imk_src.height = img.naturalHeight;
+    imk_src.getContext("2d").drawImage(img, 0, 0);
+    URL.revokeObjectURL(url);
+    imk_has = true;
+    imk_ox = 0.5; imk_oy = 0.5; imk_zoomF = 1;
+    imk_zoom.value = "100"; imk_zoomVal.textContent = "100%";
+    imk_editor.hidden = false;
+    imk_refresh();
+    imk_setStatus("Image loaded (" + imk_src.width + " × " + imk_src.height + " px). Pick a shape, drag to position, then download.", "ok");
+  };
+  img.onerror = function () {
+    URL.revokeObjectURL(url);
+    imk_setStatus("That file could not be decoded as an image by this browser.", "error");
+  };
+  img.src = url;
+}
+imk_file.addEventListener("change", function () { imk_load(imk_file.files && imk_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  imk_drop.addEventListener(ev, function (e) { e.preventDefault(); imk_drop.classList.add("imk-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  imk_drop.addEventListener(ev, function (e) { e.preventDefault(); imk_drop.classList.remove("imk-over"); });
+});
+imk_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { imk_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.addEventListener("resize", function () { if (imk_has) { imk_render(); } });
+window.imk_state = function () {
+  var box = imk_box();
+  return { shape: imk_shape, outW: box.w, outH: box.h, zoom: imk_zoomF, ox: imk_ox, oy: imk_oy, hasImage: imk_has, custom: !!imk_custom };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="image-masker"></script>
+</body>
+</html>
