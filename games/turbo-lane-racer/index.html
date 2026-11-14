@@ -756,10 +756,10 @@ var TurboLaneRacer = (function () {
     for (i = 0; i < raceRunCount; i++) {
       seg = raceRunSegs[i]; p = seg.p2.screen;
       ctx.lineTo(p.x + sA * (p.w + (rA ? p.w / 6 : 0)), p.y);
-      }
+    }
     for (i = raceRunCount - 1; i >= 0; i--) {
       seg = raceRunSegs[i]; p = seg.p2.screen;
-        ctx.lineTo(p.x + sB * (p.w + (rB ? p.w / 6 : 0)), p.y);
+      ctx.lineTo(p.x + sB * (p.w + (rB ? p.w / 6 : 0)), p.y);
     }
     seg = raceRunSegs[0]; p = seg.p1.screen;
     ctx.lineTo(p.x + sB * (p.w + (rB ? p.w / 6 : 0)), p.y);
