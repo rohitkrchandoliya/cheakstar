@@ -1601,6 +1601,302 @@ window.CK_TOOL_INFO = {
    {
     "a": "Drag the edges of the gold selection on the waveform to fine-tune, drag the middle to move it — or type the Start and End seconds directly.",
     "q": "How do I fine-tune the selection?"
+   },
+   {
+    "a": "A clean WAV file, whatever format the original was in.",
+    "q": "What format is exported?"
+   },
+   {
+    "a": "Yes. Play selection plays just the chosen part; Play all plays the whole file.",
+    "q": "Can I listen before exporting?"
+   }
+  ],
+  "goodToKnow": [
+   "Fades can be up to 10 seconds at either end.",
+   "The selection can be dragged three ways: left edge, right edge, or the middle to move it whole.",
+   "Export is always WAV, so the trimmed clip opens in every editor."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your audio file is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an audio file, or drop it here.",
+   "Drag the gold selection on the waveform, or type Start (seconds) and End (seconds).",
+   "Optionally set Fade in and Fade out (0–10 seconds).",
+   "Click Export trimmed WAV."
+  ],
+  "privacyTitle": "Your audio never leaves this device"
+ },
+ "audio-normaliser": {
+  "faq": [
+   {
+    "a": "No. Your file never leaves this browser tab — the loudness is measured and adjusted on your own device.",
+    "q": "Is my audio file uploaded?"
+   },
+   {
+    "a": "With a BS.1770-style K-weighted integrated loudness (LUFS) measurement computed in this tab — a close approximation, not a certified meter.",
+    "q": "How is the loudness measured?"
+   },
+   {
+    "a": "It caps the gain so peaks stay at or below −1 dBFS. The result may then end up quieter than the target, because the peaks cannot go higher.",
+    "q": "What does Prevent clipping do?"
+   },
+   {
+    "a": "The presets cover streaming, podcast and broadcast loudness; or set a Custom target (LUFS) of your own.",
+    "q": "Which target should I pick?"
+   }
+  ],
+  "goodToKnow": [
+   "The measurement is honest about being an approximation — it is a BS.1770-style calculation, not a certified meter.",
+   "The clipping guard keeps peaks at or below −1 dBFS.",
+   "The normalised file is exported as WAV."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your audio file is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an audio file, or drop it here.",
+   "Read the measured loudness of your recording.",
+   "Pick a Target loudness, or set a Custom target (LUFS).",
+   "Click Normalise and prepare WAV, and download the result."
+  ],
+  "privacyTitle": "Your recording stays on your device"
+ },
+ "subtitle-converter": {
+  "faq": [
+   {
+    "a": "No. Conversion is exact text processing on this device — nothing is uploaded.",
+    "q": "Are my subtitles uploaded?"
+   },
+   {
+    "a": "SRT, WebVTT and ASS — convert between any of them.",
+    "q": "Which formats are supported?"
+   },
+   {
+    "a": "It multiplies every timing by your factor — handy for frame-rate changes: multiply by 23.976/25, for example.",
+    "q": "What is rescaling for?"
+   },
+   {
+    "a": "Yes. Shift all cues by a number of seconds, positive or negative, during the same conversion.",
+    "q": "Can I shift all the cues earlier or later?"
+   }
+  ],
+  "goodToKnow": [
+   "For WebVTT output you can also set the Track kind and an optional Language code.",
+   "Shift and rescale can be combined in one conversion.",
+   "You can paste subtitle text directly — a file is not required."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your subtitles is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose a subtitle file (.srt, .vtt, .ass), drop it here, or paste subtitles into the Input box.",
+   "Choose the Output format.",
+   "Optionally shift all cues by seconds, or rescale timings by a factor.",
+   "Click Convert, then read the Converted subtitles and click Copy output."
+  ],
+  "privacyTitle": "Your text never leaves your browser"
+ },
+ "timecode-calculator": {
+  "faq": [
+   {
+    "a": "No. Everything is calculated locally in this tab.",
+    "q": "Is anything uploaded?"
+   },
+   {
+    "a": "At drop-frame rates (29.97 and 59.94), frame numbers are skipped exactly the way broadcast timecode does it, so the frame counts here match your editor.",
+    "q": "What is drop-frame timecode?"
+   },
+   {
+    "a": "Every common frame rate, including the drop-frame broadcast rates.",
+    "q": "Which frame rates are supported?"
+   },
+   {
+    "a": "No. Type in any box and every result updates live.",
+    "q": "Do I need to press a calculate button?"
+   }
+  ],
+  "goodToKnow": [
+   "Drop-frame rates skip frame numbers exactly as broadcast timecode does.",
+   "All three tools — convert, reverse-convert and add/subtract — share the one frame-rate setting.",
+   "Results update as you type; there is nothing to submit."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — everything is calculated locally in this tab and is never sent to any server, including Cheakstar.",
+  "steps": [
+   "Pick a Frame rate.",
+   "Type a timecode under Timecode → frames, or a frame count under Frames → timecode.",
+   "For arithmetic, enter Timecode A and Timecode B and pick an Operation.",
+   "Read the Result."
+  ],
+  "privacyTitle": "Timing stays on your device"
+ },
+ "video-muter": {
+  "faq": [
+   {
+    "a": "No. Nothing is uploaded — the muting is processed entirely in your browser.",
+    "q": "Is my video uploaded?"
+   },
+   {
+    "a": "The video plays through once while this tab records only its picture track, and you download the silent result.",
+    "q": "How does it remove the sound?"
+   },
+   {
+    "a": "The picture is re-recorded rather than copied, so it is re-encoded — the page carries an honest note about re-encoding to read before you rely on the output.",
+    "q": "Is the picture quality the same as the original?"
+   },
+   {
+    "a": "One full play-through of the video, in real time, because the tab records the picture as it plays.",
+    "q": "How long does it take?"
+   }
+  ],
+  "goodToKnow": [
+   "The picture stays exactly as framed; only the audio track goes.",
+   "Because the method is a real-time play-through, longer videos take longer.",
+   "No upload and no sign-up at any point."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your video is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose a video file, or drop it here.",
+   "Preview the video.",
+   "Click Remove the audio track.",
+   "Download the silent result."
+  ],
+  "privacyTitle": "Your video never leaves this device"
+ },
+ "waveform-generator": {
+  "faq": [
+   {
+    "a": "No. The picture is rendered on this device only — your file never leaves this browser tab.",
+    "q": "Is my audio file uploaded?"
+   },
+   {
+    "a": "Bars, mirrored and line styles — with bar width and gap controls for the bar styles.",
+    "q": "Which styles are there?"
+   },
+   {
+    "a": "Exactly the Image width (px) and Image height (px) you set.",
+    "q": "What size is the picture?"
+   },
+   {
+    "a": "Yes. Tick Transparent background instead of picking a background colour.",
+    "q": "Can the background be transparent?"
+   }
+  ],
+  "goodToKnow": [
+   "The same waveform can be exported as a raster PNG or a scalable SVG.",
+   "Bar width and gap are adjustable for the bars and mirror styles.",
+   "Useful for video thumbnails, podcast artwork and social posts."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your audio file is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose an audio file, or drop it here.",
+   "Set Image width (px) and Image height (px).",
+   "Pick a Style and colours — Wave colour, and Background colour or Transparent background.",
+   "Download the waveform picture as PNG or SVG."
+  ],
+  "privacyTitle": "Your sound file stays on your device"
+ },
+ "frame-extractor": {
+  "faq": [
+   {
+    "a": "No. Everything happens on this device — your video never leaves this browser tab.",
+    "q": "Is my video uploaded?"
+   },
+   {
+    "a": "Frames come out at the video's full size, as PNG or JPEG.",
+    "q": "What size are the frames?"
+   },
+   {
+    "a": "Frames are taken at 0, N, 2N, … seconds, up to the end of the video.",
+    "q": "How does the every-few-seconds mode work?"
+   },
+   {
+    "a": "One sheet image that lays out all the extracted frames together — a quick overview of the whole video.",
+    "q": "What is a contact sheet?"
+   }
+  ],
+  "goodToKnow": [
+   "A single frame, an interval series and a range are all covered by the three modes.",
+   "Frames are full-size, never downscaled thumbnails.",
+   "Clear frames empties the collection when you want to start over."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your video is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose a video file, or drop it here.",
+   "Pick an Extraction mode — one moment, every few seconds, or a range — and an Image format.",
+   "Set the times, or scrub and click a moment on the timeline strip.",
+   "Click Extract frame(s), then download frames one by one, Download all as ZIP, or Make contact sheet."
+  ],
+  "privacyTitle": "Your video never leaves this device"
+ },
+ "auto-subtitle": {
+  "faq": [
+   {
+    "a": "No. Nothing is uploaded to any server — the transcription runs entirely in your browser, on this device.",
+    "q": "Is my recording uploaded?"
+   },
+   {
+    "a": "The Whisper model you pick is downloaded once from Hugging Face (the runtime library, about 24 MB, comes from the jsDelivr CDN at the same time) and then cached by your browser, so later visits can work offline.",
+    "q": "Why is there a download on the first run?"
+   },
+   {
+    "a": "Tiny is about 43 MB and fast but rough; Base is about 77 MB, slower, and noticeably more accurate.",
+    "q": "Which model should I choose?"
+   },
+   {
+    "a": "Clear speech in quiet conditions transcribes best. Background noise, music and overlapping voices all reduce accuracy — the page sets honest expectations before you run it.",
+    "q": "How accurate is it?"
+   }
+  ],
+  "goodToKnow": [
+   "OpenAI's Whisper AI runs in the browser — the recording itself never leaves your device.",
+   "Only the model is downloaded, once; your media files are never sent anywhere.",
+   "You get both SRT and WebVTT downloads of the same transcription."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your recording is transcribed on this device and is never uploaded to any server, including Cheakstar. The Whisper model itself is downloaded once from Hugging Face and then cached by your browser.",
+  "steps": [
+   "Choose an audio or video file, or drop it here.",
+   "Pick a Whisper model (downloaded once, then cached) and the Spoken language.",
+   "Click Transcribe and wait while it runs on your device.",
+   "Download SRT or Download WebVTT."
+  ],
+  "privacyTitle": "Your recording never leaves your device"
+ },
+ "subtitle-studio": {
+  "faq": [
+   {
+    "a": "No. Everything happens on this device — your video and subtitles never leave this browser tab.",
+    "q": "Are my files uploaded?"
+   },
+   {
+    "a": "Overlapping cues, an end before the start, and empty text are flagged on the row as you type, before they can break a player.",
+    "q": "What mistakes does it flag?"
+   },
+   {
+    "a": "Yes. Load the video file as well, and clicking a cue jumps the video to that moment.",
+    "q": "Can I preview against the video?"
+   },
+   {
+    "a": "Yes. Start with an empty cue list and add cues at the playhead or at the end, then Sort by start time to tidy up.",
+    "q": "Can I start from nothing?"
+   }
+  ],
+  "goodToKnow": [
+   "Shift all cues by a number of seconds (it can be negative) and Apply shift to retime the whole file at once.",
+   "Cue timings can be typed directly in the table.",
+   "Both SRT and WebVTT exports are offered for the same edited cues."
+  ],
+  "privacyKind": "local",
+  "privacyNote": "Runs entirely in your browser — your subtitles and video is processed on this device and is never uploaded to any server, including Cheakstar.",
+  "steps": [
+   "Choose a subtitle file (.srt or .vtt), or start with an empty cue list.",
+   "Optionally choose a video file for preview.",
+   "Edit each cue's start, end and text in the table — problems are flagged on the row.",
+   "Download SRT or Download WebVTT."
+  ],
+  "privacyTitle": "Your subtitles stay on your device"
  }
 };
 window.CK_TOOL_RELATED = {
@@ -1729,6 +2025,11 @@ window.CK_TOOL_RELATED = {
    "slug": "passport-photo-maker",
    "name": "Passport Photo Maker",
    "description": "Crop a photo to 35 x 45 mm and download it, plus a 4 x 6 inch sheet of 8 copies."
+  },
+  {
+   "slug": "metadata-stripper",
+   "name": "Metadata Stripper",
+   "description": "See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed.""
   }
  ],
  "image-resizer-cropper": [
@@ -1751,6 +2052,11 @@ window.CK_TOOL_RELATED = {
    "slug": "passport-photo-maker",
    "name": "Passport Photo Maker",
    "description": "Crop a photo to 35 x 45 mm and download it, plus a 4 x 6 inch sheet of 8 copies."
+  },
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.""
   }
  ],
  "images-to-pdf": [
@@ -1795,6 +2101,11 @@ window.CK_TOOL_RELATED = {
    "slug": "image-resizer-cropper",
    "name": "Image Resizer & Cropper",
    "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.""
   }
  ],
  "pdf-compressor": [
@@ -2010,6 +2321,11 @@ window.CK_TOOL_RELATED = {
    "slug": "gif-maker",
    "name": "GIF Maker",
    "description": "Turn the first seconds of a video into an animated GIF."
+  },
+  {
+   "slug": "audio-trimmer",
+   "name": "Audio Trimmer",
+   "description": "Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV.""
   }
  ],
  "audio-merger": [
@@ -2186,6 +2502,11 @@ window.CK_TOOL_RELATED = {
    "slug": "gif-maker",
    "name": "GIF Maker",
    "description": "Turn the first seconds of a video into an animated GIF."
+  },
+  {
+   "slug": "waveform-generator",
+   "name": "Waveform Generator",
+   "description": "Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG.""
   }
  ],
  "screen-recorder": [
