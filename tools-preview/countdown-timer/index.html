@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
 <title>Countdown Timer - Free Online Tool - Cheakstar Tools</title>
-<link rel="stylesheet" href="../assets/site.css">
+<meta name="description" content="Count down the days, hours and minutes to any date or event.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/countdown-timer/">
+<meta property="og:title" content="Countdown Timer - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Count down the days, hours and minutes to any date or event.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/countdown-timer/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <link rel="stylesheet" href="../assets/tools.css">
 <link rel="stylesheet" href="../assets/tool-info.css">
 
@@ -37,7 +44,7 @@
     <div class="stat"><span class="value mono" id="cd-mins">–</span><span class="label">Minutes</span></div>
     <div class="stat"><span class="value mono" id="cd-secs">–</span><span class="label">Seconds</span></div>
   </div>
-  <p id="cd-answer" class="status" role="status" style="text-align:center"></p>
+  <p id="cd-answer" class="status" role="status" style="text-align:center" data-result></p>
   <div class="btn-row" style="justify-content:center">
     <button id="cd-copy" class="btn ghost" type="button">Copy shareable link</button>
   </div>
@@ -45,11 +52,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> the event name and date travel inside the link itself (the part after the #), so sharing works without any account or server — and that part of a link is never sent to the website when the page loads. If the date has already passed, the timer says so instead of counting into negative numbers.</div>
 </main>
-<footer class="site"><div class="wrap foot">
-<div>&copy; <span id="year">2026</span> Cheakstar Private Limited &middot; Jaipur, India</div>
-<div><a href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Our Store</a> &middot; <a href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Founder on LinkedIn</a> &middot; <a href="https://www.linkedin.com/company/cheakstar" target="_blank" rel="noopener">Follow Cheakstar on LinkedIn</a> &middot; <a href="../../contact.html">Contact</a></div>
-</div></footer>
-<script src="../assets/tools.js"></script>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
 <script>
 "use strict";
 var cdName = document.getElementById("cd-name");
