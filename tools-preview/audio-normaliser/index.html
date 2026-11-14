@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Audio Normaliser - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="Bring a recording to a standard loudness — streaming, podcast or broadcast — measured and adjusted on your own device.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/audio-normaliser/">
+<meta property="og:title" content="Audio Normaliser - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="Bring a recording to a standard loudness — streaming, podcast or broadcast — measured and adjusted on your own device.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/audio-normaliser/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.ano-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.ano-drop.ano-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.ano-measure { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 12px; background: var(--card); }
+.ano-measure h3 { margin: 0 0 8px; font-size: 1rem; color: var(--navy, #0a2540); }
+.ano-grid { display: flex; flex-wrap: wrap; gap: 6px 26px; font-size: .95rem; }
+.ano-grid strong { color: var(--navy, #0a2540); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Audio Normaliser</h1>
+<p class="tool-sub">Bring a recording to a standard loudness — streaming, podcast or broadcast — measured and adjusted on your own device.</p>
+<div class="tool-card">
+  <p>Drop an audio file to measure its loudness, pick a target, and export a normalised WAV. The measurement is a BS.1770-style K-weighted integrated loudness (LUFS) computed in this tab — a close approximation, not a certified meter (see the note below). Your file never leaves this browser tab.</p>
+
+  <div class="ano-drop" id="ano-drop">
+    <label for="ano-file"><strong>Choose an audio file</strong>, or drop it here</label>
+    <input id="ano-file" type="file" accept="audio/*">
+  </div>
+
+  <div data-result>
+    <div id="ano-editor" hidden>
+      <div class="ano-measure">
+        <h3>Measured (before)</h3>
+        <div class="ano-grid">
+          <span>Integrated loudness: <strong id="ano-m-loud">–</strong></span>
+          <span>Sample peak: <strong id="ano-m-peak">–</strong></span>
+          <span>RMS: <strong id="ano-m-rms">–</strong></span>
+          <span>Duration: <strong id="ano-m-dur">–</strong></span>
+        </div>
+      </div>
+
+      <div class="row2" style="margin-top:14px">
+        <div>
+          <label for="ano-target">Target loudness</label>
+          <select id="ano-target">
+            <option value="-14" selected>−14 LUFS — streaming (Spotify, YouTube)</option>
+            <option value="-16">−16 LUFS — podcasts (Apple Podcasts)</option>
+            <option value="-23">−23 LUFS — broadcast (EBU R128)</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+        <div>
+          <label for="ano-custom">Custom target (LUFS)</label>
+          <input id="ano-custom" type="number" min="-70" max="-1" step="0.5" value="-14" disabled>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label for="ano-guard"><input type="checkbox" id="ano-guard" checked style="width:auto;margin-right:6px">Prevent clipping — cap the gain so peaks stay at or below −1 dBFS (the result may then end up quieter than the target)</label>
+      </div>
+
+      <div class="ano-measure">
+        <h3>Plan</h3>
+        <div class="ano-grid">
+          <span>Gain needed: <strong id="ano-p-needed">–</strong></span>
+          <span>Gain applied: <strong id="ano-p-applied">–</strong></span>
+          <span>Peak after: <strong id="ano-p-peak">–</strong></span>
+          <span id="ano-p-note"></span>
+        </div>
+      </div>
+
+      <div class="ano-measure" id="ano-after-wrap" hidden>
+        <h3>Measured (after, from the exported file)</h3>
+        <div class="ano-grid">
+          <span>Integrated loudness: <strong id="ano-a-loud">–</strong></span>
+          <span>Sample peak: <strong id="ano-a-peak">–</strong></span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="ano-apply">Normalise and prepare WAV</button>
+        <a id="ano-download" class="btn" href="#" download="audio-normalised.wav" hidden>Download normalised WAV</a>
+      </div>
+    </div>
+  </div>
+  <p id="ano-status" class="status" role="status">Choose or drop an audio file to measure its loudness.</p>
+</div>
+<div class="note"><strong>Good to know — please read:</strong> the loudness figure is an <strong>approximation</strong>: it uses the ITU-R BS.1770 K-weighting filters and the standard two-stage gating, computed on your file in this browser, but it is not a certified broadcast meter — treat the last decimal as indicative, and expect very short clips (under a second) and near-silent material to measure unreliably. Channels are all weighted equally (a dedicated LFE channel, if any, is not excluded). Export is WAV (uncompressed, lossless), and normalising only changes overall gain — it does not compress dynamics, so a very dynamic recording may still sound uneven. If the clip guard caps the gain, the file honestly ends up below target rather than distorted. Nothing is uploaded.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script>
+"use strict";
+var ano_file = document.getElementById("ano-file");
+var ano_drop = document.getElementById("ano-drop");
+var ano_status = document.getElementById("ano-status");
+var ano_editor = document.getElementById("ano-editor");
+var ano_target = document.getElementById("ano-target");
+var ano_custom = document.getElementById("ano-custom");
+var ano_guard = document.getElementById("ano-guard");
+var ano_download = document.getElementById("ano-download");
+var ano_buf = null;
+var ano_base = "audio";
+var ano_meas = null;        /* measurement of the source */
+var ano_after = null;       /* measurement of the rendered export */
+var ano_plan = null;        /* { target, needed, applied, capped } */
+var ano_outUrl = null;
+var ano_outBytes = null;
+
+function ano_setStatus(text, kind) {
+  ano_status.className = "status" + (kind ? " " + kind : "");
+  ano_status.textContent = text;
+}
+function ano_db(x) { return (x <= 0 ? "-inf" : (20 * Math.log10(x)).toFixed(2)) + " dBFS"; }
+function ano_lufs(x) { return x.toFixed(1) + " LUFS"; }
+function ano_gainDb(x) { return (x >= 0 ? "+" : "") + x.toFixed(1) + " dB"; }
+function ano_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+/* ---- BS.1770 K-weighting ------------------------------------------------
+   Two biquad stages per channel. Coefficients are computed from the
+   sample rate with the standard formulae (the same ones behind the
+   fixed 48 kHz constants in the spec), then applied sample by sample. */
+function ano_kWeighting(fs) {
+  var f1 = 1681.974450955533, G = 3.999843853973347, Q1 = 0.7071752369554196;
+  var K1 = Math.tan(Math.PI * f1 / fs);
+  var Vh = Math.pow(10, G / 20), Vb = Math.pow(Vh, 0.4996667741545416);
+  var a0 = 1 + K1 / Q1 + K1 * K1;
+  var shelf = {
+    b: [(Vh + Vb * K1 / Q1 + K1 * K1) / a0, 2 * (K1 * K1 - Vh) / a0, (Vh - Vb * K1 / Q1 + K1 * K1) / a0],
+    a: [1, 2 * (K1 * K1 - 1) / a0, (1 - K1 / Q1 + K1 * K1) / a0]
+  };
+  var f2 = 38.13547087602444, Q2 = 0.5003270373238773;
+  var K2 = Math.tan(Math.PI * f2 / fs);
+  var den = K2 * K2 + K2 / Q2 + 1;
+  var hp = {
+    b: [1, -2, 1],
+    a: [1, 2 * (K2 * K2 - 1) / den, (K2 * K2 - K2 / Q2 + 1) / den]
+  };
+  return [shelf, hp];
+}
+function ano_biquad(data, coef) {
+  var out = new Float64Array(data.length);
+  var b0 = coef.b[0], b1 = coef.b[1], b2 = coef.b[2], a1 = coef.a[1], a2 = coef.a[2];
+  var x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  for (var i = 0; i < data.length; i++) {
+    var x = data[i];
+    var y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+    out[i] = y;
+    x2 = x1; x1 = x; y2 = y1; y1 = y;
+  }
+  return out;
+}
+/* Integrated loudness: 400 ms blocks, 75% overlap, absolute gate at
+   -70 LUFS, then a relative gate 10 LU below the absolute-gated result. */
+function ano_measure(buffer) {
+  var ch = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
+  var peak = 0, sumSq = 0;
+  var raw = [];
+  for (var c = 0; c < ch; c++) {
+    var d = buffer.getChannelData(c);
+    raw.push(d);
+    for (var i = 0; i < len; i++) {
+      var a = Math.abs(d[i]);
+      if (a > peak) { peak = a; }
+      sumSq += d[i] * d[i];
+    }
+  }
+  var rms = Math.sqrt(sumSq / (len * ch));
+  var stages = ano_kWeighting(sr);
+  var filt = raw.map(function (d) { return ano_biquad(ano_biquad(d, stages[0]), stages[1]); });
+  var blockLen = Math.max(1, Math.round(0.4 * sr));
+  var hop = Math.max(1, Math.round(0.1 * sr));
+  var z = [];
+  if (len < blockLen) {
+    var zAll = 0;
+    for (var c2 = 0; c2 < ch; c2++) {
+      var s = 0, fd = filt[c2];
+      for (var j = 0; j < len; j++) { s += fd[j] * fd[j]; }
+      zAll += s / len;
+    }
+    z.push(zAll);
+  } else {
+    for (var start = 0; start + blockLen <= len; start += hop) {
+      var zb = 0;
+      for (var c3 = 0; c3 < ch; c3++) {
+        var sb = 0, fd2 = filt[c3];
+        for (var k = start; k < start + blockLen; k++) { sb += fd2[k] * fd2[k]; }
+        zb += sb / blockLen;
+      }
+      z.push(zb);
+    }
+  }
+  function loud(zv) { return -0.691 + 10 * Math.log10(zv); }
+  var absKept = z.filter(function (zv) { return zv > 0 && loud(zv) > -70; });
+  var integrated;
+  if (!absKept.length) {
+    integrated = -Infinity;
+  } else {
+    var meanAbs = absKept.reduce(function (a, b) { return a + b; }, 0) / absKept.length;
+    var relThresh = loud(meanAbs) - 10;
+    var relKept = absKept.filter(function (zv) { return loud(zv) > relThresh; });
+    var meanRel = relKept.reduce(function (a, b) { return a + b; }, 0) / relKept.length;
+    integrated = loud(meanRel);
+  }
+  return { integrated: integrated, peak: peak, peakDb: peak > 0 ? 20 * Math.log10(peak) : -Infinity, rmsDb: rms > 0 ? 20 * Math.log10(rms) : -Infinity };
+}
+/* ---- WAV writer (16-bit PCM) ---- */
+function ano_encodeWav(buffer) {
+  var ch = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
+  var bytes = 44 + len * ch * 2;
+  var ab = new ArrayBuffer(bytes);
+  var v = new DataView(ab);
+  function wstr(off, s) { for (var i = 0; i < s.length; i++) { v.setUint8(off + i, s.charCodeAt(i)); } }
+  wstr(0, "RIFF"); v.setUint32(4, bytes - 8, true); wstr(8, "WAVE"); wstr(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, ch, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * ch * 2, true); v.setUint16(32, ch * 2, true);
+  v.setUint16(34, 16, true); wstr(36, "data"); v.setUint32(40, len * ch * 2, true);
+  var data = [];
+  for (var c = 0; c < ch; c++) { data.push(buffer.getChannelData(c)); }
+  var off = 44;
+  for (var i = 0; i < len; i++) {
+    for (var k = 0; k < ch; k++) {
+      var s = Math.max(-1, Math.min(1, data[k][i]));
+      v.setInt16(off, s < 0 ? s * 32768 : s * 32767, true);
+      off += 2;
+    }
+  }
+  return new Blob([ab], { type: "audio/wav" });
+}
+/* ---- planning ---- */
+function ano_targetValue() {
+  if (ano_target.value === "custom") {
+    var cv = parseFloat(ano_custom.value);
+    return isFinite(cv) ? cv : -14;
+  }
+  return parseFloat(ano_target.value);
+}
+function ano_updatePlan() {
+  if (!ano_meas) { return; }
+  var target = ano_targetValue();
+  var needed = target - ano_meas.integrated;
+  var applied = needed, capped = false;
+  if (ano_guard.checked && ano_meas.peakDb > -Infinity) {
+    var maxGain = -1 - ano_meas.peakDb;
+    if (applied > maxGain) { applied = maxGain; capped = applied < needed - 0.001; }
+  }
+  ano_plan = { target: target, needed: needed, applied: applied, capped: capped };
+  document.getElementById("ano-p-needed").textContent = ano_gainDb(needed);
+  document.getElementById("ano-p-applied").textContent = ano_gainDb(applied);
+  document.getElementById("ano-p-peak").textContent = ano_db(Math.pow(10, (ano_meas.peakDb + applied) / 20));
+  document.getElementById("ano-p-note").textContent = capped
+    ? "Clip guard is capping the gain — the result will measure about " + (ano_meas.integrated + applied).toFixed(1) + " LUFS instead of " + target.toFixed(1) + "."
+    : "";
+}
+ano_target.addEventListener("change", function () {
+  ano_custom.disabled = ano_target.value !== "custom";
+  ano_updatePlan();
+});
+ano_custom.addEventListener("input", ano_updatePlan);
+ano_guard.addEventListener("change", ano_updatePlan);
+document.getElementById("ano-apply").addEventListener("click", function () {
+  if (!ano_buf || !ano_plan) { return; }
+  var gainLin = Math.pow(10, ano_plan.applied / 20);
+  var off = new OfflineAudioContext(ano_buf.numberOfChannels, ano_buf.length, ano_buf.sampleRate);
+  var src = off.createBufferSource();
+  src.buffer = ano_buf;
+  var g = off.createGain();
+  g.gain.value = gainLin;
+  src.connect(g); g.connect(off.destination);
+  src.start(0);
+  ano_setStatus("Rendering the normalised WAV…", "");
+  off.startRendering().then(function (rendered) {
+    ano_after = ano_measure(rendered);
+    var blob = ano_encodeWav(rendered);
+    if (ano_outUrl) { URL.revokeObjectURL(ano_outUrl); }
+    ano_outUrl = URL.createObjectURL(blob);
+    ano_outBytes = blob.size;
+    ano_download.href = ano_outUrl;
+    ano_download.setAttribute("download", ano_base + "-normalised.wav");
+    ano_download.hidden = false;
+    document.getElementById("ano-a-loud").textContent = ano_lufs(ano_after.integrated);
+    document.getElementById("ano-a-peak").textContent = ano_db(ano_after.peak);
+    document.getElementById("ano-after-wrap").hidden = false;
+    ano_setStatus("Normalised WAV ready: measured " + ano_lufs(ano_after.integrated) + " after applying " + ano_gainDb(ano_plan.applied) + (ano_plan.capped ? " (capped by the clip guard, so it lands below the " + ano_plan.target.toFixed(1) + " LUFS target on purpose)" : "") + ".", "ok");
+  }).catch(function (err) {
+    ano_setStatus("Rendering failed in this browser: " + (err && err.message ? err.message : err), "error");
+  });
+});
+/* ---- loading ---- */
+function ano_load(file) {
+  if (!file) { return; }
+  ano_base = ano_baseName(file.name || "audio");
+  ano_setStatus("Decoding and measuring " + (file.name || "audio") + "…", "");
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ac = new AC();
+  file.arrayBuffer().then(function (ab) {
+    return ac.decodeAudioData(ab);
+  }).then(function (buf) {
+    ano_buf = buf;
+    ano_meas = ano_measure(buf);
+    ano_after = null; ano_outBytes = null;
+    ano_download.hidden = true;
+    document.getElementById("ano-after-wrap").hidden = true;
+    document.getElementById("ano-m-loud").textContent = ano_lufs(ano_meas.integrated);
+    document.getElementById("ano-m-peak").textContent = ano_db(ano_meas.peak);
+    document.getElementById("ano-m-rms").textContent = ano_db(Math.pow(10, ano_meas.rmsDb / 20));
+    document.getElementById("ano-m-dur").textContent = buf.duration.toFixed(2) + " s · " + buf.sampleRate + " Hz · " + buf.numberOfChannels + " ch";
+    ano_editor.hidden = false;
+    ano_updatePlan();
+    ano_setStatus("Measured. Pick a target and normalise.", "ok");
+  }).catch(function (err) {
+    ano_setStatus("That file could not be decoded as audio by this browser: " + (err && err.message ? err.message : err), "error");
+  });
+}
+ano_file.addEventListener("change", function () { ano_load(ano_file.files && ano_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  ano_drop.addEventListener(ev, function (e) { e.preventDefault(); ano_drop.classList.add("ano-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  ano_drop.addEventListener(ev, function (e) { e.preventDefault(); ano_drop.classList.remove("ano-over"); });
+});
+ano_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { ano_load(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+window.ano_state = function () {
+  return {
+    hasAudio: !!ano_buf,
+    integrated: ano_meas ? ano_meas.integrated : null,
+    peakDb: ano_meas ? ano_meas.peakDb : null,
+    rmsDb: ano_meas ? ano_meas.rmsDb : null,
+    target: ano_plan ? ano_plan.target : null,
+    gainNeeded: ano_plan ? ano_plan.needed : null,
+    appliedGain: ano_plan ? ano_plan.applied : null,
+    capped: ano_plan ? ano_plan.capped : null,
+    afterIntegrated: ano_after ? ano_after.integrated : null,
+    afterPeakDb: ano_after ? ano_after.peakDb : null,
+    outBytes: ano_outBytes
+  };
+};
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="audio-normaliser"></script>
+</body>
+</html>
