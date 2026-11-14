@@ -2573,6 +2573,583 @@ window.CK_TOOL_RELATED = {
    "slug": "gif-maker",
    "name": "GIF Maker",
    "description": "Turn the first seconds of a video into an animated GIF."
+  },
+  {
+   "slug": "frame-extractor",
+   "name": "Frame Extractor",
+   "description": "Pull still images out of a video — one moment, every few seconds, or a whole range — plus a contact sheet."
+  }
+ ],
+ "color-converter": [
+  {
+   "slug": "contrast-checker",
+   "name": "Contrast Checker",
+   "description": "Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes."
+  },
+  {
+   "slug": "color-atlas",
+   "name": "Color Atlas",
+   "description": "Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export."
+  },
+  {
+   "slug": "color-harmony-generator",
+   "name": "Color Harmony Generator",
+   "description": "Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders."
+  },
+  {
+   "slug": "color-palette-generator",
+   "name": "Color Palette Generator",
+   "description": "Build harmonious colour palettes from one base colour."
+  }
+ ],
+ "contrast-checker": [
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
+  },
+  {
+   "slug": "color-atlas",
+   "name": "Color Atlas",
+   "description": "Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export."
+  },
+  {
+   "slug": "color-palette-generator",
+   "name": "Color Palette Generator",
+   "description": "Build harmonious colour palettes from one base colour."
+  },
+  {
+   "slug": "tailwind-shade-generator",
+   "name": "Tailwind Shade Generator",
+   "description": "Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports."
+  }
+ ],
+ "color-blindness-simulator": [
+  {
+   "slug": "contrast-checker",
+   "name": "Contrast Checker",
+   "description": "Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes."
+  },
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
+  },
+  {
+   "slug": "color-atlas",
+   "name": "Color Atlas",
+   "description": "Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export."
+  },
+  {
+   "slug": "color-harmony-generator",
+   "name": "Color Harmony Generator",
+   "description": "Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders."
+  }
+ ],
+ "tailwind-shade-generator": [
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
+  },
+  {
+   "slug": "color-atlas",
+   "name": "Color Atlas",
+   "description": "Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export."
+  },
+  {
+   "slug": "color-harmony-generator",
+   "name": "Color Harmony Generator",
+   "description": "Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders."
+  },
+  {
+   "slug": "gradient-generator",
+   "name": "CSS Gradient Generator",
+   "description": "Build CSS gradients visually and copy the code."
+  }
+ ],
+ "color-atlas": [
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
+  },
+  {
+   "slug": "color-harmony-generator",
+   "name": "Color Harmony Generator",
+   "description": "Build colour harmonies from one base colour, fine-tuned with perceptual OKLCH sliders."
+  },
+  {
+   "slug": "contrast-checker",
+   "name": "Contrast Checker",
+   "description": "Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes."
+  },
+  {
+   "slug": "color-palette-generator",
+   "name": "Color Palette Generator",
+   "description": "Build harmonious colour palettes from one base colour."
+  }
+ ],
+ "color-harmony-generator": [
+  {
+   "slug": "color-atlas",
+   "name": "Color Atlas",
+   "description": "Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export."
+  },
+  {
+   "slug": "color-converter",
+   "name": "Color Converter",
+   "description": "Convert one colour into every format at once — HEX, RGB, HSL, HSV, CMYK, OKLCH, Lab and its nearest CSS colour name."
+  },
+  {
+   "slug": "tailwind-shade-generator",
+   "name": "Tailwind Shade Generator",
+   "description": "Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports."
+  },
+  {
+   "slug": "color-palette-generator",
+   "name": "Color Palette Generator",
+   "description": "Build harmonious colour palettes from one base colour."
+  }
+ ],
+ "image-clipper": [
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "image-splitter",
+   "name": "Image Splitter",
+   "description": "Cut an image into a grid of equal tiles — for Instagram carousels, puzzle posts and print layouts — and download them one by one or all together as a ZIP."
+  },
+  {
+   "slug": "paste-image",
+   "name": "Paste Image",
+   "description": "Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  }
+ ],
+ "metadata-stripper": [
+  {
+   "slug": "image-information",
+   "name": "Image Information",
+   "description": "See an image's size, dimensions and the camera details (EXIF) stored inside it."
+  },
+  {
+   "slug": "photo-privacy-checker",
+   "name": "Photo Privacy Checker (EXIF)",
+   "description": "See what a photo secretly carries: GPS location, camera model and date taken."
+  },
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
+  },
+  {
+   "slug": "paste-image",
+   "name": "Paste Image",
+   "description": "Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP."
+  }
+ ],
+ "paste-image": [
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
+  },
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  },
+  {
+   "slug": "placeholder-generator",
+   "name": "Placeholder Generator",
+   "description": "Make a placeholder image of any size — for mockups, wireframes and ad slots — with live stats and PNG, JPEG, WebP or SVG output."
+  }
+ ],
+ "placeholder-generator": [
+  {
+   "slug": "image-splitter",
+   "name": "Image Splitter",
+   "description": "Cut an image into a grid of equal tiles — for Instagram carousels, puzzle posts and print layouts — and download them one by one or all together as a ZIP."
+  },
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "paste-image",
+   "name": "Paste Image",
+   "description": "Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP."
+  },
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
+  }
+ ],
+ "artwork-enhancer": [
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  },
+  {
+   "slug": "image-watermark",
+   "name": "Image Watermark",
+   "description": "Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture."
+  },
+  {
+   "slug": "image-tracer",
+   "name": "Image Tracer",
+   "description": "Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser."
+  },
+  {
+   "slug": "image-compressor",
+   "name": "Image Compressor",
+   "description": "Shrink a JPG, PNG or WebP image to a smaller file size."
+  }
+ ],
+ "image-splitter": [
+  {
+   "slug": "collage-maker",
+   "name": "Photo Collage Maker",
+   "description": "Combine your photos into one grid collage."
+  },
+  {
+   "slug": "placeholder-generator",
+   "name": "Placeholder Generator",
+   "description": "Make a placeholder image of any size — for mockups, wireframes and ad slots — with live stats and PNG, JPEG, WebP or SVG output."
+  },
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  }
+ ],
+ "image-masker": [
+  {
+   "slug": "image-clipper",
+   "name": "Image Clipper",
+   "description": "Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut."
+  },
+  {
+   "slug": "artwork-enhancer",
+   "name": "Artwork Enhancer",
+   "description": "Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic."
+  },
+  {
+   "slug": "image-watermark",
+   "name": "Image Watermark",
+   "description": "Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture."
+  },
+  {
+   "slug": "paste-image",
+   "name": "Paste Image",
+   "description": "Press Ctrl+V (or Cmd+V) anywhere on this page to paste an image from your clipboard — then crop it and download it as PNG, JPEG or WebP."
+  }
+ ],
+ "image-de-skewer": [
+  {
+   "slug": "image-resizer-cropper",
+   "name": "Image Resizer & Cropper",
+   "description": "Resize an image to exact pixels, or crop it to an aspect ratio, with passport presets."
+  },
+  {
+   "slug": "image-tracer",
+   "name": "Image Tracer",
+   "description": "Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser."
+  },
+  {
+   "slug": "image-information",
+   "name": "Image Information",
+   "description": "See an image's size, dimensions and the camera details (EXIF) stored inside it."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  }
+ ],
+ "image-tracer": [
+  {
+   "slug": "svg-optimiser",
+   "name": "SVG Optimiser",
+   "description": "Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you."
+  },
+  {
+   "slug": "image-de-skewer",
+   "name": "Image De-skewer",
+   "description": "Photographed a document, whiteboard or screen at an angle? Drag the four corners onto the real corners and this tool straightens the perspective into a flat rectangle."
+  },
+  {
+   "slug": "artwork-enhancer",
+   "name": "Artwork Enhancer",
+   "description": "Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic."
+  },
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  }
+ ],
+ "svg-optimiser": [
+  {
+   "slug": "image-tracer",
+   "name": "Image Tracer",
+   "description": "Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser."
+  },
+  {
+   "slug": "image-watermark",
+   "name": "Image Watermark",
+   "description": "Stamp your name, brand or logo onto an image before you share it — text or logo, placed once or tiled across the whole picture."
+  },
+  {
+   "slug": "image-compressor",
+   "name": "Image Compressor",
+   "description": "Shrink a JPG, PNG or WebP image to a smaller file size."
+  },
+  {
+   "slug": "artwork-enhancer",
+   "name": "Artwork Enhancer",
+   "description": "Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic."
+  }
+ ],
+ "image-watermark": [
+  {
+   "slug": "image-masker",
+   "name": "Image Masker",
+   "description": "Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work."
+  },
+  {
+   "slug": "svg-optimiser",
+   "name": "SVG Optimiser",
+   "description": "Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you."
+  },
+  {
+   "slug": "meme-generator",
+   "name": "Meme Generator",
+   "description": "Add captions to your own photo and download the meme."
+  },
+  {
+   "slug": "artwork-enhancer",
+   "name": "Artwork Enhancer",
+   "description": "Give flat digital artwork the grain of traditional media — a colour-noise overlay, the classic trick digital painters use to make an image feel organic."
+  }
+ ],
+ "audio-trimmer": [
+  {
+   "slug": "audio-normaliser",
+   "name": "Audio Normaliser",
+   "description": "Bring a recording to a standard loudness — streaming, podcast or broadcast — measured and adjusted on your own device."
+  },
+  {
+   "slug": "waveform-generator",
+   "name": "Waveform Generator",
+   "description": "Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG."
+  },
+  {
+   "slug": "audio-converter",
+   "name": "Audio Converter",
+   "description": "Convert audio between MP3, WAV, M4A and OGG, with trim, speed and loudness options."
+  },
+  {
+   "slug": "audio-merger",
+   "name": "Audio Merger",
+   "description": "Join two or more audio files into one MP3, in your chosen order."
+  }
+ ],
+ "audio-normaliser": [
+  {
+   "slug": "audio-trimmer",
+   "name": "Audio Trimmer",
+   "description": "Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  },
+  {
+   "slug": "waveform-generator",
+   "name": "Waveform Generator",
+   "description": "Turn any sound file into a clean waveform picture — pick the size, style and colours, download PNG or SVG."
+  },
+  {
+   "slug": "audio-converter",
+   "name": "Audio Converter",
+   "description": "Convert audio between MP3, WAV, M4A and OGG, with trim, speed and loudness options."
+  }
+ ],
+ "subtitle-converter": [
+  {
+   "slug": "subtitle-studio",
+   "name": "Subtitle Studio",
+   "description": "Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files."
+  },
+  {
+   "slug": "auto-subtitle",
+   "name": "Auto Subtitle",
+   "description": "Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device."
+  },
+  {
+   "slug": "timecode-calculator",
+   "name": "Timecode Calculator",
+   "description": "Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate."
+  },
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
+  }
+ ],
+ "timecode-calculator": [
+  {
+   "slug": "subtitle-converter",
+   "name": "Subtitle Converter",
+   "description": "Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser."
+  },
+  {
+   "slug": "subtitle-studio",
+   "name": "Subtitle Studio",
+   "description": "Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files."
+  },
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  }
+ ],
+ "video-muter": [
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
+  },
+  {
+   "slug": "frame-extractor",
+   "name": "Frame Extractor",
+   "description": "Pull still images out of a video — one moment, every few seconds, or a whole range — plus a contact sheet."
+  },
+  {
+   "slug": "video-converter",
+   "name": "Video Converter",
+   "description": "Convert a short clip between MP4 and WebM."
+  },
+  {
+   "slug": "video-compressor",
+   "name": "Video Compressor",
+   "description": "Make a video file smaller: 720p or 480p at your chosen quality."
+  }
+ ],
+ "waveform-generator": [
+  {
+   "slug": "audio-trimmer",
+   "name": "Audio Trimmer",
+   "description": "Cut the exact part of a sound file you need — drag on the waveform or type the times, add fades, and export a clean WAV."
+  },
+  {
+   "slug": "audio-normaliser",
+   "name": "Audio Normaliser",
+   "description": "Bring a recording to a standard loudness — streaming, podcast or broadcast — measured and adjusted on your own device."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  },
+  {
+   "slug": "audio-converter",
+   "name": "Audio Converter",
+   "description": "Convert audio between MP3, WAV, M4A and OGG, with trim, speed and loudness options."
+  }
+ ],
+ "frame-extractor": [
+  {
+   "slug": "video-muter",
+   "name": "Video Muter",
+   "description": "Remove the sound from a video — the picture stays, the audio track goes — processed entirely in your browser."
+  },
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
+  },
+  {
+   "slug": "gif-maker",
+   "name": "GIF Maker",
+   "description": "Turn the first seconds of a video into an animated GIF."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  }
+ ],
+ "auto-subtitle": [
+  {
+   "slug": "subtitle-studio",
+   "name": "Subtitle Studio",
+   "description": "Write and edit subtitles in your browser — fix timings, spot mistakes, and export clean SRT or WebVTT files."
+  },
+  {
+   "slug": "subtitle-converter",
+   "name": "Subtitle Converter",
+   "description": "Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser."
+  },
+  {
+   "slug": "media-info",
+   "name": "Media Info",
+   "description": "See a media file's duration, resolution, codecs, bitrate and more."
+  },
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
+  }
+ ],
+ "subtitle-studio": [
+  {
+   "slug": "subtitle-converter",
+   "name": "Subtitle Converter",
+   "description": "Convert subtitles between SRT, WebVTT and ASS — with time shifting and rescaling — right in your browser."
+  },
+  {
+   "slug": "auto-subtitle",
+   "name": "Auto Subtitle",
+   "description": "Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device."
+  },
+  {
+   "slug": "timecode-calculator",
+   "name": "Timecode Calculator",
+   "description": "Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate."
+  },
+  {
+   "slug": "video-trimmer",
+   "name": "Video Trimmer",
+   "description": "Cut a section out of a short video clip."
   }
  ]
 };
