@@ -33,20 +33,15 @@
 })();
 </script>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
 <title>Gem Smash - Cheakstar Games</title>
 <style>
   :root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
   [data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
   html[data-textsize="large"] { font-size:112.5%; }
   html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
-  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 0 auto; padding: 0 1rem 3rem; background: var(--bg); color: var(--ink); }
-  header { background: var(--navy); color: #fff; margin: 0 -1rem; padding: 1.5rem 1rem; border-bottom: 4px solid var(--gold); }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 0.5rem 0 0; color: #cbd5e1; }
-  [data-theme="light"] header { color: var(--ink); }
-  [data-theme="light"] header p { color: var(--muted); }
-  h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
+  body { background: var(--bg); color: var(--ink); }
+  h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
   .note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
   button { margin-top: 0.5rem; padding: 0.6rem 1.2rem; cursor: pointer; background: var(--btn); color: #fff; border: 1px solid var(--line); border-radius: 6px; font-size: 1rem; font-family: inherit; }
   button:hover { background: #123a5c; }
@@ -61,7 +56,6 @@
   .ctrl-row select { margin-top: 0; }
 
   /* ---- toolbar / fullscreen stage (house pattern) ---- */
-  body { max-width: 860px; }
   .play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
   .play-bar .spacer { flex: 1; }
   .play-bar button { margin-top: 0; }
@@ -69,7 +63,7 @@
   .btn-link:hover { background: var(--navy3); }
   .fs-exit { display: none; }
   .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
-  .play-stage:fullscreen h2 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+  .play-stage:fullscreen h1 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
   .play-stage:fullscreen .fs-desc { display: none; }
   .play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
   .play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
@@ -79,7 +73,7 @@
   .play-stage:fullscreen button { margin-top: 0.35rem; }
   .play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
   @media (max-height: 640px) {
-    .play-stage:fullscreen h2 { display: none; }
+    .play-stage:fullscreen h1 { display: none; }
     .play-stage:fullscreen .status { min-height: 1.1em; }
   }
 
@@ -167,7 +161,6 @@
   .cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
   .cgx-btn-primary:hover { background: #dbb63a; }
   .cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
-  body.cgx-wide { max-width: 1120px; }
   .cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
   .cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
 
@@ -176,11 +169,8 @@
   [data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
 </style>
 </head>
-<body class="cgx-wide">
-<header>
-  <h1>Gem Smash</h1>
-  <p>Cheakstar Games - free games that run entirely in your browser. No download, no sign-in needed. Your progress saves on this device, and syncs to your account when you sign in.</p>
-</header>
+<body>
+<main class="wrap ck-main">
 <div class="play-bar">
   <a class="btn-link" href="../index.html">&larr; All games</a>
   <span class="spacer"></span>
@@ -189,7 +179,7 @@
 </div>
 <section class="play-stage cgx-fs" id="stage">
   <button type="button" class="fs-exit" id="fs-exit">Exit fullscreen (Esc)</button>
-  <h2>Gem Smash</h2>
+  <h1>Gem Smash</h1>
   <p class="fs-desc">Swap two neighbouring gems to line up 3 or more of the same kind in a row or a column. Matched gems clear, new ones drop in, and chains score cascade bonuses. Reach the level target before your moves run out to clear the level and unlock the next. From level 4 some gems are frozen in ice: they cannot be swapped and do not match, but matching gems next to a frozen one breaks the ice (worth 20 bonus points each) and frees it. Play by tapping two gems, dragging one gem into its neighbour, or with the arrow keys plus Enter or Space. Every gem kind has its own colour, shape and letter, so kinds stay apart even without colour vision.</p>
   <div class="scorebar"><span>Level: <span id="gem-level">1</span></span><span>Score: <span id="gem-score">0</span></span><span>Target: <span id="gem-target">500</span></span><span>Moves left: <span id="gem-moves">30</span></span><span>Best: <span id="gem-best">0</span></span><span id="gem-cascade">Cascade x2!</span></div>
   <div class="gem-progress" role="progressbar" aria-label="Progress to the level target" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="gem-progress"><div id="gem-progress-fill"></div></div>
@@ -1469,7 +1459,8 @@ var GemSmash = (function () {
   cgx.attachMuteToggle($("gem-sound"));
 })();
 </script>
-<script src="../assets/games-nav.js"></script>
+</main>
+<script src="../../shell.js?v=20261114"></script>
 <script src="../game-sync.js"></script>
 <script src="../../theme.js?v=20261106a"></script>
 </body>
