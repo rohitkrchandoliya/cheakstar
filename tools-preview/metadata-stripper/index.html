@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Metadata Stripper - Free Online Tool - Cheakstar Tools</title>
+<meta name="description" content="See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed.">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/metadata-stripper/">
+<meta property="og:title" content="Metadata Stripper - Free Online Tool - Cheakstar Tools">
+<meta property="og:description" content="See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/metadata-stripper/">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<link rel="stylesheet" href="../../styles.css?v=20261114">
+<link rel="stylesheet" href="../assets/tools.css">
+<link rel="stylesheet" href="../assets/tool-info.css">
+<style>
+.mds-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
+.mds-drop.mds-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
+.mds-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.mds-row:last-child { border-bottom: none; }
+.mds-lab { width: 190px; flex: none; font-weight: 600; }
+.mds-row code { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.mds-none { color: var(--muted); }
+</style>
+</head>
+<body>
+<main class="wrap tool-wrap ck-main">
+<p class="crumbs"><a href="../index.html">&larr; All tools</a></p>
+<h1 class="tool-title">Metadata Stripper</h1>
+<p class="tool-sub">See exactly what an image or PDF says about you — camera, software, dates, even GPS — then download a clean copy with all of it removed.</p>
+<div class="tool-card">
+  <p>Photos and PDFs quietly carry metadata: the camera or phone model, when a picture was taken, the software that made the file, and sometimes the GPS location where it was taken. This tool first <strong>shows you what it finds</strong>, then strips it by rebuilding the file. Your file is processed on this device only — it never leaves this browser tab.</p>
+
+  <div class="mds-drop" id="mds-drop">
+    <label for="mds-file"><strong>Choose an image (JPEG, PNG or WebP) or a PDF</strong>, or drop it here</label>
+    <input id="mds-file" type="file" accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf">
+  </div>
+
+  <div data-result>
+    <div id="mds-found" hidden>
+      <h2 style="margin-top:22px">Metadata found in this file</h2>
+      <div id="mds-rows"></div>
+      <p id="mds-icc-note" style="margin-top:12px"><strong>About colour profiles:</strong> images are cleaned by re-encoding the pixels through the browser canvas. That removes EXIF, GPS, XMP, text chunks <em>and</em> the ICC colour profile — a browser canvas cannot re-attach a profile, so this tool honestly offers no “keep ICC” switch rather than pretending. Colours may shift very slightly on wide-gamut photos. PDFs are cleaned with the pdf-lib library (the same one our other PDF tools use): title, author, subject, keywords and creator are deleted; the library writes its own producer line and a fresh modification date when it saves, and that is stated openly here instead of being hidden.</p>
+      <div class="btn-row"><button id="mds-strip" class="btn" type="button">Strip metadata and prepare download</button></div>
+    </div>
+    <div id="mds-done" hidden>
+      <h2 style="margin-top:22px">Clean file ready</h2>
+      <div class="mds-row"><span class="mds-lab">Before</span><code class="mono" id="mds-before">—</code></div>
+      <div class="mds-row"><span class="mds-lab">After</span><code class="mono" id="mds-after">—</code></div>
+      <div class="btn-row"><a id="mds-download" class="download" href="#" download="clean">Download clean file</a></div>
+    </div>
+  </div>
+  <p id="mds-status" class="status" role="status">Choose or drop a file to inspect its metadata.</p>
+</div>
+<div class="note"><strong>Good to know:</strong> the readout shows only what this tool actually parsed — for JPEGs that is the EXIF block (camera make and model, software, capture dates, GPS presence and coordinates when stored), JFIF, XMP and ICC presence, and comment segments; for PNGs the text chunks, embedded EXIF, ICC profile name and timestamp chunk; for WebPs the EXIF, XMP and ICC chunks. A field that is not listed was not found, which is not a guarantee that no other hiding place exists — but re-encoding an image through the canvas rebuilds the pixel file from scratch, so nothing embedded survives into the download. Everything runs in this browser tab; nothing is sent anywhere.</div>
+</main>
+<script src="../../shell.js?v=20261114"></script>
+<script src="../assets/tools.js?v=20261114"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+"use strict";
+var mds_file = document.getElementById("mds-file");
+var mds_drop = document.getElementById("mds-drop");
+var mds_status = document.getElementById("mds-status");
+var mds_found = document.getElementById("mds-found");
+var mds_rows = document.getElementById("mds-rows");
+var mds_strip = document.getElementById("mds-strip");
+var mds_done = document.getElementById("mds-done");
+var mds_download = document.getElementById("mds-download");
+var mds_current = null;   /* { file, kind: "jpeg"|"png"|"webp"|"pdf", bytes } */
+var mds_outUrl = null;
+
+function mds_setStatus(text, kind) {
+  mds_status.className = "status" + (kind ? " " + kind : "");
+  mds_status.textContent = text;
+}
+function mds_fmtSize(n) {
+  if (n < 1024) { return n + " bytes"; }
+  if (n < 1024 * 1024) { return (n / 1024).toFixed(1) + " KB"; }
+  return (n / (1024 * 1024)).toFixed(2) + " MB";
+}
+function mds_baseName(name) {
+  var dot = name.lastIndexOf(".");
+  return dot > 0 ? name.slice(0, dot) : name;
+}
+function mds_addRow(label, value) {
+  var row = document.createElement("div");
+  row.className = "mds-row";
+  var lab = document.createElement("span");
+  lab.className = "mds-lab";
+  lab.textContent = label;
+  var val = document.createElement("code");
+  val.className = "mono";
+  val.textContent = value;
+  row.appendChild(lab);
+  row.appendChild(val);
+  mds_rows.appendChild(row);
+}
+function mds_showRows(rows) {
+  mds_rows.innerHTML = "";
+  if (!rows.length) {
+    var p = document.createElement("p");
+    p.className = "mds-none";
+    p.textContent = "No metadata was found by this tool's parser in this file. You can still strip it below — the rebuilt file is guaranteed to contain none of the fields this tool checks for.";
+    mds_rows.appendChild(p);
+  } else {
+    rows.forEach(function (r) { mds_addRow(r[0], r[1]); });
+  }
+  mds_found.hidden = false;
+  mds_done.hidden = true;
+}
+
+/* ---------- byte helpers ---------- */
+function mds_u16be(b, o) { return (b[o] << 8) | b[o + 1]; }
+function mds_u32be(b, o) { return ((b[o] << 24) | (b[o + 1] << 16) | (b[o + 2] << 8) | b[o + 3]) >>> 0; }
+function mds_ascii(b, o, n) {
+  var s = "";
+  for (var i = 0; i < n && o + i < b.length; i++) { s += String.fromCharCode(b[o + i]); }
+  return s;
+}
+function mds_kind(bytes, file) {
+  if (bytes.length > 3 && bytes[0] === 0xFF && bytes[1] === 0xD8) { return "jpeg"; }
+  if (bytes.length > 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) { return "png"; }
+  if (bytes.length > 12 && mds_ascii(bytes, 0, 4) === "RIFF" && mds_ascii(bytes, 8, 4) === "WEBP") { return "webp"; }
+  if (bytes.length > 4 && mds_ascii(bytes, 0, 4) === "%PDF") { return "pdf"; }
+  if (file && file.type === "application/pdf") { return "pdf"; }
+  return null;
+}
+
+/* ---------- JPEG / EXIF parsing ---------- */
+var MDS_TYPE_SIZE = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8 };
+function mds_tiffView(b, base) {
+  var little = (b[base] === 0x49 && b[base + 1] === 0x49);
+  function u16(o) { return little ? (b[base + o] | (b[base + o + 1] << 8)) : ((b[base + o] << 8) | b[base + o + 1]); }
+  function u32(o) { return little ? ((b[base + o] | (b[base + o + 1] << 8) | (b[base + o + 2] << 16) | (b[base + o + 3] << 24)) >>> 0) : mds_u32be(b, base + o); }
+  function readIFD(off) {
+    var tags = {};
+    if (off <= 0 || base + off + 2 > b.length) { return tags; }
+    var count = u16(off);
+    for (var i = 0; i < count; i++) {
+      var e = off + 2 + i * 12;
+      if (base + e + 12 > b.length) { break; }
+      var tag = u16(e), type = u16(e + 2), num = u32(e + 4);
+      var size = (MDS_TYPE_SIZE[type] || 1) * num;
+      var valOff = size <= 4 ? e + 8 : u32(e + 8);
+      tags[tag] = { type: type, count: num, off: valOff };
+    }
+    return tags;
+  }
+  function ascii(tag) {
+    if (!tag) { return null; }
+    var s = "";
+    for (var i = 0; i < tag.count && base + tag.off + i < b.length; i++) {
+      var c = b[base + tag.off + i];
+      if (c === 0) { break; }
+      s += String.fromCharCode(c);
+    }
+    return s.trim() || null;
+  }
+  function ushort(tag) { return tag ? u16(tag.off) : null; }
+  function ulong(tag) { return tag ? u32(tag.off) : null; }
+  function rationals(tag, n) {
+    if (!tag) { return null; }
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var num = u32(tag.off + i * 8), den = u32(tag.off + i * 8 + 4);
+      out.push(den ? num / den : 0);
+    }
+    return out;
+  }
+  return { u16: u16, u32: u32, readIFD: readIFD, ascii: ascii, ushort: ushort, ulong: ulong, rationals: rationals };
+}
+function mds_parseExif(b, tiffStart) {
+  var rows = [];
+  if (tiffStart + 8 > b.length) { return rows; }
+  var magicOk = false;
+  try {
+    var tv = mds_tiffView(b, tiffStart);
+    magicOk = tv.u16(2) === 42;
+    if (!magicOk) { return rows; }
+    var ifd0 = tv.readIFD(tv.u32(4));
+    var make = tv.ascii(ifd0[0x010F]);
+    var model = tv.ascii(ifd0[0x0110]);
+    var software = tv.ascii(ifd0[0x0131]);
+    var dateTime = tv.ascii(ifd0[0x0132]);
+    var artist = tv.ascii(ifd0[0x013B]);
+    var copyright = tv.ascii(ifd0[0x8298]);
+    var orient = tv.ushort(ifd0[0x0112]);
+    var xRes = tv.rationals(ifd0[0x011A], 1);
+    if (make) { rows.push(["Camera make", make]); }
+    if (model) { rows.push(["Camera / phone model", model]); }
+    if (software) { rows.push(["Software", software]); }
+    if (artist) { rows.push(["Artist", artist]); }
+    if (copyright) { rows.push(["Copyright", copyright]); }
+    if (dateTime) { rows.push(["Date / time (file)", dateTime]); }
+    if (orient != null) { rows.push(["Orientation code", String(orient)]); }
+    if (xRes) { rows.push(["Resolution", xRes[0] + " dpi (approx.)"]); }
+    var exifPtr = ifd0[0x8769] ? tv.ulong(ifd0[0x8769]) : null;
+    if (exifPtr) {
+      var exif = tv.readIFD(exifPtr);
+      var dto = tv.ascii(exif[0x9003]);
+      var dtd = tv.ascii(exif[0x9004]);
+      var iso = tv.ushort(exif[0x8827]);
+      if (dto) { rows.push(["Date / time taken", dto]); }
+      if (dtd) { rows.push(["Date / time digitised", dtd]); }
+      if (iso != null) { rows.push(["ISO speed", String(iso)]); }
+    }
+    var gpsPtr = ifd0[0x8825] ? tv.ulong(ifd0[0x8825]) : null;
+    if (gpsPtr != null) {
+      var gps = tv.readIFD(gpsPtr);
+      var tagCount = Object.keys(gps).length;
+      if (tagCount > 0) {
+        var latRef = tv.ascii(gps[0x0001]);
+        var lat = tv.rationals(gps[0x0002], 3);
+        var lonRef = tv.ascii(gps[0x0003]);
+        var lon = tv.rationals(gps[0x0004], 3);
+        if (lat && lon) {
+          var la = lat[0] + lat[1] / 60 + lat[2] / 3600;
+          var lo = lon[0] + lon[1] / 60 + lon[2] / 3600;
+          if (latRef === "S") { la = -la; }
+          if (lonRef === "W") { lo = -lo; }
+          rows.push(["GPS location", "PRESENT — " + la.toFixed(6) + ", " + lo.toFixed(6)]);
+        } else {
+          rows.push(["GPS location", "PRESENT (partial GPS block, " + tagCount + " tags)"]);
+        }
+      }
+    }
+  } catch (e) {
+    rows.push(["EXIF block", "Present, but could not be fully parsed"]);
+  }
+  return rows;
+}
+function mds_parseJpeg(b) {
+  var rows = [];
+  var pos = 2;
+  var comments = 0, hasXmp = false, hasIcc = false, hasJfif = false;
+  while (pos + 4 <= b.length) {
+    if (b[pos] !== 0xFF) { break; }
+    var marker = b[pos + 1];
+    if (marker === 0xDA || marker === 0xD9) { break; }
+    var len = mds_u16be(b, pos + 2);
+    if (len < 2) { break; }
+    if (marker === 0xE0 && mds_ascii(b, pos + 4, 5) === "JFIF\0") { hasJfif = true; }
+    if (marker === 0xE1 && mds_ascii(b, pos + 4, 6) === "Exif\0\0") {
+      rows = rows.concat(mds_parseExif(b, pos + 4 + 6));
+      rows.push(["EXIF block", "Present"]);
+    }
+    if (marker === 0xE1 && mds_ascii(b, pos + 4, 20).indexOf("http://ns.adobe.com") === 0) { hasXmp = true; }
+    if (marker === 0xE2 && mds_ascii(b, pos + 4, 11) === "ICC_PROFILE") { hasIcc = true; }
+    if (marker === 0xFE) { comments++; }
+    pos += 2 + len;
+  }
+  if (hasJfif) { rows.push(["JFIF header", "Present"]); }
+  if (hasXmp) { rows.push(["XMP packet", "Present (Adobe metadata)"]); }
+  if (hasIcc) { rows.push(["ICC colour profile", "Present"]); }
+  if (comments > 0) { rows.push(["Comment segments", String(comments)]); }
+  return rows;
+}
+
+/* ---------- PNG parsing ---------- */
+function mds_parsePng(b) {
+  var rows = [];
+  var pos = 8;
+  while (pos + 12 <= b.length) {
+    var len = mds_u32be(b, pos);
+    var type = mds_ascii(b, pos + 4, 4);
+    var dataOff = pos + 8;
+    if (type === "tEXt") {
+      var key = "", i = 0;
+      while (i < len && b[dataOff + i] !== 0) { key += String.fromCharCode(b[dataOff + i]); i++; }
+      var val = mds_ascii(b, dataOff + i + 1, Math.min(len - i - 1, 300));
+      rows.push(["Text chunk “" + key + "”", val]);
+    } else if (type === "iTXt") {
+      var k2 = "", j = 0;
+      while (j < len && b[dataOff + j] !== 0) { k2 += String.fromCharCode(b[dataOff + j]); j++; }
+      rows.push(["International text chunk", "Key “" + k2 + "” (value not decoded here)"]);
+    } else if (type === "zTXt") {
+      var k3 = "", m = 0;
+      while (m < len && b[dataOff + m] !== 0) { k3 += String.fromCharCode(b[dataOff + m]); m++; }
+      rows.push(["Compressed text chunk", "Key “" + k3 + "” (value is compressed)"]);
+    } else if (type === "eXIf") {
+      rows.push(["EXIF block", "Present (" + len + " bytes)"]);
+      rows = rows.concat(mds_parseExif(b, dataOff));
+    } else if (type === "iCCP") {
+      var name = "", n = 0;
+      while (n < len && b[dataOff + n] !== 0) { name += String.fromCharCode(b[dataOff + n]); n++; }
+      rows.push(["ICC colour profile", "Present" + (name ? " (“" + name + "”)" : "")]);
+    } else if (type === "tIME") {
+      var yr = mds_u16be(b, dataOff);
+      rows.push(["Timestamp chunk", yr + "-" + b[dataOff + 2] + "-" + b[dataOff + 3] + " " + b[dataOff + 4] + ":" + b[dataOff + 5] + ":" + b[dataOff + 6] + " UTC"]);
+    }
+    if (type === "IEND") { break; }
+    pos += 12 + len;
+  }
+  return rows;
+}
+
+/* ---------- WebP parsing ---------- */
+function mds_parseWebp(b) {
+  var rows = [];
+  var pos = 12;
+  while (pos + 8 <= b.length) {
+    var type = mds_ascii(b, pos, 4);
+    var len = b[pos + 4] | (b[pos + 5] << 8) | (b[pos + 6] << 16) | (b[pos + 7] << 24);
+    if (type === "EXIF") { rows.push(["EXIF block", "Present (" + len + " bytes)"]); rows = rows.concat(mds_parseExif(b, pos + 8)); }
+    if (type === "XMP ") { rows.push(["XMP packet", "Present (" + len + " bytes)"]); }
+    if (type === "ICCP") { rows.push(["ICC colour profile", "Present (" + len + " bytes)"]); }
+    pos += 8 + len + (len % 2);
+  }
+  return rows;
+}
+
+/* ---------- PDF via pdf-lib ---------- */
+function mds_pdfField(v) {
+  if (v == null || v === "") { return null; }
+  if (v instanceof Date) { return v.toISOString(); }
+  return String(v);
+}
+function mds_parsePdf(bytes) {
+  if (typeof PDFLib === "undefined") {
+    return Promise.reject(new Error("lib"));
+  }
+  return PDFLib.PDFDocument.load(bytes.slice(0), { ignoreEncryption: true }).then(function (doc) {
+    var rows = [];
+    var fields = [
+      ["Title", doc.getTitle()], ["Author", doc.getAuthor()], ["Subject", doc.getSubject()],
+      ["Keywords", doc.getKeywords()], ["Creator", doc.getCreator()], ["Producer", doc.getProducer()],
+      ["Created", doc.getCreationDate()], ["Modified", doc.getModificationDate()]
+    ];
+    fields.forEach(function (f) {
+      var v = mds_pdfField(f[1]);
+      if (v) { rows.push([f[0], v]); }
+    });
+    rows.push(["Pages", String(doc.getPageCount())]);
+    return rows;
+  });
+}
+function mds_stripPdf(bytes) {
+  return PDFLib.PDFDocument.load(bytes.slice(0), { ignoreEncryption: true }).then(function (doc) {
+    doc.setTitle("");
+    doc.setAuthor("");
+    doc.setSubject("");
+    doc.setKeywords([]);
+    doc.setCreator("");
+    /* Delete the info-dictionary entries outright where the library's own
+       object model allows it, so empty strings do not linger. */
+    try {
+      var info = doc.context.lookup(doc.trailerInfo.Info);
+      ["Title", "Author", "Subject", "Keywords", "Creator"].forEach(function (k) {
+        info.delete(PDFLib.PDFName.of(k));
+      });
+    } catch (e) { /* setters above already blanked the values */ }
+    return doc.save();
+  });
+}
+
+/* ---------- image strip via canvas ---------- */
+function mds_stripImage(file, kind) {
+  return new Promise(function (resolve, reject) {
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      var ctx = canvas.getContext("2d");
+      if (kind === "jpeg") {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      var mime = kind === "png" ? "image/png" : (kind === "webp" ? "image/webp" : "image/jpeg");
+      canvas.toBlob(function (blob) {
+        if (blob) { resolve({ blob: blob, mime: mime }); } else { reject(new Error("The browser could not re-encode this image.")); }
+      }, mime, 0.92);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("This image could not be decoded by the browser.")); };
+    img.src = url;
+  });
+}
+
+/* ---------- main flow ---------- */
+function mds_inspect(file) {
+  if (mds_outUrl) { URL.revokeObjectURL(mds_outUrl); mds_outUrl = null; }
+  mds_found.hidden = true;
+  mds_done.hidden = true;
+  if (!file) { return; }
+  file.arrayBuffer().then(function (buf) {
+    var bytes = new Uint8Array(buf);
+    var kind = mds_kind(bytes, file);
+    if (!kind) {
+      mds_current = null;
+      mds_setStatus("That file is not a JPEG, PNG, WebP or PDF this browser can inspect.", "error");
+      return;
+    }
+    mds_current = { file: file, kind: kind, bytes: bytes };
+    mds_strip.disabled = false;
+    if (kind === "pdf") {
+      mds_parsePdf(bytes).then(function (rows) {
+        mds_showRows(rows);
+        mds_setStatus("PDF inspected — " + rows.length + " metadata fields found. Review them, then strip.");
+      }).catch(function (e) {
+        if (e && e.message === "lib") {
+          mds_showRows([]);
+          mds_setStatus("The PDF library (pdf-lib) did not load — check your connection and reload the page. Image stripping works without it.", "error");
+          mds_strip.disabled = true;
+        } else {
+          mds_setStatus("This PDF could not be read (it may be encrypted or damaged).", "error");
+        }
+      });
+      return;
+    }
+    var rows;
+    if (kind === "jpeg") { rows = mds_parseJpeg(bytes); }
+    else if (kind === "png") { rows = mds_parsePng(bytes); }
+    else { rows = mds_parseWebp(bytes); }
+    mds_showRows(rows);
+    mds_setStatus(kind.toUpperCase() + " inspected — " + rows.length + " metadata item" + (rows.length === 1 ? "" : "s") + " found. Review them, then strip.");
+  }).catch(function () {
+    mds_setStatus("The file could not be read.", "error");
+  });
+}
+
+mds_strip.addEventListener("click", function () {
+  if (!mds_current) { return; }
+  var cur = mds_current;
+  mds_setStatus("Rebuilding a clean copy…”);
+  var done = function (blob, ext) {
+    if (mds_outUrl) { URL.revokeObjectURL(mds_outUrl); }
+    mds_outUrl = URL.createObjectURL(blob);
+    var before = cur.file.size, after = blob.size;
+    var diff = after - before;
+    var pct = before ? (diff / before) * 100 : 0;
+    document.getElementById("mds-before").textContent = mds_fmtSize(before) + " (" + before.toLocaleString("en-IN") + " bytes)";
+    document.getElementById("mds-after").textContent = mds_fmtSize(after) + " (" + after.toLocaleString("en-IN") + " bytes) — " + (diff === 0 ? "same size" : (diff < 0 ? "smaller by " : "larger by ") + Math.abs(pct).toFixed(1) + "% (re-encoding can change size either way — what matters is that the metadata is gone)");
+    mds_download.href = mds_outUrl;
+    mds_download.setAttribute("download", mds_baseName(cur.file.name || "file") + "-clean." + ext);
+    mds_done.hidden = false;
+    mds_setStatus("Clean copy ready — all parsed metadata was removed.", "ok");
+  };
+  if (cur.kind === "pdf") {
+    if (typeof PDFLib === "undefined") {
+      mds_setStatus("The PDF library (pdf-lib) did not load — check your connection and reload the page.", "error");
+      return;
+    }
+    mds_stripPdf(cur.bytes).then(function (outBytes) {
+      done(new Blob([outBytes], { type: "application/pdf" }), "pdf");
+    }).catch(function () {
+      mds_setStatus("This PDF could not be rebuilt (it may be encrypted or damaged).", "error");
+    });
+  } else {
+    mds_stripImage(cur.file, cur.kind).then(function (res) {
+      var ext = res.mime === "image/png" ? "png" : (res.mime === "image/webp" ? "webp" : "jpg");
+      done(res.blob, ext);
+    }).catch(function (e) {
+      mds_setStatus(e.message || "Stripping failed.", "error");
+    });
+  }
+});
+
+mds_file.addEventListener("change", function () { mds_inspect(mds_file.files && mds_file.files[0]); });
+["dragenter", "dragover"].forEach(function (ev) {
+  mds_drop.addEventListener(ev, function (e) { e.preventDefault(); mds_drop.classList.add("mds-over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  mds_drop.addEventListener(ev, function (e) { e.preventDefault(); mds_drop.classList.remove("mds-over"); });
+});
+mds_drop.addEventListener("drop", function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { mds_inspect(f); }
+});
+window.addEventListener("dragover", function (e) { e.preventDefault(); });
+window.addEventListener("drop", function (e) { e.preventDefault(); });
+</script>
+<script src="../../theme.js?v=20261106a"></script>
+<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js"></script>
+<script src="../assets/tool-info.js" data-tool="metadata-stripper"></script>
+</body>
+</html>
