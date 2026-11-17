@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>How to Read a Bug Bounty Scope (Before You Test Anything) — Cheakstar Blog</title>
+<meta name="description" content="The scope page is the contract of a bug bounty programme. How to read it properly: in-scope assets, rules of engagement, and the lines that end reports.">
+<link rel="stylesheet" href="styles.css?v=20261114">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/how-to-read-a-bug-bounty-scope.html">
+<meta property="og:title" content="How to Read a Bug Bounty Scope (Before You Test Anything) — Cheakstar Blog">
+<meta property="og:description" content="The scope page is the contract of a bug bounty programme. How to read it properly: in-scope assets, rules of engagement, and the lines that end reports.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/how-to-read-a-bug-bounty-scope.html">
+<meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to Read a Bug Bounty Scope (Before You Test Anything) — Cheakstar Blog">
+<meta name="twitter:description" content="The scope page is the contract of a bug bounty programme. How to read it properly: in-scope assets, rules of engagement, and the lines that end reports.">
+<meta name="twitter:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "How to Read a Bug Bounty Scope (Before You Test Anything)",
+  "description": "The scope page is the contract of a bug bounty programme. How to read it properly: in-scope assets, rules of engagement, and the lines that end reports.",
+  "mainEntityOfPage": "https://rohitkrchandoliya.github.io/cheakstar/how-to-read-a-bug-bounty-scope.html",
+  "author": {
+    "@type": "Organization",
+    "name": "Cheakstar Private Limited",
+    "url": "https://rohitkrchandoliya.github.io/cheakstar/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cheakstar Private Limited",
+    "url": "https://rohitkrchandoliya.github.io/cheakstar/"
+  },
+  "datePublished": "2026-11-17"
+}
+</script>
+</head><body>
+<header class="site"><div class="wrap nav">
+<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
+<nav class="navlinks">
+<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+</nav></div></header>
+<div class="hero"><div class="wrap">
+<h1>How to Read a Bug Bounty Scope (Before You Test Anything)</h1>
+<p>17 Nov 2026 · Cheakstar Blog</p>
+</div></div>
+<section><div class="wrap">
+<h2>The page most beginners skim</h2>
+<p>Every bug bounty programme publishes a page that decides whether your work counts: the scope. It is part map, part contract. Yet most beginners scroll past it in twenty seconds on their way to the interesting part. Then they spend a weekend testing something the programme never asked them to test, and wonder why the report closed without a word.</p>
+<p>Reading a scope well takes ten minutes. Here is what those minutes should cover.</p>
+<h2>Section one: what is in scope</h2>
+<p>Programmes list the assets you may test: specific domains, subdomains, mobile apps, or APIs. Treat this list as a fence, not a suggestion. A wildcard entry covers subdomains of that domain; a plain domain entry usually covers only that host. Anything not listed - a sister company's site, a third-party service the company merely uses - is out, however interesting it looks.</p>
+<p>Note the details. Some programmes list an asset but mark it as ineligible for rewards, or accept only certain vulnerability classes on it. Both still matter: they tell you where your hours will and will not count.</p>
+<h2>Section two: the rules of engagement</h2>
+<p>Here the programme describes how testing may be done. Common rules: no automated scanning above a stated rate, no denial-of-service testing, no accessing or altering other users' data beyond the minimum proof, and a special header or account marker so the company can recognise researcher traffic. These are not fine print to get around. They are the conditions your permission depends on.</p>
+<h2>Section three: what they do not want</h2>
+<p>Most scopes name excluded finding types: missing headers with no proven impact, self-inflicted issues, reports from automated tools without demonstrated harm, social engineering, physical attacks. Submitting excluded findings anyway is the fastest way to look careless. The list is the programme telling you, kindly and in advance, what will be closed.</p>
+<h2>Section four: safe harbour and disclosure</h2>
+<p>Good programmes state that authorised testing under their rules will not be treated as hostile, and explain how findings should be reported and how long to wait before speaking about them publicly. If a programme offers no safe harbour language at all, that is information too - many careful researchers simply choose programmes that provide it.</p>
+<h2>A working habit: the scope notebook</h2>
+<p>Before testing any programme, copy four things into your notes: the in-scope assets, the rate and automation limits, the excluded findings, and the exact reporting route. During testing, check findings against that page before writing them up. A two-minute check has saved many researchers from a wasted report - and kept good findings valid.</p>
+<h2>The deeper point</h2>
+<p>The scope is not bureaucracy between you and the real work. It is the written form of the permission that makes the work legal and rewardable at all. Professionals read it first, reread it often, and can quote it when a triage decision goes against them. Make it the first skill you build. Every tool you learn later will sit inside it.</p>
+<p><a class="go" href="blog.html">← Back to Blog</a></p>
+</div></section>
+<script src="shell.js?v=20261114"></script>
+</body></html>
