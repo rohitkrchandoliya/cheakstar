@@ -52,6 +52,9 @@
     if (low.indexOf("rate limit") >= 0 || low.indexOf("too many") >= 0) {
       return "Too many attempts in a short time. Please wait a minute and try again.";
     }
+      if (low.indexOf("captcha") >= 0) {
+        return "The bot check could not be completed. Please wait for the check to finish and try again.";
+      }
     if (low.indexOf("same password") >= 0) {
       return "The new password must be different from your current password.";
     }
@@ -540,6 +543,126 @@
   }
 
   /* ---------------- public API ---------------- */
+
+    /* ---------------- Cloudflare Turnstile (bot protection) ----------------
+         The widget renders on demand inside the page's first form that holds
+              a password field (a floating box is used when a page has none, e.g.
+                   the re-authentication dialogs). Tokens are single-use: once a token
+                        is handed to an auth call the local copy is cleared and the widget
+                             is reset, so the next call always gets a fresh one. If the widget
+                                  cannot load (offline, blocked CDN), an empty token is returned and
+                                       the server stays the final judge: while CAPTCHA protection is off
+                                            in the auth settings the token is ignored; once it is switched on,
+                                                 a missing token is rejected by the server, never waved through. */
+    var TURNSTILE_SITE_KEY = "0x4AAAAAAGBc6k4CUhI6GTuV";
+    var TS_SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    var tsState = { loading: null, widgetId: null, token: "", tokenAt: 0, waiters: [] };
+  
+    function tsReady() {
+          return typeof window.turnstile !== "undefined" && !!window.turnstile &&
+                  typeof window.turnstile.render === "function";
+    }
+    function loadTurnstile() {
+          if (tsReady()) return Promise.resolve(true);
+          if (tsState.loading) return tsState.loading;
+          tsState.loading = new Promise(function (resolve) {
+                  var done = false;
+                  var finish = function (ok) { if (!done) { done = true; resolve(ok); } };
+                  window.__csTurnstileReady = function () { finish(true); };
+                  var s = document.createElement("script");
+                  s.src = TS_SCRIPT_URL + "&onload=__csTurnstileReady";
+                  s.async = true;
+                  s.onerror = function () { finish(false); };
+                  document.head.appendChild(s);
+                  setTimeout(function () { finish(tsReady()); }, 8000);
+          });
+          return tsState.loading;
+    }
+    function tsContainer() {
+          var existing = document.getElementById("csTurnstile");
+          if (existing) return existing;
+          var box = document.createElement("div");
+          box.id = "csTurnstile";
+          box.style.margin = "12px 0";
+          var pw = document.querySelector("form input[type='password']");
+          var form = pw ? pw.form : document.querySelector("form");
+          var btn = form ? form.querySelector("button[type='submit'], input[type='submit']") : null;
+          if (form && btn && btn.parentNode === form) form.insertBefore(box, btn);
+          else if (form) form.appendChild(box);
+          else {
+                  box.style.position = "fixed";
+                  box.style.right = "16px";
+                  box.style.bottom = "16px";
+                  box.style.zIndex = "9999";
+                  box.style.margin = "0";
+                  document.body.appendChild(box);
+          }
+          return box;
+    }
+    function tsTakeToken() {
+          var t = tsState.token;
+          tsState.token = "";
+          tsState.tokenAt = 0;
+          if (tsState.widgetId !== null && tsReady()) {
+                  try { window.turnstile.reset(tsState.widgetId); } catch (e) {}
+          }
+          return t;
+    }
+    function tsFlushWaiters() {
+          if (!tsState.waiters.length) return;
+          var w = tsState.waiters;
+          tsState.waiters = [];
+          var t = tsTakeToken();
+          for (var i = 0; i < w.length; i++) { try { w[i](t); } catch (e) {} }
+    }
+    function ensureTsWidget() {
+          return loadTurnstile().then(function (ok) {
+                  if (!ok || !tsReady()) return false;
+                  if (tsState.widgetId !== null) return true;
+                  try {
+                            tsState.widgetId = window.turnstile.render(tsContainer(), {
+                                        sitekey: TURNSTILE_SITE_KEY,
+                                        callback: function () {
+                                                      tsState.token = (arguments[0] || "");
+                                                      tsState.tokenAt = Date.now();
+                                                      tsFlushWaiters();
+                                        },
+                                        "expired-callback": function () { tsState.token = ""; tsState.tokenAt = 0; },
+                                        "error-callback": function () {
+                                                      tsState.token = ""; tsState.tokenAt = 0; tsFlushWaiters();
+                                        }
+                            });
+                            return true;
+                  } catch (e) { return false; }
+          });
+    }
+    function captchaToken() {
+          if (tsState.token && (Date.now() - tsState.tokenAt) < 240000) {
+                  return Promise.resolve(tsTakeToken());
+          }
+          return ensureTsWidget().then(function (ready) {
+                  if (!ready) return "";
+                  if (tsState.token && (Date.now() - tsState.tokenAt) < 240000) return tsTakeToken();
+                  return new Promise(function (resolve) {
+                            var settled = false;
+                            tsState.waiters.push(function (token) {
+                                        if (!settled) { settled = true; resolve(token || ""); }
+                            });
+                            setTimeout(function () {
+                                        if (!settled) { settled = true; resolve(tsState.token ? tsTakeToken() : ""); }
+                            }, 12000);
+                  });
+          });
+    }
+    // Pre-render the widget on pages whose form asks for a password, so the
+    // check is usually already complete when the visitor submits.
+    function tsBoot() {
+          if (document.querySelector("form input[type='password']")) ensureTsWidget();
+    }
+    if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", tsBoot);
+    } else { tsBoot(); }
+  
   window.CSAuth = {
     ready: ready,
     isAvailable: function () { return available; },
@@ -562,14 +685,14 @@
     signUp: function (email, password, displayName) {
       var bad = needClient();
       if (bad) return Promise.reject(bad);
-      return client.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: { display_name: displayName || "" },
-          emailRedirectTo: pageUrl("account.html")
-        }
-      }).then(function (res) {
+        return captchaToken().then(function (token) {
+            var opts = {
+                      data: { display_name: displayName || "" },
+                      emailRedirectTo: pageUrl("account.html")
+            };
+                if (token) opts.captchaToken = token;
+                return client.auth.signUp({ email: email, password: password, options: opts });
+        }).then(function (res) {
         if (res.error) throw new Error(friendly(res.error));
         var user = res.data ? res.data.user : null;
         var session = res.data ? res.data.session : null;
@@ -584,7 +707,11 @@
     signIn: function (email, password) {
       var bad = needClient();
       if (bad) return Promise.reject(bad);
-      return client.auth.signInWithPassword({ email: email, password: password })
+        return captchaToken().then(function (token) {
+            var creds = { email: email, password: password };
+                if (token) creds.options = { captchaToken: token };
+                        return client.auth.signInWithPassword(creds);
+        })
         .then(function (res) {
           if (res.error) throw new Error(friendly(res.error));
           currentUser = res.data ? res.data.user : null;
@@ -622,7 +749,11 @@
     sendPasswordReset: function (email) {
       var bad = needClient();
       if (bad) return Promise.reject(bad);
-      return client.auth.resetPasswordForEmail(email, { redirectTo: pageUrl("reset-password.html") })
+        return captchaToken().then(function (token) {
+            var opts = { redirectTo: pageUrl("reset-password.html") };
+                if (token) opts.captchaToken = token;
+                        return client.auth.resetPasswordForEmail(email, opts);
+        })
         .then(function (res) {
           if (res.error) throw new Error(friendly(res.error));
           return true;
@@ -788,7 +919,11 @@
       if (!currentUser || !currentUser.email) {
         return Promise.reject(new Error("You are not signed in."));
       }
-      return client.auth.signInWithPassword({ email: currentUser.email, password: currentPw })
+        return captchaToken().then(function (token) {
+            var creds = { email: currentUser.email, password: currentPw };
+                if (token) creds.options = { captchaToken: token };
+                        return client.auth.signInWithPassword(creds);
+        })
         .then(function (res) {
           if (res.error) {
             var m = String(res.error.message || "").toLowerCase();
@@ -830,7 +965,11 @@
         return Promise.reject(new Error("Please enter your password."));
       }
       var email = currentUser.email;
-      return client.auth.signInWithPassword({ email: email, password: password })
+        return captchaToken().then(function (token) {
+            var creds = { email: email, password: password };
+                if (token) creds.options = { captchaToken: token };
+                        return client.auth.signInWithPassword(creds);
+        })
         .then(function (res) {
           if (res.error) {
             var m = String(res.error.message || "").toLowerCase();
