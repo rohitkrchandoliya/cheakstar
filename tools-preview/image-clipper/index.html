@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Image Clipper - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Trim the transparent edges off a PNG or WebP — down to the smallest box that still holds every visible pixel, with an exact report of what was cut.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-clipper/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .icl-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .icl-drop.icl-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -68,8 +69,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> a pixel counts as content when its alpha value is above 0 — even a faint, almost invisible shadow pixel keeps its row and column alive. The output is always a PNG, because PNG keeps the transparency exactly; a WebP input is therefore converted to PNG. If the image turns out to be fully opaque there is nothing to trim, and the download then gives you your original file back, byte for byte unchanged. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var icl_file = document.getElementById("icl-file");
@@ -222,9 +223,9 @@ icl_drop.addEventListener("drop", function (e) {
 window.addEventListener("dragover", function (e) { e.preventDefault(); });
 window.addEventListener("drop", function (e) { e.preventDefault(); });
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="image-clipper"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="image-clipper"></script>
 </body>
 </html>
