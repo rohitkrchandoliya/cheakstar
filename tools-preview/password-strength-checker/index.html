@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Password Strength Checker - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Check how strong a password really is, privately on your device.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/password-strength-checker/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js" integrity="sha384-LXuP8lknSGBOLVn4fwVOl+rWR+zOEtZx6CF9ZLaN6gKBgLByU4D79VWWjV4/gefq" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -40,8 +41,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> the password you type is never transmitted, stored or logged — the zxcvbn library runs entirely in your browser on this device, and the field is cleared from the page when you close or reload it. This tool checks strength only: how hard the password is to guess. It does <strong>not</strong> check whether the password has appeared in a data breach, and a strong score is not a promise — a password reused on a site that leaks it is weak everywhere it is reused. Use a different strong password for every account, kept in a password manager.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var psStatus = document.getElementById("ps-status");
@@ -166,9 +167,9 @@ if (!psLibraryReady()) {
   psStatus.textContent = "The strength library (zxcvbn) could not be loaded, so passwords cannot be checked right now. Check your internet connection and reload the page.";
 }
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="password-strength-checker"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="password-strength-checker"></script>
 </body>
 </html>
