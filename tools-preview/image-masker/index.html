@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Image Masker - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Cut an image into a shape — circle, squircle, star, heart and more, or your own SVG shape — and download it as a transparent PNG, ready for profile pictures, stickers and design work.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-masker/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .imk-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .imk-drop.imk-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -98,8 +99,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> the output size follows the shape — round shapes (circle, hexagon, star, heart, triangle) are square at the image's smaller side, up to 2048 × 2048 px; the full frame, rounded rectangle and squircle keep the image's own proportions, capped at 2048 px on the longest side; a custom SVG shape is rendered at 1024 px on its longest side, following the SVG's own proportions. Very large photos are scaled to those caps, never upscaled. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var imk_file = document.getElementById("imk-file");
@@ -450,9 +451,9 @@ window.imk_state = function () {
   return { shape: imk_shape, outW: box.w, outH: box.h, zoom: imk_zoomF, ox: imk_ox, oy: imk_oy, hasImage: imk_has, custom: !!imk_custom };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="image-masker"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="image-masker"></script>
 </body>
 </html>
