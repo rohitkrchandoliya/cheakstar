@@ -9,7 +9,7 @@
 
   var SUPABASE_URL = "https://otubxsildmovyopebxvg.supabase.co";
   var SUPABASE_KEY = "sb_publishable_MWBG3vuN6lN196eihsPlAQ_7nhldag_";
-  var CDN_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+  var CDN_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js";
   var FAV_KEY = "csFavs";
   var RECENT_KEY = "csRecent";
   var RECENT_MAX = 8;
@@ -154,6 +154,8 @@
 
     var script = document.createElement("script");
     script.src = CDN_URL;
+        script.integrity = "sha384-gnyZit14c5lnGcarmA166QQjjJXpucw25ogZXuwH3HxxY904zHkBqmxVpelsPorb";
+        script.crossOrigin = "anonymous";
     script.async = true;
     var timer = setTimeout(function () { finishReady(); }, 12000); // CDN too slow: fail soft
     script.onload = function () {
