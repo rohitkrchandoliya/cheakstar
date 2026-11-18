@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Image De-skewer - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Photographed a document, whiteboard or screen at an angle? Drag the four corners onto the real corners and this tool straightens the perspective into a flat rectangle.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-de-skewer/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .idk-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .idk-drop.idk-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -98,8 +99,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> "Free" sizes the output from the corner distances, so a strongly angled photo keeps its natural proportions; the fixed shapes (A4, 16:9 and so on) force that exact rectangle, which is what you want for paper and screens. The straightening is a true perspective warp (a homography solved from your four corners, sampled with bilinear interpolation) — not a simple stretch. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var idk_file = document.getElementById("idk-file");
@@ -360,9 +361,9 @@ window.idk_setPts = function (pts) {
   idk_warp();
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="image-de-skewer"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="image-de-skewer"></script>
 </body>
 </html>
