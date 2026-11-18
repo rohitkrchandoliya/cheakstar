@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Image Splitter - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Cut an image into a grid of equal tiles — for Instagram carousels, puzzle posts and print layouts — and download them one by one or all together as a ZIP.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-splitter/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .isp-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .isp-drop.isp-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -77,8 +78,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> tiles are named by position — <span class="mono">tile-r1c1.png</span> is row 1, column 1 — so they sort back into order in any file manager. Tiles are PNG, cut from the original pixels with no re-scaling. The ZIP is packed in your browser with the JSZip library (version 3.10.1, loaded from the jsDelivr CDN — the same CDN the site already uses); if that library cannot load, the individual tile downloads below still work. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 "use strict";
@@ -272,9 +273,9 @@ isp_drop.addEventListener("drop", function (e) {
 window.addEventListener("dragover", function (e) { e.preventDefault(); });
 window.addEventListener("drop", function (e) { e.preventDefault(); });
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="image-splitter"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="image-splitter"></script>
 </body>
 </html>
