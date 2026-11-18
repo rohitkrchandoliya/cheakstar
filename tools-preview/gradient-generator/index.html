@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>CSS Gradient Generator - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Build CSS gradients visually and copy the code.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/gradient-generator/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 #gg-preview { height: 190px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 16px; }
 #gg-stops .gg-stop { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
@@ -95,8 +96,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> stops are spaced evenly from 0% to 100% — if you need uneven spacing or a specific radial size and position, adjust the percentages in the copied CSS by hand. A browser canvas cannot blend in OKLCH or HSL, so PNG exports are rendered in sRGB; the interpolation choice applies to the CSS. The freeform (mesh) style is built from layered radial gradients, the closest plain CSS gets to a true mesh gradient. Everything is worked out in your browser; nothing you pick is sent anywhere, and no colour or setting is stored.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var ggStatus = document.getElementById("gg-status");
@@ -439,9 +440,9 @@ document.getElementById("gg-copy").addEventListener("click", function () {
 ggBuildRows();
 ggUpdate();
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="gradient-generator"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="gradient-generator"></script>
 </body>
 </html>
