@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>SVG Optimiser - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Shrink an SVG by removing editor junk, comments and needless precision — a safe, conservative optimiser that re-checks its own output before offering it to you.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/svg-optimiser/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .svo-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .svo-row:last-child { border-bottom: none; }
@@ -93,8 +94,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> this is deliberately a <em>safe, basic</em> optimiser. It removes comments, editor metadata and namespaces, provably unreferenced ids, empty groups/definitions, excess whitespace and excess decimal precision. It does <strong>not</strong> merge paths, convert shapes, simplify curves or minify colours — the heavy rewriting a tool like SVGO does — because those can change how a file renders. The optimised output is re-parsed and rendered side by side with the original so you can see it still works. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var svo_file = document.getElementById("svo-file");
@@ -390,9 +391,9 @@ window.svo_state = function () {
   return { stats: svo_stats, outLen: svo_outText.length };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="svg-optimiser"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="svg-optimiser"></script>
 </body>
 </html>
