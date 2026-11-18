@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Tailwind Shade Generator - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Turn one base colour into a full 50–950 shade scale, with CSS variable and Tailwind config exports.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/tailwind-shade-generator/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .tws-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
 @media (min-width: 720px) { .tws-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -67,8 +68,8 @@ textarea.tws-out { width: 100%; }
 </div>
 <div class="note"><strong>Good to know:</strong> step 500 is your base colour exactly. Lighter steps move the OKLCH lightness toward 0.985 and darker steps toward 0.16, with chroma gently tapered at both ends (real pigments get less vivid near white and black); the hue never changes. If a step would fall outside the sRGB gamut, its chroma is reduced just enough to fit, so every value here is a real displayable colour. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var twsColor = document.getElementById("tws-color");
@@ -196,9 +197,9 @@ twsHex.addEventListener("input", twsRender);
 twsName.addEventListener("input", twsRender);
 twsRender();
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="tailwind-shade-generator"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="tailwind-shade-generator"></script>
 </body>
 </html>
