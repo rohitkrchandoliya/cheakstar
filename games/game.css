@@ -1,0 +1,64 @@
+/* Cheakstar games/game.css -- the shared games stylesheet.
+   Loaded by every game page after the site styles.css. Holds the
+   rules that used to be copied into every game's inline <style>:
+   the cgx dialog system, the family-A theme variables and the
+   class-scoped house pattern (play bar, score bar, control row,
+   fullscreen stage). Bare-element rules (button, select, label)
+   deliberately stay in each game: they are page furniture, and
+   keeping them out of this shared file is what protects the
+   shell chrome (see the shield rules in styles.css). Per-game
+   rules stay in each game's own <style>. */
+
+html[data-textsize="large"] { font-size:112.5%; }
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration:.001s!important; animation-iteration-count:1!important; transition-duration:.001s!important; scroll-behavior:auto!important; }
+.cgx-overlay { position: fixed; inset: 0; background: rgba(7, 26, 46, 0.78); display: none; align-items: center; justify-content: center; z-index: 200; padding: 1rem; box-sizing: border-box; }
+.cgx-overlay.open { display: flex; }
+.cgx-dialog { background: var(--navy, #0a2540); color: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 10px; max-width: 430px; width: 100%; padding: 1.25rem 1.25rem 1rem; box-sizing: border-box; text-align: center; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); }
+.cgx-dialog h3 { margin: 0 0 0.5rem; color: var(--gold, #c9a227); font-size: 1.35rem; border: none; padding: 0; }
+.cgx-dialog-body { color: #cbd5e1; margin: 0.25rem 0 0.75rem; }
+.cgx-dialog-body p { margin: 0.3rem 0; }
+.cgx-score-table { margin: 0.5rem auto 0.25rem; max-width: 300px; }
+.cgx-score-row { display: flex; justify-content: space-between; gap: 2rem; padding: 0.3rem 0; border-bottom: 1px solid #123a5c; font-weight: 600; }
+.cgx-score-row span:last-child { color: var(--gold, #c9a227); }
+.cgx-newbest { display: inline-block; background: var(--gold, #c9a227); color: #111827; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 999px; margin-top: 0.5rem; font-size: 0.9rem; }
+.cgx-stars { font-size: 1.7rem; letter-spacing: 0.2rem; color: var(--gold, #c9a227); margin-top: 0.4rem; line-height: 1.2; }
+.cgx-stars .off { color: #475569; }
+.cgx-btn-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+.cgx-btn { margin: 0; padding: 0.6rem 1.2rem; cursor: pointer; background: #123a5c; color: #fff; border: 1px solid #2c4a6b; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+.cgx-btn:hover { background: #1a4a75; }
+.cgx-btn-primary { background: var(--gold, #c9a227); color: #111827; border-color: var(--gold, #c9a227); font-weight: 700; }
+.cgx-btn-primary:hover { background: #dbb63a; }
+.cgx-confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 300; }
+.cgx-fs:fullscreen, .cgx-fs:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.5rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+.cgx-fs:fullscreen .cgx-board-fill { width: min(96vw, 120vh); }
+[data-theme="light"] .cgx-dialog { background: var(--card); color: var(--ink); }
+[data-theme="light"] .cgx-dialog-body { color: var(--muted); }
+[data-theme="light"] .cgx-score-row { border-bottom-color: var(--line); }
+:root { --navy:#0a1628; --navy2:#0e2142; --navy3:#12305c; --gold:#d4af37; --gold2:#b8912a; --bg:#0a1628; --ink:#eef2f8; --muted:#a9b8cf; --card:#10233f; --line:rgba(212,175,55,.35); --btn:#12305c; color-scheme:dark; }
+[data-theme="light"] { --navy:#f2f5fa; --navy2:#ffffff; --navy3:#e2eaf5; --gold:#a8842a; --gold2:#8f6f1f; --bg:#f2f5fa; --ink:#152540; --muted:#51637e; --card:#ffffff; --line:rgba(21,37,64,.16); --btn:#152540; color-scheme:light; }
+.note { color: var(--muted); font-size: 0.9rem; margin-top: 1rem; }
+.play-bar { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+.play-bar .spacer { flex: 1; }
+.play-bar button { margin-top: 0; }
+.scorebar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.75rem; font-weight: 600; }
+.status { margin-top: 0.75rem; font-weight: 600; min-height: 1.4em; }
+.btn-link { display: inline-block; padding: 0.6rem 1.2rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; text-decoration: none; font-size: 1rem; }
+.btn-link:hover { background: var(--navy3); }
+.fs-exit { display: none; }
+.ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
+.ctrl-row button { margin-top: 0; }
+.ctrl-row select { margin-top: 0; }
+.stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
+.keys-note { color: var(--muted); font-size: 0.9rem; text-align: center; margin-top: 0.6rem; }
+.play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
+.play-stage:-webkit-full-screen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 1rem 1rem 2rem; }
+.play-stage:fullscreen .fs-desc { display: none; }
+.play-stage:fullscreen .fs-exit { display: inline-block; position: fixed; top: 10px; right: 12px; z-index: 60; background: var(--gold); color: #111827; font-weight: 700; }
+.play-stage:fullscreen .scorebar, .play-stage:fullscreen .status { color: #e2e8f0; }
+.play-stage:fullscreen .scorebar { margin-top: 0.25rem; }
+.play-stage:fullscreen .status { margin: 0.4rem 0 0.25rem; }
+.play-stage:fullscreen h1 { color: #fff; width: 100%; max-width: 860px; margin: 0 0 0.35rem; }
+.play-stage:fullscreen .board { margin-top: 0.5rem; }
+.play-stage:fullscreen button { margin-top: 0.35rem; }
+.play-stage:fullscreen .stats-line { color: #cbd5e1; }
+.play-stage:fullscreen .keys-note { color: #cbd5e1; }
