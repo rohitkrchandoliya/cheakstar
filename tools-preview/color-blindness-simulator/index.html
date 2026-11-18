@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Color Blindness Simulator - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="See how a colour — or a whole image — looks to people with colour-vision deficiency, across all eight types.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-blindness-simulator/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .cbs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
 @media (min-width: 720px) { .cbs-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -80,8 +81,8 @@ button.cbs-card { cursor: pointer; }
 </div>
 <div class="note"><strong>Good to know:</strong> simulations use the standard Vienot, Brettel and Mollon colour-vision matrices, applied per pixel in sRGB — a good approximation, not a medical measurement; two people with the same diagnosis still see differently. Never rely on colour alone: pair colours with labels, patterns, icons or position, so a chart or a status light still makes sense when two colours merge. Images are capped at 1600px on the longest side for speed. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var cbsColor = document.getElementById("cbs-color");
@@ -206,9 +207,9 @@ cbsColor.addEventListener("input", function () { cbsHex.value = cbsColor.value.t
 cbsHex.addEventListener("input", cbsRenderColour);
 cbsRenderColour();
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="color-blindness-simulator"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="color-blindness-simulator"></script>
 </body>
 </html>
