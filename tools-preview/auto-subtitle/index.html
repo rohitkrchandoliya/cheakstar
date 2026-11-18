@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Auto Subtitle - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Turn speech into subtitles with OpenAI's Whisper AI, running entirely in your browser — the recording never leaves your device.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/auto-subtitle/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .asu-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .asu-drop.asu-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -109,8 +110,8 @@
 </div>
 <div class="note"><strong>Good to know — please read:</strong> the one-time model download described above is the only network traffic this page creates; your recording is decoded and transcribed on this device and never sent anywhere. Models: <strong>OpenAI Whisper</strong> (Tiny and Base, quantized builds published by Xenova on Hugging Face, Apache-2.0), run with <strong>transformers.js 3.8.1</strong>. Timestamps are per speech segment, not per word. Very long files can run out of memory in a tab — trimming the recording first (our Audio Trimmer, or Video Trimmer for clips) makes this tool much happier. Nothing is uploaded.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var ASU_TF_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
@@ -364,9 +365,9 @@ window.asu_state = function () {
   };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="auto-subtitle"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="auto-subtitle"></script>
 </body>
 </html>
