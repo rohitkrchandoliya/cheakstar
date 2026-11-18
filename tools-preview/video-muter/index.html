@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Video Muter - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Remove the sound from a video — the picture stays, the audio track goes — processed entirely in your browser.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/video-muter/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .vmu-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .vmu-drop.vmu-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -72,8 +73,8 @@
 </div>
 <div class="note"><strong>Good to know — please read, honestly:</strong> browsers cannot rewrite a video file's container to simply delete its audio track, so this tool <strong>re-encodes</strong> the picture while it plays (in real time — a 10-minute video takes about 10 minutes) and records no audio at all. That means the output quality depends on your browser's encoder and is not bit-identical to the original picture, and the output format is whatever your browser records — MP4 in some browsers, WebM in others; the download name and the panel above always say which. If you need the original picture stream kept bit-for-bit with only the audio removed, use a desktop tool with a stream-copy option (for example ffmpeg with <em>-c:v copy -an</em>). Nothing is uploaded either way — this all happens in your tab.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var vmu_file = document.getElementById("vmu-file");
@@ -239,9 +240,9 @@ window.vmu_state = function () {
   };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="video-muter"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="video-muter"></script>
 </body>
 </html>
