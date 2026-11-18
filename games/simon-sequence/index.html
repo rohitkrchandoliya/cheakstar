@@ -118,39 +118,39 @@ function $(id) { return document.getElementById(id); }
      slope and the same 0.62 light ratio throughout.
    - STRICT MODE (spec 12(a)/(c)): a toggle, ON by default so
      the shipped one-mistake rule is the out-of-box behaviour.
-      Off, a wrong pad flashes red, shakes the board, and the
-      same sequence simply replays for another try - the round
-      is never lost, and mistakes are counted for the end
-      screen.
-    - CONTROLS (spec 12(c)): click/tap as shipped, plus the
-      keyboard the benchmark asks for - keys 1-4 press the pads
-      in reading order and Q/W/A/S press them by grid position;
-      P or the Pause button freezes the playback timer chain
-      (every pending timer keeps its remaining time and resumes
-      where it stopped); a Replay sequence button replays the
-      current sequence during your turn and restarts your input
-      from step one.
-    - SOUND (spec 12(c) + 0.6): the pads keep their own tone
-      engine (the four frequencies ARE the game), but the tones
-      now honour the shared cgx mute setting - the Sound toggle
-      in the toolbar finally exists; the note on the shipped
-      page said "works muted" with no way to mute. UI clicks,
-      the round-complete chime and the end-screen sounds go
-      through cgx like every other polished game.
-    - ANIMATION (spec 12(b)): pads are glossy domes now; a
-      light is a brightness/glow transition instead of the
-      shipped opacity jump, a press scales the pad down, a
-      wrong pad flashes a red outline while the board shakes,
-      progress dots track the sequence through playback and
-      input, and completing a round pulses the scorebar and
-      plays the chime.
-    - END SCREEN via cgx.showResult: rounds completed, the
-      sequence length reached, Best row, and a New best badge
-      with confetti when the stored best is beaten.
-    - The game is event-driven with a setTimeout chain, as
-      shipped - no rAF loop exists to leave running (spec
-      12(f): lag risk LOWEST; the timer chain is now a single
-      registry so pause and restart can never orphan a timer). */
+     Off, a wrong pad flashes red, shakes the board, and the
+     same sequence simply replays for another try - the round
+     is never lost, and mistakes are counted for the end
+     screen.
+   - CONTROLS (spec 12(c)): click/tap as shipped, plus the
+     keyboard the benchmark asks for - keys 1-4 press the pads
+     in reading order and Q/W/A/S press them by grid position;
+     P or the Pause button freezes the playback timer chain
+     (every pending timer keeps its remaining time and resumes
+     where it stopped); a Replay sequence button replays the
+     current sequence during your turn and restarts your input
+     from step one.
+   - SOUND (spec 12(c) + 0.6): the pads keep their own tone
+     engine (the four frequencies ARE the game), but the tones
+     now honour the shared cgx mute setting - the Sound toggle
+     in the toolbar finally exists; the note on the shipped
+     page said "works muted" with no way to mute. UI clicks,
+     the round-complete chime and the end-screen sounds go
+     through cgx like every other polished game.
+   - ANIMATION (spec 12(b)): pads are glossy domes now; a
+     light is a brightness/glow transition instead of the
+     shipped opacity jump, a press scales the pad down, a
+     wrong pad flashes a red outline while the board shakes,
+     progress dots track the sequence through playback and
+     input, and completing a round pulses the scorebar and
+     plays the chime.
+   - END SCREEN via cgx.showResult: rounds completed, the
+     sequence length reached, Best row, and a New best badge
+     with confetti when the stored best is beaten.
+   - The game is event-driven with a setTimeout chain, as
+     shipped - no rAF loop exists to leave running (spec
+     12(f): lag risk LOWEST; the timer chain is now a single
+     registry so pause and restart can never orphan a timer). */
 var SimonSequence = (function () {
   var simTones = [329.63, 261.63, 392.0, 440.0];   /* shipped, by pad index */
   var SPEEDS = {
