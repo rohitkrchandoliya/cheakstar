@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Timecode Calculator - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Convert between timecode and frames, and add or subtract timecodes — drop-frame aware, at every common frame rate.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/timecode-calculator/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .tcc-out { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 12px; background: var(--card); }
 .tcc-out h3 { margin: 0 0 8px; font-size: 1rem; color: var(--navy, #0a2540); }
@@ -113,8 +114,8 @@
 </div>
 <div class="note"><strong>Good to know — please read:</strong> drop-frame timecode does not drop any actual frames — it skips frame <em>numbers</em> (two numbers at the start of most minutes at 29.97, four at 59.94) so the clock stays in step with real time. At 29.97 drop-frame, one hour of timecode is 107,892 frames, not 108,000. "Real time" is the true playback duration: frame count divided by the exact rate (for example 30000/1001 for 29.97). Non-drop 23.976 counts frames at 24, as editors do.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 /* Rates: nom = the counting rate (frames are numbered at this rate),
@@ -229,9 +230,9 @@ window.tcc_state = function () {
   };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="timecode-calculator"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="timecode-calculator"></script>
 </body>
 </html>
