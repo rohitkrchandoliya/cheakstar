@@ -93,11 +93,11 @@ var SpaceBlaster = (function () {
   for (i = 0; i < 110; i++) spaceParticles.push({ active: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, color: "#fff", size: 2 });
   for (i = 0; i < 8; i++) spacePopups.push({ active: false, x: 0, y: 0, life: 0, text: "" });
 
-   /* ---------------- persistence (cgx shared layer, spec 15d) ---------------- */
+  /* ---------------- persistence (cgx shared layer, spec 15d) ---------------- */
   var spaceStore = cgx.store("space-blaster");
   var spaceBest = spaceStore.get("best", null);
   if (!spaceBest || typeof spaceBest.score !== "number") spaceBest = { score: 0, wave: 0, bosses: 0, games: 0 };
-     var spaceBosses = 0, spaceNewBest = false;
+  var spaceBosses = 0, spaceNewBest = false;
   function spaceSaveBest(finished) {
     var changed = false;
     if (spaceScore > spaceBest.score) { spaceBest.score = spaceScore; spaceNewBest = true; changed = true; }
