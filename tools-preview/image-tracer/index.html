@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Image Tracer - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Turn a raster image — a logo, drawing or icon — into a clean, scalable SVG vector, traced entirely in your browser.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/image-tracer/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .itr-drop { border: 2px dashed var(--line); border-radius: 10px; padding: 22px 16px; text-align: center; margin-top: 12px; }
 .itr-drop.itr-over { border-color: var(--gold, #c9a227); background: rgba(201,162,39,.07); }
@@ -115,8 +116,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> tracing is done by the open-source ImageTracerJS library (version 1.2.6, public domain / The Unlicense, by András Jankovics), loaded from the jsDelivr CDN; if it cannot load, this page says so plainly instead of faking a result. Flat logos and icons trace best. Photographs trace honestly but with many paths — the Photo preset keeps up to 48 colours, and the file can grow large; that is the real trade-off of vectorising a photo, not a fault. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script src="https://cdn.jsdelivr.net/gh/jankovicsandras/imagetracerjs@1.2.6/imagetracer_v1.2.6.js"></script>
 <script>
 "use strict";
@@ -307,9 +308,9 @@ window.itr_state = function () {
   return { hasImage: itr_has, svgLen: itr_svg.length, stats: itr_stats, libLoaded: typeof ImageTracer !== "undefined" };
 };
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="image-tracer"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="image-tracer"></script>
 </body>
 </html>
