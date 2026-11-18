@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Color Atlas - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Everything about one colour on one page — every format, shade, tint and tone scales, harmonies, contrast partners and a CSS export.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/color-atlas/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 .cat-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .cat-row:last-child { border-bottom: none; }
@@ -95,8 +96,8 @@ textarea#cat-css { width: 100%; }
 </div>
 <div class="note"><strong>Good to know:</strong> shades, tints and tones are mixed in sRGB in 10% steps (the last step of each scale is pure black, white or mid-grey). Harmonies rotate the hue in OKLCH at the base colour's lightness and chroma; if a rotated colour would fall outside the sRGB gamut, its chroma is reduced just enough to fit. The name is the nearest of the 148 CSS colour names by a weighted (redmean) distance — a close neighbour, not an official name. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var catColor = document.getElementById("cat-color");
@@ -328,9 +329,9 @@ catColor.addEventListener("input", function () { catHex.value = catColor.value.t
 catHex.addEventListener("input", catRender);
 catRender();
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="color-atlas"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="color-atlas"></script>
 </body>
 </html>
