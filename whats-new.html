@@ -10,26 +10,8 @@
   <meta property="og:description" content="What is new at Cheakstar — the latest changes to this website: free tools, accounts and rewards, new books and new pages, in plain words.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/whats-new.html">
-<script>
-/* Theme snippet (same block as theme-head-snippet.html): first paint
-   already carries the visitor's saved appearance choices. */
-(function () {
-  try {
-    var mode = "system";
-    try { mode = window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) {}
-    var dark = mode === "dark" || (mode !== "light" &&
-      !(window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches));
-    var root = document.documentElement;
-    root.setAttribute("data-theme", dark ? "dark" : "light");
-    root.style.background = dark ? "#0a1628" : "#f2f5fa";
-    try {
-      if (window.localStorage.getItem("ck_reduce_motion") === "1") root.setAttribute("data-motion", "reduced");
-      if (window.localStorage.getItem("ck_text_size") === "large") root.setAttribute("data-textsize", "large");
-    } catch (e) {}
-  } catch (e) {}
-})();
-</script>
-<link rel="stylesheet" href="styles.css?v=20261114">
+<script src="theme-boot.js?v=20261118"></script>
+<link rel="stylesheet" href="styles.css?v=20261118">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -49,11 +31,7 @@
 }
 </script>
 </head><body>
-<header class="site"><div class="wrap nav">
-<a class="logo" href="index.html">CHEAK<span>STAR</span></a>
-<nav class="navlinks">
-<a href="index.html">Home</a><a href="books.html">Books &amp; Store</a><a href="training.html">Training</a><a href="services.html">Security Services</a><a href="checklist.html">Checklist</a><a href="knowledge-brain.html">Knowledge Brain</a><a href="free-resources.html">Free Resources</a><a href="blog.html">Blog</a><a href="about.html">About</a><a href="contact.html">Contact</a>
-</nav></div></header>
+
 <section><div class="wrap prose">
 <h1>What's New</h1>
 <p class="sub">The latest changes to this website, newest first — in plain words, with no hype. This page is updated whenever something meaningful ships.</p>
@@ -70,6 +48,6 @@
 <p><strong>The Cheakstar Blog.</strong> Our blog launched with practical, plainly written cybersecurity guides — password habits, phishing, updates, bug bounty and more — with new articles published regularly since. Start from the <a href="blog.html">Blog</a> page.</p>
 <p><a class="go" href="index.html">← Back to Home</a></p>
 </div></section>
-<script src="shell.js?v=20261114"></script>
-<script src="theme.js?v=20261106a"></script>
+<script src="shell.js?v=20261118"></script>
+<script src="theme.js?v=20261118"></script>
 </body></html>
