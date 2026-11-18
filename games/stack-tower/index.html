@@ -128,7 +128,7 @@ var StackTower = (function () {
   var stkSkyGrad = null; /* cached on first draw (spec 13(f)) */
 
   /* ---------------- persistence (cgx.store) ---------------- */
-     var stkStore = cgx.store("stack-tower");
+  var stkStore = cgx.store("stack-tower");
   function loadBest() {
     var v = stkStore.get("best", 0);
     return (typeof v === "number" && isFinite(v) && v > 0) ? Math.floor(v) : 0;
