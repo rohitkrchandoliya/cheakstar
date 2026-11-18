@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../theme-boot.js?v=20261118"></script>
 <link rel="icon" href="data:,">
 <title>Contrast Checker - Free Online Tool - Cheakstar Tools</title>
 <meta name="description" content="Check WCAG text contrast between two colours — AA and AAA for normal and large text, with one-click fixes.">
@@ -12,9 +13,9 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/tools-preview/contrast-checker/">
 <meta property="og:image" content="https://rohitkrchandoliya.github.io/cheakstar/og-image.png">
-<link rel="stylesheet" href="../../styles.css?v=20261114">
-<link rel="stylesheet" href="../assets/tools.css">
-<link rel="stylesheet" href="../assets/tool-info.css">
+<link rel="stylesheet" href="../../styles.css?v=20261118">
+<link rel="stylesheet" href="../assets/tools.css?v=20261118">
+<link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
 <style>
 #cck-ratio { font-size: 2.4rem; font-weight: 700; line-height: 1.1; }
 .cck-badges { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
@@ -74,8 +75,8 @@
 </div>
 <div class="note"><strong>Good to know:</strong> ratios follow the WCAG 2.1 formula, (L1 + 0.05) / (L2 + 0.05) from relative luminance. "Large text" means at least 24px, or 18.66px and bold. The fixes adjust only the text colour, mixing it toward black or white in sRGB until AA normal (4.5 : 1) is just reached — always re-check the fixed pair in your real design, because font weight and size change how much contrast you truly need. Everything runs in this browser tab; nothing is sent anywhere.</div>
 </main>
-<script src="../../shell.js?v=20261114"></script>
-<script src="../assets/tools.js?v=20261114"></script>
+<script src="../../shell.js?v=20261118"></script>
+<script src="../assets/tools.js?v=20261118"></script>
 <script>
 "use strict";
 var cckFg = document.getElementById("cck-fg");
@@ -210,9 +211,9 @@ document.getElementById("cck-swap").addEventListener("click", function () {
 });
 cckRender();
 </script>
-<script src="../../theme.js?v=20261106a"></script>
-<script src="../../gate.js?v=20261106a" data-cs-gate-run="tool"></script>
-<script src="../assets/tool-info-data.js"></script>
-<script src="../assets/tool-info.js" data-tool="contrast-checker"></script>
+<script src="../../theme.js?v=20261118"></script>
+<script src="../../gate.js?v=20261118" data-cs-gate-run="tool"></script>
+<script src="../assets/tool-info-data.js?v=20261118"></script>
+<script src="../assets/tool-info.js?v=20261118" data-tool="contrast-checker"></script>
 </body>
 </html>
