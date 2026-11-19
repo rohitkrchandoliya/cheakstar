@@ -22,83 +22,15 @@
    the Google Translate widget the language runtime drives. Every
    block is failure-isolated. */
 
-// (The appearance boot below is the first of shell.js's blocks; the
-// file header at the very top of shell.js describes the whole file.)
-
-// Appearance: apply the visitor's saved theme choices on every page.
-// The choices live in localStorage (set on the Settings page; the full
-// runtime, including account sync, is theme.js). Pages that do not load
-// theme.js still honour the choices here, because this file loads on
-// every page and the stylesheet switches on the data-theme attribute.
-// The device copy survives refresh and sign-out; nothing here clears it.
-(function () {
-  try {
-    var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
-    function currentMode() {
-      try { return window.localStorage.getItem("ck_theme_mode") || "system"; } catch (e) { return "system"; }
-    }
-    function applyAppearance() {
-      var mode = currentMode();
-      var dark = mode === "dark" || (mode !== "light" && !(mq && mq.matches));
-      var root = document.documentElement;
-      root.setAttribute("data-theme", dark ? "dark" : "light");
-      try {
-        root.setAttribute("data-motion", window.localStorage.getItem("ck_reduce_motion") === "1" ? "reduced" : "full");
-        root.setAttribute("data-textsize", window.localStorage.getItem("ck_text_size") === "large" ? "large" : "comfortable");
-      } catch (e) {}
-    }
-    applyAppearance();
-    if (mq && mq.addEventListener) {
-      mq.addEventListener("change", function () {
-        if (currentMode() === "system") applyAppearance();
-      });
-    }
-  } catch (e) { /* appearance is cosmetic; never break the page */ }
-})();
+// The pre-paint appearance boot lives in theme-boot.js (loaded in
+// the <head> of every page); the full appearance runtime is theme.js.
+// Until the 2026-11-18 unification the boot block ran here.
 
 document.addEventListener("DOMContentLoaded", function () {
   var y = document.getElementById("year");
   if (y) y.textContent = new Date().getFullYear();
 });
 
-// Mobile navbar: hide on scroll down, show again on scroll up.
-// Active only at widths up to 768px; on desktop the header is always visible.
-(function () {
-  var header = document.querySelector("header.site");
-  if (!header || !window.matchMedia) return;
-  var mq = window.matchMedia("(max-width: 768px)");
-  var lastY = window.scrollY || window.pageYOffset || 0;
-  var hidden = false;
-
-  function setHidden(value) {
-    if (value === hidden) return;
-    hidden = value;
-    header.classList.toggle("nav-hidden", value);
-  }
-
-  function onScroll() {
-    var y = window.scrollY || window.pageYOffset || 0;
-    if (!mq.matches) {
-      setHidden(false);
-      lastY = y;
-      return;
-    }
-    if (y < 100) {
-      setHidden(false);
-      lastY = y;
-      return;
-    }
-    if (Math.abs(y - lastY) <= 4) return; // ignore tiny jitter
-    if (y > lastY) setHidden(true);        // scrolling down
-    else setHidden(false);                 // scrolling up
-    lastY = y;
-  }
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  if (mq.addEventListener) mq.addEventListener("change", onScroll);
-  else if (mq.addListener) mq.addListener(onScroll);
-  onScroll();
-})();
 
 // ==== Cheakstar shell (2026-11-06): preloader, sidebar, scroll UI, reveal.
 // Hand-rolled vanilla JS, no libraries, no external calls. Every block is
@@ -988,138 +920,10 @@ document.addEventListener("DOMContentLoaded", function () {
   } catch (e) {}
 })();
 
-// ==== Cheakstar display language (site-wide) (2026-11-08).
-// Most pages do not load theme.js, so the saved
-// Settings language is applied here with exactly the same rules:
-// device copy (localStorage "ck_lang") at once, account copy
-// (display_language) adopted at sign-in through one guarded reload,
-// translation by Google Translate's page widget via its "googtrans"
-// cookie, English = the site's own text (cookie cleared, nothing
-// loaded). Failure-isolated: if the widget cannot be reached, the
-// page simply stays in English. ====
-(function () {
-  "use strict";
-  try {
-    // Shared boot guard: this same runtime also ships in theme.js
-    // and script.js. The first copy to run claims the slot; the
-    // others step aside, so the translate element is never
-    // injected twice on a page that loads two of the files.
-    if (window.__csLangBoot) return;
-    window.__csLangBoot = true;
-    var LANGS = ["en", "hi", "bn", "te", "mr", "ta", "ur", "gu", "kn", "ml", "pa", "es", "fr", "de", "ar", "zh-CN", "ja"];
-    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
-    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
-    function ssGet(k) { try { return window.sessionStorage.getItem(k); } catch (e) { return null; } }
-    function ssSet(k, v) { try { window.sessionStorage.setItem(k, v); } catch (e) {} }
-    function savedLang() {
-      var v = lsGet("ck_lang") || "en";
-      return LANGS.indexOf(v) >= 0 ? v : "en";
-    }
-    function cookieVariants(write) {
-      write("");
-      try {
-        var host = window.location.hostname || "";
-        if (host && host.indexOf(".") > 0) write("; domain=" + host);
-      } catch (e) {}
-    }
-    function setTransCookie(lang) {
-      cookieVariants(function (suffix) {
-        try { document.cookie = "googtrans=/en/" + lang + suffix + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
-      });
-    }
-    function clearTransCookie() {
-      cookieVariants(function (suffix) {
-        try { document.cookie = "googtrans=" + suffix + "; path=/; max-age=0; SameSite=Lax"; } catch (e) {}
-      });
-    }
-    // The set cookie only asks the widget to restore the saved
-    // language; it does not by itself start a translation pass.
-    // Once the widget has built its language selector, select
-    // the saved language in it and fire its change event — the
-    // same step a visitor's own selection in the gadget takes,
-    // and the step cookie-driven translate integrations perform
-    // after the widget loads. The selector is built
-    // asynchronously, so poll briefly; give up silently if it
-    // never appears (the page then simply stays in English).
-    function driveGadget(lang) {
-      var tries = 0;
-      var iv = setInterval(function () {
-        tries++;
-        var combo = null;
-        try { combo = document.querySelector("select.goog-te-combo"); } catch (e) {}
-        if (combo) {
-          if (combo.value === lang) { clearInterval(iv); return; }
-          var has = false;
-          for (var i = 0; i < combo.options.length; i++) {
-            if (combo.options[i].value === lang) { has = true; break; }
-          }
-          if (has) {
-            combo.value = lang;
-            var ev = null;
-            try { ev = new window.Event("change", { bubbles: true }); }
-            catch (e) {
-              try { ev = document.createEvent("HTMLEvents"); ev.initEvent("change", true, true); } catch (e2) {}
-            }
-            if (ev) combo.dispatchEvent(ev);
-            if (combo.value === lang) { clearInterval(iv); return; }
-          }
-        }
-        if (tries >= 30) clearInterval(iv);
-      }, 200);
-    }
-    var started = false;
-    function applyLanguage() {
-      if (started) return;
-      started = true;
-      var lang = savedLang();
-      if (lang === "en") { clearTransCookie(); return; }
-      setTransCookie(lang);
-      var holder = document.createElement("div");
-      holder.id = "google_translate_element";
-      holder.setAttribute("aria-hidden", "true");
-      (document.body || document.documentElement).appendChild(holder);
-      window.csGoogleTranslateInit = function () {
-        try {
-          new window.google.translate.TranslateElement({
-            pageLanguage: "en",
-            includedLanguages: LANGS.join(","),
-            autoDisplay: false
-          }, "google_translate_element");
-          driveGadget(lang);
-        } catch (e) { /* widget failed: the page stays in English */ }
-      };
-      var s = document.createElement("script");
-      s.src = "https://translate.google.com/translate_a/element.js?cb=csGoogleTranslateInit";
-      s.async = true;
-      (document.head || document.documentElement).appendChild(s);
-    }
-    function adoptFromAccount(user) {
-      try {
-        var meta = (user && user.user_metadata) || {};
-        var want = meta.display_language;
-        if (typeof want !== "string" || LANGS.indexOf(want) < 0) return;
-        if (want === savedLang()) return;
-        lsSet("ck_lang", want);
-        if (ssGet("csLangAdopt") === want) return;
-        ssSet("csLangAdopt", want);
-        window.location.reload();
-      } catch (e) {}
-    }
-    function hookAuth() {
-      if (!window.CSAuth || !window.CSAuth.onChange) return false;
-      window.CSAuth.onChange(function (user, event) {
-        if (user && (event === "SIGNED_IN" || event === "INITIAL")) adoptFromAccount(user);
-      });
-      return true;
-    }
-    if (!hookAuth()) {
-      var tries = 0;
-      var iv = setInterval(function () { if (hookAuth() || ++tries > 40) clearInterval(iv); }, 250);
-    }
-    if (document.body) applyLanguage();
-    else document.addEventListener("DOMContentLoaded", applyLanguage);
-  } catch (e) {}
-})();
+// The display-language runtime lives in theme.js (window.CSLang);
+// it used to ship a second copy here for pages that did not load
+// theme.js -- since the 2026-11-18 unification every page loads
+// theme.js, so the copy here is removed.
 
 /* ==== Cheakstar Guide Bot loader (2026-11-08, master list item 17).
    The guide itself lives in guide.js at the site root; the
@@ -1228,36 +1032,35 @@ document.addEventListener("DOMContentLoaded", function () {
    Owner's order: theme switching and language choice are PUBLIC — no
    sign-in needed. This block lives ONCE, here in shell.js (before the unification
    it was appended, identical, to script.js, tools.js, theme.js and
-   games-nav.js). theme.js still carries its staged copy; the boot
-   guard (window.__csPubControls) makes whichever copy runs second
-   step aside, so a page loading both files still gets exactly one
-   set of controls (the same boot-guard pattern the language
-   runtime above already uses).
+   games-nav.js). Since the 2026-11-18 unification this is the only copy:
+   theme.js's staged copy is deleted, and the boot guard
+   (window.__csPubControls) remains only as a safety net against
+   a double load of this file.
 
    THEME: the toggle drives the site's existing appearance system —
    the localStorage key "ck_theme_mode" and the data-theme attribute
    the stylesheets switch on; nothing parallel is invented. When
    theme.js is on the page, its window.CSTheme.setMode() is used
    (it also mirrors the choice to the signed-in account); otherwise
-   the key is written directly and data-theme is re-applied here
-   with the shells' own resolution rule (mode "system" follows
+   the key is written directly, data-theme is re-applied here
+   and the choice is mirrored to the signed-in account, with the
+   shells' own resolution rule (mode "system" follows
    prefers-color-scheme). The button is a two-state dark/light
    switch: a click pins the explicit opposite of the theme that is
    currently resolved. The three-state choice (incl. "system")
    stays on the Settings page and is honoured — never overwritten
    except by an explicit click here.
 
-   LANGUAGE: the footer dropdown writes the same localStorage key
-   "ck_lang" the Settings page saves and the language boot in
-   these files consumes, sets/clears the Google Translate
-   "googtrans" cookie exactly as that boot does, mirrors the
+   LANGUAGE: the footer dropdown hands the choice to the language
+   runtime in theme.js (window.CSLang.set): it writes the same
+   localStorage key "ck_lang" the Settings page saves, sets or
+   clears the Google Translate "googtrans" cookie, mirrors the
    choice to the account for signed-in users, and reloads once so
-   the boot applies it — the same apply path the boot's own
-   account-language adoption uses. "Auto (browser)" removes the
-   saved key: the boot then falls back to the site's own English
-   text and no translation is loaded. The language list matches
-   the widget's includedLanguages in the language boot, so every
-   offered language can actually translate.
+   the runtime applies it — the same apply path the boot's own
+   "Auto (browser)" removes the saved key: the site then stays
+   in its own English text and no translation is loaded. The
+   language list matches the widget's includedLanguages in the
+   runtime, so every offered language can actually translate.
 
    All styles are injected by this block (no stylesheet changes),
    so the main, tools and games sections render the controls
@@ -1331,6 +1134,16 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.CSTheme && window.CSTheme.setMode) { window.CSTheme.setMode(mode); return; }
     lsSet(THEME_KEY, mode);
     document.documentElement.setAttribute("data-theme", resolvedTheme());
+    // Keep the account layer in step for signed-in users, the same
+    // best-effort mirror the language choice in this block performs.
+    // Without it, a choice made on a page that does not load theme.js
+    // stays on the device only, and the next page that does load it
+    // restores the older account value over the device choice.
+    try {
+      if (window.CSAuth && window.CSAuth.getUser && window.CSAuth.getUser() && window.CSAuth.savePrefs) {
+        window.CSAuth.savePrefs({ theme_mode: mode }).then(function () {}, function () {});
+      }
+    } catch (e) {}
   }
   function paintToggle(btn) {
     var r = resolvedTheme();
@@ -1340,6 +1153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btn.setAttribute("aria-label", r === "dark" ? "Switch to light theme" : "Switch to dark theme");
     btn.title = r === "dark" ? "Switch to light theme" : "Switch to dark theme";
   }
+
   function buildToggle() {
     var btn = document.createElement("button");
     btn.type = "button";
@@ -1360,36 +1174,20 @@ document.addEventListener("DOMContentLoaded", function () {
     for (var i = 0; i < LANGS.length; i++) { if (LANGS[i][0] === v) return v; }
     return "auto";
   }
-  function cookieVariants(write) {
-    write("");
-    try {
-      var host = window.location.hostname || "";
-      if (host && host.indexOf(".") > 0) write("; domain=" + host);
-    } catch (e) {}
-  }
-  function setTransCookie(lang) {
-    cookieVariants(function (suffix) {
-      try { document.cookie = "googtrans=/en/" + lang + suffix + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
-    });
-  }
-  function clearTransCookie() {
-    cookieVariants(function (suffix) {
-      try { document.cookie = "googtrans=" + suffix + "; path=/; max-age=0; SameSite=Lax"; } catch (e) {}
-    });
-  }
   function chooseLanguage(v) {
-    if (v === "auto") { lsDel(LANG_KEY); clearTransCookie(); }
-    else if (v === "en") { lsSet(LANG_KEY, "en"); clearTransCookie(); }
-    else { lsSet(LANG_KEY, v); setTransCookie(v); }
-    // Keep the account layer in step for signed-in users, the same
-    // best-effort mirror theme.js performs for the theme choice.
+    // The language runtime in theme.js owns the change: device
+    // save, translate cookie, account mirror, one reload.
+    if (window.CSLang && window.CSLang.set) { window.CSLang.set(v); return; }
+    // theme.js unavailable: keep the choice on the device, mirror
+    // it to the account, and reload -- the runtime applies it on
+    // the next page that loads it.
+    if (v === "auto") { lsDel(LANG_KEY); }
+    else { lsSet(LANG_KEY, v); }
     try {
       if (window.CSAuth && window.CSAuth.getUser && window.CSAuth.getUser() && window.CSAuth.savePrefs) {
         window.CSAuth.savePrefs({ display_language: v === "auto" ? "en" : v }).then(function () {}, function () {});
       }
     } catch (e) {}
-    // One reload: the language boot in these files reads ck_lang on
-    // load and drives the widget — its own apply path.
     window.location.reload();
   }
   function buildLangLabel() {
@@ -1419,7 +1217,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* ---------------- placement ---------------- */
   function shellScriptPresent() {
-    return !!document.querySelector('script[src*="shell.js"],script[src*="script.js"],script[src*="tools.js"],script[src*="games-nav.js"]');
+    return !!document.querySelector('script[src*="shell.js"]');
   }
   function placeControls() {
     injectStyles();
@@ -1458,10 +1256,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   function init() {
     try { placeControls(); } catch (e) {}
-    // The shells build their sidebar synchronously while their file
-    // parses, but when this copy runs from theme.js the shell file
-    // may parse later in the page — retry briefly so the toggle
-    // still lands in the sidebar instead of the footer.
+    // The shell builds its sidebar synchronously while this file
+    // parses; the retry loop covers pages whose sidebar markup is
+    // rendered a moment later, so the toggle still lands in the
+    // sidebar instead of the footer.
     var tries = 0;
     var iv = setInterval(function () {
       tries++;
