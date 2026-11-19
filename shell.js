@@ -1153,7 +1153,6 @@ document.addEventListener("DOMContentLoaded", function () {
     btn.setAttribute("aria-label", r === "dark" ? "Switch to light theme" : "Switch to dark theme");
     btn.title = r === "dark" ? "Switch to light theme" : "Switch to dark theme";
   }
-
   function buildToggle() {
     var btn = document.createElement("button");
     btn.type = "button";
