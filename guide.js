@@ -9,10 +9,9 @@
 // dead-end. The tool branch reads tools.json (the machine-readable
 // catalogue, master list item 26) the first time it is opened; if
 // that file cannot be loaded, the branch falls back to pointing at
-// the All Tools page instead of failing. Loaded by script.js on the
-// main pages, by assets/tools.js on the tool pages, and directly by
-// the standalone login and signup pages (which show the welcome
-// greeting). Failure-isolated like every other block: if anything
+// the All Tools page instead of failing. Loaded by shell.js
+// on every shell page, and directly by the standalone login and
+// signup pages (which show the welcome greeting). Failure-isolated like every other block: if anything
 // here throws, the page keeps working exactly as before. ====
 (function () {
   "use strict";
