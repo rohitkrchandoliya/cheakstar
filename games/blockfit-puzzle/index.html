@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../game.css?v=20261118">
 <title>BlockFit Puzzle - Cheakstar Games</title>
+<meta name="description" content="Play BlockFit Puzzle free in your browser — a block-fitting puzzle game from Cheakstar Games. No downloads or installs; the game runs entirely on your device.">
 <style>
 body { background: var(--bg); color: var(--ink); }
 h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
@@ -21,7 +22,7 @@ label { font-weight: 600; }
 .play-stage:fullscreen h1 { display: none; }
 .play-stage:fullscreen .status { min-height: 1.1em; }
 }
-#bf-board { position: relative; display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: min(480px, 92vw); margin: 1rem auto 0; background: #0a2540; padding: 4px; box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; transition: opacity 0.6s ease, filter 0.6s ease; }
+#bf-board { position: relative; display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: min(480px, 100%); margin: 1rem auto 0; background: #0a2540; padding: 4px; box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; transition: opacity 0.6s ease, filter 0.6s ease; }
 .cgx-fs:fullscreen #bf-board, .cgx-fs:-webkit-full-screen #bf-board { width: min(94vw, 72vmin, 620px); flex: none; margin-top: 0.5rem; }
 #bf-board.over { opacity: 0.55; filter: grayscale(0.35); }
 .bf-cell { aspect-ratio: 1; background: #fff; border: none; border-radius: 2px; padding: 0; margin: 0; cursor: pointer; }
