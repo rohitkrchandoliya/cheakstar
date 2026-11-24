@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../game.css?v=20261118">
 <title>Number Merge 2048 - Cheakstar Games</title>
+<meta name="description" content="Play Number Merge 2048 free in your browser — a 2048 number-merging puzzle game from Cheakstar Games. No downloads or installs; the game runs entirely on your device.">
 <style>
 body { background: var(--bg); color: var(--ink); }
 h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
@@ -27,7 +28,7 @@ label { font-weight: 600; }
 .score-box .score-value { display: block; font-size: 1.25rem; font-weight: 800; line-height: 1.2; }
 .score-box.bump { animation: merge-score-bump 0.25s ease; }
 @keyframes merge-score-bump { 40% { transform: scale(1.1); } }
-#merge-board { --pad: 12px; --gap: 12px; --cell: 100px; position: relative; width: min(500px, 92vw); aspect-ratio: 1 / 1; margin: 1rem auto 0; background: #bbada0; border-radius: calc(var(--cell) * 0.06); touch-action: none; user-select: none; -webkit-user-select: none; }
+#merge-board { --pad: 12px; --gap: 12px; --cell: 100px; position: relative; width: min(500px, 100%); aspect-ratio: 1 / 1; margin: 1rem auto 0; background: #bbada0; border-radius: calc(var(--cell) * 0.06); touch-action: none; user-select: none; -webkit-user-select: none; }
 .cgx-fs:fullscreen #merge-board, .cgx-fs:-webkit-full-screen #merge-board { flex: none; width: min(94vw, calc(100vh - 190px), 680px); margin-top: 0.5rem; }
 .merge-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); padding: var(--pad); gap: var(--gap); box-sizing: border-box; }
 .merge-cell { background: #cdc1b4; border-radius: calc(var(--cell) * 0.06); }
