@@ -9,7 +9,7 @@ html{scroll-behavior:smooth}
 body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;background:var(--navy);color:var(--ink);line-height:1.65}
 a{color:var(--gold);text-decoration:none}
 a:hover{text-decoration:underline}
-.wrap{width:100%;max-width:1100px;margin:0 auto;padding
+.wrap{width:100%;max-width:1100px;margin:0 auto;padding:0 20px}
 header.site{background:var(--navy2);border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:50;transition:transform .3s ease}
 @media (max-width:768px){header.site.nav-hidden{transform:translateY(-100%)}}
 .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;flex-wrap:wrap;gap:10px}
