@@ -62,7 +62,7 @@
 <h2 class="h2-sub cat-head">Browse by <span class="gold">Category</span></h2>
 <div class="grid">
 <div class="card"><span class="tag">4 tools</span><h3>QR &amp; Video Links</h3><p>QR codes, video thumbnails and link details.</p><a class="go" href="tools-preview/#cat-qr-video">Browse category →</a></div>
-<div class="card"><span class="tag">12 tools</span><h3>Image Tools</h3><p>Compress, convert, resize and inspect images.</p><a class="go" href="tools-preview/#cat-image">Browse category →</a></div>
+<div class="card"><span class="tag">12 tools</span><h3>Image Tools</h3><p>Compress, convert, resize and inspect images.</p><a class="go" href="tools-preview/image-compressor/">Open the tool →</a></div>
 <div class="card"><span class="tag">11 tools</span><h3>PDF Tools</h3><p>Merge, split, compress and convert PDFs.</p><a class="go" href="tools-preview/#cat-pdf">Browse category →</a></div>
 <div class="card"><span class="tag">15 tools</span><h3>Audio &amp; Video Tools</h3><p>Convert, trim, merge and record audio and video.</p><a class="go" href="tools-preview/#cat-audio-video">Browse category →</a></div>
 <div class="card"><span class="tag">13 tools</span><h3>Text Tools</h3><p>Count words, convert case, format JSON and compare text.</p><a class="go" href="tools-preview/#cat-text">Browse category →</a></div>
@@ -96,7 +96,7 @@
 <div class="auth-msg error" id="newsError" role="alert" hidden></div>
 <div class="auth-msg success" id="newsMsg" hidden></div>
 <div id="newsTurnstile" style="margin:0 0 14px"></div>
-  <button class="btn auth-submit" type="submit" id="newsSubmit">Join the Books Readers list</button>
+<button class="btn auth-submit" type="submit" id="newsSubmit">Join the Books Readers list</button>
 </form><p class="fineprint">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
 <div class="note"><strong>Our promise:</strong> simple and correct English, honest descriptions, and no income promises — ever. Security is a skill you build with practice, and our job is to make the path clear. Learn and practise only where you have permission.</div>
 </div></section>
@@ -132,23 +132,23 @@
   var msgEl = document.getElementById("newsMsg");
   var btn = document.getElementById("newsSubmit");
   /* Turnstile bot check for this public form, loaded and rendered
-      the same way the sign-in pages do it (explicit rendering, this
+     the same way the sign-in pages do it (explicit rendering, this
      site's own widget key). */
   var tsBox = document.getElementById("newsTurnstile");
   var tsId = null;
   window.__csNewsTsReady = function () {
-    try { tsId = window.turnstile.render(tsBox, { sitekey: "0x4AAAAAAGBc6k4CUhI6GTuV" }); } catch (e) {}    
-      }   ;
-     var tsScript = document.createElement("script");
+    try { tsId = window.turnstile.render(tsBox, { sitekey: "0x4AAAAAAGBc6k4CUhI6GTuV" }); } catch (e) {}
+  };
+  var tsScript = document.createElement("script");
   tsScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__csNewsTsReady";
   tsScript.async = true;
-    document.head.appendChild(tsScript);
+  document.head.appendChild(tsScript);
   function tsToken() {
-          try { if (tsId !== null && window.turnstile) return window.turnstile.getResponse(tsId) || ""; } catch (e) {}
-          return "";
+    try { if (tsId !== null && window.turnstile) return window.turnstile.getResponse(tsId) || ""; } catch (e) {}
+    return "";
   }
-    function tsReset() {
-          try { if (tsId !== null && window.turnstile) window.turnstile.reset(tsId); } catch (e) {}
+  function tsReset() {
+    try { if (tsId !== null && window.turnstile) window.turnstile.reset(tsId); } catch (e) {}
   }
   var FALLBACK_HTML = "Your subscription could not be saved just now. Please try again in a little while, or use the <a href=\"contact.html\">contact page</a> and we will add you by hand.";
   function show(el, msg) { if (msg != null) el.textContent = msg; el.hidden = !msg; }
