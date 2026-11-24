@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/">
 <link rel="stylesheet" href="styles.css?v=20261118">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+<meta name="cs-adsense" content="on">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/">
@@ -95,7 +95,8 @@
 </div>
 <div class="auth-msg error" id="newsError" role="alert" hidden></div>
 <div class="auth-msg success" id="newsMsg" hidden></div>
-<button class="btn auth-submit" type="submit" id="newsSubmit">Join the Books Readers list</button>
+<div id="newsTurnstile" style="margin:0 0 14px"></div>
+  <button class="btn auth-submit" type="submit" id="newsSubmit">Join the Books Readers list</button>
 </form><p class="fineprint">Privacy, in plain words: we use your name and email only to send you the free resources and occasional Cheakstar emails about new books and resources. You can ask us to stop and delete your details at any time by replying to any email. We do not sell your information.</p></div>
 <div class="note"><strong>Our promise:</strong> simple and correct English, honest descriptions, and no income promises — ever. Security is a skill you build with practice, and our job is to make the path clear. Learn and practise only where you have permission.</div>
 </div></section>
@@ -130,6 +131,25 @@
   var errEl = document.getElementById("newsError");
   var msgEl = document.getElementById("newsMsg");
   var btn = document.getElementById("newsSubmit");
+  /* Turnstile bot check for this public form, loaded and rendered
+      the same way the sign-in pages do it (explicit rendering, this
+     site's own widget key). */
+  var tsBox = document.getElementById("newsTurnstile");
+  var tsId = null;
+  window.__csNewsTsReady = function () {
+    try { tsId = window.turnstile.render(tsBox, { sitekey: "0x4AAAAAAGBc6k4CUhI6GTuV" }); } catch (e) {}    
+      }   ;
+     var tsScript = document.createElement("script");
+  tsScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__csNewsTsReady";
+  tsScript.async = true;
+    document.head.appendChild(tsScript);
+  function tsToken() {
+          try { if (tsId !== null && window.turnstile) return window.turnstile.getResponse(tsId) || ""; } catch (e) {}
+          return "";
+  }
+    function tsReset() {
+          try { if (tsId !== null && window.turnstile) window.turnstile.reset(tsId); } catch (e) {}
+  }
   var FALLBACK_HTML = "Your subscription could not be saved just now. Please try again in a little while, or use the <a href=\"contact.html\">contact page</a> and we will add you by hand.";
   function show(el, msg) { if (msg != null) el.textContent = msg; el.hidden = !msg; }
   function showFallback() { errEl.innerHTML = FALLBACK_HTML; errEl.hidden = false; }
@@ -141,6 +161,16 @@
     if (!name) { show(errEl, "Please enter your name."); return; }
     if (!email || email.indexOf("@") < 1 || email.indexOf(".") < 0) {
       show(errEl, "Please enter a valid email address.");
+      return;
+    }
+    if (!tsToken()) {
+      show(errEl, "Please complete the 'Verify you are human' check just above the button, then try again.");
+      return;
+    }
+    var lastNews = 0;
+    try { lastNews = Number(window.localStorage.getItem("cs_news_last") || 0); } catch (e) {}
+    if (lastNews && Date.now() - lastNews < 60000) {
+      show(errEl, "You used this form just now. Please wait a minute before using it again.");
       return;
     }
     btn.disabled = true;
@@ -157,7 +187,9 @@
     }).then(function (res) {
       done();
       if (res.status === 201) {
+        try { window.localStorage.setItem("cs_news_last", String(Date.now())); } catch (e) {}
         form.reset();
+        tsReset();
         show(msgEl, "You have joined the Books Readers list. Watch your inbox for your free Chapter 1 of Bug Bounty from Scratch and the Bug Bounty Checklist.");
         return;
       }
