@@ -1319,3 +1319,74 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 })();
+
+/* ---------- AdSense consent gate (audit 12.2) ----------
+   Pages that carry advertising declare it with a
+   <meta name="cs-adsense" content="on"> tag instead of loading the
+   AdSense library directly. The library loads only after the
+   visitor accepts the consent message; a stored choice is honoured
+   on every later page, and declining keeps the library (and its
+   cookies) off entirely. */
+(function () {
+  try {
+    if (!document.querySelector('meta[name="cs-adsense"]')) return;
+    var KEY = "ck_ads_consent";
+    var ADS_SRC = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425";
+    function choice() {
+      try { return window.localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+    function save(v) {
+      try { window.localStorage.setItem(KEY, v); } catch (e) {}
+    }
+    function loadAds() {
+      if (document.querySelector("script[data-cs-adsense-loader]")) return;
+      var sc = document.createElement("script");
+      sc.async = true;
+      sc.src = ADS_SRC;
+      sc.crossOrigin = "anonymous";
+      sc.setAttribute("data-cs-adsense-loader", "1");
+      document.head.appendChild(sc);
+    }
+    var saved = choice();
+    if (saved === "accepted") { loadAds(); return; }
+    if (saved === "declined") { return; }
+    function showBanner() {
+      if (document.querySelector(".cs-consent")) return;
+      var bar = document.createElement("div");
+      bar.className = "cs-consent";
+      bar.setAttribute("role", "dialog");
+      bar.setAttribute("aria-label", "Cookie consent");
+      bar.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:900;background:#0b2239;color:#e8eef4;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:center;border-top:2px solid #c9a227;font-size:.92rem;line-height:1.45;";
+      var text = document.createElement("span");
+      text.style.cssText = "max-width:640px";
+      text.textContent = "This site can show ads served by Google AdSense. Ads load only if you accept: Google and its partners may then use cookies to personalise them. ";
+      var link = document.createElement("a");
+      link.href = "privacy-policy.html";
+      link.textContent = "Privacy Policy";
+      link.style.cssText = "color:#c9a227;text-decoration:underline";
+      text.appendChild(link);
+      var accept = document.createElement("button");
+      accept.type = "button";
+      accept.textContent = "Accept ads";
+      accept.style.cssText = "background:#c9a227;color:#111827;border:0;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer";
+      var decline = document.createElement("button");
+      decline.type = "button";
+      decline.textContent = "Decline";
+      decline.style.cssText = "background:transparent;color:#e8eef4;border:1px solid #5b7d99;border-radius:8px;padding:9px 18px;cursor:pointer";
+      function close() {
+        if (bar.parentNode) bar.parentNode.removeChild(bar);
+        document.body.style.paddingBottom = "";
+      }
+      accept.addEventListener("click", function () { save("accepted"); close(); loadAds(); });
+      decline.addEventListener("click", function () { save("declined"); close(); });
+      bar.appendChild(text);
+      bar.appendChild(accept);
+      bar.appendChild(decline);
+      document.body.appendChild(bar);
+      document.body.style.paddingBottom = (bar.offsetHeight + 8) + "px";
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", showBanner);
+    } else { showBanner(); }
+  } catch (e) { /* consent tooling must never break a page */ }
+})();
