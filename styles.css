@@ -655,7 +655,7 @@ ul.catalogue li .go{flex:none;white-space:nowrap}
      desktop, stepping down at 1250px, 900px and 560px. */
 .wrap.wide{max-width:1440px}
 [data-theme="light"] .cs-pc-badge{filter:brightness(.5) saturate(1.4)}
-.ck-main{width:auto;max-width:1060px;margin-left:auto;margin-right:auto}
+.ck-main{width:100%;max-width:1060px;margin-left:auto;margin-right:auto}
 .games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 @media (max-width:1250px){.games-grid{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:900px){.games-grid{grid-template-columns:repeat(2,1fr)}}
