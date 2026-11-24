@@ -47,7 +47,7 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
 .fs-exit { display: none; }
 .ctrl-row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: center; margin-top: 1rem; }
 .ctrl-row button { margin-top: 0; }
-.ctrl-row select { margin-top: 0; }
+.ctrl-row select { margin-top: 0; max-width: 100%; }
 .stats-line { color: var(--muted); font-size: 0.9rem; margin-top: 0.5rem; text-align: center; }
 .keys-note { color: var(--muted); font-size: 0.9rem; text-align: center; margin-top: 0.6rem; }
 .play-stage:fullscreen { background: #071a2e; color: #e2e8f0; overflow: auto; padding: 0.25rem 1rem 0.25rem; display: flex; flex-direction: column; align-items: center; }
