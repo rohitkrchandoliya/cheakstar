@@ -41,7 +41,7 @@
       return "Please confirm your email first: open the confirmation link in your inbox, then sign in.";
     }
     if (low.indexOf("already registered") >= 0 || low.indexOf("already exists") >= 0) {
-      return "An account with this email already exists. Try signing in instead.";
+      return "Sign-up could not be completed with these details. If you already have an account, try signing in instead.";
     }
     if (low.indexOf("password should be at least") >= 0) {
       return "Please choose a password of at least 8 characters.";
