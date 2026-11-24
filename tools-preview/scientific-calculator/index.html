@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../assets/tools.css?v=20261118">
 <link rel="stylesheet" href="../assets/tool-info.css?v=20261118">
+<style>#sci-pad .btn { min-width: 0; padding-left: 8px; padding-right: 8px; }</style>
 
 </head>
 <body>
@@ -32,7 +33,7 @@
     <p id="sci-status" class="status" role="status" style="margin:4px 0 0"></p>
   </div>
 
-  <div id="sci-pad" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px">
+  <div id="sci-pad" style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px">
     <button class="btn ghost" type="button" data-mem="MC">MC</button>
     <button class="btn ghost" type="button" data-mem="MR">MR</button>
     <button class="btn ghost" type="button" data-mem="M-">M-</button>
