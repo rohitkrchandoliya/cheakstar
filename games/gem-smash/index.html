@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../game.css?v=20261118">
 <title>Gem Smash - Cheakstar Games</title>
+<meta name="description" content="Play Gem Smash free in your browser — a gem matching puzzle game from Cheakstar Games. No downloads or installs; the game runs entirely on your device.">
 <style>
 body { background: var(--bg); color: var(--ink); }
 h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
@@ -21,7 +22,7 @@ label { font-weight: 600; }
 .play-stage:fullscreen h1 { display: none; }
 .play-stage:fullscreen .status { min-height: 1.1em; }
 }
-#gem-board { position: relative; width: min(480px, 92vw); aspect-ratio: 1; margin: 1rem auto 0; background: #0d2f52; border: 2px solid var(--gold2); border-radius: 10px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; box-sizing: border-box; transition: box-shadow 0.15s ease; }
+#gem-board { position: relative; width: min(480px, 100%); aspect-ratio: 1; margin: 1rem auto 0; background: #0d2f52; border: 2px solid var(--gold2); border-radius: 10px; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; box-sizing: border-box; transition: box-shadow 0.15s ease; }
 #gem-board.chain-flash { box-shadow: 0 0 0 3px var(--gold), 0 0 26px 6px rgba(201, 162, 39, 0.55); }
 .cgx-fs:fullscreen #gem-board, .cgx-fs:-webkit-full-screen #gem-board { width: min(92vw, 72vmin, 640px); flex: none; /* the column stage scrolls instead of squashing the square board */ }
 .gem { position: absolute; width: 12.5%; height: 12.5%; padding: 2px; margin: 0; box-sizing: border-box; background: none; border: none; cursor: pointer; transition: top 0.2s ease, left 0.2s ease, transform 0.18s ease, opacity 0.18s ease; }
@@ -43,12 +44,12 @@ label { font-weight: 600; }
 @keyframes gem-float-up { from { opacity: 1; margin-top: 0; } to { opacity: 0; margin-top: -44px; } }
 #gem-cascade { color: var(--gold); visibility: hidden; }
 .play-stage:fullscreen #gem-cascade { color: #f3d67c; }
-.gem-progress { width: min(480px, 92vw); height: 14px; margin: 0.6rem auto 0; background: var(--navy3); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; box-sizing: border-box; }
+.gem-progress { width: min(480px, 100%); height: 14px; margin: 0.6rem auto 0; background: var(--navy3); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; box-sizing: border-box; }
 .cgx-fs:fullscreen .gem-progress { width: min(92vw, 72vmin, 640px); background: #123a5c; }
 #gem-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #dbb63a, var(--gold)); transition: width 0.3s ease; }
 .gem-levels-label { font-weight: 700; text-align: center; margin-top: 1.1rem; }
 .play-stage:fullscreen .gem-levels-label { color: #e2e8f0; }
-.gem-levels { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; width: min(480px, 92vw); margin: 0.5rem auto 0; }
+.gem-levels { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; width: min(480px, 100%); margin: 0.5rem auto 0; }
 .cgx-fs:fullscreen .gem-levels { width: min(92vw, 72vmin, 640px); }
 .gem-levels button { margin: 0; flex: 1 1 21%; padding: 0.45rem 0.2rem; line-height: 1.25; }
 .gem-levels button .lv-stars { display: block; font-size: 0.72rem; color: var(--gold); min-height: 1em; }
