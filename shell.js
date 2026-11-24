@@ -1367,7 +1367,7 @@ document.addEventListener("DOMContentLoaded", function () {
       text.appendChild(link);
       var accept = document.createElement("button");
       accept.type = "button";
-      accept.textContent = "Accept ads";
+      accept.textContent = "Accept";
       accept.style.cssText = "background:#c9a227;color:#111827;border:0;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer";
       var decline = document.createElement("button");
       decline.type = "button";
