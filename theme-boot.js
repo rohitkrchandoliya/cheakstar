@@ -39,3 +39,18 @@
     }
   } catch (e) { /* appearance is cosmetic; never break the page */ }
 })();
+
+// Referrer policy (security headers, the part a static host can
+// carry): send only the origin to other sites, the full address
+// only within this site. Pages that already declare a referrer
+// policy keep theirs; this fills the gap on every other page.
+(function () {
+  try {
+    if (!document.querySelector('meta[name="referrer"]')) {
+      var m = document.createElement("meta");
+      m.name = "referrer";
+      m.content = "strict-origin-when-cross-origin";
+      document.head.appendChild(m);
+    }
+  } catch (e) { /* a missing referrer policy must never break a page */ }
+})();
