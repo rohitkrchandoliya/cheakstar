@@ -12,7 +12,7 @@
   <meta property="og:url" content="https://rohitkrchandoliya.github.io/cheakstar/contact.html">
 <script src="theme-boot.js?v=20261118"></script>
 <link rel="stylesheet" href="styles.css?v=20261118">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8762989172677425" crossorigin="anonymous"></script>
+<meta name="cs-adsense" content="on">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="canonical" href="https://rohitkrchandoliya.github.io/cheakstar/contact.html">
@@ -37,7 +37,7 @@
 <p class="sub">The fastest way to reach Cheakstar is LinkedIn. For anything about an order, the store's message option reaches us directly. We reply to every genuine message.</p>
 <div class="grid">
 <div class="card"><span class="tag">Fastest</span><h2>LinkedIn</h2><p>Questions about training, services, or working with us — message the founder on LinkedIn. Our company page announcements also appear there.</p><a class="go" href="https://www.linkedin.com/in/rohitkrchandoliya" target="_blank" rel="noopener">Message on LinkedIn →</a></div>
-<div class="card"><span class="tag">Orders &amp; Books</span><h2>Our Store</h2><p>Bought a book and something went wrong — a download that failed, or the wrong file? Use the contact/message option on the store and tell us your order details; we will sort it out.</p><a class="go" href="https://payhip.com/securethefuture" target="_blank" rel="noopener">Go to the store →</a></div>
+<div class="card"><span class="tag">Orders &amp; Books</span><h2>Our Store</h2><p>Bought a book and something went wrong — a download that failed, or the wrong file? Use the contact/message option on the store and tell us your order details; we will sort it out.</p><a class="go" href="https://payhip.com/b/lWHCt" target="_blank" rel="noopener">Go to the store →</a></div>
 <div class="card"><span class="tag">Free Learning</span><h2>ByteShield</h2><p>Our free cybersecurity and Python tutorials are published as ByteShield on YouTube, Instagram and Facebook — search "ByteShield" on your platform of choice.</p><a class="go" href="books.html">Or start with a book →</a></div>
 </div>
 <!-- Message form: delivered by Web3Forms straight to the Cheakstar
@@ -80,6 +80,7 @@
       <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
       <div class="auth-msg success" id="cfSuccess" role="status" hidden>Thank you — your message has been sent. We reply to every genuine message, usually within a couple of working days.</div>
       <div class="auth-msg error" id="cfError" role="alert" hidden>Sorry — your message could not be sent just now. Please try again in a moment, or reach us through LinkedIn or the store above.</div>
+      <div id="cfTurnstile" style="margin:0 0 14px"></div>
       <button class="btn auth-submit" type="submit" id="cfSubmit">Send Message</button>
       <p style="color:var(--muted);font-size:.85rem;margin-top:10px">This form is delivered by Web3Forms, a form-delivery service: what you write here is sent to our inbox and is not stored on this website. See our <a href="privacy-policy.html">Privacy Policy</a>.</p>
     </form>
@@ -92,26 +93,69 @@
 <script src="gate.js?v=20261118" data-cs-gate-run="contact"></script>
 <script>
 /* Contact form: submit to Web3Forms without leaving the page and
-   report the outcome in place. Without JavaScript the form still
-   posts normally to the same service. */
+   report the outcome in place. A Cloudflare Turnstile check and a
+   one-minute pause between sent messages keep automated spam away.
+   Without JavaScript the form still posts normally to the same
+   service. */
 (function () {
   var form = document.getElementById("contactForm");
   if (!form) return;
   var btn = document.getElementById("cfSubmit");
   var ok = document.getElementById("cfSuccess");
   var err = document.getElementById("cfError");
+  var genericErr = err.textContent;
+  var tsBox = document.getElementById("cfTurnstile");
+  var tsId = null;
+
+  /* Turnstile, loaded and rendered the same way the sign-in pages
+     do it (explicit rendering, this site's own widget key). */
+  window.__csContactTsReady = function () {
+    try {
+      tsId = window.turnstile.render(tsBox, { sitekey: "0x4AAAAAAGBc6k4CUhI6GTuV" });
+    } catch (e) {}
+  };
+  var tsScript = document.createElement("script");
+  tsScript.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__csContactTsReady";
+  tsScript.async = true;
+  document.head.appendChild(tsScript);
+
+  function tsToken() {
+    try {
+      if (tsId !== null && window.turnstile) return window.turnstile.getResponse(tsId) || "";
+    } catch (e) {}
+    return "";
+  }
+  function tsReset() {
+    try { if (tsId !== null && window.turnstile) window.turnstile.reset(tsId); } catch (e) {}
+  }
+  function showErr(msg) { err.textContent = msg; err.hidden = false; }
+
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     if (form.botcheck && form.botcheck.checked) return;
     ok.hidden = true; err.hidden = true;
+    if (!tsToken()) {
+      showErr("Please complete the 'Verify you are human' check just above the button, then press Send Message again.");
+      return;
+    }
+    var last = 0;
+    try { last = Number(window.localStorage.getItem("cs_contact_last") || 0); } catch (e) {}
+    if (last && Date.now() - last < 60000) {
+      showErr("Your last message was sent just now. Please wait a minute before sending another one.");
+      return;
+    }
     btn.disabled = true; btn.textContent = "Sending...";
     fetch("https://api.web3forms.com/submit", { method: "POST", body: new FormData(form) })
       .then(function (r) { return r.json(); })
       .then(function (j) {
-        if (j && j.success) { form.reset(); ok.hidden = false; }
-        else { err.hidden = false; }
+        if (j && j.success) {
+          try { window.localStorage.setItem("cs_contact_last", String(Date.now())); } catch (e) {}
+          form.reset();
+          tsReset();
+          ok.hidden = false;
+        } else { showErr(genericErr); }
       })
-      .catch(function () { err.hidden = false; })
+      .catch(function () { showErr(genericErr); })
       .then(function () { btn.disabled = false; btn.textContent = "Send Message"; });
   });
 })();
