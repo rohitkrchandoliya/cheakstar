@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../game.css?v=20261118">
 <title>Flappy Wing - Cheakstar Games</title>
+<meta name="description" content="Play Flappy Wing free in your browser — a flying arcade game from Cheakstar Games. No downloads or installs; the game runs entirely on your device.">
 <style>
 body { background: var(--bg); color: var(--ink); }
 h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
@@ -21,7 +22,7 @@ label { font-weight: 600; }
 .play-stage:fullscreen h1 { display: none; }
 .play-stage:fullscreen .status { min-height: 1.1em; }
 }
-#flap-board { display: block; width: min(400px, 92vw); aspect-ratio: 4 / 5; margin: 1rem auto 0; background: #071a2e; border: 2px solid var(--gold2); box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
+#flap-board { display: block; width: min(400px, 100%); aspect-ratio: 4 / 5; margin: 1rem auto 0; background: #071a2e; border: 2px solid var(--gold2); box-sizing: border-box; touch-action: none; user-select: none; -webkit-user-select: none; cursor: pointer; }
 .cgx-fs:fullscreen #flap-board, .cgx-fs:-webkit-full-screen #flap-board { flex: none; width: min(94vw, 64vh, 500px); margin-top: 0.5rem; }
 .flap-medal-pop { font-weight: 800; color: var(--gold, #c9a227); font-size: 1.15rem; animation: flap-medal-pop 0.6s ease; }
 @keyframes flap-medal-pop { 0% { transform: scale(0.4); opacity: 0; } 60% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
