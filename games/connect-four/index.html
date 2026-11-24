@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../styles.css?v=20261118">
 <link rel="stylesheet" href="../game.css?v=20261118">
 <title>Connect Four - Cheakstar Games</title>
+<meta name="description" content="Play Connect Four free in your browser — the Connect Four strategy board game from Cheakstar Games. No downloads or installs; the game runs entirely on your device.">
 <style>
 body { background: var(--bg); color: var(--ink); }
 h1, h2 { color: var(--ink); border-bottom: 2px solid var(--gold); padding-bottom: 0.25rem; margin-top: 2rem; }
@@ -22,15 +23,15 @@ label { font-weight: 600; }
 .play-stage:fullscreen h1 { display: none; }
 .play-stage:fullscreen .status { min-height: 1.1em; }
 }
-#conn-preview { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 92vw); margin: 0.75rem auto 0; padding: 0 6px; box-sizing: border-box; }
+#conn-preview { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 100%); margin: 0.75rem auto 0; padding: 0 6px; box-sizing: border-box; }
 .conn-slot { aspect-ratio: 1; border-radius: 50%; }
 .conn-slot.g { background: radial-gradient(circle at 35% 35%, rgba(243, 214, 124, 0.55), rgba(201, 162, 39, 0.55)); box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.85); }
 .conn-slot.r { background: radial-gradient(circle at 35% 35%, rgba(248, 113, 113, 0.55), rgba(185, 28, 28, 0.55)); box-shadow: inset 0 0 0 2px rgba(185, 28, 28, 0.85); }
-#conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 92vw); margin: 2px auto 0; padding: 0 6px; box-sizing: border-box; }
+#conn-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: min(460px, 100%); margin: 2px auto 0; padding: 0 6px; box-sizing: border-box; }
 .conn-colbtn { margin: 0; padding: 0.3rem 0; border-radius: 6px; }
 .conn-colbtn.cursor { outline: 3px solid var(--gold); outline-offset: 1px; }
 .conn-colbtn:disabled { opacity: 0.45; }
-#conn-board { display: grid; gap: 4px; width: min(460px, 92vw); margin: 4px auto 0; background: #0a2540; padding: 6px; border-radius: 8px; box-sizing: border-box; position: relative; z-index: 1; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+#conn-board { display: grid; gap: 4px; width: min(460px, 100%); margin: 4px auto 0; background: #0a2540; padding: 6px; border-radius: 8px; box-sizing: border-box; position: relative; z-index: 1; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .conn-cell { aspect-ratio: 1; background: #123a5c; border-radius: 50%; position: relative; }
 .conn-disc { position: absolute; inset: 0; border-radius: 50%; }
 .conn-disc.g { background: radial-gradient(circle at 35% 35%, #f3d67c, #c9a227); }
